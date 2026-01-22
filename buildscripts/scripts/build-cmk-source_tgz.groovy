@@ -115,6 +115,7 @@ void main() {
                             passwordVariable: 'NEXUS_PASSWORD',
                             usernameVariable: 'NEXUS_USERNAME')
                     ]) {
+                        // TODO CMK-28961: as soon as make dist is ported to bazel - use "use_faked_artifacts" here
                         sh("make dist");
                     }
                 }

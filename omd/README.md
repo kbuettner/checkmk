@@ -25,26 +25,6 @@ following targets to build a package for the current git:
 - `make deb`: Create a DEB package for Debian/Ubuntu
 - `make cma`: Create a CMA package for the appliance
 
-## Dealing with Windows artifacts
-
-Checkmk ships with several parts that are compiled on Windows build systems,
-these are
-
-- a) the Windows agent
-- b) the optional python interpreter for plugins.
-
-When these files are not existing previous to the packaging of Checkmk,
-the build will fail.
-
-For the moment there is an internal helper script
-`scripts/fake-artifacts` that creates empty stub files at the required
-locations to prevent the packaging issues. Obviously the Windows agent and
-related features in your built package will not be usable when building with
-these faked artifacts.
-
-TODO: Shouldn't we put them into dedicated packages which can then easily be
-excluded when there is no need to pack them (e.g. for tests)?
-
 ## Using bazel remote cache
 
 In case you want to use the (internal) bazel remote cache, add a `remote.bazelrc`
@@ -55,19 +35,19 @@ to the repository root (see `.bazelrc` for more information)
 Clone from the Checkmk Git, then execute the following commands:
 
 ```bash
-# Run everything in our pre-built docker images.
-# This may take a while as it's pulling the image from the registry
-scripts/run-in-docker.sh bash
-
-# Fake the windows artifacts - they need to be built on a windows node
-scripts/fake-artifacts
-
-# And now build a debian package
-make deb
+# To build a different edition, alter e.g. pro to community
+bazel build --cmk_version="2.6.0b1" --cmk_edition="pro" //omd:deps_install_pro
 ```
 
-It will use the OMD package build cache to create a `.deb` file in the `omd`
-directory.
+At the time of writing, several artifacts cannot (yet) be built in bazel.
+You either need to provide them manually in your worktree or use the faking mechanism via a build setting:
+
+```bash
+bazel build --//:use_faked_artifacts=true --cmk_version="2.6.0b1" --cmk_edition="pro" //omd:deps_install_pro
+```
+
+> NOTE: `bazel` already provides a lot of the tool hermetically, however they are (and most likely will be) system dependencies,
+> which needs to be installed manually beforehand.
 
 ## How to build a single OMD package?
 

@@ -78,6 +78,7 @@ void main() {
                 smart_stage(
                     name: "Trigger Build BOM",
                     raiseOnError: true,
+                    condition: ! params.FAKE_WINDOWS_ARTIFACTS,
                 ) {
                     smart_build(
                         // see global-defaults.yml, needs to run in minimal container

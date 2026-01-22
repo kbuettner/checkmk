@@ -114,6 +114,7 @@ void main() {
             smart_stage(
                 name: "Build BOM",
                 raiseOnError: true,
+                condition: ! params.FAKE_WINDOWS_ARTIFACTS,
             ) {
                 build_instance = smart_build(
                     // see global-defaults.yml, needs to run in minimal container
@@ -158,13 +159,8 @@ void main() {
             disable_cache: disable_cache,
             bisect_comment: params.CIPARAM_BISECT_COMMENT,
             artifacts_base_dir: "tmp_artifacts",
+            fake_artifacts: params.FAKE_WINDOWS_ARTIFACTS,
         );
-    } else {
-        smart_stage(name: 'Fake agent binaries') {
-            dir("${checkout_dir}") {
-                sh("scripts/fake-artifacts");
-            }
-        }
     }
 
     inside_container_minimal(safe_branch_name: safe_branch_name) {
@@ -203,6 +199,7 @@ void main() {
                         /// Don't use withEnv, see
                         /// https://issues.jenkins.io/browse/JENKINS-43632
                         def license_flag = ""
+                        def fake_artifacts = params.FAKE_WINDOWS_ARTIFACTS ? "--//:use_faked_artifacts=true" : ""
                         if (edition == "community") {
                             license_flag = '--//:repo_license="gpl"'
                         }
@@ -222,6 +219,7 @@ void main() {
                         ]) {
                             sh("""
                                 bazel build \
+                                    ${fake_artifacts} \
                                     --cmk_version=${cmk_version} \
                                     --cmk_edition=${edition} \
                                     ${license_flag} \

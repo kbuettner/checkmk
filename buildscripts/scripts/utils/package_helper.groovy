@@ -77,6 +77,7 @@ void provide_agent_binaries(Map args) {
     def move_artifacts = args.move_artifacts == null ? true : args.move_artifacts.asBoolean();
     def all_dependency_paths_hashes = dependency_paths_hashes();
     def test_binaries_only = args.test_binaries_only == null ? false : true;
+    def fake_artifacts = args.fake_artifacts == null ? false : args.fake_artifacts.asBoolean();
 
     // This _should_ go to an externally maintained file (single point of truth), see
     // https://jira.lan.tribe29.com/browse/CMK-13857
@@ -92,7 +93,7 @@ void provide_agent_binaries(Map args) {
             //       relatively from 'builders/..'
             relative_job_name: "${branch_base_folder(false)}/builders/build-linux-agent-updater",
             /// no Linux agent updaters for community edition..
-            condition: ! test_binaries_only,
+            skip: test_binaries_only || fake_artifacts,
             dependency_paths_hash: all_dependency_paths_hashes["build-linux-agent-updater"],
             additional_build_params: [],
             install_cmd: """\
@@ -109,7 +110,7 @@ void provide_agent_binaries(Map args) {
             relative_job_name: "${branch_base_folder(false)}/builders/build-mk-oracle-on-aix-and-solaris",
             dependency_paths_hash: all_dependency_paths_hashes["build-mk-oracle"],
             additional_build_params: [],
-            condition: ! test_binaries_only,
+            skip: test_binaries_only || fake_artifacts,
             install_cmd: """\
                 cp mk-oracle.{aix,solaris} ${checkout_dir}/omd/packages/mk-oracle/
                 """.stripIndent(),
@@ -117,7 +118,7 @@ void provide_agent_binaries(Map args) {
         "build-mk-oracle-rhel8": [
             relative_job_name: "${branch_base_folder(false)}/builders/build-cmk-package-mk-oracle-k8s",
             dependency_paths_hash: all_dependency_paths_hashes["build-mk-oracle"],
-            condition: ! test_binaries_only,
+            skip: test_binaries_only || fake_artifacts,
             additional_build_params: [
                 PACKAGE_PATH: "packages/mk-oracle",
                 DISTRO: "almalinux-8",
@@ -133,7 +134,7 @@ void provide_agent_binaries(Map args) {
         "build-mk-oracle-rhel8-component-test": [
             relative_job_name: "${branch_base_folder(false)}/builders/build-cmk-package-mk-oracle-k8s",
             dependency_paths_hash: all_dependency_paths_hashes["build-mk-oracle"],
-            condition: test_binaries_only,
+            skip: ! test_binaries_only,
             additional_build_params: [
                 PACKAGE_PATH: "packages/mk-oracle",
                 DISTRO: "almalinux-8",
@@ -155,7 +156,7 @@ void provide_agent_binaries(Map args) {
             //       relatively from 'builders/..'
             relative_job_name: "${branch_base_folder(false)}/winagt-build",
             dependency_paths_hash: all_dependency_paths_hashes["winagt-build"],
-            condition: ! test_binaries_only,
+            skip: test_binaries_only || fake_artifacts,
             additional_build_params: [],
             install_cmd: """\
                 cp \
@@ -191,7 +192,7 @@ void provide_agent_binaries(Map args) {
             //       relatively from 'builders/..'
             relative_job_name: "${branch_base_folder(false)}/winagt-build-modules",
             dependency_paths_hash: all_dependency_paths_hashes["winagt-build-modules"],
-            condition: ! test_binaries_only,
+            skip: test_binaries_only || fake_artifacts,
             additional_build_params: [],
             install_cmd: """\
                 cp \
@@ -203,16 +204,16 @@ void provide_agent_binaries(Map args) {
 
     def stages = upstream_job_details.collectEntries { job_name, details ->
         [("${job_name}".toString()) : {
-            def run_condition = details["condition"];
+            def skip = details["skip"];
             def build_instance = null;
 
-            if (! run_condition) {
+            if (skip) {
                 Utils.markStageSkippedForConditional("${job_name}");
             }
 
             smart_stage(
                 name: job_name,
-                condition: run_condition,
+                condition: ! skip,
                 raiseOnError: true,
             ) {
                 def this_parameters = [
@@ -263,7 +264,7 @@ void provide_agent_binaries(Map args) {
 
             smart_stage(
                 name: "Move artifacts around",
-                condition: run_condition && build_instance && move_artifacts,
+                condition: ! skip && build_instance && move_artifacts,
                 raiseOnError: true,
             ) {
                 // prevent "_tmp" directories created by the Jenkins groovy dir() command
