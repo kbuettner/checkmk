@@ -3,6 +3,7 @@
 load("@aspect_rules_lint//lint:bandit.bzl", "lint_bandit_aspect")
 load("@aspect_rules_lint//lint:clang_tidy.bzl", "lint_clang_tidy_aspect")
 load("@aspect_rules_lint//lint:clippy.bzl", "lint_clippy_aspect")
+load("@aspect_rules_lint//lint:eslint.bzl", "lint_eslint_aspect")
 load("@aspect_rules_lint//lint:groovy.bzl", "lint_groovy_aspect")
 load("@aspect_rules_lint//lint:ruff.bzl", "lint_ruff_aspect")
 load("@aspect_rules_lint//lint:shellcheck.bzl", "lint_shellcheck_aspect")
@@ -13,6 +14,12 @@ load("@rules_mypy//mypy:mypy.bzl", "mypy")
 load("//bazel/tools:lint_astrein.bzl", "lint_astrein_aspect")
 load("//bazel/tools:lint_license_header.bzl", "lint_license_header_aspect")
 load("//bazel/tools:lint_py_import_cycles.bzl", "lint_py_import_cycles_aspect")
+
+eslint = lint_eslint_aspect(
+    binary = Label(":eslint"),
+    configs = [Label("//:eslintrc")],
+    rule_kinds = ["js_library", "ts_project", "ts_project_rule", "js_run_binary"],
+)
 
 clippy = lint_clippy_aspect(
     config = Label("//:.clippy.toml"),
