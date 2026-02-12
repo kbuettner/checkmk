@@ -35,7 +35,7 @@ def test_register_with_system_apache(tmp_path: Path, mocker: MockerFixture) -> N
     content = apache_config.read_bytes()
     assert (
         sha256(content).hexdigest()
-        == "6da2e68b8f8aac2896934f9d6613ea17d1498c886c550b61c64e9cab2afeaeea"
+        == "76d0cc3a0b79f4e941b33c0404ec38eaae0aeae1708d3e3d928a5736f82dde7f"
     ), (
         "The content of [site].conf was changed. Have you updated the apache_hook_version()? The "
         "number needs to be increased with every change to inform the user about an additional step "

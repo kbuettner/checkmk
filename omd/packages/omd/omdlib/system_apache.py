@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 from omdlib.console import show_success
+from omdlib.utils import is_containerized
 from omdlib.version_info import VersionInfo
 
 __all__ = [
@@ -69,7 +70,102 @@ def apache_hook_header(version: int) -> str:
 
 
 def apache_hook_version() -> int:
-    return 2
+    return 3
+
+
+def _site_not_started_html(site_name: str) -> str:
+    """Self-contained HTML for the 503 error page when a site's Apache is not running.
+
+    Everything is inlined (CSS, SVG logo) because the site has no running assets to serve.
+    Must avoid double-quote characters — Apache's ErrorDocument wraps this in double quotes.
+    """
+    if os.path.exists("/etc/cma/cma.conf"):
+        instructions = "<p>Start it via the Checkmk Appliance management interface.</p>"
+    elif is_containerized():
+        instructions = "<p>Restart the container to access the web interface.</p>"
+    else:
+        instructions = (
+            "<p>Start it to access the web interface.</p>"
+            "<p>Run <code>omd start </code> as the site user.</p>"
+        )
+
+    # fmt: off
+    header = (
+        "<!DOCTYPE html>"
+        "<html lang='en'>"
+        "<head>"
+        "<title>Checkmk: Site Not Started</title>"
+        "<meta http-equiv='refresh' content='60'>"
+        "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+        "<link rel='icon' type='image/svg+xml' href='data:image/svg+xml;base64,"
+        "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyOSAzNiI+"
+        "PHBhdGggZmlsbD0iIzE1ZDFhMCIgZD0ibTE0LjE4NzEsMS42NDEzbDE0LjEzNzEsOC4xODI0djE2LjM1"
+        "NjZsLTE0LjEzNzEsOC4xNzgzTC4wNSwyNi4xNzYyVjkuODE5NkwxNC4xODcxLDEuNjQxM1pNNC45MDcz"
+        "LDEzLjU1MDZ2NS40Mjg3bDYuNjU4Ni00LjMwMjR2MTEuMjAxMmwyLjYyNTMsMS41MTU2LDIuNjIxMi0x"
+        "LjUxNTZ2LTExLjIwMTJsNi42NTQ0LDQuMzAyNHYtNS40Mjg3bC05LjI3OTgtNS44MTM4LTkuMjc5OCw1"
+        "LjgxMzhoMFoiLz48L3N2Zz4='>"
+        "<style>"
+        "*{margin:0;padding:0;box-sizing:border-box}"
+        "body{background:rgb(28,34,40);color:#fff;"
+        "font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;"
+        "display:flex;justify-content:center;align-items:center;min-height:100vh}"
+        ".c{text-align:center;background:rgb(32,39,46);border-radius:12px;"
+        "padding:48px;max-width:520px;width:90%}"
+        ".l{margin-bottom:32px}"
+        "h1{font-size:24px;font-weight:600;margin-bottom:16px}"
+        "p{color:rgba(255,255,255,0.6);font-size:15px;line-height:1.6;margin-bottom:12px}"
+        "code{background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px;"
+        "font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;"
+        "font-size:14px;color:#15d1a0}"
+        ".r{color:rgba(255,255,255,0.35);font-size:13px;margin-top:24px}"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div class='c'>"
+        "<div class='l'>"
+        "<svg xmlns='http://www.w3.org/2000/svg' width='180' height='54' viewBox='0 0 120 36'>"
+        "<path fill='#15d1a0' d='m41.6868,24.1058c-2.7785,0-4.3314-1.5735-4.3314-4.497v-2.1119"
+        "c0-2.9235,1.5363-4.497,4.3107-4.497,2.5715,0,4.0457,1.3499,4.145,3.673h-1.1222"
+        "c-.1242-1.7806-1.1429-2.6543-2.9897-2.6543-2.1326,0-3.1926,1.1636-3.1926,3.5446v1.9918"
+        "c0,2.3852,1.0559,3.5446,3.1926,3.5446,1.8468,0,2.8614-.8696,2.9897-2.6502h1.1222"
+        "c-.0994,2.2775-1.5363,3.673-4.1243,3.673m6.8822-.2609v-15.1392h1.1636v6.3894"
+        "c.7412-1.3417,2.1616-2.1491,3.6937-2.1119,2.1988,0,3.321,1.3292,3.321,3.8386v7.0271"
+        "h-1.1677v-6.907c0-1.9462-.7454-2.9028-2.3438-2.9028-1.4949,0-2.6543.8282-3.5073,2.7578"
+        "v7.0478h-1.1595Zm15.6775.2443c-2.9028,0-4.497-1.5735-4.497-4.497v-2.1119"
+        "c0-2.9235,1.557-4.497,4.3976-4.497s4.3769,1.5735,4.3769,4.497v1.3085h-7.611v.7247"
+        "c0,2.4059,1.0766,3.5653,3.2962,3.5653,1.909,0,2.9897-.8696,3.1098-2.3438h1.1222"
+        "c-.1449,2.1781-1.6812,3.3624-4.1906,3.3624m-3.3376-6.3025h6.4888v-.2277"
+        "c0-2.4059-1.0559-3.5653-3.2548-3.5653s-3.234,1.1636-3.234,3.5653v.2277Z"
+        "m14.4932,6.3025c-2.7785,0-4.3314-1.5735-4.3314-4.497v-2.1119"
+        "c0-2.9235,1.5363-4.497,4.3107-4.497,2.5715,0,4.0457,1.3499,4.145,3.673h-1.1222"
+        "c-.1242-1.7806-1.1429-2.6543-2.9897-2.6543-2.1367,0-3.1926,1.1636-3.1926,3.5446v1.9918"
+        "c0,2.3852,1.0559,3.5446,3.1926,3.5446,1.8468,0,2.8614-.8696,2.9897-2.6502h1.1222"
+        "c-.0994,2.2775-1.5363,3.673-4.1243,3.673m6.8822-.265v-15.1433h1.1636v10.4351"
+        "l5.9298-5.9132h1.4949l-4.3562,4.3314,4.4391,6.2818h-1.4079l-3.8593-5.4536-2.2402,2.1988"
+        "v3.2548h-1.1595l-.0042.0083h0Zm10.6628,0v-10.7084h1.5528l.0663,1.6812"
+        "c.6708-1.2216,1.9711-1.9669,3.3624-1.9255,1.4949,0,2.5094.6418,2.9442,1.8675"
+        ".6998-1.1843,1.9835-1.9007,3.3624-1.8675,2.1367,0,3.321,1.2878,3.321,3.6481v7.3004"
+        "h-1.8261v-7.1555c0-1.4286-.6253-2.1119-1.7392-2.1119s-2.0332.704-2.8241,2.2609v7.0106"
+        "h-1.8261v-7.1555c0-1.4286-.6253-2.1119-1.7433-2.1119s-2.0332.704-2.8241,2.3645v6.907"
+        "h-1.8303l.0041-.0041h0Zm17.8763,0v-15.1433h1.8261v9.7063l4.936-5.2672h2.2775"
+        "l-4.1078,4.3562,4.1906,6.3439h-2.1781l-3.2755-5.0146-1.8468,1.9255v3.0891h-1.8261"
+        "l.0042.0041h0Z'/>"
+        "<path fill='#15d1a0' d='m14.1871,1.6413l14.1371,8.1824v16.3566l-14.1371,8.1783"
+        "L.05,26.1762V9.8196L14.1871,1.6413ZM4.9073,13.5506v5.4287l6.6586-4.3024v11.2012"
+        "l2.6253,1.5156,2.6212-1.5156v-11.2012l6.6544,4.3024v-5.4287l-9.2798-5.8138-9.2798,5.8138"
+        "h0Z'/>"
+        "</svg>"
+        "</div>"
+        "<h1>Site Not Started</h1>"
+        f"<p>The Checkmk site <code>{site_name}</code> is not running.</p>"
+    )
+    footer = (
+        "<div class='r'>This page refreshes automatically every 60 seconds.</div>"
+        "</div>"
+        "</body></html>"
+    )
+    # fmt: on
+    return header + instructions + footer
 
 
 def create_apache_hook(
@@ -94,6 +190,8 @@ def create_apache_hook(
         os.remove(apache_own_path)
     except FileNotFoundError:
         pass
+
+    not_started_html = _site_not_started_html(site_name)
 
     apache_config.parent.mkdir(parents=True, exist_ok=True)
     with open(apache_config, "w") as f:
@@ -135,7 +233,7 @@ def create_apache_hook(
 </IfModule>
 
 <Location /{site_name}>
-  ErrorDocument 503 "<!DOCTYPE html><html lang='en'><head><title>Checkmk: Site Not Started</title><meta http-equiv='refresh' content='60'></head><body><h1>Checkmk: Site Not Started</h1>You need to start this site in order to access the web interface.</body></html>"
+  ErrorDocument 503 "{not_started_html}"
 </Location>
 """
         )
