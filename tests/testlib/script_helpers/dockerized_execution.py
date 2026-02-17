@@ -67,7 +67,6 @@ def execute_tests_in_container(
     image_name_with_tag = _create_cmk_image(
         client, distro_name, docker_tag, package_info, container_env
     )
-
     # Start the container
     container: docker.models.containers.Container
     with _start(
@@ -368,7 +367,6 @@ def _create_cmk_image(
         _prepare_git_overlay(container, "/git-lowerdir", "/git", username=_TESTUSER)
         _prepare_virtual_environment(container, container_env, username=_TESTUSER)
         _persist_virtual_environment(container, container_env)
-
         logger.info("Install Checkmk version")
         _exec_run(
             container,
@@ -820,6 +818,27 @@ def _prepare_testuser(container: docker.models.containers.Container, username: s
     """
     uid = str(os.getuid())
     gid = str(os.getgid())
+
+    # On RHEL-based distros (AlmaLinux, etc.), the default PAM config includes pam_sss.so,
+    # which is currently failing with the following error (see CMK-27940):
+    # "PAM account management error: Authentication service cannot retrieve authentication info".
+    # This is due to the usage of 'apparmor=unconfined' security option when running the container.
+    # Here we insert a permissive PAM account rule in the affected PAM config files so the account
+    # check passes before reaching pam_sss.so. This covers both sudo and crontab (crond).
+    _exec_run(
+        container,
+        [
+            "bash",
+            "-c",
+            "for f in /etc/pam.d/sudo /etc/pam.d/crond; do"
+            ' if [ -f "$f" ]; then'
+            " sed -i '1 a account sufficient pam_permit.so' \"$f\";"
+            " fi;"
+            " done",
+        ],
+        check=False,
+    )
+
     _exec_run(container, ["groupadd", "-g", gid, username], check=False)
     _exec_run(
         container,
