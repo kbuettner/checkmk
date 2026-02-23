@@ -111,7 +111,7 @@ void main() {
                             sh("""
                                 git config --add user.name ${user};
                                 git config --add user.email ${JENKINS_MAIL};
-                                scripts/run-uvenv python3 -m cmk.utils.werks mail \
+                                bazel run //cmk/utils:werks_bin -- mail \
                                 ${WORKSPACE}/check_mk origin/${branch} werk_mail ${cmd_line};
                             """);
                         }

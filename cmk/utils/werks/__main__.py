@@ -7,8 +7,8 @@
 import argparse
 from pathlib import Path
 
-from .announce import main as main_announce
-from .mail import main as mail
+from cmk.utils.werks.announce import main as main_announce
+from cmk.utils.werks.mail import main as mail
 
 
 def main_mail(args: argparse.Namespace) -> None:

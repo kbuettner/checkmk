@@ -1,4 +1,4 @@
-load("@aspect_rules_py//py:defs.bzl", "py_library")
+load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 
 package(default_visibility = ["//cmk:__subpackages__"])
@@ -16,7 +16,10 @@ py_library(
             "**/nonfree/**",
         ],
     ),
-    data = ["//cmk/utils/werks/announce/templates:j2_templates"],
+    data = [
+        "werks/mail/templates/mail.txt.jinja2",
+        "//cmk/utils/werks/announce/templates:j2_templates",
+    ],
     visibility = [
         "//cmk:__subpackages__",
         "//non-free/packages/cmk-dcd:__pkg__",
@@ -144,4 +147,12 @@ py_library(
         "//packages/cmk-ccc:resulttype",
         requirement("python-dateutil"),
     ],
+)
+
+py_binary(
+    name = "werks_bin",
+    srcs = ["werks/__main__.py"],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+    deps = [":utils"],
 )
