@@ -2032,7 +2032,7 @@ class PageBackupKeyManagement(key_mgmt.PageKeyManagement):
         show_key_download_warning(self.key_store.load())
         super().page(config)
 
-    def _key_in_use(self, key_id: KeyId, key: Key) -> bool:
+    def _key_in_use(self, key: Key) -> bool:
         key_digest = key.fingerprint(HashAlgorithm.MD5)
         return any(
             (job_key_fp := job.key_ident()) and key_digest == job_key_fp

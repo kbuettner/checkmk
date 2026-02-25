@@ -118,7 +118,7 @@ class PageKeyManagement:
 
             key = keys[key_id]
 
-            if self._key_in_use(key_id, key):
+            if self._key_in_use(key):
                 raise MKUserError("", _("This key is still used."))
 
             del keys[key_id]
@@ -146,7 +146,7 @@ class PageKeyManagement:
     def _delete_confirm_title(self, nr: int) -> str:
         raise NotImplementedError()
 
-    def _key_in_use(self, key_id: KeyId, key: Key) -> bool:
+    def _key_in_use(self, key: Key) -> bool:
         raise NotImplementedError()
 
     def _table_title(self) -> str:
