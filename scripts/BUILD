@@ -49,3 +49,10 @@ sh_library(
         "run-uvenv",
     ],
 )
+
+py_binary(
+    name = "decent_output",
+    srcs = ["decent_output.py"],
+    main = "decent_output.py",
+    visibility = ["//visibility:public"],
+)

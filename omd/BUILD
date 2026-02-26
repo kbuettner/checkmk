@@ -20,6 +20,13 @@ exports_files([
     "requirements.txt",
 ])
 
+py_binary(
+    name = "strip_binaries",
+    srcs = ["strip_binaries.py"],
+    main = "strip_binaries.py",
+    visibility = ["//visibility:public"],
+)
+
 # NOTES:
 # * jaeger should be added to all editions EXCEPT cloud - cloud has its own tracing collector
 # * nagvis should be added to all editions EXCEPT cloud - see CMK-14926

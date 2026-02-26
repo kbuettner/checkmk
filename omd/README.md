@@ -181,9 +181,6 @@ like this:
 You could grep them from the log to get an idea which package takes how long to
 be built. These lines are also written to `omd/omd_build_times.log`.
 
-The log contains absolute time stamps. You may use the helper script
-`omd/show_build_times` to get the duration of each step calculated.
-
 An other option would be to use `remake` like this:
 
 ```sh

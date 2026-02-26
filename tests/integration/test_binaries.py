@@ -107,11 +107,6 @@ ALL_SITE_BINARIES: Sequence[BinarySmoke] = [*NOTIFICATION_PLUGINS, *BIN_BINARIES
 # Build/dev scripts that are not installed in the site
 REPO_SCRIPTS: Sequence[RepoScript] = [
     RepoScript(
-        "show_build_times",
-        "omd/show_build_times",
-        expected_stderr=r"(build|FileNotFoundError|omd_build_times)",
-    ),
-    RepoScript(
         "strip_binaries",
         "omd/strip_binaries",
         args=["-h"],
