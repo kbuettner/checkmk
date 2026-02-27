@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.ibm_imm_health import (
+from cmk.plugins.ibm.agent_based.ibm_imm_health import (
     check_ibm_imm_health,
     discover_ibm_imm_health,
     parse_ibm_imm_health,
