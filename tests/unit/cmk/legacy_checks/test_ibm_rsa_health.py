@@ -3,15 +3,11 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="misc"
-# mypy: disable-error-code="no-untyped-call"
-
-from collections.abc import Mapping, Sequence
-from typing import Any
+from collections.abc import Sequence
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Result, Service, State, StringTable
 from cmk.legacy_checks.ibm_rsa_health import (
     check_ibm_rsa_health,
     discover_ibm_rsa_health,
@@ -22,33 +18,31 @@ from cmk.legacy_checks.ibm_rsa_health import (
 @pytest.mark.parametrize(
     "string_table, expected_discoveries",
     [
-        ([["0"], ["1"], ["Critical"], ["SSL Server Certificate Error"]], [(None, None)]),
+        ([["0"], ["1"], ["Critical"], ["SSL Server Certificate Error"]], [Service()]),
     ],
 )
 def test_discover_ibm_rsa_health(
-    string_table: StringTable, expected_discoveries: Sequence[tuple[str, Mapping[str, Any]]]
+    string_table: StringTable, expected_discoveries: Sequence[Service]
 ) -> None:
     """Test discovery function for ibm_rsa_health check."""
     parsed = parse_ibm_rsa_health(string_table)
     result = list(discover_ibm_rsa_health(parsed))
-    assert sorted(result) == sorted(expected_discoveries)
+    assert result == expected_discoveries
 
 
 @pytest.mark.parametrize(
-    "item, params, string_table, expected_results",
+    "string_table, expected_results",
     [
         (
-            None,
-            {},
             [["0"], ["1"], ["Critical"], ["SSL Server Certificate Error"]],
-            [2, "SSL Server Certificate Error(Critical)"],
+            [Result(state=State.CRIT, summary="SSL Server Certificate Error(Critical)")],
         ),
     ],
 )
 def test_check_ibm_rsa_health(
-    item: str, params: Mapping[str, Any], string_table: StringTable, expected_results: Sequence[Any]
+    string_table: StringTable, expected_results: Sequence[Result]
 ) -> None:
     """Test check function for ibm_rsa_health check."""
     parsed = parse_ibm_rsa_health(string_table)
-    result = list(check_ibm_rsa_health(item, params, parsed))
+    result = list(check_ibm_rsa_health(parsed))
     assert result == expected_results

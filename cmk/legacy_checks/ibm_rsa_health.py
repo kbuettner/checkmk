@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 # Example for info:
 
 # [['0'], ['1'], ['2'], ['3'], ['4'], ['5'], ['Critical'], ['Critical'],
@@ -18,50 +16,66 @@
 #   normal(255)
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import contains, SNMPTree, StringTable
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    contains,
+    DiscoveryResult,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
 
-check_info = {}
+
+def discover_ibm_rsa_health(section: StringTable) -> DiscoveryResult:
+    if section:
+        yield Service()
 
 
-def discover_ibm_rsa_health(info):
-    if len(info) > 0:
-        return [(None, None)]
-    return []
-
-
-def check_ibm_rsa_health(_no_item, _no_params, info):
-    num_alerts = int((len(info) - 1) / 3)
+def check_ibm_rsa_health(section: StringTable) -> CheckResult:
+    num_alerts = int((len(section) - 1) / 3)
     infotext = ""
     for i in range(0, num_alerts):
-        state = info[num_alerts + 1 + i][0]
-        text = info[num_alerts * 2 + 1 + i][0]
+        state = section[num_alerts + 1 + i][0]
+        text = section[num_alerts * 2 + 1 + i][0]
         if infotext != "":
             infotext += ", "
         infotext += f"{text}({state})"
 
-    state = info[0][0]
+    state = section[0][0]
     if state == "255":
-        return 0, "no problem found"
+        yield Result(state=State.OK, summary="no problem found")
+        return
     if state in ["0", "2"]:
-        return 2, infotext
+        yield Result(state=State.CRIT, summary=infotext)
+        return
     if state == "4":
-        return 1, infotext
-    return 3, infotext
+        yield Result(state=State.WARN, summary=infotext)
+        return
+    yield Result(state=State.UNKNOWN, summary=infotext)
+    return
 
 
 def parse_ibm_rsa_health(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["ibm_rsa_health"] = LegacyCheckDefinition(
+snmp_section_ibm_rsa_health = SimpleSNMPSection(
     name="ibm_rsa_health",
-    parse_function=parse_ibm_rsa_health,
     detect=contains(".1.3.6.1.2.1.1.1.0", "Remote Supervisor Adapter"),
     fetch=SNMPTree(
         base=".1.3.6.1.4.1.2.3.51.1.2",
         oids=["7"],
     ),
+    parse_function=parse_ibm_rsa_health,
+)
+
+
+check_plugin_ibm_rsa_health = CheckPlugin(
+    name="ibm_rsa_health",
     service_name="System health",
     discovery_function=discover_ibm_rsa_health,
     check_function=check_ibm_rsa_health,
