@@ -3,59 +3,75 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, StringTable
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
 from cmk.plugins.ibm.lib import DETECT_IBM_IMM
 
-check_info = {}
+
+def discover_ibm_imm_health(section: StringTable) -> DiscoveryResult:
+    if section:
+        yield Service()
 
 
-def discover_ibm_imm_health(info):
-    if info:
-        return [(None, None)]
-    return []
+def check_ibm_imm_health(section: StringTable) -> CheckResult:
+    if not section or not section[0]:
+        yield Result(state=State.UNKNOWN, summary="Health info not found in SNMP data")
+        return
 
-
-def check_ibm_imm_health(_no_item, _no_params, info):
-    if not info or not info[0]:
-        return 3, "Health info not found in SNMP data"
-
-    num_alerts = int((len(info) - 1) / 3)
+    num_alerts = int((len(section) - 1) / 3)
     infotext = ""
     for i in range(0, num_alerts):
-        state = info[num_alerts + 1 + i][0]
-        text = info[num_alerts * 2 + 1 + i][0]
+        state = section[num_alerts + 1 + i][0]
+        text = section[num_alerts * 2 + 1 + i][0]
         if infotext != "":
             infotext += ", "
         infotext += f"{text}({state})"
 
-    state = info[0][0]
+    state = section[0][0]
     if state == "255":
-        return (0, "no problem found")
+        yield Result(state=State.OK, summary="no problem found")
+        return
     if state == "0":
-        return (2, infotext + " - manual log clearing needed to recover state")
+        yield Result(
+            state=State.CRIT, summary=infotext + " - manual log clearing needed to recover state"
+        )
+        return
     if state == "2":
-        return (2, infotext)
+        yield Result(state=State.CRIT, summary=infotext)
+        return
     if state == "4":
-        return (1, infotext)
-    return (3, infotext)
+        yield Result(state=State.WARN, summary=infotext)
+        return
+    yield Result(state=State.UNKNOWN, summary=infotext)
+    return
 
 
 def parse_ibm_imm_health(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["ibm_imm_health"] = LegacyCheckDefinition(
+snmp_section_ibm_imm_health = SimpleSNMPSection(
     name="ibm_imm_health",
-    parse_function=parse_ibm_imm_health,
     detect=DETECT_IBM_IMM,
     fetch=SNMPTree(
         base=".1.3.6.1.4.1.2.3.51.3.1",
         oids=["4"],
     ),
+    parse_function=parse_ibm_imm_health,
+)
+
+
+check_plugin_ibm_imm_health = CheckPlugin(
+    name="ibm_imm_health",
     service_name="System health",
     discovery_function=discover_ibm_imm_health,
     check_function=check_ibm_imm_health,
