@@ -62,10 +62,6 @@ def check_ibm_xraid_pdisks(item: str, section: Section) -> CheckResult:
     yield Result(state=State.CRIT, summary="disk is missing")
 
 
-# there is no information about the ext mib in the right place
-# (at least on windows)
-# this means the check has to fetch a specific oid. Limit this
-# effect to relevant systems to lessen useless scanning.,
 snmp_section_ibm_xraid_pdisks = SimpleSNMPSection(
     name="ibm_xraid_pdisks",
     detect=all_of(
