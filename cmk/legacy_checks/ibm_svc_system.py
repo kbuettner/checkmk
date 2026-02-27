@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 # Example output from agent:
 # <<<ibm_svc_system:sep(58)>>>
 # id:0000020060C16104
@@ -77,33 +75,45 @@
 # total_drive_raw_capacity:0
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
-check_info = {}
+
+def discover_ibm_svc_system(section: StringTable) -> DiscoveryResult:
+    yield Service()
 
 
-def discover_ibm_svc_system(info):
-    return [(None, None)]
-
-
-def check_ibm_svc_system(item, _no_params, info):
+def check_ibm_svc_system(section: StringTable) -> CheckResult:
     message = ""
-    for line in info:
+    for line in section:
         if line[0] in ("name", "location", "code_level", "email_contact_location"):
             if message != "":
                 message += ", "
             message += f"{line[0]}: {line[1]}"
-    return 0, message
+    yield Result(state=State.OK, summary=message)
+    return
 
 
 def parse_ibm_svc_system(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["ibm_svc_system"] = LegacyCheckDefinition(
+agent_section_ibm_svc_system = AgentSection(
     name="ibm_svc_system",
     parse_function=parse_ibm_svc_system,
+)
+
+
+check_plugin_ibm_svc_system = CheckPlugin(
+    name="ibm_svc_system",
     service_name="Info",
     discovery_function=discover_ibm_svc_system,
     check_function=check_ibm_svc_system,
