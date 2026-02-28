@@ -17,7 +17,7 @@ from cmk.agent_based.v2 import (
     State,
     StringTable,
 )
-from cmk.legacy_includes.ibm_svc import parse_ibm_svc_with_header
+from cmk.plugins.ibm.lib_svc import parse_ibm_svc_with_header
 
 # Example agent output:
 # <<<ibm_svc_portsas:sep(58)>>>
