@@ -3,15 +3,20 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
+from typing import Any
 
-# mypy: disable-error-code="var-annotated"
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 from cmk.legacy_includes.ibm_svc import parse_ibm_svc_with_header
-
-check_info = {}
 
 # Output may have 11 fields:
 # id:fc_io_port_id:port_id:type:port_speed:node_id:node_name:WWPN:nportid:status:attachment
@@ -39,8 +44,10 @@ check_info = {}
 # 10:3:3:fc:N/A:2:node2:50050768030C2127:000000:inactive_unconfigured:none:local_partner
 # 11:4:4:fc:N/A:2:node2:5005076803102127:000000:inactive_unconfigured:none:local_partner
 
+Section = dict[str, Any]
 
-def parse_ibm_svc_portfc(string_table):
+
+def parse_ibm_svc_portfc(string_table: StringTable) -> Section:
     dflt_header = [
         "id",
         "fc_io_port_id",
@@ -57,50 +64,47 @@ def parse_ibm_svc_portfc(string_table):
         "adapter_location",
         "adapter_port_id",
     ]
-    parsed = {}
+    parsed: Section = {}
     for id_, rows in parse_ibm_svc_with_header(string_table, dflt_header).items():
         try:
             data = rows[0]
         except IndexError:
             continue
         if "node_id" in data and "adapter_location" in data and "adapter_port_id" in data:
-            item_name = "Node {} Slot {} Port {}".format(
-                data["node_id"],
-                data["adapter_location"],
-                data["adapter_port_id"],
-            )
+            item_name = f"Node {data['node_id']} Slot {data['adapter_location']} Port {data['adapter_port_id']}"
         else:
-            item_name = "Port %s" % id_
+            item_name = f"Port {id_}"
         parsed.setdefault(item_name, data)
     return parsed
 
 
-def discover_ibm_svc_portfc(parsed):
-    for item_name, data in parsed.items():
+def discover_ibm_svc_portfc(section: Section) -> DiscoveryResult:
+    for item_name, data in section.items():
         if data["status"] != "active":
             continue
-        yield item_name, None
+        yield Service(item=item_name)
 
 
-def check_ibm_svc_portfc(item, _no_params, parsed):
-    if not (data := parsed.get(item)):
+def check_ibm_svc_portfc(item: str, section: Section) -> CheckResult:
+    if not (data := section.get(item)):
         return
     port_status = data["status"]
-    infotext = "Status: {}, Speed: {}, WWPN: {}".format(
-        port_status, data["port_speed"], data["WWPN"]
+    infotext = f"Status: {port_status}, Speed: {data['port_speed']}, WWPN: {data['WWPN']}"
+
+    yield Result(
+        state=State.OK if port_status == "active" else State.CRIT,
+        summary=infotext,
     )
 
-    if port_status == "active":
-        state = 0
-    else:
-        state = 2
 
-    yield state, infotext
-
-
-check_info["ibm_svc_portfc"] = LegacyCheckDefinition(
+agent_section_ibm_svc_portfc = AgentSection(
     name="ibm_svc_portfc",
     parse_function=parse_ibm_svc_portfc,
+)
+
+
+check_plugin_ibm_svc_portfc = CheckPlugin(
+    name="ibm_svc_portfc",
     service_name="FC %s",
     discovery_function=discover_ibm_svc_portfc,
     check_function=check_ibm_svc_portfc,
