@@ -3,15 +3,21 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="var-annotated"
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Mapping
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 from cmk.legacy_includes.ibm_svc import parse_ibm_svc_with_header
-
-check_info = {}
 
 # Example agent output:
 # <<<ibm_svc_portsas:sep(58)>>>
@@ -35,10 +41,10 @@ check_info = {}
 # the corresponding header line
 # id:port_id:port_speed:node_id:node_name:WWPN:status:switch_WWPN:attachment:type:adapter_location:adapter_port_id
 
+Section = dict[str, Mapping[str, str]]
 
-def parse_ibm_svc_portsas(
-    string_table: Sequence[Sequence[str]],
-) -> Mapping[str, Mapping[str, str]]:
+
+def parse_ibm_svc_portsas(string_table: StringTable) -> Section:
     dflt_header = [
         "id",
         "port_id",
@@ -53,55 +59,49 @@ def parse_ibm_svc_portsas(
         "adapter_location",
         "adapter_port_id",
     ]
-    parsed = {}
+    parsed: Section = {}
     for id_, rows in parse_ibm_svc_with_header(string_table, dflt_header).items():
         try:
             data = rows[0]
         except IndexError:
             continue
         if "node_id" in data and "adapter_location" in data and "adapter_port_id" in data:
-            item_name = "Node {} Slot {} Port {}".format(
-                data["node_id"],
-                data["adapter_location"],
-                data["adapter_port_id"],
-            )
+            item_name = f"Node {data['node_id']} Slot {data['adapter_location']} Port {data['adapter_port_id']}"
         else:
-            item_name = "Port %s" % id_
+            item_name = f"Port {id_}"
         parsed.setdefault(item_name, data)
     return parsed
 
 
-def discover_ibm_svc_portsas(
-    parsed: Mapping[str, Mapping[str, str]],
-) -> Iterable[tuple[str, dict[str, object]]]:
-    for item_name, data in parsed.items():
+def discover_ibm_svc_portsas(section: Section) -> DiscoveryResult:
+    for item_name, data in section.items():
         status = data["status"]
         if status == "offline_unconfigured":
             continue
-        yield item_name, {"current_state": status}
+        yield Service(item=item_name, parameters={"current_state": status})
 
 
-def check_ibm_svc_portsas(
-    item: str, params: Mapping[str, Any], parsed: Mapping[str, Mapping[str, str]]
-) -> Iterable[tuple[int, str]]:
-    if not (data := parsed.get(item)):
+def check_ibm_svc_portsas(item: str, params: Mapping[str, Any], section: Section) -> CheckResult:
+    if not (data := section.get(item)):
         return
     sasport_status = data["status"]
 
-    infotext = "Status: %s" % sasport_status
-    if sasport_status == params["current_state"]:
-        state = 0
-    else:
-        state = 2
+    infotext = f"Status: {sasport_status}"
+    state = State.OK if sasport_status == params["current_state"] else State.CRIT
 
-    infotext += ", Speed: {}, Type: {}".format(data["port_speed"], data["type"])
+    infotext += f", Speed: {data['port_speed']}, Type: {data['type']}"
 
-    yield state, infotext
+    yield Result(state=state, summary=infotext)
 
 
-check_info["ibm_svc_portsas"] = LegacyCheckDefinition(
+agent_section_ibm_svc_portsas = AgentSection(
     name="ibm_svc_portsas",
     parse_function=parse_ibm_svc_portsas,
+)
+
+
+check_plugin_ibm_svc_portsas = CheckPlugin(
+    name="ibm_svc_portsas",
     service_name="SAS %s",
     discovery_function=discover_ibm_svc_portsas,
     check_function=check_ibm_svc_portsas,
