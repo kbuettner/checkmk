@@ -16,7 +16,7 @@ from cmk.agent_based.v2 import (
     State,
     StringTable,
 )
-from cmk.legacy_includes.ibm_svc import parse_ibm_svc_with_header
+from cmk.plugins.ibm.lib_svc import parse_ibm_svc_with_header
 
 # Output may have 11 fields:
 # id:fc_io_port_id:port_id:type:port_speed:node_id:node_name:WWPN:nportid:status:attachment

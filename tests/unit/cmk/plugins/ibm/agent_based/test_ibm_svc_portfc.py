@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.ibm_svc_portfc import (
+from cmk.plugins.ibm.agent_based.ibm_svc_portfc import (
     check_ibm_svc_portfc,
     discover_ibm_svc_portfc,
     parse_ibm_svc_portfc,
