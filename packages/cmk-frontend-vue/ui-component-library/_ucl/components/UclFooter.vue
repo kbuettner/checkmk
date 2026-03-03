@@ -61,7 +61,7 @@ const handleButtonClick = () => {
 }
 
 .ucl-footer__title {
-  font-size: 24px;
+  font-size: 16px;
   line-height: normal;
   margin: 0 0 12px;
 }

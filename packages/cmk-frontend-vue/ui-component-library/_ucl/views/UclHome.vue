@@ -109,3 +109,9 @@ defineProps<{ screenshotMode: boolean }>()
     </template>
   </HomeLayout>
 </template>
+
+<style scoped>
+h1 {
+  font-size: 24px !important;
+}
+</style>
