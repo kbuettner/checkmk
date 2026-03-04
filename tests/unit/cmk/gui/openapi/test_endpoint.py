@@ -411,7 +411,9 @@ def test_crash_report_with_post(clients: ClientRegistry, monkeypatch: pytest.Mon
     ext = resp.json["ext"]
 
     assert set(ext) == {
+        "crash_info_version",
         "time",
+        "occurrences",
         "os",
         "version",
         "edition",

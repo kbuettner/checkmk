@@ -23,7 +23,7 @@ from typing import cast, override, Protocol, Self, TypedDict
 import livestatus
 
 import cmk.ccc.version as cmk_version
-from cmk.ccc.crash_reporting import CrashInfo, SENSITIVE_KEYWORDS
+from cmk.ccc.crash_reporting import CrashInfo, normalize_crash_time, SENSITIVE_KEYWORDS
 from cmk.ccc.plugin_registry import Registry
 from cmk.ccc.site import SiteId
 from cmk.gui import forms, userdb
@@ -452,9 +452,20 @@ class PageCrash(Page):
         )
 
         _crash_row(_("Crash Type"), info["crash_type"], odd=False, legend=True)
+        crash_time = normalize_crash_time(info["time"])
+        first_seen = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(crash_time["first_seen"]))
+        if crash_time["count"] == 1:
+            time_text: str = first_seen
+        else:
+            last_seen = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(crash_time["last_seen"]))
+            time_text = _("First: %s, Last: %s (%d occurrences)") % (
+                first_seen,
+                last_seen,
+                crash_time["count"],
+            )
         _crash_row(
             _("Time"),
-            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(info["time"]))),
+            time_text,
             odd=True,
         )
         _crash_row(_("Operating System"), info["os"], False)

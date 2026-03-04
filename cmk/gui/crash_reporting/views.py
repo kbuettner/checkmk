@@ -12,6 +12,7 @@ from typing import Any, Literal
 import livestatus
 from livestatus import MKLivestatusNotFoundError, OnlySites, Query, QuerySpecification
 
+from cmk.ccc.crash_reporting import normalize_crash_time
 from cmk.gui import query_filters
 from cmk.gui.config import Config
 from cmk.gui.data_source import (
@@ -116,7 +117,7 @@ class CrashReportsRowTable(RowTableLivestatus):
                 "site": raw_row["site"],
                 "crash_id": raw_row["crash_id"],
                 "crash_type": raw_row["crash_type"],
-                "crash_time": crash_info_raw["time"],
+                "crash_time": normalize_crash_time(crash_info_raw["time"])["last_seen"],
                 "crash_version": crash_info_raw["version"],
                 "crash_exc_type": crash_info_raw["exc_type"],
                 "crash_exc_value": crash_info_raw["exc_value"],

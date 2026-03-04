@@ -18,7 +18,7 @@ def _check_generic_crash_info(crash):
 
     for key, ty in {
         "crash_type": str,
-        "time": float,
+        "time": dict,
         "os": str,
         "version": str,
         "python_version": str,

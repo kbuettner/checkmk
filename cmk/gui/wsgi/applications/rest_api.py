@@ -33,7 +33,12 @@ from livestatus import LivestatusTestingError
 import cmk.ccc.version as cmk_version
 from cmk import trace
 from cmk.ccc import store
-from cmk.ccc.crash_reporting import ABCCrashReport, CrashReportStore, make_crash_report_base_path
+from cmk.ccc.crash_reporting import (
+    ABCCrashReport,
+    CrashReportStore,
+    make_crash_report_base_path,
+    normalize_crash_time,
+)
 from cmk.ccc.exceptions import MKException, MKGeneralException
 from cmk.ccc.site import omd_site, SiteId
 from cmk.crypto import MKCryptoException
@@ -78,6 +83,17 @@ if TYPE_CHECKING:
     from cmk.gui.wsgi.type_defs import WSGIResponse
 
 tracer = trace.get_tracer()
+
+
+def _serialize_crash_time(raw_time: object) -> dict[str, object]:
+    """Serialize the crash time field to a dict with ISO timestamps."""
+    occ = normalize_crash_time(raw_time)
+    return {
+        "first_seen": datetime.fromtimestamp(occ["first_seen"], UTC).isoformat(),
+        "last_seen": datetime.fromtimestamp(occ["last_seen"], UTC).isoformat(),
+        "count": occ["count"],
+    }
+
 
 ARGS_KEY = "CHECK_MK_REST_API_ARGS"
 
@@ -168,7 +184,10 @@ def crash_report_response(exc: Exception) -> WSGIApplication:
         ext_info = EXT(
             {
                 **crash.crash_info,
-                **{"time": datetime.fromtimestamp(float(crash.crash_info["time"])).isoformat()},
+                **{
+                    "occurrences": (occurrences := _serialize_crash_time(crash.crash_info["time"])),
+                    "time": occurrences["last_seen"],
+                },
             }
         )
 
