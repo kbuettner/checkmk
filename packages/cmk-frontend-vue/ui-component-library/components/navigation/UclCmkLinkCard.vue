@@ -19,7 +19,10 @@ import { ref } from 'vue'
 
 import type { SimpleIcons } from '@/components/CmkIcon'
 import CmkLinkCard from '@/components/CmkLinkCard'
-import type { CmkLinkCardVariants } from '@/components/CmkLinkCard/CmkLinkCard.vue'
+import type {
+  CmkLinkCardBorders,
+  CmkLinkCardContrast
+} from '@/components/CmkLinkCard/CmkLinkCard.vue'
 
 import UclCmkLinkCardDev from './UclCmkLinkCardDev.vue'
 
@@ -57,12 +60,21 @@ ${'import'} CmkLinkCard from '@/components/CmkLinkCard'
 </template>`
 
 const panelConfig = {
-  variant: {
+  borders: {
     type: 'list',
     title: 'Variant',
     options: [
       { title: 'Standard', name: 'standard' },
       { title: 'Borderless', name: 'borderless' }
+    ],
+    initialState: 'standard'
+  },
+  contrast: {
+    type: 'list',
+    title: 'Variant',
+    options: [
+      { title: 'Standard', name: 'standard' },
+      { title: 'High', name: 'high' }
     ],
     initialState: 'standard'
   },
@@ -109,7 +121,8 @@ const propState = ref(createPanelState(panelConfig))
           :subtitle="propState.subtitle"
           :icon-name="propState.iconName as SimpleIcons"
           :url="propState.disabled ? undefined : 'https://forum.checkmk.com'"
-          :variant="propState.variant as CmkLinkCardVariants['variant']"
+          :borders="propState.borders as CmkLinkCardBorders"
+          :contrast="propState.contrast as CmkLinkCardContrast"
           :open-in-new-tab="propState.openInNewTab"
           :disabled="propState.disabled"
         />
