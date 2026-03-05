@@ -15,6 +15,7 @@ from cmk.gui.main_menu import MainMenuRegistry
 from cmk.gui.main_menu_types import ConfigurableMainMenuItem, MainMenuItem, MainMenuLinkItem
 from cmk.gui.userdb.store import load_custom_attr
 from cmk.gui.utils.urls import makeuri, makeuri_contextless
+from cmk.gui.wato.pages.activate_changes import get_last_wato_snapshot_file
 from cmk.shared_typing.changes import ChangesProps
 from cmk.shared_typing.main_menu import (
     ColorEnum,
@@ -49,6 +50,7 @@ def _get_changes_app(request: Request) -> NavItemVueApp:
                     delvars="start_url",
                 ),
                 user_has_activate_foreign=user.may("wato.activateforeign"),
+                new_installation=get_last_wato_snapshot_file(debug=False) is None,
                 user_name=user.ident,
             )
         ),

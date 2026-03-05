@@ -141,7 +141,7 @@ def _get_snapshots() -> list[str]:
     return snapshots
 
 
-def _get_last_wato_snapshot_file(*, debug: bool) -> None | str:
+def get_last_wato_snapshot_file(*, debug: bool) -> None | str:
     for snapshot_file in _get_snapshots():
         status = backup_snapshots.get_snapshot_status(
             snapshot=snapshot_file,
@@ -216,7 +216,7 @@ class ModeRevertChanges(WatoMode):
         if read_only.is_enabled(read_only_config) and not read_only.may_override(read_only_config):
             return False
 
-        if not _get_last_wato_snapshot_file(debug=debug):
+        if not get_last_wato_snapshot_file(debug=debug):
             return False
 
         return True
@@ -236,7 +236,7 @@ class ModeRevertChanges(WatoMode):
 
         # Now remove all currently pending changes by simply restoring the last automatically
         # taken snapshot. Then activate the configuration. This should revert all pending changes.
-        file_to_restore = _get_last_wato_snapshot_file(debug=config.debug)
+        file_to_restore = get_last_wato_snapshot_file(debug=config.debug)
 
         if not file_to_restore:
             raise MKUserError(None, _("There is no Setup snapshot to be restored."))
@@ -469,7 +469,7 @@ class ModeActivateChanges(WatoMode):
         enabled = False
         disabled_tooltip: str | None = None
         if self._changes.has_changes():
-            if not _get_last_wato_snapshot_file(debug=debug):
+            if not get_last_wato_snapshot_file(debug=debug):
                 enabled = False
                 disabled_tooltip = _("No snapshot to restore available.")
             elif self._changes.discard_changes_forbidden(activation_site_ids):
@@ -532,7 +532,7 @@ class ModeActivateChanges(WatoMode):
         if not self._may_activate_changes(read_only_config, activation_site_ids):
             return False
 
-        if not _get_last_wato_snapshot_file(debug=debug):
+        if not get_last_wato_snapshot_file(debug=debug):
             return False
 
         return True
