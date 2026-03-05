@@ -395,6 +395,19 @@ sh_library(
     visibility = ["//visibility:public"],
 )
 
+js_library(
+    name = "eslintrc",
+    srcs = ["eslint.config.js"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        ":node_modules/@eslint/js",
+        ":node_modules/@vue/eslint-config-prettier",
+        ":node_modules/@vue/eslint-config-typescript",
+        ":node_modules/eslint-plugin-vue",
+        ":node_modules/typescript-eslint",
+    ],
+)
+
 alias(
     name = "format",
     actual = "//bazel/tools/format",

@@ -153,11 +153,11 @@ TOOLING = [
 ]
 
 SRCS = [
+    "//:eslintrc",
     "//packages/cmk-frontend:dist",
     "env.d.ts",
     "weaki18nString.d.ts",
     "scripts/stylelint-vue-bem-naming-convention.js",
-    "eslint.config.js",
     "index.html",
     "package.json",
     "tsconfig.app.json",

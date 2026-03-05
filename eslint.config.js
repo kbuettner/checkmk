@@ -13,15 +13,15 @@ export default [
   {
     name: 'app/files-to-ignore',
     ignores: [
-      '*.config.js',
-      'vite.config.*',
+      '**/*.config.js',
+      '**/vite.config.*',
       '**/dist/**',
       '**/dist-dev/**',
       '**/dist-ssr/**',
       '**/coverage/**',
-      'ui-component-library/public/mockServiceWorker.js',
+      'packages/cmk-frontend-vue/ui-component-library/public/mockServiceWorker.js',
       '.stylelintrc.js',
-      'scripts/stylelint-vue-bem-naming-convention.js'
+      'packages/cmk-frontend-vue/scripts/stylelint-vue-bem-naming-convention.js'
     ]
   },
 
@@ -36,10 +36,9 @@ export default [
     languageOptions: {
       parserOptions: {
         project: [
-          './tsconfig.test.json',
-          './tsconfig.ucl.json',
-          './tsconfig.app.json',
-          './prettier.config.cjs'
+          'packages/cmk-frontend-vue/tsconfig.test.json',
+          'packages/cmk-frontend-vue/tsconfig.ucl.json',
+          'packages/cmk-frontend-vue/tsconfig.app.json'
         ],
         tsconfigRootDir: import.meta.dirname,
         parser: '@typescript-eslint/parser',
@@ -137,7 +136,7 @@ export default [
   },
 
   {
-    files: ['src/**/*'],
+    files: ['packages/cmk-frontend-vue/src/**/*'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -154,14 +153,14 @@ export default [
   },
 
   {
-    files: ['ui-component-library/**/*'],
+    files: ['packages/cmk-frontend-vue/ui-component-library/**/*'],
     rules: {
       'vue/no-bare-strings-in-template': 'off'
     }
   },
 
   {
-    files: ['tests/**/*'],
+    files: ['packages/cmk-frontend-vue/tests/**/*'],
     rules: {
       'vue/one-component-per-file': 'off'
     }
