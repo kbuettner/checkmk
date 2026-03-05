@@ -15,6 +15,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import glob
 import os
 import sys
 from datetime import datetime
@@ -43,21 +44,12 @@ extensions = [
     "sphinxcontrib.plantuml",
 ]
 
-plantuml_path = os.getenv("PLANTUML_JAR_PATH")
-if not plantuml_path:
-    raise Exception("PLANTUML_JAR_PATH must be defined")
+_runfiles = os.path.dirname(sys.prefix)
+_matches = glob.glob(os.path.join(_runfiles, "plantuml+/plantuml"))
+if not _matches:
+    raise Exception("@plantuml//:plantuml must be in sphinx_build data")
 
-plantuml = " ".join(
-    [
-        "java",
-        "-Djava.awt.headless=true",
-        "-jar",
-        os.path.join(
-            plantuml_path,
-            "plantuml.jar",
-        ),
-    ]
-)
+plantuml = _matches[0]
 
 plantuml_output_format = "svg"
 

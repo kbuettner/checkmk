@@ -174,9 +174,6 @@ what-gerrit-makes:
 documentation:
 	echo Nothing to do here remove this target
 
-sw-documentation:
-	scripts/run-uvenv make -C doc/documentation html
-
 update_venv:
 	echo > requirements.txt
 	bazel run //:lock_python_requirements > /dev/null

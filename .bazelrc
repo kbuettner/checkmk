@@ -49,6 +49,10 @@ common --remote_upload_local_results=false
 common --lockfile_mode=error
 common --test_summary=detailed
 
+# Required for tools using java such as plantuml
+common --java_runtime_version=remotejdk_21
+common --java_language_version=21
+
 ## For specific commands
 # Always require debug info.
 # common --copt="-g"

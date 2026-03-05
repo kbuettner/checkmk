@@ -74,10 +74,6 @@ VARIABLES:
       SH: "echo '${CHANGED_FILES_REL}' | grep '^tests/agent-plugin-unit/' || true"
       REPLACE_NEWLINES: true
 
-    - NAME: CHANGED_SW_DOC_FILES
-      SH: "echo '${CHANGED_FILES_REL}' | grep 'doc/documentation/' || true"
-      REPLACE_NEWLINES: true
-
     - NAME: CHANGED_WERK_FILES
       SH: "echo '${CHANGED_FILES_REL}' | grep '^\\.werks/' || true"
       REPLACE_NEWLINES: true
@@ -323,13 +319,6 @@ STAGES:
       TEXT_ON_SKIP: "No agent files changed"
       BAZEL_LOCKS_AMOUNT: 1
       RESULT_CHECK_FILE_PATTERN: "results/agent-plugin-unit-junit.txt"
-
-    - NAME: "Software Documentation Generation"
-      ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_SW_DOC_FILES,CHANGED_MAKEFILE
-      COMMAND: "make sw-documentation &> ${RESULTS}/sw-documentation.txt"
-      TEXT_ON_SKIP: "No SW Documentation files changed"
-      BAZEL_LOCKS_AMOUNT: 1
-      RESULT_CHECK_FILE_PATTERN: "results/sw-documentation.txt"
 
     - NAME: "Plugins Consistency"
       ONLY_WHEN_NOT_EMPTY: CHANGED_CMK_PLUGINS,CHANGED_CMK_CHECKENGINE,CHANGED_CMK_DISCOVER_PLUGINS,CHANGED_CMK_GUI,CHANGED_CMK_SERVER_SIDE_CALLS_BACKEND,CHANGED_CMK_UTILS,CHANGED_CMK_BASE_CONFIG

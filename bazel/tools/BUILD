@@ -104,6 +104,7 @@ bazel_env(
         "genhtml": "@lcov//:genhtml",
         "mypy": ":mypy_cli_original",
         "osslsigncode": "@osslsigncode",
+        "plantuml": "@plantuml",
         "pnpm": "@pnpm",
         "py_import_cycles": ":py-import-cycles",
         "stylelint": ":stylelint",

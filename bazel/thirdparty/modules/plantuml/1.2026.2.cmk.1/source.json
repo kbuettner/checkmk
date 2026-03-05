@@ -1,0 +1,9 @@
+{
+  "integrity": "sha256-azWeJzT5HbmHkArHtymJwbaoeLnKs00q+WUjQJBZnww=",
+  "strip_prefix": "plantuml-1.2026.2",
+  "url": "https://github.com/plantuml/plantuml/archive/refs/tags/v1.2026.2.tar.gz",
+  "overlay": {
+    "BUILD.bazel": "sha256-J+IyGGLRhea3KUWhpHDRPEUQdxXejmzOZsADOrFZGuc=",
+    "MODULE.bazel": "sha256-hfoOO1yZBpnJ6VS56PoP7Wzfsq1varyfDqCHJxMC2Q4="
+  }
+}
