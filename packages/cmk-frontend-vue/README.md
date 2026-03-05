@@ -60,7 +60,7 @@ The inotify & `DefaultLimitNOFILE=65536` settings have proven to be
 effective. Make sure to restart the machine as instructed. If problems
 persist, reach out to Team Bug.
 
-## Demo App
+## UI Component Library
 
 To try our reusable components outside a checkmk site, you can
 
@@ -71,7 +71,7 @@ or
 
 * Visit https://devdocs.lan.checkmk.net/frontend-demo/
 
-The hosted demo app is built from the master branch daily. It can also
+The hosted UI component library is built from the master branch daily. It can also
 be manually deployed by triggering the "Build and deploy frontend-demo"
 jenkins job.
 

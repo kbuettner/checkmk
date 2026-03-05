@@ -13,7 +13,7 @@ export default defineConfig(() => {
   return {
     plugins: [vue(), VueDevTools()],
     clearScreen: false,
-    root: './demo/',
+    root: './ui-component-library/',
     build: {
       minify: false
     },
@@ -34,7 +34,7 @@ export default defineConfig(() => {
     resolve: {
       alias: {
         '@': path.resolve('./src'),
-        '@demo': path.resolve('./demo'),
+        '@ucl': path.resolve('./ui-component-library'),
         // This is only a temporary hack to allow resolving icons and the demo css. Do not use this in new code!
         '~cmk-frontend': path.resolve('../cmk-frontend/dist')
       }

@@ -21,6 +21,6 @@ packages/cmk-frontend/src/openapi
 packages/cmk-frontend/src/js/modules/figures/cmk_stats.ts
 
 # cmk-frontend-vue
-packages/cmk-frontend-vue/demo/public/mockServiceWorker.js
+packages/cmk-frontend-vue/ui-component-library/public/mockServiceWorker.js
 packages/cmk-frontend-vue/dist-dev/
 packages/cmk-frontend-vue/*.md

@@ -7,7 +7,7 @@
     "paths": {
       "@/lib/i18nString": ["weaki18nString.d.ts"],
       "@/*": ["./src/*"],
-      "@demo/*": ["./demo/*"],
+      "@ucl/*": ["./ui-component-library/*"],
       "*": ["./node_modules/*", "../../bazel-bin/packages/cmk-frontend-vue/node_modules/*"]
     }
   }

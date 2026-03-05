@@ -48,7 +48,7 @@
   },
   "msw": {
     "workerDirectory": [
-      "demo/public/"
+      "ui-component-library/public/"
     ]
   }
 }

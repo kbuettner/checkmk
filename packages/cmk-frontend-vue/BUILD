@@ -72,13 +72,13 @@ filegroup(
 
 filegroup(
     name = "demo_vue",
-    srcs = glob(["demo/**/*.vue"]),
+    srcs = glob(["ui-component-library/**/*.vue"]),
     tags = ["stylelint"],
 )
 
 filegroup(
     name = "demo_css",
-    srcs = glob(["demo/**/*.css"]),
+    srcs = glob(["ui-component-library/**/*.css"]),
     tags = ["stylelint"],
 )
 
@@ -86,7 +86,9 @@ js_run_binary(
     name = "extract_pot_file",
     srcs = glob([
         "src/**/*.ts",
-        "demo/**/*.ts",
+        "src/**/*.vue",
+        "ui-component-library/**/*.ts",
+        "ui-component-library/**/*.vue",
     ]) + [
         "gettext.config.js",
         ":demo_vue",
@@ -165,7 +167,7 @@ SRCS = [
     "tsconfig.test.json",
     "vite.config.demo.ts",
     "vite.config.ts",
-    "demo/index.html",
+    "ui-component-library/index.html",
     ":demo_vue",
     ":demo_css",
     ":src_vue",
@@ -194,10 +196,12 @@ SRCS = [
 ] + LOCALE_OUTS + glob([
     "src/**/*.ts",
     "src/**/*.svg",
-    "demo/**/*.ts",
-    "demo/**/*.png",
-    "demo/**/*.svg",
-    "demo/public/*",
+    "ui-component-library/**/*.ts",
+    "ui-component-library/**/*.vue",
+    "ui-component-library/**/*.css",
+    "ui-component-library/**/*.png",
+    "ui-component-library/**/*.svg",
+    "ui-component-library/public/*",
 ])
 
 filegroup(
@@ -239,7 +243,7 @@ vite_bin.vite(
         "/frontend-demo/",
     ],
     chdir = package_name(),
-    out_dirs = ["demo/dist"],
+    out_dirs = ["ui-component-library/dist"],
 )
 
 vitest_bin.vitest_test(

@@ -19,7 +19,7 @@ export default [
       '**/dist-dev/**',
       '**/dist-ssr/**',
       '**/coverage/**',
-      'demo/public/mockServiceWorker.js',
+      'ui-component-library/public/mockServiceWorker.js',
       '.stylelintrc.js',
       'scripts/stylelint-vue-bem-naming-convention.js'
     ]
@@ -137,7 +137,7 @@ export default [
   },
 
   {
-    files: ['demo/**/*'],
+    files: ['ui-component-library/**/*'],
     rules: {
       'vue/no-bare-strings-in-template': 'off'
     }

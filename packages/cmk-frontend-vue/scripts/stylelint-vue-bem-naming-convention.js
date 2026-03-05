@@ -48,7 +48,7 @@ const projectRoot = path.join(import.meta.dirname, '../')
 
 const patternMap = {
   // make sure the thing we map to is unique:
-  demo: 'demo/',
+  ucl: 'ui-component-library/',
   '': 'src/assets/',
   cmk: 'src/components/',
   db: 'src/dashboard/',

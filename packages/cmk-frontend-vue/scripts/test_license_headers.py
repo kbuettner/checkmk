@@ -42,9 +42,9 @@ FILES_IGNORED = {
     Path(".npmrc"),
     Path("README.md"),
     Path("index.html"),
-    Path("demo/index.html"),
+    Path("ui-component-library/index.html"),
     Path("env.d.ts"),
-    Path("demo/public/mockServiceWorker.js"),  # auto generated
+    Path("ui-component-library/public/mockServiceWorker.js"),  # auto generated
     Path("cmk-frontend-vue.txt"),  # generated inside CI
 }
 

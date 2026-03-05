@@ -1,0 +1,39 @@
+/**
+ * Copyright (C) 2026 Checkmk GmbH - License: GNU General Public License v2
+ * This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
+ * conditions defined in the file COPYING, which is part of this source code package.
+ */
+
+@layer theme {
+  body[data-theme='facelift'] {
+    --ucl-body-text-color: var(--color-mid-grey-100);
+    --ucl-headings-font-color: var(--color-conference-grey-100);
+    --ucl-elements-background-color: var(--color-daylight-grey-40);
+    --ucl-elements-border-color: var(--color-mid-grey-10);
+    --ucl-nav-tree-link-active-color: var(--color-corporate-green-70);
+    --ucl-nav-tree-link-active-color-bg: var(--color-daylight-grey-30);
+    --ucl-nav-tree-background-color: var(--color-daylight-grey-20);
+    --ucl-nav-tree-scroll-bar-color: var(--color-mid-grey-20);
+    --ucl-cta-banner-title-color: var(--color-conference-grey-100);
+
+    /** detail page */
+    --ucl-detail-section-bg-color: var(--color-daylight-grey-10);
+    --ucl-detail-table-pill-bg-color: var(--color-daylight-grey-50);
+  }
+
+  body[data-theme='modern-dark'] {
+    --ucl-body-text-color: var(--color-mid-grey-0);
+    --ucl-headings-font-color: var(--color-white-100);
+    --ucl-elements-background-color: var(--color-midnight-grey-70);
+    --ucl-elements-border-color: var(--color-mid-grey-100);
+    --ucl-nav-tree-link-active-color: var(--color-corporate-green-50);
+    --ucl-nav-tree-link-active-color-bg: var(--color-midnight-grey-80);
+    --ucl-nav-tree-background-color: var(--color-midnight-grey-90);
+    --ucl-nav-tree-scroll-bar-color: var(--color-mid-grey-90);
+    --ucl-cta-banner-title-color: var(--color-white-100);
+
+    /** detail page */
+    --ucl-detail-section-bg-color: var(--color-midnight-grey-80);
+    --ucl-detail-table-pill-bg-color: var(--color-midnight-grey-50);
+  }
+}
