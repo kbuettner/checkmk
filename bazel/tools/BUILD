@@ -118,6 +118,13 @@ py_binary(
     visibility = ["//visibility:public"],
 )
 
+py_binary(
+    name = "license_header_checker",
+    srcs = ["license_header_checker.py"],
+    main = "license_header_checker.py",
+    visibility = ["//visibility:public"],
+)
+
 [
     sh_expand_template(
         name = name,

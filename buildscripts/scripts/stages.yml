@@ -230,18 +230,6 @@ STAGES:
       RESULT_CHECK_FILE_PATTERN: "results/cpp/**/test.xml"
       JENKINS_TEST_RESULT_PATH: "testReport/(root)/"
 
-    - NAME: "Python License Headers Test"
-      ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_FIND_PYTHON_FILES_SCRIPT,CHANGED_PYTHON_FILES
-      DIR: "tests"
-      ENV_VARS:
-          PYTEST_ADDOPTS: "--junitxml=${RESULTS}/python3-license-headers-junit.xml --color=no"
-      COMMAND: "make test-license-headers"
-      BAZEL_LOCKS_AMOUNT: 1
-      TEXT_ON_SKIP: "No Python files changed"
-      RESULT_CHECK_TYPE: "JUNIT"
-      RESULT_CHECK_FILE_PATTERN: "results/python3-license-headers-junit.xml"
-      JENKINS_TEST_RESULT_PATH: "testReport/pytest.tests.code_quality/test_license_headers/"
-
     - NAME: "Python Requirements Test"
       ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_PYTHON_REQUIREMENTS,CHANGED_FIND_PYTHON_FILES_SCRIPT,CHANGED_PYTHON_FILES,CHANGED_RELAY_ENGINE_FILES
       DIR: "tests"

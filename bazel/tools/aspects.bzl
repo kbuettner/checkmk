@@ -11,6 +11,7 @@ load("@cmk_requirements//:requirements.bzl", "requirement")
 load("@cmk_types//:types.bzl", "types")
 load("@rules_mypy//mypy:mypy.bzl", "mypy")
 load("//bazel/tools:lint_astrein.bzl", "lint_astrein_aspect")
+load("//bazel/tools:lint_license_header.bzl", "lint_license_header_aspect")
 load("//bazel/tools:lint_py_import_cycles.bzl", "lint_py_import_cycles_aspect")
 
 clippy = lint_clippy_aspect(
@@ -86,4 +87,8 @@ stylelint = lint_stylelint_aspect(
     binary = Label(":stylelint"),
     config = Label("//:stylelintrc"),
     filegroup_tags = ["stylelint"],
+)
+
+license_header_checker = lint_license_header_aspect(
+    binary = Label("//bazel/tools:license_header_checker"),
 )

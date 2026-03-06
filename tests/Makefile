@@ -262,7 +262,9 @@ $(foreach TEST,$(DOCKERABLE_TESTS),$(TEST)-docker):
 	../scripts/run-in-docker.sh make --quiet "$(subst -docker,,$@)"
 
 test-license-headers:
-	$(PYTEST) --log-cli-level=INFO $(realpath code_quality)/test_license_headers.py
+	bazel build --aspects=//bazel/tools:aspects.bzl%license_header_checker //... \
+	--@aspect_rules_lint//lint:fail_on_violation=True --//:use_faked_artifacts=True \
+	--sandbox_debug --keep_going --test_output=errors
 
 test-requirements:
 	$(PYTEST) --log-cli-level=INFO $(realpath code_quality)/test_requirements.py;
@@ -285,7 +287,7 @@ test-format:
 test-werks:
 	$(PYTEST) --log-cli-level=INFO $(realpath code_quality)/test_werks.py;
 
-test-code-quality: test-license-headers test-requirements test-file-content test-werks
+test-code-quality: test-requirements test-file-content test-werks
 
 test-mypy: test-mypy-cmk
 
