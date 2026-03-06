@@ -5,12 +5,17 @@
 
 import base64
 import contextlib
-from collections.abc import Iterator
+from ast import literal_eval
+from collections.abc import Callable, Iterator
+from datetime import datetime
 
 import pytest
 
+from cmk.ccc.user import UserId
+from cmk.crypto.totp import TOTP
 from cmk.gui.type_defs import TotpCredential, TwoFactorCredentials
-from tests.testlib.site import Site
+from cmk.gui.userdb.session import generate_auth_hash
+from tests.testlib.site import ADMIN_USER, Site
 from tests.testlib.web_session import CMKWebSession
 
 
@@ -131,7 +136,7 @@ def test_human_user_gui(site: Site) -> None:
     - the HTTP param login must not work
     - a session must be established
     """
-    username = "cmkadmin"
+    username = ADMIN_USER
     password = site.admin_password
 
     session = CMKWebSession(site)
@@ -176,7 +181,7 @@ def test_human_user_restapi(site: Site) -> None:
     - a session must not be established
     """
 
-    username = "cmkadmin"
+    username = ADMIN_USER
     password = site.admin_password
 
     session = CMKWebSession(site)
@@ -234,7 +239,7 @@ def test_failed_login_counter_human(site: Site) -> None:
     """test that all authentication methods count towards the failed login attempts"""
     session = CMKWebSession(site)
 
-    with _reset_failed_logins(site, username := "cmkadmin"):
+    with _reset_failed_logins(site, username := ADMIN_USER):
         session.get(
             f"/{site.id}/check_mk/api/1.0/version",
             headers={"Authorization": f"Bearer {username} wrong_password"},
@@ -387,36 +392,259 @@ def require_password_change(site: Site, username: str) -> Iterator[None]:
         site.delete_file(pw_change_marker)
 
 
-def test_rest_api_access_with_enabled_2fa(site: Site) -> None:
-    """you're not supposed to access the rest api if you have 2fa enabled (except for cookie auth)
+@contextlib.contextmanager
+def update_global_config(site: Site, new_config: list[str]) -> Iterator[None]:
+    """Multiple auth settings require the global config to be updated. Config reset on exit"""
+    global_config_path = "etc/check_mk/multisite.d/wato/global.mk"
+    backup = site.read_file(global_config_path)
+    site.write_file(global_config_path, backup + "\n".join(new_config))
+    try:
+        yield
+    finally:
+        site.write_file(global_config_path, backup)
 
-    See: CMK-18988"""
-    username = "cmkadmin"
+
+@pytest.mark.parametrize(
+    "additional_auth_config, kwargs, expected_error_msg",
+    [
+        pytest.param(
+            enable_2fa,
+            {"username": ADMIN_USER},
+            "Two-factor authentication is required.",
+            id="2fa_auth_required",
+        ),
+        pytest.param(
+            require_password_change,
+            {"username": ADMIN_USER},
+            "Password change is required.",
+            id="password_change_required",
+        ),
+        pytest.param(
+            update_global_config,
+            {"new_config": ["require_two_factor_all_users = True"]},
+            "Two-factor setup is required for user.",
+            id="2fa_setup_required",
+        ),
+    ],
+)
+def test_rest_api_basic_auth_denied_by_auth_config(  # type: ignore[misc] #mypy struggles to evaluate additional_auth_config methods
+    site: Site,
+    additional_auth_config: Callable[..., contextlib.AbstractContextManager[None]],
+    kwargs: dict[str, str],
+    expected_error_msg: str,
+) -> None:
+    """If an account has any additional action required such as 2fa or password change, the user must be denied."""
     password = site.admin_password
-    with enable_2fa(site, "cmkadmin"):
-        session = CMKWebSession(site)
+    session = CMKWebSession(site)
+    with additional_auth_config(site, **kwargs):
         response = session.get(
             f"/{site.id}/check_mk/api/1.0/version",
-            auth=(username, password),
+            auth=(ADMIN_USER, password),
             expected_code=401,
         )
-        assert "site" not in response.json()
+        assert not session.is_logged_in()
+        assert response.json()["detail"] == expected_error_msg
+
+
+@pytest.mark.parametrize(
+    "additional_auth_config, kwargs, expected_error_msg",
+    [
+        pytest.param(
+            enable_2fa,
+            {"username": ADMIN_USER},
+            "Two-factor authentication is required.",
+            id="2fa_auth_required",
+        ),
+        pytest.param(
+            require_password_change,
+            {"username": ADMIN_USER},
+            "Password change is required.",
+            id="password_change_required",
+        ),
+        pytest.param(
+            update_global_config,
+            {"new_config": ["require_two_factor_all_users = True"]},
+            "Two-factor setup is required for user.",
+            id="2fa_setup_required",
+        ),
+    ],
+)
+def test_rest_api_bearer_auth_denied_by_auth_config(  # type: ignore[misc]
+    site: Site,
+    additional_auth_config: Callable[..., contextlib.AbstractContextManager[None]],
+    kwargs: dict[str, str],
+    expected_error_msg: str,
+) -> None:
+    """If an account has any additional action required such as 2fa or password change, the user must be denied"""
+    session = CMKWebSession(site)
+    with additional_auth_config(site, **kwargs):
+        response = session.get(
+            f"/{site.id}/check_mk/api/1.0/version",
+            headers={
+                "Authorization": f"Bearer {ADMIN_USER} {site.admin_password}",
+            },
+            expected_code=401,
+        )
+        assert not session.is_logged_in()
+        assert response.json()["detail"] == expected_error_msg
+
+
+@pytest.mark.parametrize(
+    "additional_auth_config, global_edits, user",
+    [
+        pytest.param(
+            enable_2fa,
+            ["auth_by_http_header = 'X-Remote-User'"],
+            ADMIN_USER,
+            id="2fa_auth_required_valid_user",
+        ),
+        pytest.param(
+            require_password_change,
+            ["auth_by_http_header = 'X-Remote-User'"],
+            ADMIN_USER,
+            id="password_change_required_valid_user",
+        ),
+        pytest.param(
+            lambda *args: contextlib.nullcontext(),
+            ["require_two_factor_all_users = True", "auth_by_http_header = 'X-Remote-User'"],
+            ADMIN_USER,
+            id="2fa_setup_required_valid_user",
+        ),
+    ],
+)
+def test_remote_user_denied_by_additional_auth_configs(  # type: ignore[misc]
+    site: Site,
+    additional_auth_config: Callable[..., contextlib.AbstractContextManager[None]],
+    global_edits: list[str],
+    user: str,
+) -> None:
+    """This test sets a custom header/remote user in the global config, then ensures that all secondary
+    auth methods appropriately deny access."""
+    session = CMKWebSession(site)
+    with (
+        additional_auth_config(site, ADMIN_USER),
+        update_global_config(site, global_edits),
+    ):
+        session.get(
+            f"/{site.id}/check_mk/api/1.0/version",
+            headers={
+                "X-Remote-User": user,
+            },
+            expected_code=401,
+        )
         assert not session.is_logged_in()
 
 
+@pytest.mark.parametrize(
+    "additional_auth_config, global_edits, user, expected_error_msg, expected_code",
+    [
+        pytest.param(
+            enable_2fa,
+            ["auth_by_http_header = 'X-Remote-User'"],
+            "fake_user",
+            "Two-factor authentication is required.",
+            200,
+            id="2fa_auth_required_invalid_user",
+        ),
+        pytest.param(
+            require_password_change,
+            ["auth_by_http_header = 'X-Remote-User'"],
+            "fake_user",
+            "Password change is required.",
+            200,
+            id="password_change_required_invalid_user",
+        ),
+        pytest.param(
+            lambda *args: contextlib.nullcontext(),
+            ["require_two_factor_all_users = True", "auth_by_http_header = 'X-Remote-User'"],
+            "fake_user",
+            "Two-factor setup is required for user.",
+            401,
+            id="2fa_setup_required_invalid_user",
+        ),
+    ],
+)
+def test_invalid_remote_user_not_denied_by_additional_auth_configs(  # type: ignore[misc]
+    site: Site,
+    additional_auth_config: Callable[..., contextlib.AbstractContextManager[None]],
+    global_edits: list[str],
+    user: str,
+    expected_error_msg: str,
+    expected_code: int,
+) -> None:
+    """This test sets a custom header/remote user in the global config.
+    Two-factor authentication needed and password change required, should not block this authentication header
+    for fake/unknown users.
+    Enforce two factor (noted as setup) is intended to always block both real and fake users."""
+    session = CMKWebSession(site)
+    with (
+        additional_auth_config(site, ADMIN_USER),
+        update_global_config(site, global_edits),
+    ):
+        response = session.get(
+            f"/{site.id}/check_mk/api/1.0/version",
+            headers={
+                "X-Remote-User": user,
+            },
+            expected_code=expected_code,
+        )
+        assert not session.is_logged_in()
+        if response.status_code == 401:
+            assert response.json()["detail"] == expected_error_msg
+
+
+def _get_site_auth_cookie(site: Site, username: str) -> dict[str, str]:
+    """Access session_info information and craft user's latest auth cookie"""
+    session_info_mk = literal_eval(site.read_file(f"var/check_mk/web/{username}/session_info.mk"))
+    session_id = next(iter(session_info_mk))
+    cookie_value = str(
+        username + ":" + session_id + ":" + generate_auth_hash(UserId(username), session_id)
+    )
+    cookie_name = "auth_" + site.id
+    return {cookie_name: cookie_value}
+
+
 @pytest.mark.skip_if_edition("cloud")
-def test_rest_api_access_by_cookie_2fa(site: Site) -> None:
+def test_rest_api_access_allowed_by_cookie_without_2fa(site: Site) -> None:
+    """login via the gui and get a valid cookie, cookie should work when no 2fa."""
+
+    username = ADMIN_USER
+    password = site.admin_password
+    session = CMKWebSession(site)
+
+    # Login to GUI
+    session.post(
+        "login.py",
+        data={
+            "filled_in": "login",
+            "_username": username,
+            "_password": password,
+            "_login": "Login",
+        },
+    )
+
+    # Use cookie for RestAPI
+    session.get(
+        f"/{site.id}/check_mk/api/1.0/version",
+        cookies=_get_site_auth_cookie(site, username),
+        expected_code=200,
+    )
+    assert session.is_logged_in()
+
+
+@pytest.mark.skip_if_edition("cloud")
+def test_rest_api_access_denied_by_cookie_without_2fa(site: Site) -> None:
     """login via the gui but do not complete the 2fa, the cookie must not allow you access to the
-    rest api
+    rest api"""
 
-    See: CMK-18988"""
-
-    username = "cmkadmin"
+    username = ADMIN_USER
     password = site.admin_password
 
-    with enable_2fa(site, "cmkadmin"):
+    with enable_2fa(site, username):
         session = CMKWebSession(site)
-        response = session.post(
+
+        # Login to GUI
+        session.post(
             "login.py",
             data={
                 "filled_in": "login",
@@ -426,16 +654,64 @@ def test_rest_api_access_by_cookie_2fa(site: Site) -> None:
             },
         )
 
-        # Check if the cmk-two-factor-authentication vue app has been initialized in mode "totp_credentials"
-        assert "cmk-two-factor-authentication" in response.text
-        assert "&quot;totp_credentials&quot;: true" in response.text
-
+        # Use cookie for RestAPI
         response = session.get(
             f"/{site.id}/check_mk/api/1.0/version",
+            cookies=_get_site_auth_cookie(site, username),
             expected_code=401,
         )
-        assert "site" not in response.json()
-        assert not session.is_logged_in()
+        assert response.json()["detail"] == "Two-factor authentication is required."
+
+
+@pytest.mark.skip_if_edition("cloud")
+def test_rest_api_access_allowed_by_cookie_2fa(site: Site) -> None:
+    """login via the gui and complete the 2fa, the cookie must not allow you access to the
+    rest api"""
+    username = ADMIN_USER
+
+    with enable_2fa(site, ADMIN_USER):
+        session = CMKWebSession(site)
+
+        # Login
+        session.post(
+            "login.py",
+            data={
+                "filled_in": "login",
+                "_username": username,
+                "_password": site.admin_password,
+                "_login": "Login",
+            },
+            allow_redirects=True,
+        )
+
+        # Generate valid TOTP code
+        two_factor_file_contents = literal_eval(
+            site.read_file(f"var/check_mk/web/{username}/two_factor_credentials.mk")
+        )
+        totp_uuid = list(two_factor_file_contents["totp_credentials"].keys())[0]
+
+        authenticator = TOTP(two_factor_file_contents["totp_credentials"][totp_uuid]["secret"])
+        current_time = authenticator.calculate_generation(datetime.now())
+        otp_value = authenticator.generate_totp(current_time)
+
+        # Perform GUI 2fa authentication
+        session.post(
+            "user_login_two_factor.py",
+            data={
+                "filled_in": "totp",
+                "_totp_code": otp_value,
+            },
+            allow_redirects=True,
+            expected_code=200,
+        )
+
+        # Generated cookie for latest user session should now work.
+        session.get(
+            f"/{site.id}/check_mk/api/1.0/version",
+            cookies=_get_site_auth_cookie(site, username),
+            expected_code=200,
+        )
+        assert session.is_logged_in()
 
 
 @pytest.mark.skip_if_edition("community", "cloud")
@@ -455,20 +731,3 @@ def test_invalid_remote_site_login(site: Site) -> None:
         allow_redirect_to_login=True,
     )
     assert "check_mk/login.py" in response.url
-
-
-def test_rest_api_requires_password_change(site: Site) -> None:
-    """test that rest api access is blocked when user is required to change password"""
-
-    username = "cmkadmin"
-    password = site.admin_password
-
-    with require_password_change(site, username):
-        session = CMKWebSession(site)
-        response = session.get(
-            f"/{site.id}/check_mk/api/1.0/version",
-            headers={"Authorization": f"Bearer {username} {password}"},
-            expected_code=401,
-        )
-        assert not session.is_logged_in()
-        assert response.json()["detail"] == "Password change is required."
