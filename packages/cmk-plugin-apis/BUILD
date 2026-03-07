@@ -187,6 +187,33 @@ py_library(
 )
 
 py_library(
+    name = "dcd_connectors",
+    srcs = [
+        "cmk/dcd_connectors/__init__.py",
+        "cmk/dcd_connectors/internal/__init__.py",
+        "cmk/dcd_connectors/internal/_connector_specs.py",
+    ],
+    data = ["cmk/dcd_connectors/py.typed"],
+    imports = ["."],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "dcd_connector_parameters",
+    srcs = [
+        "cmk/dcd_connector_parameters/__init__.py",
+        "cmk/dcd_connector_parameters/internal/__init__.py",
+        "cmk/dcd_connector_parameters/internal/connector_parameter_specs.py",
+    ],
+    data = ["cmk/dcd_connector_parameters/py.typed"],
+    imports = ["."],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":rulesets",
+    ],
+)
+
+py_library(
     name = "inventory_ui",
     srcs = [
         "cmk/inventory_ui/__init__.py",
@@ -207,6 +234,8 @@ py_doc_test(
     srcs = [
         ":agent_based",
         ":bakery",
+        ":dcd_connector_parameters",
+        ":dcd_connectors",
         ":discover_plugins",
         ":graphing",
         ":inventory_ui",
@@ -249,12 +278,39 @@ py_test(
 )
 
 py_test(
+    name = "dcd_connectors-test",
+    size = "small",
+    srcs = glob(["tests/cmk/dcd_connectors/**/*.py"]) + [":__test__.py"],
+    main = ":__test__.py",
+    deps = [
+        ":__test__",
+        ":dcd_connectors",
+        requirement("pytest"),
+    ],
+)
+
+py_test(
+    name = "dcd_connector_parameters-test",
+    size = "small",
+    srcs = glob(["tests/cmk/dcd_connector_parameters/**/*.py"]) + [":__test__.py"],
+    main = ":__test__.py",
+    deps = [
+        ":__test__",
+        ":dcd_connector_parameters",
+        ":rulesets",
+        requirement("pytest"),
+    ],
+)
+
+py_test(
     name = "discover_plugins-test",
     size = "small",
     srcs = glob(["tests/cmk/discover_plugins/**/*.py"]) + [":__test__.py"],
     main = ":__test__.py",
     deps = [
         ":__test__",
+        ":dcd_connector_parameters",
+        ":dcd_connectors",
         ":discover_plugins",
         requirement("pytest"),
     ],
@@ -343,6 +399,8 @@ py_wheel(
     deps = [
         ":agent_based",
         ":bakery",
+        ":dcd_connector_parameters",
+        ":dcd_connectors",
         ":discover_plugins",
         ":graphing",
         ":inventory_ui",
@@ -364,6 +422,8 @@ filegroup(
     srcs = [
         "cmk/agent_based/py.typed",
         "cmk/bakery/py.typed",
+        "cmk/dcd_connector_parameters/py.typed",
+        "cmk/dcd_connectors/py.typed",
         "cmk/discover_plugins/py.typed",
         "cmk/graphing/py.typed",
         "cmk/inventory_ui/py.typed",

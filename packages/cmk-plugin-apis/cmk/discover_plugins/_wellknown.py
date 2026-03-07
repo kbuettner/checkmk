@@ -19,6 +19,8 @@ class PluginGroup(enum.Enum):
     AGENT_BASED = "agent_based"
     BAKERY = "bakery"
     CHECKMAN = "checkman"
+    DCD_CONNECTORS = "dcd_connectors"
+    DCD_CONNECTOR_PARAMETERS = "dcd_connector_parameters"
     GRAPHING = "graphing"
     RULESETS = "rulesets"
     SERVER_SIDE_CALLS = "server_side_calls"

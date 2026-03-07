@@ -233,6 +233,8 @@ PACKAGE_PLUGIN_APIS = (
     "cmk.agent_based.v2",
     "cmk.agent_based.internal",
     "cmk.bakery.v2_unstable",
+    "cmk.dcd_connector_parameters.internal",
+    "cmk.dcd_connectors.internal",
     "cmk.graphing.v1",
     "cmk.inventory_ui.v1_unstable",
     "cmk.password_store.v1_unstable",
@@ -1086,6 +1088,10 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
     Component("cmk.inventory"): _allow(
         *PACKAGE_CCC,
     ),
+    Component("cmk.dcd_connector_parameters"): _allow(
+        "cmk.rulesets",
+    ),
+    Component("cmk.dcd_connectors"): _allow(),
     Component("cmk.inventory_ui"): _allow(),
     Component("cmk.logwatch"): _allow(
         *PACKAGE_PLUGIN_APIS,
