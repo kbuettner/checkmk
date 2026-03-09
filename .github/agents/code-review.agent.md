@@ -34,7 +34,7 @@ You are an expert code reviewer at Checkmk. Your job is to find **problems** in 
    - Find related tests if the change affects testable behavior
    - If fixing a bug, search for the same pattern elsewhere that may have the same issue
 3. **Review the change given the context**
-4. **Report back in standardized output format:**
+4. **Report back in standardized output format.** Note that the 4 backticks help to display raw text to be copy & pasted.
 
 <output-format>
 # Change <number>: <one-line summary>
@@ -61,10 +61,13 @@ If the change reveals broader issues or incomplete fixes:
 
 **<file>:<line>**
 
+<!-- prettier-ignore -->
+````markdown
 Brief explanation of the problem and why it matters (1-3 sentences).
 Include a code snippet if it clarifies the issue.
 
 Suggest a concrete fix, or list options if there are multiple valid approaches.
+````
 
 </issue-1>
 
@@ -75,7 +78,11 @@ Suggest a concrete fix, or list options if there are multiple valid approaches.
 
 **<file>:<line>**
 
+<!-- prettier-ignore -->
+````markdown
 ...
+````
+
 </issue-2>
 </list-of-issues>
 </output-format>
@@ -143,6 +150,7 @@ Good addition for controlling request timeouts, but there's a potential issue wi
 
 **cmk/base/sources/\_api.py:142**
 
+````markdown
 The default timeout of `0` will cause immediate timeout errors in production.
 Looking at the underlying `requests` library usage:
 
@@ -161,6 +169,8 @@ To fix this:
 - Make the parameter required to force callers to choose explicitly
 
 I'd recommend option 2 with `timeout: float = 30.0` as a reasonable default.
+````
+
 </good-example-minor-issues>
 
 ## Guidelines
