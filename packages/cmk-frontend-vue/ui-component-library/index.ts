@@ -6,12 +6,16 @@
 import { createApp } from 'vue'
 import 'vue-router'
 
+import { initializeComponentRegistry } from '@/form/private/FormEditDispatcher/dispatch'
+
 import '@/assets/variables.css'
 
 import UclApp from './_ucl/UclApp.vue'
 import './_ucl/assets/main.css'
 import './_ucl/assets/variables.css'
 import router from './_ucl/router/router'
+
+initializeComponentRegistry()
 
 const app = createApp(UclApp)
 app.use(router)
