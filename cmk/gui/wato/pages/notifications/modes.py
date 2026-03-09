@@ -715,6 +715,8 @@ class ABCNotificationsMode(ABCEventsMode[EventRule]):
                 ("user", userid),
                 ("_delete", nr),
             ]
+            if search := request.get_str_input("search", ""):
+                httpvars.append(("search", search))
             return make_confirm_delete_link(
                 url=make_action_link(httpvars + back_mode),
                 title=_("Delete notification rule #%d") % nr,
@@ -728,6 +730,8 @@ class ABCNotificationsMode(ABCEventsMode[EventRule]):
                 ("user", userid),
                 ("_move", nr),
             ]
+            if search := request.get_str_input("search", ""):
+                httpvars.append(("search", search))
             return make_action_link(httpvars + back_mode)
 
         def _edit_url() -> str:
@@ -736,6 +740,8 @@ class ABCNotificationsMode(ABCEventsMode[EventRule]):
                 ("edit", nr),
                 ("user", userid),
             ]
+            if search := request.get_str_input("search", ""):
+                httpvars.append(("search", search))
             return folder_preserving_link(httpvars + back_mode)
 
         def _clone_url() -> str:
@@ -744,6 +750,8 @@ class ABCNotificationsMode(ABCEventsMode[EventRule]):
                 ("clone", nr),
                 ("user", userid),
             ]
+            if search := request.get_str_input("search", ""):
+                httpvars.append(("search", search))
             return make_confirm_delete_link(
                 url=folder_preserving_link(httpvars + back_mode),
                 title=_("Clone & edit notification rule #%d") % nr,
@@ -776,6 +784,12 @@ class ModeNotifications(ABCNotificationsMode):
 
     def title(self) -> str:
         return _("Notifications")
+
+    def _breadcrumb_url(self) -> str:
+        search = request.get_str_input("search", "")
+        if search:
+            return self.mode_url(search=search)
+        return self.mode_url()
 
     def page_menu(self, config: Config, breadcrumb: Breadcrumb) -> PageMenu:
         menu = PageMenu(
@@ -965,6 +979,9 @@ class ModeNotifications(ABCNotificationsMode):
         if back_mode := request.var("back_mode"):
             return redirect(mode_url(back_mode, user=request.get_str_input_mandatory("user")))
 
+        search = request.get_str_input("search", "")
+        if search:
+            return redirect(self.mode_url(search=search))
         return redirect(self.mode_url())
 
     def _get_notification_rules(self) -> list[EventRule]:
@@ -2622,6 +2639,9 @@ class ABCUserNotificationsMode(ABCNotificationsMode):
                 site_configs=config.sites,
             )
 
+        search = request.get_str_input("search", "")
+        if search:
+            return redirect(self.mode_url(user=self._user_id(), search=search))
         return redirect(self.mode_url(user=self._user_id()))
 
     def page(self, config: Config) -> None:
@@ -2674,6 +2694,9 @@ class ModeUserNotifications(ABCUserNotificationsMode):
         return super().mode_url(**kwargs)
 
     def _breadcrumb_url(self) -> str:
+        search = request.get_str_input("search", "")
+        if search:
+            return self.mode_url(user=self._user_id(), search=search)
         return self.mode_url(user=self._user_id())
 
     def _user_id(self) -> UserId:
@@ -2746,6 +2769,12 @@ class ModePersonalUserNotifications(ABCUserNotificationsMode):
 
     def main_menu(self) -> NavItem:
         return main_menu_registry.menu_user()
+
+    def _breadcrumb_url(self) -> str:
+        search = request.get_str_input("search", "")
+        if search:
+            return self.mode_url(search=search)
+        return self.mode_url()
 
     def page_menu(self, config: Config, breadcrumb: Breadcrumb) -> PageMenu:
         return PageMenu(
@@ -3426,6 +3455,9 @@ class ModeEditNotificationRule(ABCEditNotificationRuleMode):
         return None
 
     def _back_mode(self) -> ActionResult:
+        search = request.get_str_input("search", "")
+        if search:
+            return redirect(mode_url("notifications", search=search))
         return redirect(mode_url("notifications"))
 
     def title(self) -> str:
@@ -3483,6 +3515,9 @@ class ModeEditUserNotificationRule(ABCEditNotificationRuleMode):
         return request.get_validated_type_input_mandatory(UserId, "user")
 
     def _back_mode(self) -> ActionResult:
+        search = request.get_str_input("search", "")
+        if search:
+            return redirect(mode_url("user_notifications", user=self._user_id(), search=search))
         return redirect(mode_url("user_notifications", user=self._user_id()))
 
     def title(self) -> str:
@@ -3567,6 +3602,9 @@ class ModeEditPersonalNotificationRule(ABCEditNotificationRuleMode):
     def _back_mode(self) -> ActionResult:
         if has_distributed_setup_remote_sites(active_config.sites):
             return None
+        search = request.get_str_input("search", "")
+        if search:
+            return redirect(mode_url("user_notifications_p", search=search))
         return redirect(mode_url("user_notifications_p"))
 
     def title(self) -> str:
@@ -4298,11 +4336,16 @@ class ModeEditNotificationRuleQuickSetup(WatoMode):
             return super().breadcrumb()
 
     def page_menu(self, config: Config, breadcrumb: Breadcrumb) -> PageMenu:
+        search = request.get_str_input("search", "")
         return make_simple_form_page_menu(
             title=_("Notification rule"),
             breadcrumb=breadcrumb,
             add_cancel_link=True,
-            cancel_url=mode_url(mode_name=ModeNotifications.name()),
+            cancel_url=(
+                ModeNotifications.mode_url(search=search)
+                if search
+                else mode_url(mode_name=ModeNotifications.name())
+            ),
         )
 
     def page(self, config: Config) -> None:
