@@ -175,7 +175,10 @@ from cmk.gui.watolib.sample_config import (
     new_notification_rule_id,
 )
 from cmk.gui.watolib.timeperiods import TimeperiodSelection
-from cmk.gui.watolib.user_scripts import load_notification_scripts
+from cmk.gui.watolib.user_scripts import (
+    declare_notification_plugin_permissions,
+    load_notification_scripts,
+)
 from cmk.gui.watolib.users import notification_script_choices
 from cmk.rulesets.v1.rule_specs import NotificationParameters
 from cmk.shared_typing.main_menu import NavItem
@@ -248,8 +251,7 @@ class ABCNotificationsMode(ABCEventsMode[EventRule]):
     def __init__(self) -> None:
         super().__init__()
 
-        # Make sure that all dynamic permissions are available
-        permissions.load_dynamic_permissions()
+        declare_notification_plugin_permissions()
 
     @classmethod
     def _rule_match_conditions(
