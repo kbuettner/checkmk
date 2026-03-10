@@ -17,7 +17,7 @@ const isSearching = ref(false)
 </script>
 
 <template>
-  <DemoSearch v-model:is-searching="isSearching" :nav-trees="navTrees" />
+  <DemoSearch v-model:is-searching="isSearching" />
 
   <template v-if="!isSearching">
     <RouterLink
