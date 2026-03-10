@@ -415,7 +415,7 @@ def change_werk_version(werk_path: Path, new_version: str, werk_version: WerkVer
 
 
 def _git_add(werk_path: Path) -> None:
-    os.system(f"git add {werk_path}")  # nosec
+    os.system(f"git add {werk_path}")  # nosec B605 # BNS:a52d7f
 
 
 def git_move(source: Path, destination: Path) -> None:
@@ -442,12 +442,12 @@ def git_commit(werk: Werk, custom_files: list[str]) -> None:
             " ".join(files_to_commit),
             shlex.quote(title + "\n\n" + werk.content.description),
         )
-        os.system(cmd)  # nosec
+        os.system(cmd)  # nosec B605 # BNS:a52d7f
 
     else:
         if something_in_git_index():
             dash_a = ""
-            os.system(f"cd '{git_top_level()}' ; git add .werks")  # nosec
+            os.system(f"cd '{git_top_level()}' ; git add .werks")  # nosec B605 # BNS:a52d7f
         else:
             dash_a = "-a"
 
@@ -455,7 +455,7 @@ def git_commit(werk: Werk, custom_files: list[str]) -> None:
             dash_a,
             shlex.quote(title + "\n\n" + werk.content.description),
         )
-        os.system(cmd)  # nosec
+        os.system(cmd)  # nosec B605 # BNS:a52d7f
 
 
 def git_top_level() -> str:
@@ -832,7 +832,7 @@ def get_werk_arg(arg: WerkId | None) -> WerkId:
 
 def main_blame(args: argparse.Namespace) -> None:
     wid = get_werk_arg(WerkId(args.id))
-    os.system(f"git blame {werk_path_by_id(wid)}")  # nosec
+    os.system(f"git blame {werk_path_by_id(wid)}")  # nosec B605 # BNS:a52d7f
 
 
 def main_url(args: argparse.Namespace) -> None:
@@ -936,7 +936,7 @@ def edit_werk(werk_path: Path, custom_files: list[str] | None = None, commit: bo
     werk = None
 
     while True:
-        if os.system(f"bash -c '{editor} +{number_of_lines_in_werk} {werk_path}'") != 0:  # nosec
+        if os.system(f"bash -c '{editor} +{number_of_lines_in_werk} {werk_path}'") != 0:  # nosec B605 # BNS:a52d7f
             bail_out("Editor returned error, something is very wrong!")
 
         try:
@@ -1132,7 +1132,7 @@ def main_fetch_ids(args: argparse.Namespace) -> None:
     )
 
     if get_config().create_commit:
-        if os.system(f"git commit --no-verify -m 'Reserved {args.count} Werk IDS' .") == 0:  # nosec
+        if os.system(f"git commit --no-verify -m 'Reserved {args.count} Werk IDS' .") == 0:  # nosec B605 # BNS:a52d7f
             sys.stdout.write("--> Successfully committed reserved Werk IDS. Please push it soon!\n")
         else:
             bail_out("Cannot commit.")

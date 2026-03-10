@@ -57,7 +57,7 @@ def test_hash_algorithms_from_cryptography() -> None:
 
 def test_hash_algorithms_from_cryptography_unsupported() -> None:
     with pytest.raises(ValueError):
-        HashAlgorithm.from_cryptography(hashes.MD5())  # nosec
+        HashAlgorithm.from_cryptography(hashes.MD5())  # nosec B303 # BNS:e18b63
 
 
 OK = PasswordPolicy.Result.OK

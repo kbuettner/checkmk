@@ -15,15 +15,15 @@ from collections.abc import Iterable
 from dataclasses import astuple, dataclass
 from typing import Final, Self, TYPE_CHECKING, TypedDict
 
-import pyghmi.constants as ipmi_const  # type: ignore[import-untyped,unused-ignore] # nosec B415
-from pyghmi.exceptions import (  # type: ignore[import-untyped,unused-ignore] # nosec B415
+import pyghmi.constants as ipmi_const  # type: ignore[import-untyped,unused-ignore] # nosec B415 # BNS:7c4e91
+from pyghmi.exceptions import (  # type: ignore[import-untyped,unused-ignore] # nosec B415 # BNS:7c4e91
     IpmiException,
 )
 
 if TYPE_CHECKING:
     # The remaining pyghmi imports are expensive (60 ms for all of them together).
-    import pyghmi.ipmi.command as ipmi_cmd  # type: ignore[import-untyped,unused-ignore] # nosec B415
-    import pyghmi.ipmi.sdr as ipmi_sdr  # type: ignore[import-untyped,unused-ignore] # nosec B415
+    import pyghmi.ipmi.command as ipmi_cmd  # type: ignore[import-untyped,unused-ignore] # nosec B415 # BNS:7c4e91
+    import pyghmi.ipmi.sdr as ipmi_sdr  # type: ignore[import-untyped,unused-ignore] # nosec B415 # BNS:7c4e91
 
 from cmk.ccc.exceptions import MKTimeout
 from cmk.ccc.hostaddress import HostAddress
@@ -168,7 +168,7 @@ class IPMIFetcher(Fetcher[AgentRawData]):
         )
 
         # Performance: See header.
-        import pyghmi.ipmi.command as ipmi_cmd  # type: ignore[import-untyped,unused-ignore] # nosec B415
+        import pyghmi.ipmi.command as ipmi_cmd  # type: ignore[import-untyped,unused-ignore] # nosec B415 # BNS:7c4e91
 
         try:
             self._command = ipmi_cmd.Command(
@@ -194,7 +194,7 @@ class IPMIFetcher(Fetcher[AgentRawData]):
         # initialize a new session every cycle.
         # We also don't want to reuse sockets or other things from previous calls.
 
-        import pyghmi.ipmi.private.session as ipmi_session  # type: ignore[import-untyped,unused-ignore] # nosec B415
+        import pyghmi.ipmi.private.session as ipmi_session  # type: ignore[import-untyped,unused-ignore] # nosec B415 # BNS:7c4e91
 
         assert ipmi_session.iothread is not None
         ipmi_session.iothread.join()
@@ -224,7 +224,7 @@ class IPMIFetcher(Fetcher[AgentRawData]):
         self._logger.debug("Fetching sensor data via UDP from %s:623", self._command.bmc)
 
         # Performance: See header.
-        import pyghmi.ipmi.sdr as ipmi_sdr  # type: ignore[import-untyped,unused-ignore] # nosec B415
+        import pyghmi.ipmi.sdr as ipmi_sdr  # type: ignore[import-untyped,unused-ignore] # nosec B415 # BNS:7c4e91
 
         try:
             sdr = ipmi_sdr.SDR(self._command)

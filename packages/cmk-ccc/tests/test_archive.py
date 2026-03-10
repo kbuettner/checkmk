@@ -2,7 +2,6 @@
 # Copyright (C) 2025 Checkmk GmbH - License: GNU General Public License v2
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
-# nosec B202
 
 import io
 import tarfile
@@ -53,7 +52,7 @@ def test_safe_extractall_basic_bytes(tmp_path: Path) -> None:
     dest = tmp_path / "dest"
 
     with CheckmkTarArchive.from_bytes(raw) as safe_tar:
-        safe_tar.extractall(dest)  # nosec B202
+        safe_tar.extractall(dest)  # nosec B202 # BNS:481b41
 
     for f, content in files.items():
         assert (dest / f).read_bytes() == content
@@ -65,7 +64,7 @@ def test_safe_extractall_basic_io(tmp_path: Path) -> None:
     dest = tmp_path / "dest"
 
     with CheckmkTarArchive.from_buffer(buf) as safe_tar:
-        safe_tar.extractall(dest)  # nosec B202
+        safe_tar.extractall(dest)  # nosec B202 # BNS:481b41
 
     for f, content in files.items():
         assert (dest / f).read_bytes() == content
@@ -77,7 +76,7 @@ def test_safe_extractall_basic_path(tmp_path: Path) -> None:
     dest = tmp_path / "dest"
 
     with CheckmkTarArchive.from_path(path) as safe_tar:
-        safe_tar.extractall(dest)  # nosec B202
+        safe_tar.extractall(dest)  # nosec B202 # BNS:481b41
 
     for f, content in files.items():
         assert (dest / f).read_bytes() == content
@@ -90,7 +89,7 @@ def test_path_traversal_bytes(tmp_path: Path) -> None:
 
     with pytest.raises(SecurityViolation):
         with CheckmkTarArchive.from_bytes(raw) as safe_tar:
-            safe_tar.extractall(dest)  # nosec B202
+            safe_tar.extractall(dest)  # nosec B202 # BNS:481b41
 
 
 def test_per_file_size_limit_bytes(tmp_path: Path) -> None:
@@ -101,7 +100,7 @@ def test_per_file_size_limit_bytes(tmp_path: Path) -> None:
 
     with pytest.raises(UnpackedArchiveTooLargeError):
         with CheckmkTarArchive.from_bytes(raw, per_file_limit=max_size) as safe_tar:
-            safe_tar.extractall(dest)  # nosec B202
+            safe_tar.extractall(dest)  # nosec B202 # BNS:481b41
 
 
 def test_total_file_limit_bytes(tmp_path: Path) -> None:
@@ -111,7 +110,7 @@ def test_total_file_limit_bytes(tmp_path: Path) -> None:
 
     with pytest.raises(UnpackedArchiveTooLargeError):
         with CheckmkTarArchive.from_bytes(raw, file_limit=2) as safe_tar:
-            safe_tar.extractall(dest)  # nosec B202
+            safe_tar.extractall(dest)  # nosec B202 # BNS:481b41
 
 
 def test_iteration_bytes() -> None:
@@ -161,7 +160,7 @@ def test_symlink_blocked(tmp_path: Path) -> None:
         with CheckmkTarArchive.from_buffer(buf, allow_symlinks=False) as safe_tar:
             safe_tar.extractall(
                 dest,
-            )  # nosec B202
+            )  # nosec B202 # BNS:481b41
 
 
 def test_symlink_allowed(tmp_path: Path) -> None:
@@ -174,4 +173,4 @@ def test_symlink_allowed(tmp_path: Path) -> None:
 
     dest = tmp_path / "dest"
     with CheckmkTarArchive.from_buffer(buf, allow_symlinks=True) as safe_tar:
-        safe_tar.extractall(dest)  # nosec B202
+        safe_tar.extractall(dest)  # nosec B202 # BNS:481b41
