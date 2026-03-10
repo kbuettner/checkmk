@@ -14,7 +14,6 @@ import livestatus
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.site import SiteId
 from cmk.gui import sites
-from cmk.gui.http import request
 from cmk.gui.i18n import _
 from cmk.gui.logged_in import user
 from cmk.gui.pages import AjaxPage, PageContext, PageResult
@@ -32,7 +31,7 @@ class PageRescheduleCheck(AjaxPage):
 
     @override
     def page(self, ctx: PageContext) -> PageResult:
-        api_request = request.get_request()
+        api_request = ctx.request.get_request()
         return self._do_reschedule(api_request, ctx.config.reschedule_timeout)
 
     @staticmethod
