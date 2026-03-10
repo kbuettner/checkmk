@@ -55,6 +55,20 @@ py_library(
     ],
 )
 
+py_library(
+    name = "conftest_update_config",
+    testonly = True,
+    srcs = [
+        "cmk/update_config/conftest.py",
+    ],
+    deps = [
+        "//tests/testlib/unit:unit_free",
+        requirement("flask"),
+        requirement("pytest"),
+        requirement("pytest-mock"),
+    ],
+)
+
 py_pytest_main(
     name = "__test__",
     deps = [
@@ -711,6 +725,140 @@ py_test(
 )
 
 py_test(
+    name = "update_config_community",
+    srcs = ["__test__.py"] + glob(
+        include = ["cmk/update_config/**/*.py"],
+        exclude = ["**/nonfree/**"],
+    ),
+    args = [
+        "--config-file=$(location @//:pyproject.toml)",
+        "--import-mode=importlib",
+        "--random-order-bucket=global",
+        "--dist=loadfile",
+        "--numprocesses=4",
+    ],
+    data = ["@//:pyproject.toml"],
+    main = ":__test__.py",
+    visibility = ["//tests:__subpackages__"],
+    deps = [
+        ":__test__",
+        ":conftest",
+        "//cmk/update_config:cmk_update_config",
+        "//tests/testlib/unit:unit_free",
+        requirement("flask"),
+        requirement("pytest"),
+        requirement("pytest-asyncio"),
+        requirement("pytest-random-order"),
+        requirement("pytest-mock"),
+    ],
+)
+
+py_test(
+    name = "update_config_pro",
+    srcs = ["__test__.py"] + glob(
+        include = ["cmk/update_config/**/nonfree/**/pro/**/*.py"],
+        allow_empty = True,
+    ),
+    args = [
+        "--config-file=$(location @//:pyproject.toml)",
+        "--import-mode=importlib",
+        "--random-order-bucket=global",
+        "--dist=loadfile",
+        "--numprocesses=4",
+    ],
+    data = ["@//:pyproject.toml"],
+    main = ":__test__.py",
+    target_compatible_with = select({
+        "@//:gpl+nonfree_repo": [],
+        "@//:gpl_repo": ["@platforms//:incompatible"],
+    }),
+    visibility = ["//tests:__subpackages__"],
+    deps = [
+        ":__test__",
+        ":conftest",
+        ":conftest_update_config",
+        requirement("pytest"),
+        requirement("pytest-asyncio"),
+        requirement("pytest-random-order"),
+    ] + select({
+        "@//:gpl+nonfree_repo": [
+            "//cmk/update_config:cmk_update_config_pro",
+            "//cmk/utils:pro",
+            "//tests/testlib/unit:unit_nonfree",
+        ],
+        "@//:gpl_repo": [],
+    }),
+)
+
+py_test(
+    name = "update_config_ultimate",
+    srcs = ["__test__.py"] + glob(
+        include = ["cmk/update_config/**/nonfree/**/ultimate/**/*.py"],
+        allow_empty = True,
+    ),
+    args = [
+        "--config-file=$(location @//:pyproject.toml)",
+        "--import-mode=importlib",
+        "--random-order-bucket=global",
+        "--dist=loadfile",
+        "--numprocesses=4",
+    ],
+    data = ["@//:pyproject.toml"],
+    main = ":__test__.py",
+    target_compatible_with = select({
+        "@//:gpl+nonfree_repo": [],
+        "@//:gpl_repo": ["@platforms//:incompatible"],
+    }),
+    visibility = ["//tests:__subpackages__"],
+    deps = [
+        ":__test__",
+        ":conftest",
+        ":conftest_update_config",
+        requirement("pytest"),
+        requirement("pytest-asyncio"),
+        requirement("pytest-random-order"),
+    ] + select({
+        "@//:gpl+nonfree_repo": [
+            "//cmk/update_config:cmk_update_config_ultimate",
+        ],
+        "@//:gpl_repo": [],
+    }),
+)
+
+py_test(
+    name = "update_config_ultimatemt",
+    srcs = ["__test__.py"] + glob(
+        include = ["cmk/update_config/**/nonfree/**/ultimatemt/**/*.py"],
+        allow_empty = True,
+    ),
+    args = [
+        "--config-file=$(location @//:pyproject.toml)",
+        "--import-mode=importlib",
+        "--random-order-bucket=global",
+        "--dist=loadfile",
+        "--numprocesses=4",
+    ],
+    data = ["@//:pyproject.toml"],
+    main = ":__test__.py",
+    target_compatible_with = select({
+        "@//:gpl+nonfree_repo": [],
+        "@//:gpl_repo": ["@platforms//:incompatible"],
+    }),
+    visibility = ["//tests:__subpackages__"],
+    deps = [
+        ":__test__",
+        requirement("pytest"),
+        requirement("pytest-asyncio"),
+        requirement("pytest-random-order"),
+    ] + select({
+        "@//:gpl+nonfree_repo": [
+            "//cmk/update_config:cmk_update_config_ultimatemt",
+        ],
+        "@//:gpl_repo": [],
+    }),
+)
+
+py_test(
     name = "utils_community",
     srcs = ["__test__.py"] + glob(
         include = ["cmk/utils/**/*.py"],
@@ -818,7 +966,6 @@ py_test(
             "cmk/server_side_calls_backend/**/*.py",
             "cmk/snmplib/**/*.py",
             "cmk/special_agents/**/*.py",
-            "cmk/update_config/**/*.py",
             "livestatus/**/*.py",
             "testlib/**/*.py",
         ],

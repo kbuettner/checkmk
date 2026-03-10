@@ -11,7 +11,10 @@ py_library(
         ],
     ),
     imports = ["../.."],
-    visibility = ["//cmk:__subpackages__"],
+    visibility = [
+        "//cmk:__subpackages__",
+        "//tests:__subpackages__",
+    ],
     deps = [
         "//cmk:message_broker_certs",
         "//cmk:validate_config",
@@ -47,7 +50,10 @@ py_library(
         allow_empty = True,
     ),
     imports = ["../.."],
-    visibility = ["//cmk:__subpackages__"],
+    visibility = [
+        "//cmk:__subpackages__",
+        "//tests:__subpackages__",
+    ],
     deps = [
         ":cmk_update_config",
         "//cmk/gui:pro",
@@ -67,7 +73,10 @@ py_library(
         allow_empty = True,
     ),
     imports = ["../.."],
-    visibility = ["//cmk:__subpackages__"],
+    visibility = [
+        "//cmk:__subpackages__",
+        "//tests:__subpackages__",
+    ],
     deps = [
         ":cmk_update_config",
         "//cmk/gui:pro",
@@ -87,7 +96,10 @@ py_library(
         allow_empty = True,
     ),
     imports = ["../.."],
-    visibility = ["//cmk:__subpackages__"],
+    visibility = [
+        "//cmk:__subpackages__",
+        "//tests:__subpackages__",
+    ],
     deps = [
         ":cmk_update_config",
     ],
