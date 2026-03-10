@@ -1,6 +1,6 @@
 #!groovy
 
-/// file: frontend-demo.groovy
+/// file: frontend-ui-component-library.groovy
 
 void main() {
     def versioning = load("${checkout_dir}/buildscripts/scripts/utils/versioning.groovy");
@@ -16,7 +16,7 @@ void main() {
         container("ubuntu-2404-${container_safe_branch_name}-latest") {
             stage("Build") {
                 sh("""
-                    bazel build @@//packages/cmk-frontend-vue:dist-demo-hosted
+                    bazel build @@//packages/cmk-frontend-vue:dist-ucl-hosted
                 """);
             // all files are "-r-xr-xr-x" aka "555"
             }
@@ -28,7 +28,7 @@ void main() {
                         chmod -R 755 ${output_artifacts}/
 
                         scp -rs -o StrictHostKeyChecking=accept-new -i ${RELEASE_KEY} \
-                        ${output_artifacts}/* ${DEV_DOCS_URL}/frontend-demo
+                        ${output_artifacts}/* ${DEV_DOCS_URL}/ui-component-library
                     """);
                 }
             }

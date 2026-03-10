@@ -162,10 +162,10 @@ SRCS = [
     "package.json",
     "tsconfig.app.json",
     "tsconfig.json",
-    "tsconfig.demo.json",
+    "tsconfig.ucl.json",
     "tsconfig.node.json",
     "tsconfig.test.json",
-    "vite.config.demo.ts",
+    "vite.config.ucl.ts",
     "vite.config.ts",
     "ui-component-library/index.html",
     ":demo_vue",
@@ -231,16 +231,16 @@ vite_bin.vite(
 )
 
 vite_bin.vite(
-    name = "dist-demo-hosted",
+    name = "dist-ucl-hosted",
     srcs = TOOLING + SRCS,
     # The --base argument needs to match the hosting web server config
-    # (e.g. http://localhost/frontend-demo/)
+    # (e.g. http://localhost/ui-component-library/)
     args = [
         "build",
         "--config",
-        "vite.config.demo.ts",
+        "vite.config.ucl.ts",
         "--base",
-        "/frontend-demo/",
+        "/ui-component-library/",
     ],
     chdir = package_name(),
     out_dirs = ["ui-component-library/dist"],

@@ -15,7 +15,7 @@ usage() {
     echo "Run the CI pipeline or parts of it."
     echo
     echo "  -b, --build                build"
-    echo "  -B, --build-demo           build demo"
+    echo "  -B, --build-ucl            build UI Component Library demo"
     echo "  -d, --build-dev            build in dev mode"
     echo "  -t, --tests                run tests"
     echo "  -F, --check-format         run format check"
@@ -52,7 +52,7 @@ parse_options() {
                 shift
                 continue
                 ;;
-            '-B' | '--build-demo')
+            '-B' | '--build-ucl')
                 RUN_BUILD_DEMO=yes
                 shift
                 continue
@@ -139,7 +139,7 @@ run_build_dev() {
 }
 
 run_build_demo() {
-    bazel run vite -- build --config=vite.config.demo.ts --mode=dev --outDir=dist-demo
+    bazel run vite -- build --config=vite.config.ucl.ts --mode=dev --outDir=dist-ucl
 }
 
 run_check_format() {

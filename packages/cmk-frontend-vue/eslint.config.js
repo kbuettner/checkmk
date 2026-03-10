@@ -37,7 +37,7 @@ export default [
       parserOptions: {
         project: [
           './tsconfig.test.json',
-          './tsconfig.demo.json',
+          './tsconfig.ucl.json',
           './tsconfig.app.json',
           './prettier.config.cjs'
         ],

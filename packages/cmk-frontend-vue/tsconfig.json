@@ -11,7 +11,7 @@
       "path": "./tsconfig.test.json"
     },
     {
-      "path": "./tsconfig.demo.json"
+      "path": "./tsconfig.ucl.json"
     }
   ]
 }
