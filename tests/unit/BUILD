@@ -940,13 +940,13 @@ py_test(
     name = "repo",
     # https://bazel.build/reference/be/common-definitions#test.size
     size = "large",
+    # This is the "catch all" target. Don't add new stuff here.
     srcs = [
         "__init__.py",
         "__test__.py",
+        "agents/plugins/test_user_agent.py",
     ] + glob(
-        # This is the "catch all" target. Don't add new stuff here.
         include = [
-            "agents/**/*.py",
             "cmk/*.py",
             "cmk/automations/**/*.py",
             "cmk/bi/**/*.py",
