@@ -5,7 +5,10 @@ py_library(
     name = "cmk_special_agents",
     srcs = glob(["**/*.py"]),
     imports = ["../.."],
-    visibility = ["//cmk:__subpackages__"],
+    visibility = [
+        "//cmk:__subpackages__",
+        "//tests:__subpackages__",
+    ],
     deps = [
         "//cmk/utils",
         "//packages/cmk-ccc:crash-reporting",

@@ -8,6 +8,7 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/legacy_checks:__pkg__",
+        "//tests:__subpackages__",
     ],
     deps = [
         "//cmk/plugins:cmk_plugins",

@@ -28,7 +28,6 @@ from cmk.checkengine.discovery import CheckPreviewEntry
 from cmk.checkengine.discovery import DiscoveryReport as SingleHostDiscoveryResult
 from cmk.checkengine.plugins import SectionName
 from cmk.password_store.v1_unstable import Secret
-from cmk.utils import paths
 from cmk.utils.ip_lookup import IPStackConfig
 from cmk.utils.labels import HostLabel
 
@@ -36,13 +35,9 @@ from cmk.utils.labels import HostLabel
 def test_result_type_registry_completeness() -> None:
     # ensures that all automation calls registered in cmk.base have a corresponding result type
     # registered in cmk.automations
-    automations_missing = (
-        {"bake-agents", "notify"}
-        if (edition := cmk_version.edition(paths.omd_root)) is cmk_version.Edition.COMMUNITY
-        else set()
-    )
+    automations_missing = {"bake-agents", "notify"}
     assert set(result_type_registry) - automations_missing == set(
-        make_app(edition).automations._automations
+        make_app(cmk_version.Edition.COMMUNITY).automations._automations
     )
 
 
