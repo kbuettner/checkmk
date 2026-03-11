@@ -294,7 +294,7 @@ STAGES:
       GIT_FETCH_NOTES: true
       BAZEL_LOCKS_AMOUNT: 1
       COMMAND: |
-          scripts/run-uvenv python3 -m cmk.werks.utils collect cmk . --substitute-branches $(git symbolic-ref --short HEAD):HEAD &> ${RESULTS}/werk_commands.txt
+          bazel run //omd/packages/changelog:werks_utils_binary -- collect cmk $(pwd) --substitute-branches $(git symbolic-ref --short HEAD):HEAD &> ${RESULTS}/werk_commands.txt
           bazel run //cmk/utils:werks_bin -- announce $(pwd)/.werks $(make print-VERSION) --format md &>> ${RESULTS}/werk_commands.txt
           bazel run //cmk/utils:werks_bin -- announce $(pwd)/.werks $(make print-VERSION) --format txt &>> ${RESULTS}/werk_commands.txt
           scripts/run-uvenv python3 -m cmk.werks.utils precompile .werks precompiled.json &>> ${RESULTS}/werk_commands.txt
