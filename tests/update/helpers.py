@@ -77,7 +77,7 @@ def _get_site_factory(package: CMKPackageInfo | CMKPackageInfoOld) -> SiteFactor
     )
 
 
-def create_site(base_package: CMKPackageInfoOld) -> Site:
+def create_site(base_package: CMKPackageInfoOld | CMKPackageInfo) -> Site:
     site_name = "central"
     site_factory = _get_site_factory(base_package)
     site = site_factory.get_existing_site(site_name)
@@ -320,11 +320,6 @@ class BaseVersions:
                 ]
 
         return cls._base_packages
-
-    @classmethod
-    def get_first_base_package(cls) -> CMKPackageInfoOld:
-        """Get the first base package used for the test."""
-        return cls.get_base_packages()[0]
 
     @classmethod
     def get_latest_base_package(cls) -> CMKPackageInfoOld:
