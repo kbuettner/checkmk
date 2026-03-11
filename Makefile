@@ -86,8 +86,8 @@ dist: $(SOURCE_BUILT_AGENTS) $(SOURCE_BUILT_AGENT_UPDATER)
 
 announcement:
 	mkdir -p $(CHECK_MK_ANNOUNCE_FOLDER)
-	PYTHONPATH=${PYTHONPATH}:$(REPO_PATH) $(UVENV) python -m cmk.utils.werks announce .werks $(VERSION) --format=md > $(CHECK_MK_ANNOUNCE_MD)
-	PYTHONPATH=${PYTHONPATH}:$(REPO_PATH) $(UVENV) python -m cmk.utils.werks announce .werks $(VERSION) --format=txt > $(CHECK_MK_ANNOUNCE_TXT)
+	bazel run //cmk/utils:werks_bin -- announce "$$(pwd)/.werks" $(VERSION) --format=md > $(CHECK_MK_ANNOUNCE_MD)
+	bazel run //cmk/utils:werks_bin -- announce "$$(pwd)/.werks" $(VERSION) --format=txt > $(CHECK_MK_ANNOUNCE_TXT)
 	tar -czf $(CHECK_MK_ANNOUNCE_TAR) -C $(CHECK_MK_ANNOUNCE_FOLDER) .
 
 packages:
