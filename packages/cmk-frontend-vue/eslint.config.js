@@ -137,6 +137,23 @@ export default [
   },
 
   {
+    files: ['src/**/*'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@ucl', '@ucl/*'],
+              message: 'Production code must not import from the UI Component Library (@ucl).'
+            }
+          ]
+        }
+      ]
+    }
+  },
+
+  {
     files: ['ui-component-library/**/*'],
     rules: {
       'vue/no-bare-strings-in-template': 'off'

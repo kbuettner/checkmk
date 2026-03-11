@@ -1,6 +1,13 @@
 {
   "extends": "./tsconfig.app.json",
-  "include": ["env.d.ts", "weaki18nString.d.ts", "src/**/*", "tests/**/*.ts", "tests/**/*.vue"],
+  "include": [
+    "env.d.ts",
+    "weaki18nString.d.ts",
+    "src/**/*",
+    "tests/**/*.ts",
+    "tests/**/*.vue",
+    "ui-component-library/**/*"
+  ],
   "exclude": ["src/lib/i18nString.ts"],
   "compilerOptions": {
     "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
