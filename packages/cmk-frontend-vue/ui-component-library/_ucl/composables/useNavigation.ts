@@ -6,7 +6,7 @@
 import { roots } from '@ucl/components/'
 import { type Component, type Ref, ref } from 'vue'
 
-import { type Folder, Page } from '../types/page'
+import { type Folder, Page, toSlug } from '../types/page'
 
 export interface NavPage {
   type: 'page'
@@ -28,7 +28,7 @@ export type NavItem = NavPage | NavFolder
 function buildNavTree(items: Array<Page | Folder>, parentPath: string): Array<NavItem> {
   return items
     .map((item): NavItem => {
-      const itemPath = `${parentPath}/${encodeURIComponent(item.name)}`
+      const itemPath = `${parentPath}/${toSlug(item.name)}`
       if (item instanceof Page) {
         return {
           type: 'page' as const,
@@ -58,8 +58,7 @@ export function useNavigation() {
 
     for (const segment of segments) {
       const folder = items.find(
-        (item): item is NavFolder =>
-          item.type === 'folder' && item.name === decodeURIComponent(segment)
+        (item): item is NavFolder => item.type === 'folder' && toSlug(item.name) === segment
       )
       if (folder) {
         folder.isOpen.value = true

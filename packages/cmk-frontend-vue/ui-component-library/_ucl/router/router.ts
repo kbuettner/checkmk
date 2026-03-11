@@ -7,7 +7,7 @@ import { roots } from '@ucl/components/'
 import { type RouteLocation, type RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 
 import { useNavigation } from '../composables/useNavigation'
-import { type Folder, Page } from '../types/page'
+import { type Folder, Page, toSlug } from '../types/page'
 import UclEmpty from '../views/UclEmpty.vue'
 import UclHome from '../views/UclHome.vue'
 
@@ -21,7 +21,7 @@ function buildRoutes(items: Array<Page | Folder>, parentPath: string): Array<Rou
   const routes: Array<RouteRecordRaw> = []
 
   for (const item of items) {
-    const itemPath = `${parentPath}/${encodeURIComponent(item.name)}`
+    const itemPath = `${parentPath}/${toSlug(item.name)}`
     if (item instanceof Page) {
       routes.push({
         path: itemPath,

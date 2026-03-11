@@ -5,6 +5,16 @@
  */
 import type { Component } from 'vue'
 
+export function toSlug(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
 export class Page {
   name: string
   component: Component<{ screenshotMode: boolean }>
