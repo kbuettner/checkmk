@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+# SMS (using smstools)
+
+# Copyright (C) 2019 Checkmk GmbH - License: GNU General Public License v2
+# This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
+# conditions defined in the file COPYING, which is part of this source code package.
+
+# Notification via sms using the sms tools
+# Note: You have to add the site user to the sendsms group
+# and restart the site
+
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+from cmk.notification_plugins.utils import collect_context, get_sms_message_from_context
+
+
+def quote_message(msg: str, max_length: int | None = None) -> str:
+    if max_length:
+        return "'" + msg.replace("'", "'\"'\"'")[: max_length - 2] + "'"
+    return "'" + msg.replace("'", "'\"'\"'") + "'"
+
+
+if __name__ == "__main__":
+    send_path = shutil.which("smssend") or shutil.which("sendsms")
+    smsd_user = "smsd"
+    spool_dir_ = "/var/spool/sms/outgoing"
+    spool_dir = spool_dir_ if os.path.exists(spool_dir_) else None
+
+    if not send_path and not spool_dir:
+        sys.stderr.write(
+            "Error: SMS Tools binaries (sendsms or smssend) not found and spool dir does not exists.\n"
+        )
+        sys.exit(2)  # Fatal error, no retry
+
+    recipient = os.environ["NOTIFY_CONTACTPAGER"].replace(" ", "")
+
+    if not recipient:
+        contactname = os.environ["NOTIFY_CONTACTNAME"]
+        sys.stderr.write("Error: Pager Number of %s not set\n" % contactname)
+        sys.exit(2)  # Fatal error, no retry
+
+    if not re.match(r"^\+?[\/\-\(\)\.\d\w]*$", recipient):
+        contactname = os.environ["NOTIFY_CONTACTNAME"]
+        sys.stderr.write("Error: Pager Number of %s is not a valid pager address\n" % contactname)
+        sys.exit(2)  # Fatal error, no retry
+
+    raw_context = collect_context()
+    message = get_sms_message_from_context(raw_context)
+
+    if send_path:
+        try:
+            subprocess.run([send_path, recipient, quote_message(message, 160)], check=True)
+        except subprocess.SubprocessError:
+            sys.exit(1)
+    elif spool_dir:
+        # On some distros, like debian, smstools does not ship with the sendsms/smssend helper
+        # script. On this distro, simply drop the SMS in the outgoing spool directory.
+        fd, path = tempfile.mkstemp(prefix="cmk_sms_")
+        os.write(
+            fd,
+            b"To: %s\n\n%s" % (recipient.encode("utf-8"), quote_message(message).encode("utf-8")),
+        )
+        os.close(fd)
+        os.chmod(path, 0o660)  # nosec B103 # BNS:ce45cd
+        filename = path.split("/")[-1]
+        shutil.move(path, spool_dir + "/" + filename)

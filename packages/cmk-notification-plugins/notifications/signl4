@@ -1,9 +1,0 @@
-#!/usr/bin/env python3
-# SIGNL4 Alerting
-
-import sys
-
-from cmk.notification_plugins.signl4 import main
-
-if __name__ == "__main__":
-    sys.exit(main())

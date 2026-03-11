@@ -29,6 +29,14 @@ ENTERPRISE_HEADER_ALERT_HANDLERS = re.compile(
 {ENTERPRISE}"""
 )
 
+ENTERPRISE_HEADER_NOTIFICATION = re.compile(
+    rf"""#!/usr/bin/env python3
+# .+(\n# Bulk: (yes|no))?
+
+{ENTERPRISE}
+"""
+)
+
 
 OMD_HEADER = re.compile(rf"#!/omd/versions/###OMD_VERSION###/bin/python3\n{GPL}")
 
@@ -74,6 +82,17 @@ enterprise_names = [
 ]
 
 
+notification_dirs = [
+    "notifications/",
+    "packages/cmk-notification-plugins/notifications/",
+    "non-free/packages/cmk-notification-plugins-nonfree/notifications/",
+]
+
+
+def is_notification_file(path: str) -> bool:
+    return any(path.startswith(d) for d in notification_dirs)
+
+
 def needs_enterprise_license(path: str) -> bool:
     parts = path.split("/")
     if any(p for p in enterprise_names if p in parts):
@@ -95,6 +114,9 @@ def check_for_license_header_violation(file_path: str) -> str | None:
     elif file_path.startswith("omd/non-free/packages/alert-handling/alert_handlers/"):
         if not ENTERPRISE_HEADER_ALERT_HANDLERS.match(get_file_header(file_path, length=8)):
             return "enterprise header with alert handler not matching"
+    elif is_notification_file(file_path) and needs_enterprise_license(file_path):
+        if not ENTERPRISE_HEADER_NOTIFICATION.match(get_file_header(file_path, length=10)):
+            return "enterprise header with notification not matching"
     elif needs_enterprise_license(file_path):
         header = get_file_header(file_path, length=4)
         if not (ENTERPRISE_HEADER.match(header) or ENTERPRISE_HEADER_NO_SHEBANG.match(header)):
@@ -102,7 +124,7 @@ def check_for_license_header_violation(file_path: str) -> str | None:
     elif file_path == "omd/packages/omd/omd.bin":
         if not OMD_HEADER.match(get_file_header(file_path, length=23)):
             return "omd gpl license header not matching"
-    elif file_path.startswith("notifications/"):
+    elif is_notification_file(file_path):
         if not GPL_HEADER_NOTIFICATION.match(get_file_header(file_path, length=10)):
             return "gpl header with notification not matching"
     else:

@@ -125,12 +125,12 @@ def _fake_version_and_paths() -> None:
     notifications_tmp = Path(tempfile.mkdtemp(prefix="pytest_cmk_notif_"))
     for f in (repo_path() / "packages/cmk-notification-plugins/notifications").iterdir():
         if f.is_file():
-            (notifications_tmp / f.name).symlink_to(f)
+            (notifications_tmp / f.stem).symlink_to(f)
     nonfree_notif = repo_path() / "non-free/packages/cmk-notification-plugins-nonfree/notifications"
     if nonfree_notif.is_dir():
         for f in nonfree_notif.iterdir():
-            if f.is_file() and not (notifications_tmp / f.name).exists():
-                (notifications_tmp / f.name).symlink_to(f)
+            if f.is_file() and not (notifications_tmp / f.stem).exists():
+                (notifications_tmp / f.stem).symlink_to(f)
     monkeypatch.setattr("cmk.utils.paths.notifications_dir", notifications_tmp)
 
     monkeypatch.setattr("cmk.utils.paths.inventory_dir", repo_path() / "inventory")

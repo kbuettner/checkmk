@@ -69,16 +69,38 @@ package_wheel(
     whl = "wheel",
 )
 
+py_library(
+    name = "notification_scripts_lib",
+    srcs = glob(["notifications/*.py"]),
+    imports = ["."],
+    deps = [
+        ":cmk-notification-plugins",
+    ],
+)
+
 pkg_files(
     name = "notification_scripts",
-    srcs = glob(
-        ["notifications/*"],
-        exclude = ["notifications/README"],
-    ),
+    srcs = glob(["notifications/*.py"]) + ["notifications/mkeventd"],
     attributes = pkg_attributes(
         mode = "0755",
     ),
     prefix = "share/check_mk/notifications",
+    renames = {
+        "notifications/asciimail.py": "asciimail",
+        "notifications/cisco_webex_teams.py": "cisco_webex_teams",
+        "notifications/ilert.py": "ilert",
+        "notifications/mail.py": "mail",
+        "notifications/msteams.py": "msteams",
+        "notifications/opsgenie_issues.py": "opsgenie_issues",
+        "notifications/pagerduty.py": "pagerduty",
+        "notifications/pushover.py": "pushover",
+        "notifications/signl4.py": "signl4",
+        "notifications/slack.py": "slack",
+        "notifications/sms.py": "sms",
+        "notifications/sms_api.py": "sms_api",
+        "notifications/spectrum.py": "spectrum",
+        "notifications/victorops.py": "victorops",
+    },
 )
 
 pkg_files(
