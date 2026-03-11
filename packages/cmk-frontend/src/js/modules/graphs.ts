@@ -28,18 +28,7 @@ type TimeRange = [number, number]
 export type TimeSeriesValue = number | null
 type SizePT = number
 
-interface GraphTitleFormat {
-  plain: boolean
-  add_host_name: boolean
-  add_host_alias: boolean
-  add_service_description: boolean
-}
-
 interface GraphRenderConfig {
-  border_width: number
-  color_gradient: number
-  editing: boolean
-  explicit_title: string | null
   fixed_timerange: boolean
   font_size: SizePT
   foreground_color: string
@@ -48,32 +37,20 @@ interface GraphRenderConfig {
   preview: boolean
   resizable: boolean
   show_controls: boolean
-  show_graph_time: boolean
-  show_legend: boolean
-  show_margin: boolean
   show_pin: boolean
   show_time_axis: boolean
   show_time_range_previews: boolean
-  show_title: boolean | 'inline'
   show_vertical_axis: boolean
-  size: [number, number]
-  title_format: GraphTitleFormat
   vertical_axis_width: 'fixed' | ['explicit', SizePT]
 }
 
-interface _GraphDataRangeMandatory {
+interface GraphDataRange {
   time_range: TimeRange
-  step: Seconds | string
-}
-
-interface GraphDataRange extends _GraphDataRangeMandatory {
-  vertical_range: [number, number]
 }
 
 interface AjaxContext {
   graph_id: string
   graph_recipe: GraphRecipe
-  data_range: GraphDataRange
   render_config: GraphRenderConfig
   display_id: string
 }
@@ -90,7 +67,6 @@ export interface AjaxGraph {
 interface LayoutedCurveArea {
   line_type: 'area' | '-area'
   points: [TimeSeriesValue, TimeSeriesValue][]
-  attributes: Record<string, string>
   //dynamic
   title?: string
   color: string
@@ -99,7 +75,6 @@ interface LayoutedCurveArea {
 interface LayoutedCurveStack {
   line_type: 'stack' | '-stack'
   points: [TimeSeriesValue, TimeSeriesValue][]
-  attributes: Record<string, string>
   //dynamic
   title?: string
   color: string
@@ -108,7 +83,6 @@ interface LayoutedCurveStack {
 interface LayoutedCurveLine {
   line_type: 'line' | '-line'
   points: TimeSeriesValue[]
-  attributes: Record<string, string>
   //dynamic
   title?: string
   color: string
@@ -125,7 +99,6 @@ interface TimeAxisLabel {
 interface TimeAxis {
   labels: TimeAxisLabel[]
   range: TimeRange
-  title: string
   //dynamic
   pixels_per_second: number
 }
@@ -140,29 +113,13 @@ interface VerticalAxisLabel {
 
 interface VerticalAxis {
   range: [number, number]
-  axis_label: string | null
   labels: VerticalAxisLabel[]
-  max_label_length: number
   //dynamic
   pixels_per_unit: number
-  pixels_per_second: number
-}
-
-interface FixedVerticalRange {
-  type: 'fixed'
-  min: number | null
-  max: number | null
-}
-
-interface MinimalVerticalRange {
-  type: 'minimal'
-  min: number | null
-  max: number | null
 }
 
 export interface HorizontalRule {
   value: number
-  rendered_value: string
   color: string
   title: string
 }
@@ -175,11 +132,6 @@ export interface GraphArtwork {
   render_config: GraphRenderConfig
   time_origin?: number
   vertical_origin?: number
-  // Labelling, size, layout
-  title: string | null
-  width: number
-  height: number
-  mirrored: boolean
   // Actual data and axes
   curves: LayoutedCurve[]
   horizontal_rules: HorizontalRule[]
@@ -190,11 +142,9 @@ export interface GraphArtwork {
   start_time: Timestamp
   end_time: Timestamp
   step: Seconds
-  explicit_vertical_range: FixedVerticalRange | MinimalVerticalRange | null
   requested_vrange: [number, number] | null
   requested_start_time: Timestamp
   requested_end_time: Timestamp
-  requested_step: string | Seconds
   pin_time: Timestamp | null
 }
 

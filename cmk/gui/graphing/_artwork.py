@@ -98,7 +98,6 @@ class VerticalAxis(TypedDict):
     range: tuple[float, float]
     axis_label: str | None
     labels: Sequence[VerticalAxisLabel]
-    max_label_length: int
 
 
 class TimeAxis(TypedDict):
@@ -116,9 +115,6 @@ class CurveValue(TypedDict):
 class GraphArtwork(BaseModel):
     # Labelling, size, layout
     title: str
-    width: float
-    height: float
-    mirrored: bool
     # Actual data and axes
     curves: list[LayoutedCurve]
     horizontal_rules: Sequence[HorizontalRule]
@@ -129,11 +125,9 @@ class GraphArtwork(BaseModel):
     start_time: int
     end_time: int
     step: Seconds
-    explicit_vertical_range: FixedVerticalRange | MinimalVerticalRange | None
     requested_vrange: tuple[float, float] | None
     requested_start_time: int
     requested_end_time: int
-    requested_step: str | Seconds
     pin_time: int | None
 
 
@@ -203,9 +197,6 @@ def compute_graph_artwork(
         GraphArtwork(
             # Labelling, size, layout
             title=graph_recipe.title,
-            width=(width := size[0]),  # in widths of lower case 'x'
-            height=(height := size[1]),
-            mirrored=mirrored,
             # Actual data and axes
             curves=layouted_curves,
             horizontal_rules=graph_recipe.horizontal_rules,
@@ -223,11 +214,9 @@ def compute_graph_artwork(
             start_time=int(start_time),
             end_time=int(end_time),
             step=int(step),
-            explicit_vertical_range=graph_recipe.explicit_vertical_range,
             requested_vrange=graph_data_range.vertical_range,
             requested_start_time=graph_data_range.time_range[0],
             requested_end_time=graph_data_range.time_range[1],
-            requested_step=graph_data_range.step,
             pin_time=pin_time,
         ),
         errors,
@@ -725,9 +714,6 @@ def _compute_graph_v_axis(
         range=label_range,
         axis_label=None,
         labels=rendered_labels,
-        max_label_length=(
-            max(len(label.text) for label in rendered_labels) if rendered_labels else 0
-        ),
     )
 
 
@@ -831,28 +817,6 @@ def _compute_v_axis_min_max(
             max_value += 0.5 * distance_per_ex
 
     return min_value, max_value
-
-
-def render_labels(
-    label_specs: Iterable[tuple[float, str, int]],
-) -> tuple[list[VerticalAxisLabel], int]:
-    max_label_length = 0
-    rendered_labels: list[VerticalAxisLabel] = []
-
-    for pos, text, line_width in label_specs:
-        # Generally remove useless zeroes in fixed point numbers.
-        # This is a bit hacky. Got no idea how to make this better...
-        text = _remove_useless_zeroes(text)
-        max_label_length = max(max_label_length, len(text))
-        rendered_labels.append(
-            VerticalAxisLabel(
-                position=pos,
-                text=text,
-                line_width=line_width,
-            )
-        )
-
-    return rendered_labels, max_label_length
 
 
 def _remove_useless_zeroes(label: str) -> str:

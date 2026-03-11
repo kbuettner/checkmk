@@ -55,19 +55,9 @@ type TimeRange = [number, number]
 
 type Seconds = number
 
-interface GraphDataRangeMandatory {
-  time_range: TimeRange
-  step: Seconds | string
-}
-
-interface GraphDataRange extends GraphDataRangeMandatory {
-  vertical_range: [number, number]
-}
-
 interface AjaxContext {
   graph_id: string
   graph_recipe: GraphRecipe
-  data_range: GraphDataRange
   render_config: GraphRenderConfig
   display_id: string
 }
@@ -102,7 +92,6 @@ type LayoutedCurve = LayoutedCurveLine | LayoutedCurveArea | LayoutedCurveStack
 
 interface HorizontalRule {
   value: number
-  rendered_value: string
   color: string
   title: string
 }
@@ -115,12 +104,9 @@ interface VerticalAxisLabel {
 
 interface VerticalAxis {
   range: [number, number]
-  axis_label: string | null
   labels: VerticalAxisLabel[]
-  max_label_length: null
   //dynamic
   pixels_per_unit: number
-  pixels_per_second: number
 }
 
 interface TimeAxisLabel {
@@ -132,24 +118,9 @@ interface TimeAxisLabel {
 interface TimeAxis {
   labels: TimeAxisLabel[]
   range: TimeRange
-  title: string
-  //dynamic
-  pixels_per_second: number
 }
 
 type Timestamp = number
-
-interface FixedVerticalRange {
-  type: 'fixed'
-  min: number | null
-  max: number | null
-}
-
-interface MinimalVerticalRange {
-  type: 'minimal'
-  min: number | null
-  max: number | null
-}
 
 //this type is from cmk/gui/plugins/metrics/artwork.py:82
 interface GraphArtwork {
@@ -159,11 +130,6 @@ interface GraphArtwork {
   render_config: GraphRenderConfig
   time_origin?: number
   vertical_origin?: number
-  // Labelling, size, layout
-  title: string | null
-  width: number
-  height: number
-  mirrored: boolean
   // Actual data and axes
   curves: LayoutedCurve[]
   horizontal_rules: HorizontalRule[]
@@ -174,11 +140,9 @@ interface GraphArtwork {
   start_time: Timestamp
   end_time: Timestamp
   step: Seconds
-  explicit_vertical_range: FixedVerticalRange | MinimalVerticalRange | null
   requested_vrange: [number, number] | null
   requested_start_time: Timestamp
   requested_end_time: Timestamp
-  requested_step: string | Seconds
   pin_time: Timestamp | null
 }
 
