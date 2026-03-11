@@ -48,7 +48,7 @@ def _formspec_discovery_oracle_performance() -> Dictionary:
                 parameter_form=FixedValue(
                     value=True,
                     title=Title("Create separate service for DB time"),
-                    label=Label("Extracts DB time performance data into a separate service"),
+                    label=Label("Extracts DB time metrics into a separate service"),
                 ),
             ),
             "memory": DictElement(
@@ -57,7 +57,7 @@ def _formspec_discovery_oracle_performance() -> Dictionary:
                     value=True,
                     title=Title("Create separate service for memory information"),
                     label=Label(
-                        "Extracts SGA performance data into a separate service and additionally displays PGA performance data"
+                        "Extracts SGA metrics into a separate service and additionally displays PGA metrics"
                     ),
                 ),
             ),

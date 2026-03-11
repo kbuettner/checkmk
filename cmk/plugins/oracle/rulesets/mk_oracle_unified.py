@@ -176,9 +176,9 @@ def _auth_options(is_default_options: bool = True) -> Dictionary:
                     elements=[
                         CascadingSingleChoiceElement(
                             name="standard",
-                            title=Title("User & Password"),
+                            title=Title("User & password"),
                             parameter_form=Dictionary(
-                                title=Title("Username and Password"),
+                                title=Title("Username and password"),
                                 elements={
                                     "username": DictElement(
                                         parameter_form=String(
@@ -211,7 +211,7 @@ def _auth_options(is_default_options: bool = True) -> Dictionary:
                                     "without storing passwords in plain text. "
                                     "If 'Path to tnsnames.ora or sqlnet.ora file' (TNS_ADMIN) is not set, "
                                     "the wallet must be located in $MK_CONFDIR/oracle_wallet. "
-                                    "In this case, the plugin will automatically create a sqlnet.ora file "
+                                    "In this case, the plug-in will automatically create a sqlnet.ora file "
                                     "if it does not exist. "
                                     "If TNS_ADMIN is set to a custom path, you must ensure that sqlnet.ora "
                                     "(with the correct wallet location) and the Oracle Wallet files "
@@ -233,15 +233,16 @@ def _auth_options(is_default_options: bool = True) -> Dictionary:
 
 def _oracle_id() -> Dictionary:
     return Dictionary(
-        title=Title("Oracle Database Identification"),
+        title=Title("Oracle database identification"),
         elements={
             "service_name": DictElement(
                 parameter_form=String(
                     title=Title("Service Name"),
                     help_text=Help(
-                        "The Oracle service name used to connect to the database. "
-                        "A service name typically represents a database and can map to "
-                        "one or more instances in a RAC environment."
+                        "The Oracle service name used to connect to the "
+                        "database. A service name typically represents a "
+                        "database and can map to one or more instances in "
+                        "a RAC environment."
                     ),
                 ),
                 required=False,
@@ -292,7 +293,7 @@ def _connection_options() -> Dictionary:
     base: dict[str, DictElement[str] | DictElement[int]] = {
         "host": DictElement(
             parameter_form=String(
-                title=Title("Hostname"),
+                title=Title("Host name"),
                 prefill=DefaultValue("localhost"),
             ),
             required=False,
@@ -315,11 +316,12 @@ def _connection_options() -> Dictionary:
             parameter_form=String(
                 title=Title("TNS_ADMIN directory path"),
                 help_text=Help(
-                    "Sets the TNS_ADMIN environment variable for the Oracle plugin. "
-                    "This directory should contain Oracle network configuration files "
-                    "such as tnsnames.ora, sqlnet.ora, or wallet files. "
-                    "The plugin must have read access to all files in this directory. "
-                    "If not specified, the default plugin's config directory will be used."
+                    "Sets the TNS_ADMIN environment variable for the Oracle "
+                    "plug-in. This directory should contain Oracle network "
+                    "configuration files such as tnsnames.ora, sqlnet.ora, "
+                    "or wallet files. The plug-in must have read access to "
+                    "all files in this directory. If not specified, the "
+                    "default plug-in's config directory will be used."
                 ),
                 custom_validate=(
                     validators.MatchRegex("^/.*", Message("Please enter an absolute path.")),
