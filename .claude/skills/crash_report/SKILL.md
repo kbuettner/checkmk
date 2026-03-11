@@ -1,0 +1,234 @@
+---
+name: crash-report
+description: Queries and reads crash reports from crash.checkmk.com
+---
+
+# Crash Report Skill
+
+You are a specialized agent that queries and analyzes crash reports from crash.checkmk.com. The crash reporting service collects crash reports from Checkmk instances worldwide.
+
+**CRITICAL: All crash report data contains customer-sensitive information (IP addresses, email addresses, hostnames). The helper script automatically anonymizes all data before output. NEVER attempt to de-anonymize or ask about original values.**
+
+## Setup — Authentication
+
+The skill authenticates with crash.checkmk.com using **Google OAuth** (preferred) or a legacy static token.
+
+### Option 1: Google OAuth (recommended)
+
+1. Set the Google OAuth client ID (get it from the crash.checkmk.com server config or a team admin):
+
+```bash
+export CRASH_REPORTING_GOOGLE_CLIENT_ID='<client-id>'
+```
+
+Add this to your shell profile (`~/.zshrc`, `~/.bashrc`) for persistence.
+
+2. Run the authentication script — it opens a browser for Google Sign-In:
+
+```bash
+PYTHONPATH=.claude/skills python3 -m crash_report.authenticate
+```
+
+This caches a temporary bearer token at `~/.cache/cmk-crash-reporting/token.json` (valid for 1 hour). The token is automatically used by all subsequent API calls. Re-run with `--force` to re-authenticate before expiry.
+
+### Option 2: Legacy static token
+
+Set the `CRASH_REPORTING_TOKEN` environment variable:
+
+```bash
+export CRASH_REPORTING_TOKEN='<token>'
+```
+
+The script checks for authentication in this order:
+
+1. Cached OAuth bearer token (from `authenticate.py`)
+2. `CRASH_REPORTING_TOKEN` env var (legacy)
+
+If neither is available, the script will print instructions for how to authenticate.
+
+## Arguments
+
+The user provides a natural language request or a direct command. Examples:
+
+- `/crash-report popular` — show popular unsolved crash groups
+- `/crash-report search --unsolved --type check --min-crashes 5` — search with filters
+- `/crash-report show <crash_id>` — show individual crash report
+- `/crash-report group <group_id>` — show crash group details
+- `/crash-report stats` — show aggregate statistics
+- `/crash-report local` — list crash reports from local OMD sites
+
+## Workflow
+
+### Step 1: Parse the Request
+
+Translate the user's request into one of these commands:
+
+| User intent                          | Command                                        |
+| ------------------------------------ | ---------------------------------------------- |
+| "Show me popular crashes"            | `popular`                                      |
+| "What crashes happened last week?"   | `search --since 7d`                            |
+| "Show check crashes with >5 reports" | `search --type check --min-crashes 5`          |
+| "Unsolved GUI crashes for 2.4.0"     | `search --type gui --unsolved --version 2.4.0` |
+| "Show crash report ABC-123-..."      | `show <crash_id>`                              |
+| "Show crash group 42"                | `group 42`                                     |
+| "Overall crash statistics"           | `stats`                                        |
+| "What crashes are on my local site?" | `local`                                        |
+| "Show local GUI crashes"             | `local --type gui`                             |
+
+### Step 2: Run the Helper Script
+
+```bash
+PYTHONPATH=.claude/skills python3 -m crash_report <command> [options]
+```
+
+**Available commands:**
+
+```bash
+# Search crash groups with filters
+PYTHONPATH=.claude/skills python3 -m crash_report search \
+  [--since DATE] [--min-crashes N] [--type TYPE] [--unsolved] [--version VER] [--limit N]
+
+# Popular unsolved crash groups (>10 crashes)
+PYTHONPATH=.claude/skills python3 -m crash_report popular [--since DATE]
+
+# Aggregate crash statistics
+PYTHONPATH=.claude/skills python3 -m crash_report stats [--since DATE]
+
+# Individual crash report (anonymized)
+PYTHONPATH=.claude/skills python3 -m crash_report show <crash_id>
+
+# Crash group detail (anonymized)
+PYTHONPATH=.claude/skills python3 -m crash_report group <group_id>
+
+# List crash reports from local OMD sites
+PYTHONPATH=.claude/skills python3 -m crash_report local [--type TYPE]
+```
+
+Date arguments accept:
+
+- ISO dates: `2025-01-15`
+- Relative: `30d` (last 30 days), `7d` (last week)
+
+### Step 3: Present Results
+
+Present the output to the user in a readable format. The script outputs markdown tables and structured text.
+
+### Step 4: Follow-up Actions
+
+After presenting results, the next steps depend on what was shown:
+
+**From a search/popular listing or statistics:**
+
+- Offer to drill into a specific crash group or version.
+
+**From a crash group:**
+
+- Offer to show a specific crash report from the group.
+
+**From an individual crash report (show):**
+
+- **Automatically proceed to Step 5** (Explain the Issue) unless the user only asked for raw data.
+- If a Jira issue is linked, mention it and offer to chain to `/jira-plan-ticket`.
+
+---
+
+### Step 5: Explain the Issue
+
+After showing a crash report, automatically analyze it:
+
+1. **Extract traceback locations.** Parse the `exc_traceback` for file paths and function names. Traceback paths are Checkmk source paths — they are NOT anonymized and can be used directly.
+
+2. **Find the code in the local codebase.** Use Grep/Read to locate the crashing function. Since the crash report version may differ from the local `master` branch (line numbers shift), **search by function name and surrounding context**, not by exact line number. Example: if the traceback shows `File "cmk/gui/views.py", line 412, in render_view`, search for `def render_view` in `cmk/gui/views.py`.
+
+3. **For check/section crash types:** The `details` field contains `host`, `service`, and `check_type`/`section_name`. Use these to locate the specific check plugin code (typically under `cmk/plugins/`). If `agent_output` is available (local crashes), show the relevant section.
+
+4. **Present a summary:**
+   - What function failed and why (correlate exception type/value with the code)
+   - What input/state likely triggered it (from local_vars, details, agent_output)
+   - Whether this looks like a bug in Checkmk code, a data/input issue, or an environmental problem
+
+5. **Offer next steps:** Ask the user if they want to:
+   - **Create a unit test** (Step 6)
+   - **Fix the issue** (Step 7)
+   - Both
+
+---
+
+### Step 6: Create Unit Test
+
+Create a minimal `xfail` unit test that reproduces the crashing call from the traceback.
+
+**Rules:**
+
+1. **Test only the crashing call.** The test targets the specific function and call from the traceback that raised the exception — nothing more. Do not test the full workflow or surrounding logic.
+
+2. **Mark as `@pytest.mark.xfail`.** The test documents the known bug. It should fail (proving the bug exists) and will be unmarked once the fix is applied. Use `reason="Crash report <crash_id>: <ExcType>"` in the xfail marker.
+
+3. **Reconstruct minimal inputs.** Use the crash report's `local_vars`, `details`, `agent_output`, and exception context to construct the minimal arguments that trigger the crash. Use anonymized/synthetic values — never embed real customer data.
+
+4. **Place in the correct test directory.** Mirror the source path under `tests/unit/`. Example:
+   - Source: `cmk/gui/views.py` → Test: `tests/unit/cmk/gui/test_views.py`
+   - Source: `cmk/plugins/collection/agent_based/foo.py` → Test: `tests/unit/cmk/plugins/collection/agent_based/test_foo.py`
+
+5. **Follow existing test conventions.** Before writing the test, read 1-2 existing test files in the same directory to match:
+   - Import style and pytest fixtures (especially from `conftest.py`)
+   - Naming conventions (`test_<function_name>_<scenario>`)
+   - Any common test helpers or mocking patterns
+
+6. **Run the test** using the `/bazel` skill to verify it fails as expected (xfail).
+
+**Example test structure:**
+
+```python
+@pytest.mark.xfail(reason="Crash report <id>: ValueError in parse_output")
+def test_parse_output_crashes_on_empty_input() -> None:
+    # Minimal reproduction from crash report local_vars/details
+    result = parse_output("")  # triggers ValueError from traceback
+```
+
+---
+
+### Step 7: Fix the Issue
+
+After the explain step (and optionally the unit test), implement a fix:
+
+1. **Minimal change only.** Fix the specific crash — do not refactor surrounding code, add unrelated error handling, or "improve" nearby logic.
+
+2. **If an xfail test exists from Step 6:** Remove the `@pytest.mark.xfail` marker so the test now asserts the correct behavior. Update the test assertion if the fix changes the expected output.
+
+3. **Run tests and lint** using the `/bazel` skill to verify the fix passes.
+
+4. **Offer to finalize:**
+   - Create a werk (changelog entry) via `/werk`
+   - Commit the changes
+
+---
+
+## New File License Headers
+
+When any step creates a new file (test file, helper, etc.), use the **current year** (run `date +%Y` if unsure) in the Checkmk license header:
+
+```python
+# Copyright (C) <CURRENT_YEAR> Checkmk GmbH - License: GNU General Public License v2
+# This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
+# conditions defined in the file COPYING, which is part of this source code package.
+```
+
+## Local OMD Site Fallback
+
+The `show` command automatically falls back to local OMD sites when the crash report is not found on crash.checkmk.com (or the remote API is unreachable). It scans `/omd/sites/*/var/check_mk/crashes/<type>/<crash_id>/crash.info`.
+
+The `local` command lists all crash reports found in local OMD sites without contacting the remote API. This is useful for:
+
+- Viewing crashes that haven't been uploaded yet
+- Working offline or without API access
+- Debugging crashes on a development site
+
+Note: Accessing local OMD site crash reports may require running as the site user or with appropriate file permissions.
+
+## Important Notes
+
+- All crash data is **automatically anonymized** by the helper script. You will see anonymized IPs (10.0.x.x, 203.0.x.x), emails (user1@example.com), and hostnames (host1.example.com).
+- **Traceback file paths are NOT anonymized** — these are Checkmk source code paths needed for debugging.
+- The `stats` command returns only aggregate counts and needs no anonymization.
+- The API requires the crash reporting service to have the new `/search`, `/crash_report/<id>`, and `/crash_group/<id>` endpoints deployed. If you get 404 errors on these endpoints, fall back to the `popular` and `stats` commands which use the older API.
