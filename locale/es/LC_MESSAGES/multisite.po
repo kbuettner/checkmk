@@ -1805,6 +1805,19 @@ msgstr ""
 "manera.</p>"
 
 msgid ""
+"<p>Select how piggyback hosts are named for your containers. You can choose "
+"from:</p><ul><li><tt>Use container name: mycontainername</tt></"
+"li><li><tt>Combine the host name and container name (default): creates names "
+"in the format 'mypodmanhost_mycontainername'. If the host name is "
+"unavailable, the container user's name is used. This is recommended to "
+"prevent naming conflicts, e.g. if multiple containers with the name "
+"'mycontainer' exist on different Podman hosts.</tt></li><li><tt>Combine "
+"container name and ID: 'mycontainername_containerID'. Please note that in "
+"some cases the container IDs can change. Therefore this option can cause "
+"piggyback host names to change.</tt></li></ul>"
+msgstr ""
+
+msgid ""
 "<p>The Apache has a number of maximum processes it may start in case of high "
 "load situations. These Apache processes may use a decent amount of memory, "
 "so you need to configure them in a way that your system can handle them "
@@ -7022,15 +7035,6 @@ msgstr ""
 "Se ha producido un error interno al procesar su solicitud. Puede informar de "
 "este problema al equipo de Checkmk para que le ayuden a solucionarlo. "
 "Utilice el siguiente formulario para informar."
-
-msgid ""
-"An internal error occurred while processing your request. You can report "
-"this issue to your Checkmk administrator. Detailed information can be found "
-"on the crash report page or in <tt>var/log/web.log</tt>."
-msgstr ""
-"Se ha producido un error interno al procesar su solicitud. Puede informar de "
-"este problema a su administrador de Checkmk. Puede encontrar información "
-"detallada en la página de informes de fallos o en <tt>var/log/web.log</tt>."
 
 #, fuzzy
 msgid "An ntopng user who belongs to the group 'Administrator' in ntopng."
@@ -14338,11 +14342,6 @@ msgstr ""
 "contenedor, así como a los elementos de los servicios creados en el nodo "
 "para cada contenedor."
 
-msgid ""
-"Choose which identifier is used for the piggybacked host name of monitored "
-"containers."
-msgstr ""
-
 #, fuzzy
 msgid ""
 "Choose, whether you want to use the parent host information for the NetBIOS "
@@ -15127,6 +15126,14 @@ msgstr "Columnas a juego"
 
 msgid "Com. buf. max/total"
 msgstr "Com. buf. máx/total"
+
+#, fuzzy
+msgid "Combine the container name and container ID"
+msgstr "Nombre - Utilice el nombre del contenedor"
+
+#, fuzzy
+msgid "Combine the host name and the container name"
+msgstr "Nombre - Utilice el nombre del contenedor"
 
 #, fuzzy
 msgid "Combine the nodename and the name of the container"
@@ -24246,7 +24253,7 @@ msgstr "Envíe un correo electrónico a"
 msgid ""
 "Emails are sent via the Microsoft Graph API. The endpoint "
 "(graph.microsoft.com) will appear as the sending host in the message headers "
-"of forwarded emails."
+"of forwarded emails by default."
 msgstr ""
 
 #, fuzzy
@@ -24667,7 +24674,7 @@ msgstr ""
 msgid ""
 "Enabling this option excludes VMs from the host name computation and lets VM "
 "piggyback hosts keep their original Azure name. This is needed when using "
-"Automated host creation in order to monitor VMs by installing the agent, "
+"automated host creation in order to monitor VMs by installing the agent, "
 "performing TLS registration on the agent, or wanting to ping VMs by their "
 "DNS name."
 msgstr ""
@@ -46196,10 +46203,6 @@ msgstr ""
 msgid "Name"
 msgstr "Nombre"
 
-#, fuzzy
-msgid "Name + ID - Use the name of the container plus the container ID"
-msgstr "Nombre - Utilice el nombre del contenedor"
-
 msgid "Name - Use the name of the container"
 msgstr "Nombre - Utilice el nombre del contenedor"
 
@@ -47695,12 +47698,6 @@ msgstr "Etiquetas de los nodos"
 
 msgid "Node name"
 msgstr "Nombre del nodo"
-
-msgid ""
-"Node name + Name - Combine the Podman node name and the container name. If "
-"the Podman node name cannot be determined, it will use the name of the host "
-"instead"
-msgstr ""
 
 msgid "Node name: Inventorize the nodes' name"
 msgstr "Nombre del nodo: inventar el nombre de los nodos"
@@ -72515,6 +72512,9 @@ msgstr "El parámetro \"%s\" no es un entero."
 msgid "The parameter \"topology_type\" is missing."
 msgstr "Falta el parámetro \"%s\"."
 
+msgid "The parameters that were provided to create the Diagnostics dump."
+msgstr ""
+
 #, python-format
 msgid ""
 "The parent '%s' is monitored on site '%s' while the host itself is monitored "
@@ -85802,6 +85802,10 @@ msgstr "Atributo User-ID"
 msgid "Use bold font"
 msgstr "Utilizar la fuente en negrita"
 
+#, fuzzy
+msgid "Use container name"
+msgstr "Nombre del contenedor"
+
 msgid "Use custom connection parameters"
 msgstr "Utilizar parámetros de conexión personalizados"
 
@@ -88859,6 +88863,15 @@ msgid ""
 "We are sorry, but you lack the permission for this operation. If you do not "
 "like this then please ask your administrator to provide you with the "
 "following permission: '<b>%s</b>'."
+msgstr ""
+"Lo sentimos, pero carece de permiso para esta operación. Si no le gusta, "
+"pida a su administrador que le proporcione el siguiente permiso: '<b>%s</b>'."
+
+#, fuzzy
+msgid ""
+"We are sorry, but you lack the required permissions to access or download "
+"crash reports. Please contact your administrator to request the following "
+"permission: <b>'See crash reports'</b>."
 msgstr ""
 "Lo sentimos, pero carece de permiso para esta operación. Si no le gusta, "
 "pida a su administrador que le proporcione el siguiente permiso: '<b>%s</b>'."
@@ -97666,6 +97679,13 @@ msgid "Loading content..."
 msgstr "Cargando..."
 
 #, fuzzy
+msgid "Activation of changes failed"
+msgstr "Activar los cambios terminados"
+
+msgid "Open the full activation page for more details."
+msgstr ""
+
+#, fuzzy
 msgid "Quick activation of pending changes"
 msgstr "Activar los cambios pendientes"
 
@@ -97677,13 +97697,6 @@ msgid ""
 "Changes are saved in a temporary environment first, letting you review and "
 "adjust them safely.\n"
 "             Activate changes to apply them to live monitoring."
-msgstr ""
-
-#, fuzzy
-msgid "Activation of changes failed"
-msgstr "Activar los cambios terminados"
-
-msgid "Open the full activation page for more details."
 msgstr ""
 
 #, fuzzy
@@ -99154,8 +99167,8 @@ msgid "Create a check parameter rule"
 msgstr "Mostrar parámetros de comprobación"
 
 msgid ""
-"In the ruleset view, click Add rule for current host to create a rule that "
-"applies specifically to the selected host."
+"In the ruleset view, click \"Add rule for current host\" to create a rule "
+"that applies specifically to the selected host."
 msgstr ""
 
 msgid ""
@@ -99342,6 +99355,20 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#~ msgid ""
+#~ "An internal error occurred while processing your request. You can report "
+#~ "this issue to your Checkmk administrator. Detailed information can be "
+#~ "found on the crash report page or in <tt>var/log/web.log</tt>."
+#~ msgstr ""
+#~ "Se ha producido un error interno al procesar su solicitud. Puede informar "
+#~ "de este problema a su administrador de Checkmk. Puede encontrar "
+#~ "información detallada en la página de informes de fallos o en <tt>var/log/"
+#~ "web.log</tt>."
+
+#, fuzzy
+#~ msgid "Name + ID - Use the name of the container plus the container ID"
+#~ msgstr "Nombre - Utilice el nombre del contenedor"
 
 #, fuzzy
 #~ msgid "IP address or hostname"

@@ -1766,6 +1766,19 @@ msgstr ""
 "p>"
 
 msgid ""
+"<p>Select how piggyback hosts are named for your containers. You can choose "
+"from:</p><ul><li><tt>Use container name: mycontainername</tt></"
+"li><li><tt>Combine the host name and container name (default): creates names "
+"in the format 'mypodmanhost_mycontainername'. If the host name is "
+"unavailable, the container user's name is used. This is recommended to "
+"prevent naming conflicts, e.g. if multiple containers with the name "
+"'mycontainer' exist on different Podman hosts.</tt></li><li><tt>Combine "
+"container name and ID: 'mycontainername_containerID'. Please note that in "
+"some cases the container IDs can change. Therefore this option can cause "
+"piggyback host names to change.</tt></li></ul>"
+msgstr ""
+
+msgid ""
 "<p>The Apache has a number of maximum processes it may start in case of high "
 "load situations. These Apache processes may use a decent amount of memory, "
 "so you need to configure them in a way that your system can handle them "
@@ -6577,15 +6590,6 @@ msgstr ""
 "お客様のリクエストの処理中に内部エラーが発生しました。この問題を修正するため"
 "に、Checkmkチームに報告することができます。以下のフォームを使用して報告してく"
 "ださい。"
-
-msgid ""
-"An internal error occurred while processing your request. You can report "
-"this issue to your Checkmk administrator. Detailed information can be found "
-"on the crash report page or in <tt>var/log/web.log</tt>."
-msgstr ""
-"リクエストの処理中に内部エラーが発生しました。この問題は、Checkmk管理者に報告"
-"できます。詳細情報は、クラッシュレポートページまたは<tt>var/log/web.log</tt>"
-"にあります。"
 
 msgid "An ntopng user who belongs to the group 'Administrator' in ntopng."
 msgstr "ntopngのグループ 'Administrator'に属するntopngユーザー。"
@@ -13222,12 +13226,6 @@ msgstr ""
 "スのアイテムに影響します。"
 
 msgid ""
-"Choose which identifier is used for the piggybacked host name of monitored "
-"containers."
-msgstr ""
-"監視対象コンテナのピギーバックされたホスト名に使用する識別子を選択します。"
-
-msgid ""
 "Choose, whether you want to use the parent host information for the NetBIOS "
 "server name, or if you want to specify one."
 msgstr "NetBIOSサーバー名に親ホスト情報を使用するか指定するかを選択します。"
@@ -13967,6 +13965,14 @@ msgstr "削除するカラム"
 
 msgid "Com. buf. max/total"
 msgstr "Com. Buf. 最大/合計"
+
+#, fuzzy
+msgid "Combine the container name and container ID"
+msgstr "ノード名とコンテナ名を組合せる"
+
+#, fuzzy
+msgid "Combine the host name and the container name"
+msgstr "ノード名とコンテナ名を組合せる"
 
 msgid "Combine the nodename and the name of the container"
 msgstr "ノード名とコンテナ名を組合せる"
@@ -22368,10 +22374,11 @@ msgstr "レポートを %sに電子メールで送信しました。"
 msgid "Emails"
 msgstr "Eメール"
 
+#, fuzzy
 msgid ""
 "Emails are sent via the Microsoft Graph API. The endpoint "
 "(graph.microsoft.com) will appear as the sending host in the message headers "
-"of forwarded emails."
+"of forwarded emails by default."
 msgstr ""
 "メールはMicrosoft Graph API経由で送信されます。転送メールのメッセージヘッダー"
 "には、送信元ホストとしてエンドポイント（graph.microsoft.com）が表示されます。"
@@ -22777,10 +22784,11 @@ msgstr ""
 "め、例えば1通のメールに実際の問題点をすべて列挙します。これにより、短時間に多"
 "くの（関連する）問題が発生した場合、通知の数を減らすことができます。"
 
+#, fuzzy
 msgid ""
 "Enabling this option excludes VMs from the host name computation and lets VM "
 "piggyback hosts keep their original Azure name. This is needed when using "
-"Automated host creation in order to monitor VMs by installing the agent, "
+"automated host creation in order to monitor VMs by installing the agent, "
 "performing TLS registration on the agent, or wanting to ping VMs by their "
 "DNS name."
 msgstr ""
@@ -42946,10 +42954,6 @@ msgstr ""
 msgid "Name"
 msgstr "名前"
 
-#, fuzzy
-msgid "Name + ID - Use the name of the container plus the container ID"
-msgstr "名前 - コンテナの名前を使用"
-
 msgid "Name - Use the name of the container"
 msgstr "名前 - コンテナの名前を使用"
 
@@ -44351,14 +44355,6 @@ msgstr "ノードラベル"
 
 msgid "Node name"
 msgstr "ノード名"
-
-msgid ""
-"Node name + Name - Combine the Podman node name and the container name. If "
-"the Podman node name cannot be determined, it will use the name of the host "
-"instead"
-msgstr ""
-"ノード名 + 名前 - Podmanノード名とコンテナ名を結合します。Podmanノード名が特"
-"定できない場合、代わりにホスト名を使用します"
 
 msgid "Node name: Inventorize the nodes' name"
 msgstr "ノード名:ノードの名前を発明する"
@@ -67666,6 +67662,9 @@ msgstr "パラメータ \"%s\" は整数ではありません。"
 msgid "The parameter \"topology_type\" is missing."
 msgstr "パラメータ \"%s\" がありません。"
 
+msgid "The parameters that were provided to create the Diagnostics dump."
+msgstr ""
+
 #, python-format
 msgid ""
 "The parent '%s' is monitored on site '%s' while the host itself is monitored "
@@ -79991,6 +79990,10 @@ msgstr "属性値を使用"
 msgid "Use bold font"
 msgstr "太字を使用する"
 
+#, fuzzy
+msgid "Use container name"
+msgstr "コンテナ名"
+
 msgid "Use custom connection parameters"
 msgstr "カスタム接続パラメータを使用する"
 
@@ -82752,6 +82755,15 @@ msgid ""
 "We are sorry, but you lack the permission for this operation. If you do not "
 "like this then please ask your administrator to provide you with the "
 "following permission: '<b>%s</b>'."
+msgstr ""
+"申し訳ありませんが、この操作の許可がありません。これが気に入らない場合は、管"
+"理者に次の権限を与えるように依頼してください: '<b>%s</b>'。"
+
+#, fuzzy
+msgid ""
+"We are sorry, but you lack the required permissions to access or download "
+"crash reports. Please contact your administrator to request the following "
+"permission: <b>'See crash reports'</b>."
 msgstr ""
 "申し訳ありませんが、この操作の許可がありません。これが気に入らない場合は、管"
 "理者に次の権限を与えるように依頼してください: '<b>%s</b>'。"
@@ -91252,6 +91264,13 @@ msgid "Loading content..."
 msgstr "読み込んでいます..."
 
 #, fuzzy
+msgid "Activation of changes failed"
+msgstr "変更事項のアクティベートが完了しました"
+
+msgid "Open the full activation page for more details."
+msgstr ""
+
+#, fuzzy
 msgid "Quick activation of pending changes"
 msgstr "保留中の変更をアクティブ化する"
 
@@ -91263,13 +91282,6 @@ msgid ""
 "Changes are saved in a temporary environment first, letting you review and "
 "adjust them safely.\n"
 "             Activate changes to apply them to live monitoring."
-msgstr ""
-
-#, fuzzy
-msgid "Activation of changes failed"
-msgstr "変更事項のアクティベートが完了しました"
-
-msgid "Open the full activation page for more details."
 msgstr ""
 
 msgid "Successfully activated 1 change"
@@ -92700,8 +92712,8 @@ msgid "Create a check parameter rule"
 msgstr "不明なチェックパラメータールールセット"
 
 msgid ""
-"In the ruleset view, click Add rule for current host to create a rule that "
-"applies specifically to the selected host."
+"In the ruleset view, click \"Add rule for current host\" to create a rule "
+"that applies specifically to the selected host."
 msgstr ""
 
 msgid ""
@@ -92887,6 +92899,33 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#~ msgid ""
+#~ "An internal error occurred while processing your request. You can report "
+#~ "this issue to your Checkmk administrator. Detailed information can be "
+#~ "found on the crash report page or in <tt>var/log/web.log</tt>."
+#~ msgstr ""
+#~ "リクエストの処理中に内部エラーが発生しました。この問題は、Checkmk管理者に"
+#~ "報告できます。詳細情報は、クラッシュレポートページまたは<tt>var/log/"
+#~ "web.log</tt>にあります。"
+
+#~ msgid ""
+#~ "Choose which identifier is used for the piggybacked host name of "
+#~ "monitored containers."
+#~ msgstr ""
+#~ "監視対象コンテナのピギーバックされたホスト名に使用する識別子を選択します。"
+
+#, fuzzy
+#~ msgid "Name + ID - Use the name of the container plus the container ID"
+#~ msgstr "名前 - コンテナの名前を使用"
+
+#~ msgid ""
+#~ "Node name + Name - Combine the Podman node name and the container name. "
+#~ "If the Podman node name cannot be determined, it will use the name of the "
+#~ "host instead"
+#~ msgstr ""
+#~ "ノード名 + 名前 - Podmanノード名とコンテナ名を結合します。Podmanノード名が"
+#~ "特定できない場合、代わりにホスト名を使用します"
 
 #~ msgid "IP address or hostname"
 #~ msgstr "IPアドレスまたはホスト名"
