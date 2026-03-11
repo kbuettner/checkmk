@@ -1,6 +1,5 @@
-set noparent  # don't inherit owners information from parent folders
-
-file:/component_owners/ci_platform/OWNERS_DEFINITION
+set noparent
+file:/component_owners/ai_dev_tools/OWNERS_DEFINITION
 
 # Please
 #  - don't add individual owners here but provide a reference to an OWNERS_DEFINITION file instead
