@@ -87,7 +87,8 @@ const panelConfig = {
     initialState: 'This is a sample message demonstrating the dialog content and layout.'
   },
   buttons: { type: 'boolean', title: 'Buttons', initialState: true },
-  dismissal_button: { type: 'boolean', title: 'Dismissal Button', initialState: false }
+  dismissal_button: { type: 'boolean', title: 'Dismissal Button', initialState: false },
+  auto_dismiss: { type: 'boolean', title: 'Auto Dismiss (6s)', initialState: false }
 } satisfies PanelConfig
 
 const propState = ref(createPanelState(panelConfig))
@@ -112,6 +113,9 @@ const dialogProps = computed(() => ({
       title: 'Dismiss',
       key: 'immediate_slideout_change' as DismissalButtonKey
     }
+  }),
+  ...(propState.value.auto_dismiss && {
+    autoDismiss: 6000
   })
 }))
 </script>
