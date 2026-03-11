@@ -7,10 +7,13 @@
 @import url('~cmk-frontend/themes/facelift/fonts_inter.css');
 
 body {
+  margin: 0;
+  padding: 0 0 0 10px;
   font-family: Inter, sans-serif;
   font-size: 14px !important;
   font-weight: 400;
   color: var(--ucl-body-text-color);
+  background-color: var(--ucl-app-bg-color);
 }
 
 h1,
@@ -27,4 +30,8 @@ h1 {
 
 h2 {
   font-size: 16px !important;
+}
+
+button {
+  color: inherit;
 }

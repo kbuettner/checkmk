@@ -6,6 +6,8 @@
 
 @layer theme {
   body[data-theme='facelift'] {
+    --ucl-app-bg-color: var(--color-daylight-grey-20);
+    --ucl-header-bg-color: var(--color-daylight-grey-20);
     --ucl-body-text-color: var(--color-mid-grey-100);
     --ucl-headings-font-color: var(--color-conference-grey-100);
     --ucl-elements-background-color: var(--color-daylight-grey-40);
@@ -22,6 +24,8 @@
   }
 
   body[data-theme='modern-dark'] {
+    --ucl-app-bg-color: var(--color-midnight-grey-90);
+    --ucl-header-bg-color: var(--color-midnight-grey-90);
     --ucl-body-text-color: var(--color-mid-grey-0);
     --ucl-headings-font-color: var(--color-white-100);
     --ucl-elements-background-color: var(--color-midnight-grey-70);

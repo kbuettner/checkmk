@@ -31,9 +31,10 @@ const { page } = defineProps<{
   padding: 6px 0 6px 20px;
   text-decoration: none;
   cursor: pointer;
+  color: var(--ucl-headings-font-color);
 }
 
-.ucl-nav-page--active {
+.ucl-nav-page.ucl-nav-page--active {
   color: var(--ucl-nav-tree-link-active-color);
   font-weight: 700;
   border-left: 3px solid var(--ucl-nav-tree-link-active-color);

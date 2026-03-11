@@ -61,8 +61,8 @@ watch(
 .ucl-app {
   display: flex;
   flex-direction: column;
-  color: var(--font-color);
-  background-color: var(--default-bg-color);
+  color: var(--ucl-body-text-color);
+  background-color: var(--ucl-app-bg-color);
   height: 100vh;
   overflow: hidden;
 }
@@ -72,8 +72,8 @@ watch(
   justify-content: space-between;
   align-items: center;
   padding: 8px 24px;
-  background-color: var(--default-bg-color);
-  border-bottom: 1px solid var(--default-form-element-bg-color);
+  background-color: var(--ucl-header-bg-color);
+  border-bottom: 1px solid var(--ucl-elements-border-color);
   height: 50px;
 }
 
@@ -89,7 +89,7 @@ watch(
   display: flex;
   flex-direction: column;
   width: 250px;
-  border-right: 1px solid var(--default-form-element-bg-color);
+  border-right: 1px solid var(--ucl-elements-border-color);
   overflow: hidden auto;
   flex-shrink: 0;
   scrollbar-width: thin;
