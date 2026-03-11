@@ -255,18 +255,6 @@ STAGES:
       RESULT_CHECK_FILE_PATTERN: "results/python-extensions.txt"
       JENKINS_TEST_RESULT_PATH: "testReport/pytest.tests.code_quality/test_py_extensions/"
 
-    - NAME: "Python File Content Test"
-      ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_FIND_PYTHON_FILES_SCRIPT,CHANGED_PYTHON_FILES
-      DIR: "tests"
-      ENV_VARS:
-          PYTEST_ADDOPTS: "--junitxml=${RESULTS}/python3-file-content-junit.xml --color=no"
-      COMMAND: "make test-file-content"
-      TEXT_ON_SKIP: "No files changed"
-      BAZEL_LOCKS_AMOUNT: 1
-      RESULT_CHECK_TYPE: "JUNIT"
-      RESULT_CHECK_FILE_PATTERN: "results/python3-file-content-junit.xml"
-      JENKINS_TEST_RESULT_PATH: "testReport/pytest.tests.code_quality.file_content/"
-
     - NAME: "Python Werks Test"
       ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_WERK_FILES
       DIR: "tests"

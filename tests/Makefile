@@ -56,7 +56,6 @@ PYTEST_SYSTEM_TEST_ARGS := \
     --log-cli-format="%(asctime)s.%(msecs)03d %(levelname)s %(message)s"
 DOCKERABLE_TESTS := \
 	test-code-quality \
-	test-file-content \
 	test-format \
 	test-license-headers \
 	test-mypy \
@@ -278,16 +277,13 @@ test-py-extensions:
 		$(PYTEST) --log-cli-level=INFO $(realpath code_quality)/test_python_extensions.py --git-changes="$$CHANGED_FILES_WITH_MODE_FILE" -k 'py_extension' --result-out="$$RESULTS_FILE"; \
 	fi
 
-test-file-content:
-	$(PYTEST) --log-cli-level=INFO $(realpath code_quality)/file_content;
-
 test-format:
 	bazel run //:format.check
 
 test-werks:
 	$(PYTEST) --log-cli-level=INFO $(realpath code_quality)/test_werks.py;
 
-test-code-quality: test-requirements test-file-content test-werks
+test-code-quality: test-requirements test-werks
 
 test-mypy: test-mypy-cmk
 

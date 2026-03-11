@@ -16,7 +16,7 @@ import os
 import re
 import subprocess
 import tarfile
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from functools import cache
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
@@ -938,3 +938,134 @@ def test_windows_artifacts_are_signed(
             LOGGER.info("PASS: No further signable files* found (excluding ignored).")
 
     assert not any(signing_failures)
+
+
+class FileMode(str):
+    """File permission mode as a symbolic string (e.g. '-rwxr-xr-x')."""
+
+    def is_world_executable(self) -> bool:
+        return self[9] == "x"
+
+    def is_directory(self) -> bool:
+        return self[0] == "d"
+
+
+def _get_paths_with_modes_from_package(path_to_package: str) -> Mapping[str, FileMode]:
+    """Return a mapping of file paths to their mode strings from the given package."""
+    if path_to_package.endswith(".rpm"):
+        return {
+            path.lstrip("/"): FileMode(mode)
+            for path, mode in (
+                line.split("\t")
+                for line in subprocess.check_output(
+                    ["rpm", "-qp", "--qf", "[%{FILENAMES}\t%{FILEMODES:perms}\n]", path_to_package],
+                    encoding="utf-8",
+                ).splitlines()
+                if "\t" in line
+            )
+        }
+
+    if path_to_package.endswith(".deb"):
+        return {
+            line.split()[5].lstrip("./"): FileMode(line.split()[0])
+            for line in subprocess.check_output(
+                ["dpkg", "-c", path_to_package], encoding="utf-8"
+            ).splitlines()
+        }
+
+    if path_to_package.endswith(".cma"):
+        return {
+            line.split()[-1]: FileMode(line.split()[0])
+            for line in subprocess.check_output(
+                ["tar", "tvzf", path_to_package], encoding="utf-8"
+            ).splitlines()
+        }
+
+    if path_to_package.endswith(".tar.gz"):
+        if "-docker-" in path_to_package:
+            container_id = _get_or_create_docker_container(path_to_package)
+            proc = subprocess.Popen(["docker", "export", container_id], stdout=subprocess.PIPE)
+            if proc.stdout is None:
+                raise RuntimeError("Failed to open stdout pipe for docker export")
+            paths_output = subprocess.check_output(["tar", "tv"], input=proc.stdout.read())
+            proc.wait()
+            return {
+                (
+                    "/" + line.split()[-1]
+                    if not line.split()[-1].startswith("/")
+                    else line.split()[-1]
+                ): FileMode(line.split()[0])
+                for line in paths_output.decode("utf-8").splitlines()
+            }
+
+        return {
+            line.split()[-1]: FileMode(line.split()[0])
+            for line in subprocess.check_output(
+                ["tar", "tvzf", path_to_package], encoding="utf-8"
+            ).splitlines()
+        }
+
+    raise NotImplementedError()
+
+
+EXECUTABLE_DIRS = [
+    "share/check_mk/agents/check_mk_agent.",
+    "share/check_mk/agents/plugins",
+    "share/check_mk/notifications",
+    "bin",
+    "share/check_mk/alert_handlers",
+]
+EXECUTABLE_EXCEPTIONS = {
+    "cpython-313.pyc",
+    "README",
+    "mkeventd_open514",
+    ".html.jinja",
+}
+PLUGINS_EXECUTABLE_EXCEPTIONS = {
+    "lib/python3/cmk/plugins/oracle/agents/mk-oracle",
+    "lib/python3/cmk/plugins/oracle/agents/mk-oracle.aix",
+    "lib/python3/cmk/plugins/oracle/agents/mk-oracle.exe",
+    "lib/python3/cmk/plugins/oracle/agents/mk-oracle.solaris",
+}
+
+
+def _filter_files(
+    paths: Mapping[str, FileMode],
+    pattern: str,
+    exceptions: set[str],
+) -> Mapping[str, FileMode]:
+    return {
+        path: mode
+        for path, mode in paths.items()
+        if re.search(pattern, path)
+        and not mode.is_directory()
+        and not any(path.endswith(exc) for exc in exceptions)
+    }
+
+
+def test_permissions(package_path: str, cmk_version: str) -> None:
+    """Verify that files in specific directories have the correct executable permissions."""
+    paths = _get_paths_with_modes_from_package(package_path)
+    omd_version = _get_omd_version(cmk_version, package_path)
+
+    violations = []
+    for directory in EXECUTABLE_DIRS:
+        files = _filter_files(
+            paths,
+            rf"opt/omd/versions/{omd_version}/{directory}/",
+            exceptions=EXECUTABLE_EXCEPTIONS,
+        )
+        violations += [path for path, mode in files.items() if not mode.is_world_executable()]
+
+    plugins_files = _filter_files(
+        paths,
+        rf"opt/omd/versions/{omd_version}/lib/python3.*cmk/plugins/",
+        exceptions=PLUGINS_EXECUTABLE_EXCEPTIONS,
+    )
+    violations += [
+        path
+        for path, mode in plugins_files.items()
+        if ("libexec" in Path(path).parts) != mode.is_world_executable()
+    ]
+
+    assert not violations, f"Files with wrong permissions: {violations}"
