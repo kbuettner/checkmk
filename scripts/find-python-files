@@ -37,7 +37,6 @@ get_candidates_from_filesystem() {
     SEARCH+=" doc"
     PRUNE+=" -path $(realpath doc/treasures) -prune -o" # our "treasures" need much more love before they can be linted
     SEARCH+=" locale"
-    SEARCH+=" notifications"
     # Do not search whole omd/ because it may contain unpacked sub-packages
     if [ -d "omd/non-free/packages" ]; then
         SEARCH+=" omd/non-free/packages"

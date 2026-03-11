@@ -10,8 +10,8 @@ set -e -o pipefail
 declare -a fails
 
 known_other_licened_files=(
-    "cmk/notification_plugins/ilert.py"
-    "cmk/notification_plugins/signl4.py"
+    "packages/cmk-notification-plugins/cmk/notification_plugins/ilert.py"
+    "packages/cmk-notification-plugins/cmk/notification_plugins/signl4.py"
 )
 
 is_known_exception() {
