@@ -5,27 +5,81 @@ conditions defined in the file COPYING, which is part of this source code packag
 -->
 <script setup lang="ts">
 import type { ListPropDef, PanelConfig, PanelState } from '@demo/_demo/types/prop-panel.ts'
+import { computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 import useId from '@/lib/useId'
 
+import CmkCopy from '@/components/CmkCopy.vue'
 import CmkDropdown from '@/components/CmkDropdown'
 import CmkHelpText from '@/components/CmkHelpText.vue'
+import CmkIconButton from '@/components/CmkIconButton.vue'
 import CmkLabel from '@/components/CmkLabel.vue'
 import CmkSpace from '@/components/CmkSpace.vue'
 import CmkSwitch from '@/components/CmkSwitch.vue'
 import CmkHeading from '@/components/typography/CmkHeading.vue'
 import CmkInput from '@/components/user-input/CmkInput.vue'
 
-defineProps<{ config: PanelConfig }>()
+const props = defineProps<{ config: PanelConfig }>()
 
 const state = defineModel<PanelState>({ required: true })
 
 const uid = useId()
+
+const router = useRouter()
+const route = useRoute()
+
+const url = computed(() => {
+  const urlQuery: Record<string, string> = {}
+  for (const [configKey, configValue] of Object.entries(props.config)) {
+    const stateValue = state.value[configKey]
+    if (configValue.initialState !== stateValue && stateValue !== undefined) {
+      if (typeof stateValue === 'boolean') {
+        urlQuery[configKey] = stateValue ? '1' : '0'
+      } else if (typeof stateValue === 'number') {
+        urlQuery[configKey] = stateValue.toString()
+      } else {
+        urlQuery[configKey] = stateValue
+      }
+    }
+  }
+
+  const permaLink = router.resolve({
+    ...route,
+    query: urlQuery
+  }).href
+  return `${window.location.origin}${permaLink}`
+})
+
+onMounted(() => {
+  for (const [configKey, configValue] of Object.entries(props.config)) {
+    let urlValue = route.query[configKey]
+    if (Array.isArray(urlValue)) {
+      urlValue = urlValue[0]
+    }
+    if (urlValue !== undefined && urlValue !== null) {
+      if (configValue.type === 'boolean') {
+        state.value[configKey] = urlValue === '1' ? true : false
+      } else if (configValue.type === 'number') {
+        state.value[configKey] = parseFloat(urlValue)
+      } else {
+        state.value[configKey] = urlValue
+      }
+    }
+  }
+})
 </script>
 
 <template>
   <div class="demo-properties-panel__properties-panel">
     <CmkHeading type="h4">Properties</CmkHeading>
+
+    <div class="demo-properties-panel__copy">
+      <CmkCopy :text="url">
+        <CmkIconButton name="copied" size="medium" title="Copy permalink" />
+      </CmkCopy>
+    </div>
+
     <CmkSpace size="small" />
 
     <div
@@ -82,6 +136,13 @@ const uid = useId()
   border: 1px solid var(--demo-elements-border-color);
   border-radius: 4px;
   padding: 16px;
+  position: relative;
+}
+
+.demo-properties-panel__copy {
+  position: absolute;
+  right: 16px;
+  top: 14px;
 }
 
 .demo-properties-panel__prop-control {
