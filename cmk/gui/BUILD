@@ -156,10 +156,10 @@ py_library(
         requirement("roman"),
     ] + select({
         "@//:gpl+nonfree_repo": [
-            "//cmk/nonfree/pro/bakery",
             "//cmk/nonfree/pro/robotmk",
             "//cmk/nonfree/pro/robotmk:bakery",
             "//cmk/utils:pro",
+            "//non-free/packages/cmk-bakery",
             "//non-free/packages/cmk-dcd:gui",
             "//non-free/packages/cmk-dcd:protocols",
             "//non-free/packages/cmk-liveproxyd:gui",

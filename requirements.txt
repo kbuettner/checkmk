@@ -3605,6 +3605,7 @@ pydantic==2.12.5 \
     --hash=sha256:e561593fccf61e8a20fc46dfc2dfe075b8be7d0188df33f221ad1f0139180f9d
     # via
     #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-bakery/requirements.in
     #   -r non-free/packages/cmk-metric-backend/requirements.in
     #   -r non-free/packages/cmk-otel-collector/requirements.in
     #   -r non-free/packages/cmk-relay-engine/requirements.in
@@ -3995,6 +3996,7 @@ pytest==8.3.5 \
     --hash=sha256:f4efe70cc14e511565ac476b57c279e12a855b11f48f212af1080ef2263d3845
     # via
     #   -c constraints.txt
+    #   -r non-free/packages/cmk-bakery/dev-requirements.in
     #   -r non-free/packages/cmk-core-helpers/dev-requirements.in
     #   -r non-free/packages/cmk-metric-backend/dev-requirements.in
     #   -r non-free/packages/cmk-mknotifyd/dev-requirements.in

@@ -26,6 +26,7 @@ exports_files([
 edition_deps = select({
     "@cmk//edition:cloud": [
         "//cmk:cmk_tar",
+        "//non-free/packages/cmk-bakery:pkg_tar",
         "//non-free/packages/cmc-protocols:pkg_tar",
         "//non-free/packages/cmk-core-helpers:pkg_tar",
         "//non-free/packages/cmk-core-helpers:relay-fetcher-trigger-pkg_tar",
@@ -53,6 +54,7 @@ edition_deps = select({
     ],
     "@cmk//edition:pro": [
         "//cmk:cmk_tar",
+        "//non-free/packages/cmk-bakery:pkg_tar",
         "//non-free/packages/cmc-protocols:pkg_tar",
         "//non-free/packages/cmk-core-helpers:pkg_tar",
         "//non-free/packages/cmk-mknotifyd:pkg_tar",
@@ -73,6 +75,7 @@ edition_deps = select({
     "@cmk//edition:ultimate": [
         "//cmk:cmk_tar",
         "//non-free/bin:ultimate_bin_pkg_tar",
+        "//non-free/packages/cmk-bakery:pkg_tar",
         "//non-free/packages/cmc-protocols:pkg_tar",
         "//non-free/packages/cmk-core-helpers:pkg_tar",
         "//non-free/packages/cmk-core-helpers:relay-fetcher-trigger-pkg_tar",
@@ -101,6 +104,7 @@ edition_deps = select({
     "@cmk//edition:ultimatemt": [
         "//cmk:cmk_tar",
         "//non-free/bin:ultimate_bin_pkg_tar",
+        "//non-free/packages/cmk-bakery:pkg_tar",
         "//non-free/packages/cmc-protocols:pkg_tar",
         "//non-free/packages/cmk-core-helpers:pkg_tar",
         "//non-free/packages/cmk-core-helpers:relay-fetcher-trigger-pkg_tar",
