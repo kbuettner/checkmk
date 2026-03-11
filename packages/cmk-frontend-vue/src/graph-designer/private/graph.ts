@@ -66,7 +66,7 @@ interface GraphDataRange extends GraphDataRangeMandatory {
 
 interface AjaxContext {
   graph_id: string
-  definition: GraphRecipe
+  graph_recipe: GraphRecipe
   data_range: GraphDataRange
   render_config: GraphRenderConfig
   display_id: string
@@ -156,7 +156,6 @@ interface GraphArtwork {
   //optional properties assigned dynamically in javascript
   id: string
   canvas_obj: HTMLCanvasElement
-  ajax_context?: AjaxContext
   render_config: GraphRenderConfig
   time_origin?: number
   vertical_origin?: number
@@ -181,11 +180,6 @@ interface GraphArtwork {
   requested_end_time: Timestamp
   requested_step: string | Seconds
   pin_time: Timestamp | null
-  // Definition itself, for reproducing the graph
-  definition: GraphRecipe
-  // Display id to avoid mixups in get_id_of_graph when rendering the same graph multiple times
-  // in graph collections and dashboards. Often set to the empty string when not needed.
-  display_id: string
 }
 
 export interface AjaxGraph {

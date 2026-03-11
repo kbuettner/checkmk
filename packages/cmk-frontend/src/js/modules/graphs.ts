@@ -72,7 +72,7 @@ interface GraphDataRange extends _GraphDataRangeMandatory {
 
 interface AjaxContext {
   graph_id: string
-  definition: GraphRecipe
+  graph_recipe: GraphRecipe
   data_range: GraphDataRange
   render_config: GraphRenderConfig
   display_id: string
@@ -172,7 +172,6 @@ export interface GraphArtwork {
   //optional properties assigned dynamically in javascript
   id: string
   canvas_obj: HTMLCanvasElement
-  ajax_context?: AjaxContext
   render_config: GraphRenderConfig
   time_origin?: number
   vertical_origin?: number
@@ -197,12 +196,6 @@ export interface GraphArtwork {
   requested_end_time: Timestamp
   requested_step: string | Seconds
   pin_time: Timestamp | null
-  // Definition itself, for reproducing the graph. Not always present, use ajax_context.definition instead.
-  definition?: GraphRecipe
-  // Display id to avoid mixups in get_id_of_graph when rendering the same graph multiple times
-  // in graph collections and dashboards. Often set to the empty string when not needed.
-  // Not always present, use ajax_context.display_id instead.
-  display_id?: string
 }
 
 // Styling. Please note that for each visible pixel our canvas
@@ -218,6 +211,7 @@ const g_delayed_graphs: DelayedGraph[] = []
 
 // Global graph constructs to store the graphs etc.
 const g_graphs: Record<string, GraphArtwork> = {}
+const g_ajax_contexts: Record<string, AjaxContext> = {}
 let g_current_graph_id = 0
 
 // Graph hover cache for shared dashboards (bounded LRU).
@@ -288,6 +282,7 @@ function purge_stale_graphs() {
   for (const graph_id in g_graphs) {
     if (!document.getElementById(graph_id)) {
       delete g_graphs[graph_id]
+      delete g_ajax_contexts[graph_id]
     }
   }
 }
@@ -297,12 +292,14 @@ function get_id_of_graph(ajax_context: AjaxContext) {
   // Return the graph_id for and eventual existing graph
   for (const graph_id in g_graphs) {
     // JSON.stringify seems to be the easiest way to compare the both dicts
+    const existing_context = g_ajax_contexts[graph_id]
     if (
-      JSON.stringify(ajax_context.definition.specification) ==
-        JSON.stringify(g_graphs[graph_id].ajax_context!.definition.specification) &&
+      existing_context &&
+      JSON.stringify(ajax_context.graph_recipe.specification) ==
+        JSON.stringify(existing_context.graph_recipe.specification) &&
       JSON.stringify(ajax_context.render_config) ==
-        JSON.stringify(g_graphs[graph_id].ajax_context!.render_config) &&
-      ajax_context.display_id == g_graphs[graph_id].ajax_context!.display_id
+        JSON.stringify(existing_context.render_config) &&
+      ajax_context.display_id == existing_context.display_id
     ) {
       return graph_id
     }
@@ -365,11 +362,9 @@ export function show_ajax_graph_at_container(ajax_graph: AjaxGraph, container: H
 
   // Now register and paint the graph
   ajax_context['graph_id'] = graph_id
-  //TODO: perhaps reformat this so we have two GraphArtwork interfaces
-  // before and after these assignments
+  g_ajax_contexts[graph_id] = ajax_context
   g_graphs[graph_id] = ajax_graph['graph']
-  g_graphs[graph_id]['ajax_context'] = ajax_context
-  g_graphs[graph_id]['render_config'] = ajax_graph['context']['render_config']
+  g_graphs[graph_id]['render_config'] = ajax_context.render_config
   g_graphs[graph_id]['id'] = graph_id
   render_graph(g_graphs[graph_id])
 }
@@ -402,10 +397,8 @@ export function create_graph(
 
   // Now register and paint the graph
   ajax_context['graph_id'] = graph_id
-  //TODO: perhaps reformat this so we have two GraphArtwork interfaces
-  // before and after these assignments
+  g_ajax_contexts[graph_id] = ajax_context
   g_graphs[graph_id] = graph_artwork
-  g_graphs[graph_id]['ajax_context'] = ajax_context
   g_graphs[graph_id]['render_config'] = ajax_context.render_config
   g_graphs[graph_id]['id'] = graph_id
   render_graph(g_graphs[graph_id])
@@ -1349,10 +1342,7 @@ function graph_activate_mouse_control(graph: GraphArtwork) {
 
   add_event_handler('mouseup', global_graph_mouse_up)
 
-  if (
-    graph.ajax_context!.render_config.show_controls &&
-    graph.ajax_context!.render_config.resizable
-  ) {
+  if (graph.render_config.show_controls && graph.render_config.resizable) {
     // Find resize img element
     const container = get_graph_container(canvas)
     const resize_img = container!.getElementsByClassName('resize')[0]
@@ -1367,7 +1357,7 @@ function graph_activate_mouse_control(graph: GraphArtwork) {
     add_event_handler('mousemove', graph_mouse_resize)
   }
 
-  if (graph.ajax_context!.render_config.interaction) {
+  if (graph.render_config.interaction) {
     add_event_handler('mousemove', update_mouse_hovering)
   }
 }
@@ -1395,7 +1385,7 @@ function graph_mouse_resize(event: Event) {
   const graph = g_resizing_graph.graph
   const post_data =
     'context=' +
-    encodeURIComponent(JSON.stringify(graph.ajax_context)) +
+    encodeURIComponent(JSON.stringify(g_ajax_contexts[graph.id])) +
     '&resize_x=' +
     delta_x +
     '&resize_y=' +
@@ -1729,7 +1719,7 @@ function update_graph_hover_popup(event: Event, graph: GraphArtwork): boolean | 
   }
 
   const cmk_token = get_url_param('cmk-token')
-  const display_id = graph.ajax_context?.display_id || ''
+  const display_id = g_ajax_contexts[graph.id]?.display_id || ''
 
   // Check hover cache (shared dashboards)
   if (cmk_token) {
@@ -1755,7 +1745,7 @@ function update_graph_hover_popup(event: Event, graph: GraphArtwork): boolean | 
     post_data += '&cmk-token=' + encodeURIComponent(cmk_token)
     post_data += '&widget_id=' + encodeURIComponent(display_id)
   } else {
-    post_data += '&context=' + encodeURIComponent(JSON.stringify(graph.ajax_context))
+    post_data += '&context=' + encodeURIComponent(JSON.stringify(g_ajax_contexts[graph.id]))
   }
 
   g_graph_update_in_process = true
@@ -1792,7 +1782,7 @@ function handle_graph_hover_popup_update(
   }
 
   if (handler_data.hover_timestamp !== undefined && get_url_param('cmk-token')) {
-    const display_id = handler_data.graph.ajax_context?.display_id || ''
+    const display_id = g_ajax_contexts[handler_data.graph.id]?.display_id || ''
     const cache_key = _hover_cache_key(display_id, handler_data.hover_timestamp)
     _hover_cache_set(cache_key, popup_data)
   }
@@ -1968,7 +1958,7 @@ function update_graph(
 
   let post_data =
     'context=' +
-    encodeURIComponent(JSON.stringify(graph.ajax_context)) +
+    encodeURIComponent(JSON.stringify(g_ajax_contexts[graph.id])) +
     '&start_time=' +
     encodeURIComponent(start_time) +
     '&end_time=' +
@@ -2035,15 +2025,15 @@ function handle_graph_update(graph_container: HTMLElement, ajax_response: string
   //     "graph" : graph_artwork,
   //     "context" : {
   //         "graph_id"       : context["graph_id"],
-  //         "definition"     : graph_recipe,
+  //         "graph_recipe"   : graph_recipe,
   //         "data_range"     : graph_data_range,
   //         "render_config"  : graph_render_config,
   // }
   const graph_id = response.context.graph_id
   const graph: GraphArtwork = response.graph
   graph['id'] = graph_id
-  graph['ajax_context'] = response.context
-  graph['render_config'] = graph['ajax_context']['render_config']
+  graph['render_config'] = response.context.render_config
+  g_ajax_contexts[graph_id] = response.context
   g_graphs[graph_id] = graph
 
   // replace eventual references
@@ -2145,7 +2135,7 @@ function set_graph_timerange(graph_id: string, start_time: number, end_time: num
 
     const post_data =
       'context=' +
-      encodeURIComponent(JSON.stringify(graph.ajax_context)) +
+      encodeURIComponent(JSON.stringify(g_ajax_contexts[graph.id])) +
       '&start_time=' +
       encodeURIComponent(start_time) +
       '&end_time=' +

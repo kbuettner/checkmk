@@ -135,11 +135,6 @@ class GraphArtwork(BaseModel):
     requested_end_time: int
     requested_step: str | Seconds
     pin_time: int | None
-    # Definition itself, for reproducing the graph
-    definition: GraphRecipe
-    # Display id to avoid mixups in our JS code when rendering the same graph multiple times in
-    # graph collections and dashboards. Often set to the empty string when not needed.
-    display_id: str
 
 
 # .
@@ -173,7 +168,6 @@ def compute_graph_artwork(
     *,
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
-    graph_display_id: str = "",
 ) -> GraphArtworkOrErrors:
     unit_spec = user_specific_unit(graph_recipe.unit_spec, temperature_unit)
 
@@ -235,11 +229,6 @@ def compute_graph_artwork(
             requested_end_time=graph_data_range.time_range[1],
             requested_step=graph_data_range.step,
             pin_time=pin_time,
-            # Definition itself, for reproducing the graph
-            definition=graph_recipe,
-            # Display id to avoid mixups in our JS code when rendering the same graph multiple times in
-            # graph collections and dashboards. Often set to the empty string when not needed.
-            display_id=graph_display_id,
         ),
         errors,
         graph_metric_limits_reached,
