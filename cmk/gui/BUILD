@@ -194,7 +194,6 @@ py_library(
         "@//:gpl+nonfree_repo": [
             ":pro",
             "//cmk/nonfree/ultimate/metric_backend",
-            "//cmk/nonfree/ultimate/otel",
             "//cmk/utils:pro",
             "//non-free/packages/cmk-otel-collector",
         ],
