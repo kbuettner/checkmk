@@ -251,7 +251,7 @@ def _event_choices(
         UniqueCascadingSingleChoiceElement(
             parameter_form=CascadingSingleChoiceElementExtended(
                 name="acknowledgement",
-                title=Title("Acknowledgement of problem"),
+                title=Title("Acknowledgment of problem"),
                 parameter_form=FixedValue(value=None),
             ),
         ),
@@ -311,7 +311,7 @@ def triggering_events() -> QuickSetupStage:
                                             help_text=Help(
                                                 "Notifications are sent only for event types "
                                                 "defined by the 'Notified events for "
-                                                "hosts' ruleset. "
+                                                "hosts' rule set. "
                                                 "Note: Host events do not match "
                                                 "this rule if a service filter "
                                                 "matches. However, if an exclude "
@@ -335,8 +335,8 @@ def triggering_events() -> QuickSetupStage:
                                             title=Title("Service events"),
                                             help_text=Help(
                                                 "Notifications are sent only for event types "
-                                                "defined by the 'Notified events for "
-                                                "services' ruleset"
+                                                "defined by the 'Notified events for"
+                                                "services' rule set"
                                             ),
                                             prefill=DefaultValue(
                                                 [
@@ -545,7 +545,7 @@ def filter_for_hosts_and_services() -> QuickSetupStage:
                                                     field_size=FieldSize.MEDIUM,
                                                     custom_validate=[
                                                         NonEmptyString(
-                                                            Message("Please add a Rule ID.")
+                                                            Message("Please add a rule ID.")
                                                         )
                                                     ],
                                                 ),
@@ -554,7 +554,7 @@ def filter_for_hosts_and_services() -> QuickSetupStage:
                                                 custom_validate=[
                                                     not_empty(
                                                         error_msg=Message(
-                                                            "Please add at least one Rule ID."
+                                                            "Please add at least one rule ID."
                                                         )
                                                     )
                                                 ],
@@ -606,7 +606,7 @@ def filter_for_hosts_and_services() -> QuickSetupStage:
                                                 field_size=FieldSize.LARGE,
                                                 custom_validate=[
                                                     NonEmptyString(
-                                                        Message("Please add an event comment..")
+                                                        Message("Please add an event comment.")
                                                     )
                                                 ],
                                             ),
@@ -928,12 +928,12 @@ def filter_for_hosts_and_services() -> QuickSetupStage:
                                             parameter_form=MultipleChoiceExtended(
                                                 title=Title("Check types"),
                                                 help_text=Help(
-                                                    "Only apply the rule if the "
+                                                    "Only apply the rule, if the "
                                                     "notification originates from "
                                                     "certain types of check plug-ins. "
                                                     "Note: Host notifications never "
-                                                    "match this rule, if this option is "
-                                                    "being used."
+                                                    "match this rule, if this option "
+                                                    "is being used."
                                                 ),
                                                 elements=Autocompleter(
                                                     data=AutocompleterData(
@@ -1152,7 +1152,7 @@ def notification_method() -> QuickSetupStage:
                 elements=[
                     CascadingSingleChoiceElement(
                         name="always",
-                        title=Title("Always bulk"),
+                        title=Title("Always build bulks"),
                         parameter_form=bulk_notification(
                             title="always",
                         ),
@@ -1316,7 +1316,7 @@ def notification_method() -> QuickSetupStage:
                         "bulk_outside_timeperiod": DictElement(
                             required=False,
                             parameter_form=DictionaryExtended(
-                                title=Title("Bulk outside of the timeperiod"),
+                                title=Title("Build bulks outside of the time period"),
                                 elements=bulk_notification(title="always").elements,
                             ),
                         )
@@ -1510,7 +1510,7 @@ def recipient() -> QuickSetupStage:
                             custom_validate=[
                                 LengthInRange(
                                     min_value=1,
-                                    error_msg=Message("Please add at least one email address"),
+                                    error_msg=Message("Please add at least one email address."),
                                 ),
                             ],
                         ),
@@ -1540,7 +1540,7 @@ def recipient() -> QuickSetupStage:
                             custom_validate=[
                                 LengthInRange(
                                     min_value=1,
-                                    error_msg=Message("Please add at least one user"),
+                                    error_msg=Message("Please add at least one user."),
                                 ),
                             ],
                         ),
@@ -1585,7 +1585,7 @@ def recipient() -> QuickSetupStage:
                                 add_element_label=Label("Add recipient"),
                                 custom_validate=[
                                     not_empty(
-                                        error_msg=Message("Please add at least one recipient")
+                                        error_msg=Message("Please add at least one recipient.")
                                     )
                                 ],
                             ),
@@ -1671,7 +1671,7 @@ def recipient() -> QuickSetupStage:
                                                     LengthInRange(
                                                         min_value=1,
                                                         error_msg=Message(
-                                                            "Please add at least one macro"
+                                                            "Please add at least one macro."
                                                         ),
                                                     ),
                                                     custom_macros_cannot_be_empty,
@@ -1812,7 +1812,7 @@ def sending_conditions() -> QuickSetupStage:
                                 elements={
                                     "by_plugin_output": DictElement(
                                         parameter_form=String(
-                                            title=Title("By plugin output"),
+                                            title=Title("By plug-in output"),
                                             help_text=Help(
                                                 "The text entered here is "
                                                 "handled as a regular expression "
@@ -1824,7 +1824,7 @@ def sending_conditions() -> QuickSetupStage:
                                             custom_validate=[
                                                 not_empty(
                                                     error_msg=Message(
-                                                        "Enter a plugin output to define what to filter for."
+                                                        "Enter a plug-in output to define what to filter for."
                                                     )
                                                 ),
                                                 IsValidRegularExpression(),

@@ -102,7 +102,7 @@ class ModeDiagHost(WatoMode):
             raise MKGeneralException(_("This page does not support cluster hosts."))
 
         if "cmk/relay_monitored" in self._host.labels():
-            raise MKGeneralException(_("This page does not support relay monitored hosts."))
+            raise MKGeneralException(_("This page does not support Relay monitored hosts."))
 
     def title(self) -> str:
         return _("Test connection to host") + " " + self._hostname
@@ -416,7 +416,7 @@ class ModeDiagHost(WatoMode):
                         minvalue=1,
                         maxvalue=65535,
                         default_value=agent_port if agent_port is not None else 6556,
-                        title=_('Checkmk Agent Port (<a href="%s">Rules</a>)')
+                        title=_('Checkmk agent port (<a href="%s">rules</a>)')
                         % folder_preserving_link(
                             [
                                 ("mode", "edit_ruleset"),
@@ -456,7 +456,7 @@ class ModeDiagHost(WatoMode):
                 (
                     "snmp_timeout",
                     Integer(
-                        title=_('SNMP-Timeout (<a href="%s">Rules</a>)')
+                        title=_('SNMP-timeout (<a href="%s">Rules</a>)')
                         % folder_preserving_link(
                             [
                                 ("mode", "edit_ruleset"),
@@ -476,7 +476,7 @@ class ModeDiagHost(WatoMode):
                 (
                     "snmp_retries",
                     Integer(
-                        title=_('SNMP-Retries (<a href="%s">Rules</a>)')
+                        title=_('SNMP-retries (<a href="%s">Rules</a>)')
                         % folder_preserving_link(
                             [
                                 ("mode", "edit_ruleset"),

@@ -796,7 +796,7 @@ class ModeEditBrokerConnection(WatoMode):
                 "You can define pairs of sites here that will be able to directly "
                 "communicate, without routing the messages via the central site. "
                 "Messages themselves will be sent in both directions: from the "
-                "connecter to the connectee and vice versa. "
+                "initiating peer to the accepting peer and vice versa. "
                 "Note that the order in which you choose the sites here still might matter, "
                 "depending on your network restrictions: "
                 "The initiating peer must be able to establish a TCP connection to the accepting "
@@ -1029,7 +1029,7 @@ class ModeDistributedMonitoring(WatoMode):
                 None,
                 _(
                     "You cannot delete this connection. It still has empty folders assigned "
-                    "to it: %s"
+                    "to it: %s. "
                     'If you want us to remove these automatically, click <a href="%s">delete</a>.'
                 )
                 % (self._build_urls_for_folders(empty_folders), delete_folders_url),
@@ -1169,10 +1169,10 @@ class ModeDistributedMonitoring(WatoMode):
 
         html.p(
             _(
-                "One manual login as administrator to the Multisite GUI of the remote site"
+                "One manual login as administrator to the graphical user interface (GUI) of the remote site"
                 ' "%s" is required to initialize the connection.'
                 " The credentials will only be used for the initial handshake and not be stored."
-                " If the login is successful then both sides will exchange a login secret"
+                " If the login is successful, then both sides will exchange a login secret"
                 " which will be used for subsequent remote calls."
             )
             % HTMLWriter.render_tt(site["alias"])
@@ -1307,7 +1307,7 @@ class ModeDistributedMonitoring(WatoMode):
             globals_url = folder_preserving_link([("mode", "edit_site_globals"), ("site", site_id)])
 
             has_site_globals = bool(site.get("globals"))
-            title = _("Site specific global configuration")
+            title = _("Site-specific global configuration")
             if has_site_globals:
                 icon = StaticIcon(IconNames.site_globals_modified)
                 title += " (%s)" % (_("%d specific settings") % len(site.get("globals", {})))
@@ -1647,7 +1647,7 @@ class ModeEditSiteGlobals(ABCGlobalSettingsMode):
             self._current_settings = self._site.get("globals", {})
 
     def title(self) -> str:
-        return _("Edit site specific global settings of %s") % self._site_id
+        return _("Edit site-specific global settings of %s") % self._site_id
 
     def _breadcrumb_url(self) -> str:
         return self.mode_url(site=self._site_id)
@@ -1703,7 +1703,7 @@ class ModeEditSiteGlobals(ABCGlobalSettingsMode):
 
         self._current_settings[varname] = new_value
 
-        msg = _("Changed site specific configuration variable %s to %s.") % (
+        msg = _("Changed site-specific configuration variable %s to %s.") % (
             varname,
             _("on") if self._current_settings[varname] else _("off"),
         )
@@ -1752,7 +1752,7 @@ class ModeEditSiteGlobals(ABCGlobalSettingsMode):
             if not has_distributed_setup_remote_sites(self._configured_sites):
                 html.show_error(
                     _(
-                        "You cannot configure site specific global settings "
+                        "You cannot configure site-specific global settings "
                         "in non-distributed setups."
                     )
                 )
@@ -1932,7 +1932,7 @@ class ModeSiteLivestatusEncryption(WatoMode):
     def page(self, config: Config) -> None:
         if not is_livestatus_encrypted(self._site):
             html.show_message(
-                _("The livestatus connection to this site is configured not to be encrypted.")
+                _("The Livestatus connection to this site is configured not to be encrypted.")
             )
             return
 

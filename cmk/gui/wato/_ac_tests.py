@@ -616,10 +616,10 @@ class ACTestEscapeHTMLDisabled(ACTest):
             yield ACSingleResult(
                 state=ACResultState.CRIT,
                 text=_(
-                    "Please consider configuring the host or service rulesets "
+                    "Please consider configuring the host or service rule sets "
                     '<a href="%s">Escape HTML in service output</a> or '
                     '<a href="%s">Escape HTML in host output</a> instead '
-                    'of <a href="%s">disabling escaping globally</a>'
+                    'of <a href="%s">disabling escaping globally</a>.'
                 )
                 % (
                     "wato.py?mode=edit_ruleset&varname=extra_service_conf:_ESCAPE_PLUGIN_OUTPUT",
@@ -1266,10 +1266,11 @@ class ACTestUnknownCheckParameterRuleSets(ACTest):
             "These rule sets are configured in your site, but not used by any check plug-in."
             " There are two main reasons to have such rule sets configured:"
             "<ol>"
-            "<li> Rule sets which were used by builtin check plugins that have been deprecated and"
+            "<li> Rule sets which were used by built-in check plug-ins that have been deprecated and"
             " removed in the past. These can be cleaned up without any negative side effect.</li>"
             "<li> Rule sets which belong to disabled or removed extension packages. If you plan to"
-            " keep it removed, you can safely clean them up. In case the extension package was"
+            " keep the related extension package removed, you can safely clean the rule sets up."
+            " In case the extension package was"
             " temporarily disabled, you may consider keeping the rule sets in place.</li>"
             "</ol>"
         )
@@ -1402,7 +1403,7 @@ class ACTestDeprecatedInventoryPlugins(ACTest):
         return ACTestCategories.deprecations
 
     def title(self) -> str:
-        return _("Deprecated HW/SW Inventory plug-ins")
+        return _("Deprecated HW/SW inventory plug-ins")
 
     def help(self) -> str:
         return _(
@@ -1427,7 +1428,7 @@ class ACTestDeprecatedInventoryPlugins(ACTest):
                     version=__version__,
                     deprecated_version="2.1.0",
                     removed_version="2.2.0",
-                    title_entity=_("HW/SW Inventory plug-in"),
+                    title_entity=_("HW/SW inventory plug-in"),
                     title_api=_("legacy"),
                     site_id=site_id,
                     path=plugin_filepath,
@@ -1436,7 +1437,7 @@ class ACTestDeprecatedInventoryPlugins(ACTest):
 
         yield ACSingleResult(
             state=ACResultState.OK,
-            text=_("No HW/SW Inventory plug-ins using the deprecated API"),
+            text=_("No HW/SW inventory plug-ins using the deprecated API"),
             site_id=site_id,
         )
 
@@ -1446,13 +1447,13 @@ class ACTestDeprecatedCheckManpages(ACTest):
         return ACTestCategories.deprecations
 
     def title(self) -> str:
-        return _("Deprecated check man pages")
+        return _("Deprecated check manual pages")
 
     def help(self) -> str:
         return _(
-            "Check man pages in <tt>'%s'</tt> are marked as 'deprecated'"
-            " and will be ignored in future Checkmk versions"
-            " (official deprecation timeline not decided yet)."
+            "Check man pages in <tt>'%s'</tt> are marked as "
+            "'deprecated' and will be ignored in future Checkmk versions "
+            "(official deprecation timeline not decided yet)."
         ) % str(local_legacy_check_manpages_dir)
 
     def _get_files(self) -> Sequence[Path]:
@@ -1522,8 +1523,9 @@ class ACTestDeprecatedGUIExtensions(ACTest):
                     state=ACResultState.WARN,
                     text=(
                         _(
-                            "GUI extension in %r uses an API which is marked as deprecated and may"
-                            " not work anymore due to unknown imports or objects (File: %s)."
+                            "GUI extension in %r uses an API which is marked "
+                            "as deprecated and may not work anymore due to "
+                            "unknown imports or objects (file: %s)."
                         )
                         % (
                             plugin_filepath.parent.name,
@@ -1552,7 +1554,7 @@ def _compute_deprecation_result_of_views_plugin(
             version=__version__,
             deprecated_version="2.6.0",
             removed_version="2.7.0",
-            title_entity=(_("HW/SW Inventory display hints in %r") % plugin_filepath.parent.name),
+            title_entity=(_("HW/SW inventory display hints in %r") % plugin_filepath.parent.name),
             title_api=_("legacy"),
             site_id=site_id,
             path=plugin_filepath,
@@ -1561,9 +1563,9 @@ def _compute_deprecation_result_of_views_plugin(
         state=ACResultState.WARN,
         text=(
             _(
-                "Legacy GUI extension in %r uses an API which is marked as"
-                " deprecated and may not work anymore due to unknown imports or"
-                " objects (File: %s)."
+                "Legacy GUI extension in %r uses an API which is "
+                "marked as deprecated and may not work anymore due "
+                "to unknown imports or objects (file: %s)."
             )
             % (
                 plugin_filepath.parent.name,
@@ -1633,9 +1635,10 @@ class ACTestDeprecatedLegacyGUIExtensions(ACTest):
                             state=ACResultState.WARN,
                             text=(
                                 _(
-                                    "Legacy GUI extension in %r uses an API which is marked as"
-                                    " deprecated and may not work anymore due to unknown imports or"
-                                    " objects (File: %s)."
+                                    "Legacy GUI extension in %r uses an "
+                                    "API which is marked as deprecated "
+                                    "and may not work anymore due to "
+                                    "unknown imports or objects (file: %s)."
                                 )
                                 % (
                                     plugin_filepath.parent.name,
@@ -1684,8 +1687,8 @@ class ACTestDeprecatedPNPTemplates(ACTest):
                     state=ACResultState.CRIT,
                     text=(
                         _(
-                            "PNP template uses an API which was removed in an ealier"
-                            " Checkmk version (File: %s)."
+                            "PNP template uses an API which was removed in an earlier"
+                            " Checkmk version (file: %s)."
                         )
                         % try_relative_site_path(site_id, plugin_filepath)
                     ),
