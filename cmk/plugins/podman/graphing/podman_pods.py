@@ -39,7 +39,7 @@ perfometer_running_number = perfometers.Perfometer(
 
 graph_podman_pods = graphs.Graph(
     name="podman_pods_total_number",
-    title=Title("Podman Pods"),
+    title=Title("Podman pods"),
     simple_lines=["podman_pods_total_number"],
     compound_lines=[
         "podman_pods_dead_number",

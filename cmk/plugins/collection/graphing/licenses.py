@@ -31,7 +31,7 @@ perfometer_licenses = perfometers.Perfometer(
 
 graph_licenses_total = graphs.Graph(
     name="licenses_total",
-    title=Title("Licenses (Total)"),
+    title=Title("Licenses (total)"),
     compound_lines=[
         "licenses_total",
         "licenses",
@@ -39,7 +39,7 @@ graph_licenses_total = graphs.Graph(
 )
 graph_licenses_max = graphs.Graph(
     name="licenses_max",
-    title=Title("Licenses (Maximum)"),
+    title=Title("Licenses (maximum)"),
     minimal_range=graphs.MinimalRange(
         0,
         metrics.MaximumOf(

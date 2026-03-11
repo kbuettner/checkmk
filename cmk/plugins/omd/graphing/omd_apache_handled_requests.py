@@ -105,7 +105,7 @@ metric_requests_nagvis_other = metrics.Metric(
 )
 metric_requests_images = metrics.Metric(
     name="requests_images",
-    title=Title("Image: Requests"),
+    title=Title("Image: requests"),
     unit=UNIT_PER_SECOND,
     color=metrics.Color.LIGHT_BLUE,
 )

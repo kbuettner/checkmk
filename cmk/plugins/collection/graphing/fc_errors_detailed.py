@@ -88,7 +88,7 @@ metric_fc_c2_frjt_frames = metrics.Metric(
 
 graph_fc_errors_detailed = graphs.Graph(
     name="fc_errors_detailed",
-    title=Title("Errors (Detailed)"),
+    title=Title("Errors (detailed)"),
     compound_lines=[
         "fc_link_fails",
         "fc_sync_losses",

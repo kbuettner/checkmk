@@ -9,7 +9,7 @@ UNIT_COUNTER = metrics.Unit(metrics.DecimalNotation(""), metrics.StrictPrecision
 
 metric_ucwa_active_sessions_android = metrics.Metric(
     name="ucwa_active_sessions_android",
-    title=Title("UCWA - Active sessions (Android)"),
+    title=Title("UCWA - Active sessions (android)"),
     unit=UNIT_COUNTER,
     color=metrics.Color.GREEN,
 )

@@ -32,7 +32,7 @@ metric_hyperv_vhd_file_size = Metric(
 
 graph_hyperv_vhd = graphs.Graph(
     name=f"{prefix}vhd_graph",
-    title=Title("Disk Metrics"),
+    title=Title("Disk metrics"),
     compound_lines=(f"{prefix}file_size",),
     simple_lines=(f"{prefix}disk_size",),
 )

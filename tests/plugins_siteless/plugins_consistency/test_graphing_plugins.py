@@ -353,6 +353,7 @@ _ALLOWED_DUPLICATE_METRIC_TITLES = {
     },
     "Allocated space": {"mem_lnx_vmalloc_used", "allocated_size"},
     "Average consumption": {"aws_dynamodb_consumed_wcu", "aws_dynamodb_consumed_rcu"},
+    "Average latency": {"latency_ave", "average_latency_s"},
     "Average usage": {
         "aws_dynamodb_consumed_rcu_perc",
         "aws_dynamodb_consumed_wcu_perc",
@@ -384,6 +385,7 @@ _ALLOWED_DUPLICATE_METRIC_TITLES = {
         "aws_dynamodb_minimum_consumed_wcu",
     },
     "New connections": {"new_connections", "aws_new_connections"},
+    "Number of Go routines": {"bazel_cache_status_num_goroutines", "bazel_cache_go_go_goroutines"},
     "Node utilization": {
         "kube_cpu_node_allocatable_utilization",
         "kube_memory_node_allocatable_utilization",
@@ -393,8 +395,9 @@ _ALLOWED_DUPLICATE_METRIC_TITLES = {
         "mobileiron_non_compliant",
         "mobileiron_non_compliant_summary",
     },
-    "Power Usage": {"power_usage", "power_usage_percentage"},
+    "Power usage": {"power_usage", "power_usage_percentage"},
     "Pressure": {"pressure_pa", "pressure"},
+    "Rate of metrics received": {"perf_data_count_rate", "metrics_count_rate"},
     "Queue length": {"queue", "queue_length"},
     "Read latency": {"db_read_latency_s", "read_latency"},
     "Read operations": {"disk_read_ios", "read_ops"},

@@ -21,7 +21,7 @@ metric_audiocodes_ip2tel_no_match_calls = metrics.Metric(
 )
 graph_audiocodes_sip_calls_no_match_calls = graphs.Bidirectional(
     name="audiocodes_sip_calls_no_match_calls",
-    title=Title("Number of No capability match between peers on SIP/H323 calls"),
+    title=Title("Number of no capability match between peers on SIP/H323 calls"),
     lower=graphs.Graph(
         name="tel2ip_no_match_calls",
         title=Title("Tel2IP"),

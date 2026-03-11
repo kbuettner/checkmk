@@ -20,21 +20,21 @@ UNIT_MILLISECOND = Unit(TimeNotation())
 
 metric_corosync_latency_max = Metric(
     name="latency_max",
-    title=Title("Maximum Latency"),
+    title=Title("Maximum latency"),
     unit=UNIT_MILLISECOND,
     color=Color.RED,
 )
 
 metric_corosync_latency_ave = Metric(
     name="latency_ave",
-    title=Title("Average Latency"),
+    title=Title("Average latency"),
     unit=UNIT_MILLISECOND,
     color=Color.ORANGE,
 )
 
 graph_corosync_latency = Graph(
     name="corosync_latency_graph",
-    title=Title("Corosync Latency max/avg"),
+    title=Title("Corosync latency max/avg"),
     simple_lines=["latency_max", "latency_ave"],
     minimal_range=MinimalRange(0.0, 0.05),
 )

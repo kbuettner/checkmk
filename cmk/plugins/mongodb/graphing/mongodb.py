@@ -29,13 +29,13 @@ metric_assert_regular = metrics.Metric(
 )
 metric_assert_warning = metrics.Metric(
     name="assert_warning",
-    title=Title("Warning Asserts"),
+    title=Title("Warning asserts"),
     unit=UNIT_COUNTER,
     color=metrics.Color.ORANGE,
 )
 metric_assert_user = metrics.Metric(
     name="assert_user",
-    title=Title("User Asserts"),
+    title=Title("User asserts"),
     unit=UNIT_COUNTER,
     color=metrics.Color.ORANGE,
 )

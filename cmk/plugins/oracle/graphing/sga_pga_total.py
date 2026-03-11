@@ -96,7 +96,7 @@ graph_oracle_sga_pga_total = graphs.Graph(
     ],
     simple_lines=[
         metrics.Sum(
-            Title("Oracle total Memory"),
+            Title("Oracle total memory"),
             metrics.Color.GRAY,
             [
                 "oracle_sga_size",

@@ -62,25 +62,25 @@ metric_bazel_uncompressed_size = Metric(
 
 metric_bazel_remote_azblob_cache_hits = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_azblob_cache_hits",
-    title=Title("azblob backend cache hits"),
+    title=Title("azblob back-end cache hits"),
     unit=COUNT_UNIT,
     color=Color.PURPLE,
 )
 metric_bazel_remote_azblob_cache_misses = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_azblob_cache_misses",
-    title=Title("azblob backend cache missess"),
+    title=Title("azblob back-end cache misses"),
     unit=COUNT_UNIT,
     color=Color.PURPLE,
 )
 metric_bazel_remote_disk_cache_evicted_bytes_total = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_disk_cache_evicted_bytes_total",
-    title=Title("Disk backend bytes evicted (full cache)"),
+    title=Title("Disk back-end bytes evicted (full cache)"),
     unit=BYTES_UNIT,
     color=Color.PURPLE,
 )
 metric_bazel_remote_disk_cache_logical_bytes = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_disk_cache_logical_bytes",
-    title=Title("Disk backend uncompressed"),
+    title=Title("Disk back-end uncompressed"),
     unit=BYTES_UNIT,
     color=Color.PURPLE,
 )
@@ -92,45 +92,45 @@ metric_bazel_remote_disk_cache_longest_item_idle_time_seconds = Metric(
 )
 metric_bazel_remote_disk_cache_overwritten_bytes_total = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_disk_cache_overwritten_bytes_total",
-    title=Title("Disk backend bytes removed or overwritten"),
+    title=Title("Disk back-end bytes removed or overwritten"),
     unit=BYTES_UNIT,
     color=Color.PURPLE,
 )
 
 metric_bazel_remote_disk_cache_overwritten_bytes_rate = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_disk_cache_overwritten_bytes_rate",
-    title=Title("Rate of disk backend bytes removed or overwritten"),
+    title=Title("Rate of disk back-end bytes removed or overwritten"),
     unit=BYTES_UNIT,
     color=Color.PURPLE,
 )
 
 metric_bazel_remote_disk_cache_size_bytes = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_disk_cache_size_bytes",
-    title=Title("Disk backend size"),
+    title=Title("Disk back-end size"),
     unit=BYTES_UNIT,
     color=Color.PURPLE,
 )
 metric_bazel_remote_http_cache_hits = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_http_cache_hits",
-    title=Title("HTTP backend cache hits"),
+    title=Title("HTTP back-end cache hits"),
     unit=COUNT_UNIT,
     color=Color.PURPLE,
 )
 metric_bazel_remote_http_cache_misses = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_http_cache_misses",
-    title=Title("HTTP backend cache missess"),
+    title=Title("HTTP back-end cache misses"),
     unit=COUNT_UNIT,
     color=Color.PURPLE,
 )
 metric_bazel_remote_s3_cache_hits = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_s3_cache_hits",
-    title=Title("S3 backend cache hits"),
+    title=Title("S3 back-end cache hits"),
     unit=COUNT_UNIT,
     color=Color.PURPLE,
 )
 metric_bazel_remote_s3_cache_misses = Metric(
     name=f"{name_prefix_bazel_cache_metrics}bazel_remote_s3_cache_misses",
-    title=Title("S3 backend cache missess"),
+    title=Title("S3 back-end cache misses"),
     unit=COUNT_UNIT,
     color=Color.PURPLE,
 )
@@ -179,13 +179,13 @@ metric_process_virtual_memory_max_bytes = Metric(
 
 metric_go_gc_duration_seconds_count = Metric(
     name=f"{name_prefix_bazel_cache_go}go_gc_duration_seconds_count",
-    title=Title("Timespan since last Go garbage collection cycle"),
+    title=Title("Time span since last Go garbage collection cycle"),
     unit=TIME_SINCE_BUILD_UNIT,
     color=Color.PURPLE,
 )
 metric_go_goroutines = Metric(
     name=f"{name_prefix_bazel_cache_go}go_goroutines",
-    title=Title("Number of goroutines"),
+    title=Title("Number of Go routines"),
     unit=COUNT_UNIT,
     color=Color.PURPLE,
 )
