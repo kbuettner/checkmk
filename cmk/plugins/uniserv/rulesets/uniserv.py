@@ -97,7 +97,7 @@ def _valuespec_active_checks_uniserv() -> Dictionary:
                                     "search_regex": DictElement(
                                         required=True,
                                         parameter_form=String(
-                                            title=Title("Check City against Regex"),
+                                            title=Title("Check city against regex"),
                                             help_text=Help(
                                                 "The city name from the response will be checked against "
                                                 "the regular expression specified here"

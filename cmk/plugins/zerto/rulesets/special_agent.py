@@ -75,12 +75,15 @@ def _form_spec_special_agents_zerto() -> Dictionary:
                                     "cert_server_name": DictElement(
                                         required=False,
                                         parameter_form=String(
-                                            title=Title("TLS certificate hostname"),
+                                            title=Title("TLS certificate host name"),
                                             custom_validate=(
                                                 validators.LengthInRange(min_value=1),
                                             ),
                                             help_text=Help(
-                                                "The special agent will use this hostname for the TLS certificate validation. If omitted, the Checkmk host name of the host will be used"
+                                                "The special agent will use this host "
+                                                "name for the TLS certificate "
+                                                "validation. If omitted, the Checkmk "
+                                                "host name of the host will be used"
                                             ),
                                         ),
                                     ),
