@@ -50,7 +50,7 @@ def _parameter_valuespec_checkmk_agent_plugins() -> Dictionary:
                 ),
             ),
         ],
-        help=_('This ruleset is deprecated. Please use the ruleset <i>"%s"</i> instead.')
+        help=_('This rule set is deprecated. Please use the rule set <i>"%s"</i> instead.')
         % _("Checkmk agent installation auditing"),
     )
 

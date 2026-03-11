@@ -1048,11 +1048,11 @@ def _parameter_valuespec_if() -> Dictionary:
                 _vs_alternative_levels(
                     title=_("Unicast packet rates"),
                     help=_(
-                        "These levels make the check go warning or critical whenever the "
+                        "These levels change the status of a check to WARNING or CRITICAL whenever the "
                         "<b>percentual packet rate</b> or the <b>absolute packet "
                         "rate</b> of the monitored interface reaches the given "
                         "bounds. The percentual packet rate is computed by "
-                        "the formula <b>(unicast / (unicast + non-unicast))*100</b>"
+                        "the formula <b>(unicast / (unicast + non-unicast))*100</b>."
                     ),
                     percent_levels=PERC_PKG_LEVELS,
                     percent_detail=_(" (in relation to all successful packets)"),
@@ -1064,11 +1064,11 @@ def _parameter_valuespec_if() -> Dictionary:
                 _vs_alternative_levels(
                     title=_("Multicast packet rates"),
                     help=_(
-                        "These levels make the check go warning or critical whenever the "
+                        "These levels change the status of a check to WARNING or CRITICAL whenever the "
                         "<b>percentual packet rate</b> or the <b>absolute packet "
                         "rate</b> of the monitored interface reaches the given "
                         "bounds. The percentual packet rate is computed by "
-                        "the formula <b>(multicast / (unicast + non-unicast))*100</b>"
+                        "the formula <b>(multicast / (unicast + non-unicast))*100</b>."
                     ),
                     percent_levels=PERC_PKG_LEVELS,
                     percent_detail=_(" (in relation to all successful packets)"),
@@ -1080,11 +1080,11 @@ def _parameter_valuespec_if() -> Dictionary:
                 _vs_alternative_levels(
                     title=_("Broadcast packet rates"),
                     help=_(
-                        "These levels make the check go warning or critical whenever the "
+                        "These levels change the status of a check to WARNING or CRITICAL whenever the "
                         "<b>percentual packet rate</b> or the <b>absolute packet "
                         "rate</b> of the monitored interface reaches the given "
                         "bounds. The percentual packet rate is computed by "
-                        "the formula <b>(broadcast / (unicast + non-unicast))*100</b>"
+                        "the formula <b>(broadcast / (unicast + non-unicast))*100</b>."
                     ),
                     percent_levels=PERC_PKG_LEVELS,
                     percent_detail=_(" (in relation to all successful packets)"),
@@ -1097,10 +1097,10 @@ def _parameter_valuespec_if() -> Dictionary:
                     valuespec=_vs_alternative_levels(
                         title=_("Levels for discards rates"),
                         help=_(
-                            "These levels make the check go warning or critical whenever the "
+                            "These levels change the status of a check to WARNING or CRITICAL whenever the "
                             "<b>percentual discards rate</b> or the <b>absolute discards rate</b> of the monitored interface reaches "
                             "the given bounds. The percentual discards rate is computed by "
-                            "the formula <b>(discards / (unicast + non-unicast + discards))*100</b> "
+                            "the formula <b>(discards / (unicast + non-unicast + discards))*100</b>. "
                         ),
                         percent_levels=PERC_DISCARD_LEVELS,
                         percent_detail=_(" (in relation to all packets (successful + discard))"),
@@ -1129,7 +1129,7 @@ def _parameter_valuespec_if() -> Dictionary:
                 DropdownChoice(
                     title=_("Speed of interface groups (Netapp only)"),
                     help=_(
-                        "Choose the behaviour for different interface speeds in "
+                        "Choose the behavior for different interface speeds in "
                         'interface groups. The default is "Check and WARN". This '
                         "feature is currently only supported by the check "
                         "netapp_api_if."
@@ -1147,7 +1147,7 @@ def _parameter_valuespec_if() -> Dictionary:
                 DropdownChoice(
                     title=_("Is-Home state (Netapp only)"),
                     help=_(
-                        "Choose the behaviour when the current port is not the "
+                        "Choose the behavior when the current port is not the "
                         "home port of the respective interface. The default is "
                         '"Check and Display". This feature is currently only '
                         "supported by the check netapp_api_if."

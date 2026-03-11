@@ -70,7 +70,7 @@ def _valuespec_wut_webio_check() -> Dictionary:
                                 (
                                     "Unknown",
                                     MonitoringState(
-                                        title=_("State if input is Unknown"), default_value=3
+                                        title=_("State if input is UNKNOWN"), default_value=3
                                     ),
                                 ),
                             ],

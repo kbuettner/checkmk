@@ -44,7 +44,7 @@ def _parameter_valuespec_vpn_tunnel() -> Dictionary:
                     ),
                     add_label=_("Add tunnel"),
                     movable=False,
-                    title=_("VPN tunnel specific configuration"),
+                    title=_("VPN tunnel-specific configuration"),
                 ),
             ),
             (
