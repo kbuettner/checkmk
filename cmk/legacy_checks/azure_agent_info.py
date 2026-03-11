@@ -151,7 +151,6 @@ def check_azure_agent_info(
 ) -> Generator[LegacyResult]:
     yield from agent_bailouts(parsed.get("agent-bailout", []))
 
-    # Does not exist in v2 (moved to subscription_info), but ok because of the None check
     reads = parsed.get("remaining-reads")
     if reads is not None:
         yield remaining_api_reads(reads, params)
@@ -182,19 +181,5 @@ check_info["azure_agent_info"] = LegacyCheckDefinition(
         "warning_levels": (1, 10),
         "exception_levels": (1, 1),
         "remaining_reads_unknown_state": 1,
-    },
-)
-
-# TODO: migrate and move to new folder struct
-check_info["azure_v2_agent_info"] = LegacyCheckDefinition(
-    name="azure_v2_agent_info",
-    parse_function=parse_azure_agent_info,
-    service_name="Azure agent info",
-    discovery_function=discovery_azure_agent_info,
-    check_function=check_azure_agent_info,
-    check_ruleset_name="azure_v2_agent_info",
-    check_default_parameters={
-        "warning_levels": (1, 10),
-        "exception_levels": (1, 1),
     },
 )
