@@ -24,7 +24,10 @@ plug-in instance name must start with the corresponding prefix.
 
 from collections.abc import Mapping
 
+from ._connector_object import ConnectorObject, FailedToContactRemoteSite, NullObject
 from ._connector_specs import ConnectorSpec as ConnectorSpec
+from ._plugin import ConnectorContext, ConnectorPlugin, PhaseStep, SiteChanges
+from ._types import ChangeDirective, find_order, GlobalIdent, HostOrder
 
 
 def entry_point_prefixes() -> Mapping[type[ConnectorSpec], str]:
@@ -48,5 +51,16 @@ def entry_point_prefixes() -> Mapping[type[ConnectorSpec], str]:
 
 __all__ = [
     "ConnectorSpec",
+    "ChangeDirective",
+    "ConnectorContext",
+    "ConnectorObject",
+    "ConnectorPlugin",
     "entry_point_prefixes",
+    "FailedToContactRemoteSite",
+    "find_order",
+    "GlobalIdent",
+    "HostOrder",
+    "NullObject",
+    "PhaseStep",
+    "SiteChanges",
 ]

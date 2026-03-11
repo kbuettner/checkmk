@@ -3,27 +3,36 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-from cmk.dcd_connectors.internal import ConnectorSpec, entry_point_prefixes
+from cmk.dcd_connectors.internal import (
+    ConnectorContext,
+    ConnectorPlugin,
+    ConnectorSpec,
+    entry_point_prefixes,
+    NullObject,
+)
+
+
+def _dummy_factory(_ctx: ConnectorContext) -> ConnectorPlugin:
+    raise NotImplementedError
 
 
 def test_connector_spec_stores_all_fields() -> None:
-    spec = ConnectorSpec(name="test", connector_class=object)
-    assert spec.name == "test"
-    assert spec.connector_class is object
-    assert spec.connector_object_class is None
-
-
-def test_connector_spec_with_connector_object_class() -> None:
     spec = ConnectorSpec(
         name="test",
-        connector_class=object,
-        connector_object_class=int,
+        create_connector=_dummy_factory,
+        connector_object_class=NullObject,
     )
-    assert spec.connector_object_class is int
+    assert spec.name == "test"
+    assert spec.create_connector is _dummy_factory
+    assert spec.connector_object_class is NullObject
 
 
 def test_connector_spec_name_used_by_discovery() -> None:
-    spec = ConnectorSpec(name="my_connector", connector_class=object)
+    spec = ConnectorSpec(
+        name="my_connector",
+        create_connector=_dummy_factory,
+        connector_object_class=NullObject,
+    )
     assert spec.name == "my_connector"
 
 

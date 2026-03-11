@@ -1112,7 +1112,9 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
     Component("cmk.dcd_connector_parameters"): _allow(
         "cmk.rulesets",
     ),
-    Component("cmk.dcd_connectors"): _allow(),
+    Component("cmk.dcd_connectors"): _allow(
+        *PACKAGE_CCC,
+    ),
     Component("cmk.inventory_ui"): _allow(),
     Component("cmk.logwatch"): _allow(
         *PACKAGE_PLUGIN_APIS,

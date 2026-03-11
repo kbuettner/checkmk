@@ -9,7 +9,12 @@ from types import ModuleType
 from cmk.dcd_connector_parameters.internal.connector_parameter_specs import (
     ConnectorParametersSpec,
 )
-from cmk.dcd_connectors.internal import ConnectorSpec
+from cmk.dcd_connectors.internal import (
+    ConnectorContext,
+    ConnectorPlugin,
+    ConnectorSpec,
+    NullObject,
+)
 from cmk.discover_plugins import Collector, discover_modules, PluginGroup, PluginLocation
 from cmk.rulesets.v1 import form_specs
 
@@ -29,8 +34,8 @@ class _AssumeDirs:
         )
 
 
-class _DummyConnector:
-    pass
+def _dummy_factory(_ctx: ConnectorContext) -> ConnectorPlugin:
+    raise NotImplementedError
 
 
 def _make_module(name: str, path: list[str], **kwargs: object) -> ModuleType:
@@ -61,7 +66,9 @@ def test_collect_connector_spec_by_prefix() -> None:
         skip_wrong_types=False,
         raise_errors=True,
     )
-    spec = ConnectorSpec(name="test", connector_class=_DummyConnector)
+    spec = ConnectorSpec(
+        name="test", create_connector=_dummy_factory, connector_object_class=NullObject
+    )
     module = _make_module("test_module", [], connector_test=spec)
     collector.add_from_module(
         "test_module",
@@ -79,7 +86,9 @@ def test_collector_ignores_connector_spec_with_wrong_prefix() -> None:
         skip_wrong_types=False,
         raise_errors=True,
     )
-    spec = ConnectorSpec(name="test", connector_class=_DummyConnector)
+    spec = ConnectorSpec(
+        name="test", create_connector=_dummy_factory, connector_object_class=NullObject
+    )
     module = _make_module("test_module", [], wrong_prefix_test=spec)
     collector.add_from_module(
         "test_module",

@@ -191,11 +191,17 @@ py_library(
     srcs = [
         "cmk/dcd_connectors/__init__.py",
         "cmk/dcd_connectors/internal/__init__.py",
+        "cmk/dcd_connectors/internal/_connector_object.py",
         "cmk/dcd_connectors/internal/_connector_specs.py",
+        "cmk/dcd_connectors/internal/_plugin.py",
+        "cmk/dcd_connectors/internal/_types.py",
     ],
     data = ["cmk/dcd_connectors/py.typed"],
     imports = ["."],
     visibility = ["//visibility:public"],
+    deps = [
+        "//packages/cmk-ccc:hostaddress",
+    ],
 )
 
 py_library(

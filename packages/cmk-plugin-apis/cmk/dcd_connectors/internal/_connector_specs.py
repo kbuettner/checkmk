@@ -3,7 +3,11 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
+from collections.abc import Callable
 from dataclasses import dataclass
+
+from ._connector_object import ConnectorObject
+from ._plugin import ConnectorContext, ConnectorPlugin
 
 
 @dataclass(frozen=True)
@@ -18,5 +22,5 @@ class ConnectorSpec:
     """
 
     name: str
-    connector_class: type
-    connector_object_class: type | None = None
+    create_connector: Callable[[ConnectorContext], ConnectorPlugin]
+    connector_object_class: type[ConnectorObject]
