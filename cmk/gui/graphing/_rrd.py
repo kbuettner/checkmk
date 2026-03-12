@@ -26,7 +26,7 @@ from cmk.ccc.site import SiteId
 from cmk.ccc.version import parse_check_mk_version
 from cmk.gui import sites
 from cmk.gui.i18n import _
-from cmk.gui.type_defs import ColumnName
+from cmk.gui.type_defs import ColumnName, Row
 from cmk.gui.utils.temperate_unit import TemperatureUnit
 from cmk.utils.metrics import MetricName
 from cmk.utils.servicename import ServiceName
@@ -49,13 +49,17 @@ from ._translated_metrics import find_matching_translation, TranslationSpec
 from ._unit import user_specific_unit
 
 
-def get_graph_data_from_livestatus(only_sites, host_name, service_description):  # type: ignore[no-untyped-def]
+def get_graph_data_from_livestatus(
+    site_id: list[SiteId] | SiteId | None,
+    host_name: HostName,
+    service_description: ServiceName,
+) -> Row:
     columns = ["perf_data", "metrics", "check_command"]
     query = livestatus_lql([host_name], columns, service_description)
     what = "host" if service_description == "_HOST_" else "service"
     labels = ["site"] + [f"{what}_{col}" for col in columns]
 
-    with sites.only_sites(only_sites), sites.prepend_site():
+    with sites.only_sites(site_id), sites.prepend_site():
         info = dict(zip(labels, sites.live().query_row(query)))
 
     info["host_name"] = host_name

@@ -107,21 +107,19 @@ def _answer_graph_image_request(
     backend_time_series_fetcher: FetchTimeSeries | None,
 ) -> None:
     try:
+        site_id = SiteId(raw_site) if (raw_site := request.var("site")) else None
         host_name = request.get_validated_type_input_mandatory(HostName, "host")
-
         service_description = request.get_str_input_mandatory("service", "_HOST_")
-
-        site = request.var("site")
         # FIXME: We should really enforce site here. But it seems that the notification context
         # has no idea about the site of the host. This could be optimized later.
         # if not site:
         #    raise MKGeneralException("Missing mandatory \"site\" parameter")
         try:
-            row = get_graph_data_from_livestatus(site, host_name, service_description)
+            row = get_graph_data_from_livestatus(site_id, host_name, service_description)
         except livestatus.MKLivestatusNotFoundError:
             logger.debug(
                 "Cannot fetch graph data: site: %s, host %s, service %s",
-                site,
+                site_id,
                 host_name,
                 service_description,
             )
