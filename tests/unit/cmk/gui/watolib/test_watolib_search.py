@@ -493,6 +493,10 @@ class TestRealisticSearch:
             lambda *args, **kwargs: GetConfigurationResult({}),
         )
 
+    @pytest.fixture()
+    def real_index_builder(self, clean_redis_client: "Redis") -> IndexBuilder:
+        return IndexBuilder(real_match_item_generator_registry, clean_redis_client)
+
     @pytest.mark.usefixtures(
         "with_admin_login",
         "fake_omd_default_globals",
@@ -503,12 +507,11 @@ class TestRealisticSearch:
     )
     def test_real_search_without_exception(
         self,
+        real_index_builder: IndexBuilder,
         clean_redis_client: "Redis",
         index_searcher: IndexSearcher,
     ) -> None:
-        IndexBuilder(real_match_item_generator_registry, clean_redis_client).build_full_index(
-            UserPermissions({}, {}, {}, [])
-        )
+        real_index_builder.build_full_index(UserPermissions({}, {}, {}, []))
         assert IndexBuilder.index_is_built(clean_redis_client)
         assert len(list(index_searcher.search("Host"))) > 4
 
@@ -530,16 +533,14 @@ class TestRealisticSearch:
     )
     def test_index_is_built_as_super_user(
         self,
-        clean_redis_client: "Redis",
+        real_index_builder: IndexBuilder,
         index_searcher: IndexSearcher,
     ) -> None:
         """
         We test that the index is always built as a super user.
         """
         with _UserContext(LoggedInNobody()):
-            IndexBuilder(real_match_item_generator_registry, clean_redis_client).build_full_index(
-                UserPermissions({}, {}, {}, [])
-            )
+            real_index_builder.build_full_index(UserPermissions({}, {}, {}, []))
 
         # if the search index did not internally use the super user while building, this item would
         # be missing, because the match item generator for the setup menu only yields entries which
@@ -557,7 +558,7 @@ class TestRealisticSearch:
     def test_dcd_not_found_if_not_super_user(
         self,
         monkeypatch: MonkeyPatch,
-        clean_redis_client: "Redis",
+        real_index_builder: IndexBuilder,
         index_searcher: IndexSearcher,
     ) -> None:
         """
@@ -576,8 +577,6 @@ class TestRealisticSearch:
         )
 
         with _UserContext(LoggedInNobody()):
-            IndexBuilder(real_match_item_generator_registry, clean_redis_client).build_full_index(
-                UserPermissions({}, {}, {}, [])
-            )
+            real_index_builder.build_full_index(UserPermissions({}, {}, {}, []))
 
         assert not list(index_searcher.search("custom host attributes"))
