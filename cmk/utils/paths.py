@@ -15,7 +15,7 @@ def _omd_path(path: str) -> Path:
     return omd_root / path
 
 
-def _local_path(global_path: str | Path) -> Path:
+def _local_path(global_path: Path) -> Path:
     return omd_root / LOCAL_SEGMENT / Path(global_path).relative_to(omd_root)
 
 
@@ -39,10 +39,7 @@ final_config_file = _omd_path("etc/check_mk/final.mk")
 local_config_file = _omd_path("etc/check_mk/local.mk")
 check_mk_config_dir = _omd_path("etc/check_mk/conf.d")
 modules_dir = _omd_path("share/check_mk/modules")
-
-relative_var_dir = Path("var/check_mk")
-var_dir = omd_root / relative_var_dir
-
+var_dir = _omd_path("var/check_mk")
 log_dir = _omd_path("var/log")
 precompiled_checks_dir = _omd_path("var/check_mk/precompiled_checks")
 autochecks_dir = _omd_path("var/check_mk/autochecks")
