@@ -32,9 +32,6 @@ from cmk.gui.search import (
     may_see_url,
     PermissionsHandler,
 )
-from cmk.gui.search import (
-    match_item_generator_registry as real_match_item_generator_registry,
-)
 from cmk.gui.search.engines import setup as search
 from cmk.gui.session import _UserContext
 from cmk.gui.type_defs import SearchResult, SearchResultsByTopic
@@ -495,7 +492,9 @@ class TestRealisticSearch:
 
     @pytest.fixture()
     def real_index_builder(self, clean_redis_client: "Redis") -> IndexBuilder:
-        return IndexBuilder(real_match_item_generator_registry, clean_redis_client)
+        from cmk.gui.search import match_item_generator_registry
+
+        return IndexBuilder(match_item_generator_registry, clean_redis_client)
 
     @pytest.mark.usefixtures(
         "with_admin_login",
