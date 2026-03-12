@@ -300,7 +300,6 @@ filegroup(
         "fritzbox/libexec/agent_fritzbox",
         "gcp/libexec/agent_gcp",
         "gcp/libexec/agent_gcp_status",
-        "gerrit/libexec/agent_gerrit",
         "hivemanager/libexec/agent_hivemanager",
         "hivemanager_ng/libexec/agent_hivemanager_ng",
         "hp_msa/libexec/agent_hp_msa",

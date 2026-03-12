@@ -134,6 +134,39 @@ py_test(
 )
 
 py_library(
+    name = "gerrit",
+    srcs = glob(["cmk/plugins/gerrit/**/*.py"]),
+    data = glob([
+        "cmk/plugins/gerrit/checkman/*",
+        "cmk/plugins/gerrit/libexec/*",
+    ]) + ["cmk/plugins/gerrit/py.typed"],
+    imports = ["."],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//packages/cmk-plugin-apis:agent_based",
+        "//packages/cmk-plugin-apis:password_store",
+        "//packages/cmk-plugin-apis:rulesets",
+        "//packages/cmk-plugin-apis:server_side_calls",
+        "//packages/cmk-plugin-apis:server_side_programs",
+        requirement("pydantic"),
+        requirement("requests"),
+    ],
+)
+
+py_test(
+    name = "gerrit-test",
+    size = "small",
+    srcs = glob(["tests/cmk/plugins/gerrit/**/*.py"]) + [":__test__.py"],
+    main = ":__test__.py",
+    deps = [
+        ":__test__",
+        ":gerrit",
+        requirement("polyfactory"),
+        requirement("pytest"),
+    ],
+)
+
+py_library(
     name = "graylog",
     srcs = glob(["cmk/plugins/graylog/**/*.py"]),
     imports = ["."],

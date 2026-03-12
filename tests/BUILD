@@ -407,6 +407,7 @@ py_library(
         ":testlib",
         "//packages/cmk-plugins:cisco_prime",
         "//packages/cmk-plugins:elasticsearch",
+        "//packages/cmk-plugins:gerrit",
         "//packages/cmk-plugins:ipmi",
         "//packages/cmk-plugins:kube",
         "//packages/cmk-plugins:netapp",
