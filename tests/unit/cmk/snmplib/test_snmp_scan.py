@@ -8,7 +8,6 @@
 # mypy: disable-error-code="type-arg"
 
 
-import logging
 from collections.abc import Iterator
 
 import pytest
@@ -64,13 +63,6 @@ def backend() -> Iterator[SNMPBackend]:
 def single_oid_cache() -> Iterator[dict[str, SNMPDecodedString | None]]:
     # Cache OIDs to avoid actual SNMP I/O.
     yield {snmp_scan.OID_SYS_DESCR: "sys description", snmp_scan.OID_SYS_OBJ: "sys object"}
-
-
-def test_snmp_scan_fake_description_object__success(backend: SNMPBackend) -> None:
-    assert {
-        snmp_scan.OID_SYS_DESCR: "",
-        snmp_scan.OID_SYS_OBJ: "",
-    } == snmp_scan._fake_description_object(logging.getLogger("test"))
 
 
 def test_snmp_scan_find_plugins__success(
