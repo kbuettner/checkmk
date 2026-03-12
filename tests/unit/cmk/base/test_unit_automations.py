@@ -34,6 +34,7 @@ def test_registered_automations(edition: Edition) -> None:
         "delete-hosts-known-remote",
         "diag-cmk-agent",
         "diag-host",
+        "diag-snmp",
         "diag-special-agent",
         "autodiscovery",
         "service-discovery",

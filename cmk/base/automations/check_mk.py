@@ -16,6 +16,7 @@ import itertools
 import logging
 import operator
 import os
+import re
 import shlex
 import shutil
 import socket
@@ -33,6 +34,7 @@ from typing import Any, Literal
 import livestatus
 
 import cmk.base.parent_scan
+import cmk.ccc.cleanup
 import cmk.ccc.debug
 import cmk.utils.password_store
 import cmk.utils.paths
@@ -51,6 +53,8 @@ from cmk.automations.results import (
     DiagCmkAgentInput,
     DiagCmkAgentResult,
     DiagHostResult,
+    DiagSnmpInput,
+    DiagSnmpResult,
     DiagSpecialAgentHostConfig,
     DiagSpecialAgentInput,
     DiagSpecialAgentResult,
@@ -206,6 +210,7 @@ from cmk.snmplib import (
     get_snmp_table,
     oids_to_walk,
     SNMPBackend,
+    SNMPBackendEnum,
     SNMPCredentials,
     SNMPHostConfig,
     SNMPVersion,
@@ -3222,6 +3227,125 @@ def automation_diag_cmk_agent(
     return DiagCmkAgentResult(state, output)
 
 
+def automation_diag_snmp(
+    ctx: AutomationContext,
+    args: list[str],
+    _plugins: AgentBasedPlugins | None,
+    _loading_result: config.LoadingResult | None,
+) -> DiagSnmpResult:
+    diag_input = DiagSnmpInput.deserialize(sys.stdin.read())
+    ip_address = diag_input.ip_address
+
+    if not ip_address:
+        # Use the hostname directly and let the SNMP library resolve it.
+        # This avoids issues with stale DNS caches for new/unconfigured hosts.
+        ip_address = diag_input.host_name
+
+    # Build credentials from input
+    credentials: SNMPCredentials
+    if diag_input.snmpv3_use is not None:
+        if diag_input.snmpv3_use == "authPriv":
+            credentials = (
+                diag_input.snmpv3_use,
+                diag_input.snmpv3_auth_proto or "",
+                diag_input.snmpv3_security_name or "",
+                diag_input.snmpv3_security_password or "",
+                diag_input.snmpv3_privacy_proto or "",
+                diag_input.snmpv3_privacy_password or "",
+            )
+        elif diag_input.snmpv3_use == "authNoPriv":
+            credentials = (
+                diag_input.snmpv3_use,
+                diag_input.snmpv3_auth_proto or "",
+                diag_input.snmpv3_security_name or "",
+                diag_input.snmpv3_security_password or "",
+            )
+        else:
+            # noAuthNoPriv
+            credentials = (
+                diag_input.snmpv3_use,
+                diag_input.snmpv3_security_name or "",
+            )
+    elif diag_input.snmp_community:
+        credentials = diag_input.snmp_community
+    else:
+        credentials = snmp_default_community
+
+    # Determine SNMP version
+    if diag_input.snmpv3_use is not None:
+        snmp_version = SNMPVersion.V3
+        bulkwalk_enabled = True
+    elif diag_input.snmp_version == "snmp-v1":
+        snmp_version = SNMPVersion.V1
+        bulkwalk_enabled = False
+    else:
+        snmp_version = SNMPVersion.V2C
+        bulkwalk_enabled = True
+
+    is_ipv6 = ":" in ip_address if ip_address else diag_input.address_family == "ip-v6-only"
+
+    snmp_config = SNMPHostConfig(
+        is_ipv6_primary=is_ipv6,
+        hostname=diag_input.host_name,
+        ipaddress=ip_address,
+        credentials=credentials,
+        port=diag_input.port,
+        snmp_version=snmp_version,
+        bulkwalk_enabled=bulkwalk_enabled,
+        bulk_walk_size_of=10,
+        timing={
+            "timeout": diag_input.timeout,
+            "retries": diag_input.retries,
+        },
+        oid_range_limits={},
+        snmpv3_contexts=[],
+        character_encoding=None,
+        snmp_backend=SNMPBackendEnum.INLINE,
+    )
+
+    # Clear cached SNMP sessions so that changed port/version/timing are respected.
+    # The inline SNMP session cache key does not include these parameters.
+    cmk.ccc.cleanup.cleanup_globals()
+
+    try:
+        data = get_snmp_table(
+            section_name=None,
+            tree=BackendSNMPTree(
+                base=".1.3.6.1.2.1.1",
+                oids=[BackendOIDSpec(c, "string", False) for c in "1456"],
+            ),
+            walk_cache={},
+            backend=make_snmp_backend(
+                snmp_config, log.logger, stored_walk_path=cmk.utils.paths.snmpwalks_dir
+            ),
+            log=log.logger.debug,
+        )
+    except Exception as e:
+        if cmk.ccc.debug.enabled():
+            raise
+        # The inline SNMP library reports "after N tries" but the UI exposes "retries"
+        # (which is tries - 1). Rewrite the message to match.
+        msg = str(e)
+        match = re.search(r"after (\d+) tries", msg)
+        if match:
+            retries = int(match.group(1)) - 1
+            msg = msg.replace(
+                match.group(0),
+                f"after {retries} {'retry' if retries == 1 else 'retries'}",
+            )
+        return DiagSnmpResult(1, msg)
+
+    if data:
+        if len(data[0]) != 4:
+            return DiagSnmpResult(1, "Invalid SNMP response")
+        return DiagSnmpResult(
+            0,
+            "sysDescr:\t%s\nsysContact:\t%s\nsysName:\t%s\nsysLocation:\t%s\n" % tuple(data[0]),
+        )
+
+    return DiagSnmpResult(1, "Got empty SNMP response")
+
+
 class AutomationDiagHost:
     def execute(
         self,
@@ -4355,6 +4479,10 @@ def automations_common() -> list[Automation]:
         Automation(
             ident="diag-cmk-agent",
             handler=automation_diag_cmk_agent,
+        ),
+        Automation(
+            ident="diag-snmp",
+            handler=automation_diag_snmp,
         ),
         Automation(
             ident="diag-host",

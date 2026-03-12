@@ -12,14 +12,21 @@
 import abc
 from collections.abc import Collection, Iterator, Sequence
 from dataclasses import asdict
-from typing import Final, Literal, overload, override
+from typing import cast, Final, Literal, overload, override
 from urllib.parse import unquote
 
 from livestatus import SiteConfigurations
 
 import cmk.gui.watolib.sites as watolib_sites
 import cmk.utils.tags
-from cmk.automations.results import DiagCmkAgentInput, PingHostCmd, PingHostInput
+from cmk.automations.results import (
+    DiagCmkAgentInput,
+    DiagSnmpInput,
+    PingHostCmd,
+    PingHostInput,
+    SnmpV3AuthProtocol,
+    SnmpV3SecurityLevel,
+)
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.hostaddress import HostName
 from cmk.ccc.site import omd_site, SiteId
@@ -31,6 +38,7 @@ from cmk.gui.exceptions import MKAuthException, MKUserError
 from cmk.gui.htmllib.html import html
 from cmk.gui.http import request
 from cmk.gui.i18n import _
+from cmk.gui.log import logger
 from cmk.gui.logged_in import user
 from cmk.gui.page_menu import (
     make_form_submit_link,
@@ -69,6 +77,7 @@ from cmk.gui.valuespec import (
 from cmk.gui.wato.pages.folders import ModeFolder
 from cmk.gui.watolib import bakery
 from cmk.gui.watolib.agent_registration import remove_tls_registration
+from cmk.gui.watolib.attributes import SNMPCredentials as SNMPCredentialsVS
 from cmk.gui.watolib.audit_log_url import make_object_audit_log_url
 from cmk.gui.watolib.automations import make_automation_config
 from cmk.gui.watolib.builtin_attributes import (
@@ -79,6 +88,7 @@ from cmk.gui.watolib.builtin_attributes import (
 from cmk.gui.watolib.check_mk_automations import (
     delete_hosts,
     diag_cmk_agent,
+    diag_snmp,
     ping_host,
     update_dns_cache,
 )
@@ -122,6 +132,7 @@ def register(mode_registry: ModeRegistry, page_registry: PageRegistry) -> None:
     mode_registry.register(ModeCreateCluster)
     page_registry.register(PageEndpoint("ajax_ping_host", PageAjaxPingHost()))
     page_registry.register(PageEndpoint("wato_ajax_diag_cmk_agent", PageAjaxDiagCmkAgent()))
+    page_registry.register(PageEndpoint("wato_ajax_diag_snmp", PageAjaxDiagSnmp()))
 
 
 class UpdateDnsCacheLoadingContainer:
@@ -398,6 +409,7 @@ class ABCHostMode(WatoMode, abc.ABC):
                         ip_address_family="tag_address_family",
                         cmk_agent_connection="cmk_agent_connection",
                         tag_agent="tag_agent",
+                        tag_snmp_ds="tag_snmp_ds",
                         cb_change="cb_host_change"
                         if not self._is_cluster()
                         else "cb_cluster_change",
@@ -1151,6 +1163,74 @@ class PageAjaxDiagCmkAgent(AjaxPage):
                 address_family=api_request["address_family"],
                 agent_port=api_request["agent_port"],
                 timeout=api_request["timeout"],
+            ),
+            debug=ctx.config.debug,
+        )
+
+        return {
+            "status_code": result.return_code,
+            "output": result.response,
+        }
+
+
+class PageAjaxDiagSnmp(AjaxPage):
+    @override
+    def page(self, ctx: PageContext) -> PageResult:
+        api_request = ctx.request.get_request()
+
+        # Parse SNMP credentials from forwarded form fields using the ValueSpec
+        snmp_community: str | None = None
+        snmpv3_use: str | None = None
+        snmpv3_auth_proto: str | None = None
+        snmpv3_security_name: str | None = None
+        snmpv3_security_password: str | None = None
+        snmpv3_privacy_proto: str | None = None
+        snmpv3_privacy_password: str | None = None
+
+        try:
+            credentials = SNMPCredentialsVS(
+                default_value=None,
+            ).from_html_vars("snmp_community")
+        except Exception:
+            logger.exception("Failed to parse SNMP credentials from form data")
+            credentials = None
+
+        if isinstance(credentials, str):
+            snmp_community = credentials
+        elif isinstance(credentials, tuple):
+            if len(credentials) == 2:
+                snmpv3_use = credentials[0]
+                snmpv3_security_name = credentials[1]
+            elif len(credentials) == 4:
+                snmpv3_use = credentials[0]
+                snmpv3_auth_proto = credentials[1]
+                snmpv3_security_name = credentials[2]
+                snmpv3_security_password = credentials[3]
+            elif len(credentials) == 6:
+                snmpv3_use = credentials[0]
+                snmpv3_auth_proto = credentials[1]
+                snmpv3_security_name = credentials[2]
+                snmpv3_security_password = credentials[3]
+                snmpv3_privacy_proto = credentials[4]
+                snmpv3_privacy_password = credentials[5]
+
+        result = diag_snmp(
+            automation_config=make_automation_config(ctx.config.sites[api_request["site_id"]]),
+            diag_snmp_input=DiagSnmpInput(
+                host_name=HostName(api_request["host_name"]),
+                ip_address=api_request.get("ipaddress", ""),
+                address_family=api_request.get("address_family", "ip-v4-only"),
+                snmp_version=api_request["snmp_version"],
+                snmp_community=snmp_community,
+                snmpv3_use=cast(SnmpV3SecurityLevel | None, snmpv3_use),
+                snmpv3_auth_proto=cast(SnmpV3AuthProtocol | None, snmpv3_auth_proto),
+                snmpv3_security_name=snmpv3_security_name,
+                snmpv3_security_password=snmpv3_security_password,
+                snmpv3_privacy_proto=snmpv3_privacy_proto,
+                snmpv3_privacy_password=snmpv3_privacy_password,
+                port=max(1, min(65535, int(api_request.get("port", "161")))),
+                timeout=max(1, int(api_request.get("timeout", "5"))),
+                retries=max(0, int(api_request.get("retries", "1"))),
             ),
             debug=ctx.config.debug,
         )

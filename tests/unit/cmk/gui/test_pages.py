@@ -150,6 +150,7 @@ def test_registered_pages() -> None:
         "wato",
         "wato_ajax_diag_cmk_agent",
         "wato_ajax_diag_host",
+        "wato_ajax_diag_snmp",
         "wato_ajax_execute_check",
         "wato_ajax_fetch_site_status",
         "wato_ajax_profile_repl",

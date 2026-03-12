@@ -648,6 +648,27 @@ def diag_cmk_agent(
     )
 
 
+def diag_snmp(
+    automation_config: LocalAutomationConfig | RemoteAutomationConfig,
+    diag_snmp_input: results.DiagSnmpInput,
+    *,
+    debug: bool,
+) -> results.DiagSnmpResult:
+    return _deserialize(
+        _automation_serialized(
+            "diag-snmp",
+            automation_config=automation_config,
+            args=None,
+            stdin_data=diag_snmp_input.serialize(
+                cmk_version.Version.from_str(cmk_version.__version__)
+            ),
+            debug=debug,
+        ),
+        results.DiagSnmpResult,
+        debug=debug,
+    )
+
+
 def active_check(
     automation_config: LocalAutomationConfig | RemoteAutomationConfig,
     host_name: HostName,
