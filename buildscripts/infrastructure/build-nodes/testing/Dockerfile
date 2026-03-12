@@ -44,19 +44,19 @@ ENV \
 
 # above image is ubuntu-22.04:master-latest
 # docker inspect -f "{{ .Size }}" testing-ubuntu-checkmk-master:latest
-# bash is required to be used in Jenkins with image.inside(), requires +0MB
-# curl is required to download artifacts, requires +0MB
-# cmake is required to install iwyu, requires +34MB
-# git is required to use tests and install iwyu, requires +0MB
-# gpg is required to use installation scripts, requires +0MB
-# libaio1 is required by mk-oracle component testing, requires +1MB
-# lsb-release is required to use installation scripts, requires +0MB
-# libenchant-2-dev is required to build the software architecture due to sphinxcontrib.spelling, requires +5MB
-# make is required for installations, requires +0MB
-# mbuffer is required for faster decompression with lz4, requires +1MB
-# sudo is required to install packer, requires +0MB
-# unzip is required to install aws-cli, requires +0MB
-# wget is required to download artifacts, requires +0MB
+# bash is required to be used in Jenkins with image.inside()
+# curl is required to download artifacts
+# cmake is required to install iwyu
+# git is required to use tests and install iwyu
+# gpg is required to use installation scripts
+# libaio1 is required by mk-oracle component testing
+# lsb-release is required to use installation scripts
+# libenchant-2-dev is required to build the software architecture due to sphinxcontrib.spelling
+# make is required for installations
+# mbuffer is required for faster decompression with lz4
+# sudo is required to install packer
+# unzip is required to install aws-cli
+# wget is required to download artifacts
 RUN apt-get update && \
     apt-get install -y \
         bash \
@@ -74,16 +74,11 @@ RUN apt-get update && \
         wget && \
     rm -rf /var/cache/apt/*
 
-# +5MB
 RUN /opt/install-make-dist-deps.sh
-
-# +48MB
 RUN /opt/install-packer.sh
-
-# +195MB
 RUN /opt/install-aws-cli.sh
 
-# lz4 is required to tar home cache folder, requires +1MB
+# lz4 is required to tar home cache folder
 RUN /opt/install-lz4-parallel.sh
 
 RUN rm /opt/install*.sh /opt/defines.make /opt/.bazelversion /opt/package_versions.bzl /opt/build_lib.sh /opt/strip_binaries
