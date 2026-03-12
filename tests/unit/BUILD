@@ -275,46 +275,6 @@ py_test(
 )
 
 py_test(
-    name = "fetchers_ultimate",
-    srcs = ["__test__.py"] + glob(
-        include = ["cmk/fetchers/**/nonfree/**/ultimate/**/*.py"],
-        allow_empty = True,
-    ),
-    args = [
-        "--config-file=$(location @//:pyproject.toml)",
-        "--import-mode=importlib",
-        "--random-order-bucket=global",
-        "--dist=loadfile",
-        "--numprocesses=4",
-    ],
-    data = ["@//:pyproject.toml"],
-    main = ":__test__.py",
-    target_compatible_with = select({
-        "@//:gpl+nonfree_repo": [],
-        "@//:gpl_repo": ["@platforms//:incompatible"],
-    }),
-    visibility = ["//tests:__subpackages__"],
-    deps = [
-        ":__test__",
-        ":conftest",
-        "//packages/cmk-ccc:resulttype",
-        "//packages/cmk-check-engine:fetchers",
-        "//packages/cmk-check-engine:snmplib",
-        "//packages/cmk-relay-protocols",
-        "//tests/testlib/unit:unit_free",
-        requirement("responses"),
-        requirement("pytest-asyncio"),
-        requirement("pytest-random-order"),
-    ] + select({
-        "@//:gpl+nonfree_repo": [
-            "//non-free/packages/cmk-core-helpers:relay-fetcher-trigger",
-            "//non-free/packages/cmk-core-helpers:relay_trigger_protocol",
-        ],
-        "@//:gpl_repo": [],
-    }),
-)
-
-py_test(
     name = "gui_community",
     # https://bazel.build/reference/be/common-definitions#test.size
     size = "large",
