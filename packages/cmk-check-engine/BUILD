@@ -112,6 +112,7 @@ py_test(
     deps = [
         "__test__",
         requirement("pytest"),
+        requirement("pyghmi"),
         ":fetchers",
         "//packages/cmk-plugin-apis:agent_based",
     ],

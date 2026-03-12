@@ -7,6 +7,7 @@
 # mypy: disable-error-code="no-any-return"
 # mypy: disable-error-code="no-untyped-def"
 # mypy: disable-error-code="type-arg"
+# ruff: noqa: ARG002, ARG004, ARG005, SLF001
 
 
 from __future__ import annotations
@@ -908,9 +909,7 @@ class TestTCPFetcher:
                 file_cache, fetcher, Mode.CHECKING, ActivatedSecrets()
             ) == result.OK(b"cached_section")
 
-    def test_open_exception_becomes_fetcher_error(
-        self, tmp_path: Path, disable_debug: None
-    ) -> None:
+    def test_open_exception_becomes_fetcher_error(self, tmp_path: Path) -> None:
         file_cache = StubFileCache[AgentRawData](
             base_path=Path("/"),
             relative_path_template="dev/null",

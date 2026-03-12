@@ -245,36 +245,6 @@ py_test(
 )
 
 py_test(
-    name = "fetchers_community",
-    srcs = ["__test__.py"] + glob(
-        include = ["cmk/fetchers/**/*.py"],
-        exclude = ["**/nonfree/**"],
-    ),
-    args = [
-        "--config-file=$(location @//:pyproject.toml)",
-        "--import-mode=importlib",
-        "--random-order-bucket=global",
-        "--dist=loadfile",
-        "--numprocesses=4",
-    ],
-    data = ["@//:pyproject.toml"],
-    main = ":__test__.py",
-    visibility = ["//tests:__subpackages__"],
-    deps = [
-        ":__test__",
-        ":conftest",
-        "//packages/cmk-ccc:hostaddress",
-        "//packages/cmk-check-engine:fetchers",
-        "//packages/cmk-check-engine:snmplib",
-        requirement("pyghmi"),
-        requirement("marshmallow"),
-        requirement("pytest-mock"),
-        requirement("pytest-asyncio"),
-        requirement("pytest-random-order"),
-    ],
-)
-
-py_test(
     name = "gui_community",
     # https://bazel.build/reference/be/common-definitions#test.size
     size = "large",
