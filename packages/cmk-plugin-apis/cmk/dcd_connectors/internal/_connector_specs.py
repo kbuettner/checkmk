@@ -7,7 +7,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from ._connector_object import ConnectorObject
-from ._plugin import ConnectorContext, ConnectorPlugin
+from ._plugin import Connector, ConnectorContext
 
 
 @dataclass(frozen=True)
@@ -22,5 +22,5 @@ class ConnectorSpec:
     """
 
     name: str
-    create_connector: Callable[[ConnectorContext], ConnectorPlugin]
+    create_connector: Callable[[ConnectorContext], Connector]
     connector_object_class: type[ConnectorObject]

@@ -26,7 +26,7 @@ from collections.abc import Mapping
 
 from ._connector_object import ConnectorObject, FailedToContactRemoteSite, NullObject
 from ._connector_specs import ConnectorSpec as ConnectorSpec
-from ._plugin import ConnectorContext, ConnectorPlugin, PhaseStep, SiteChanges
+from ._plugin import Connector, ConnectorContext, PhaseStep, SiteChanges
 from ._types import ChangeDirective, find_order, GlobalIdent, HostOrder
 
 
@@ -54,7 +54,7 @@ __all__ = [
     "ChangeDirective",
     "ConnectorContext",
     "ConnectorObject",
-    "ConnectorPlugin",
+    "Connector",
     "entry_point_prefixes",
     "FailedToContactRemoteSite",
     "find_order",

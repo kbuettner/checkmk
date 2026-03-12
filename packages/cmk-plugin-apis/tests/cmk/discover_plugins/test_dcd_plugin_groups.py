@@ -10,8 +10,8 @@ from cmk.dcd_connector_parameters.internal.connector_parameter_specs import (
     ConnectorParametersSpec,
 )
 from cmk.dcd_connectors.internal import (
+    Connector,
     ConnectorContext,
-    ConnectorPlugin,
     ConnectorSpec,
     NullObject,
 )
@@ -34,7 +34,7 @@ class _AssumeDirs:
         )
 
 
-def _dummy_factory(_ctx: ConnectorContext) -> ConnectorPlugin:
+def _dummy_factory(_ctx: ConnectorContext) -> Connector:
     raise NotImplementedError
 
 

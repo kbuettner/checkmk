@@ -25,7 +25,7 @@ class PhaseStep(Protocol):
 
 
 class ConnectorContext(Protocol):
-    """Context provided by the daemon to connector plugins."""
+    """Context provided by the daemon to connectors."""
 
     @property
     def logger(self) -> logging.Logger: ...
@@ -50,8 +50,8 @@ class SiteChanges:
     discover: bool = True
 
 
-class ConnectorPlugin(Protocol):
-    """Protocol that connector plugins implement.
+class Connector(Protocol):
+    """Protocol that connectors implement.
 
     Instances are created by the factory in ``ConnectorSpec.create_connector``.
     The daemon calls these methods during the synchronization loop.

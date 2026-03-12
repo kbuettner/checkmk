@@ -4,15 +4,15 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 from cmk.dcd_connectors.internal import (
+    Connector,
     ConnectorContext,
-    ConnectorPlugin,
     ConnectorSpec,
     entry_point_prefixes,
     NullObject,
 )
 
 
-def _dummy_factory(_ctx: ConnectorContext) -> ConnectorPlugin:
+def _dummy_factory(_ctx: ConnectorContext) -> Connector:
     raise NotImplementedError
 
 
