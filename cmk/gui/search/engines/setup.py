@@ -526,13 +526,31 @@ class IndexSearcher:
                 )
         return results
 
-    @classmethod
+    @staticmethod
     def _sort_search_results(
-        cls,
         results: Mapping[str, Iterable[_SearchResultWithVisibilityCheck]],
     ) -> Iterator[tuple[str, Iterable[_SearchResultWithVisibilityCheck]]]:
-        first_topics = cls._first_topics()
-        last_topics = cls._last_topics()
+        first_topics = (
+            _("Setup"),
+            _("Hosts"),
+            _("VM, Cloud, Container"),
+            _("Other integrations"),
+            _("Service monitoring rules"),
+            _("Service discovery rules"),
+        )
+        last_topics = (
+            # _("Business Intelligence"),
+            _("Event Console rule packs"),
+            _("Event Console rules"),
+            _("Event Console settings"),
+            _("Notification parameter"),
+            # _("Users"),
+            _("Enforced services"),
+            _("Global settings"),
+            _("Miscellaneous"),
+            _("Deprecated rule sets"),
+            # _("Maintenance"),
+        )
         middle_topics = sorted(set(results.keys()) - set(first_topics) - set(last_topics))
         yield from (
             (
@@ -545,37 +563,6 @@ class IndexSearcher:
                 last_topics,
             )
             if topic in results
-        )
-
-    @staticmethod
-    def _first_topics() -> Iterable[str]:
-        # This is not a class attribute because it could mess up the localization if e.g.
-        # string concatenation is used
-        return (
-            _("Setup"),
-            _("Hosts"),
-            _("VM, Cloud, Container"),
-            _("Other integrations"),
-            _("Service monitoring rules"),
-            _("Service discovery rules"),
-        )
-
-    @staticmethod
-    def _last_topics() -> Iterable[str]:
-        # This is not a class attribute because it could mess up the localization if e.g.
-        # string concatenation is used
-        return (
-            # _("Business Intelligence"),
-            _("Event Console rule packs"),
-            _("Event Console rules"),
-            _("Event Console settings"),
-            _("Notification parameter"),
-            # _("Users"),
-            _("Enforced services"),
-            _("Global settings"),
-            _("Miscellaneous"),
-            _("Deprecated rule sets"),
-            # _("Maintenance"),
         )
 
     def _filter_results_by_user_permissions(
