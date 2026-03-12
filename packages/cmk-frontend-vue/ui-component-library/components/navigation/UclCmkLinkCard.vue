@@ -62,7 +62,7 @@ ${'import'} CmkLinkCard from '@/components/CmkLinkCard'
 const panelConfig = {
   borders: {
     type: 'list',
-    title: 'Variant',
+    title: 'Borders',
     options: [
       { title: 'Standard', name: 'standard' },
       { title: 'Borderless', name: 'borderless' }
@@ -71,7 +71,7 @@ const panelConfig = {
   },
   contrast: {
     type: 'list',
-    title: 'Variant',
+    title: 'Contrast',
     options: [
       { title: 'Standard', name: 'standard' },
       { title: 'High', name: 'high' }
