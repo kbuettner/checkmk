@@ -130,6 +130,8 @@ py_test(
 
 py_test(
     name = "base_community",
+    # https://bazel.build/reference/be/common-definitions#test.size
+    size = "large",
     srcs = ["__test__.py"] + glob(
         include = ["cmk/base/**/*.py"],
         exclude = ["**/nonfree/**"],
