@@ -4,7 +4,7 @@
  * conditions defined in the file COPYING, which is part of this source code package.
  */
 import userEvent from '@testing-library/user-event'
-import { fireEvent, render, screen } from '@testing-library/vue'
+import { render, screen, waitFor } from '@testing-library/vue'
 import { type GraphLines } from 'cmk-shared-typing/typescript/graph_designer'
 import { HttpResponse, http } from 'msw'
 import { setupServer } from 'msw/node'
@@ -27,6 +27,14 @@ afterAll(() => server.close())
 
 async function fakeGraphRenderer(_ajaxGraph: AjaxGraph, _container: HTMLDivElement) {
   return
+}
+
+async function selectDropdownOption(dropdownLabel: string, optionName: string) {
+  const dropdown = await screen.findByRole('combobox', { name: dropdownLabel })
+  await waitFor(() => expect(dropdown).toBeEnabled(), { timeout: 10000 })
+  void userEvent.click(dropdown)
+  const option = await screen.findByRole('option', { name: optionName }, { timeout: 10000 })
+  await userEvent.click(option)
 }
 
 const graphLineTypesExceptQuery = [
@@ -523,39 +531,40 @@ test.each(graphLineTypesExceptQuery)(
   }
 )
 
-describe('Adding a Query graph line', { timeout: 10_000 }, () => {
+// This is an integration test that covers the whole flow including the mocked
+// autocompleter interaction, so we need to increase the default timeout for this test.
+describe('Adding a Query graph line', { timeout: 20_000 }, () => {
   beforeAll(() => {
-    async function autocompleteInterceptor({
+    type Id = string
+    type Value = string
+    const choicesByIdent: Record<string, Array<{ id: Id; value: Value }>> = {
+      monitored_metrics_backend: [{ id: 'dummy_metric_name', value: 'Dummy Metric Name' }],
+      monitored_resource_attributes_keys_backend: [
+        { id: 'dummy_resource_attribute_key', value: 'Dummy Resource Attribute key' }
+      ],
+      monitored_resource_attributes_values_backend: [
+        { id: 'dummy_resource_attribute_value', value: 'Dummy Resource Attribute value' }
+      ],
+      monitored_scope_attributes_keys_backend: [
+        { id: 'dummy_scope_attribute_key', value: 'Dummy Scope Attribute key' }
+      ],
+      monitored_scope_attributes_values_backend: [
+        { id: 'dummy_scope_attribute_value', value: 'Dummy Scope Attribute value' }
+      ],
+      monitored_data_point_attributes_keys_backend: [
+        { id: 'dummy_data_point_attribute_key', value: 'Dummy Data Point Attribute key' }
+      ],
+      monitored_data_point_attributes_values_backend: [
+        { id: 'dummy_data_point_attribute_value', value: 'Dummy Data Point Attribute value' }
+      ]
+    }
+
+    function autocompleteInterceptor({
       params
     }: {
       params: Record<string, string | readonly string[] | undefined>
     }) {
       const ident = params['autocompleter'] as string
-
-      type Id = string
-      type Value = string
-      const choicesByIdent: Record<string, Array<{ id: Id; value: Value }>> = {
-        monitored_metrics_backend: [{ id: 'dummy_metric_name', value: 'Dummy Metric Name' }],
-        monitored_resource_attributes_keys_backend: [
-          { id: 'dummy_resource_attribute_key', value: 'Dummy Resource Attribute key' }
-        ],
-        monitored_resource_attributes_values_backend: [
-          { id: 'dummy_resource_attribute_value', value: 'Dummy Resource Attribute value' }
-        ],
-        monitored_scope_attributes_keys_backend: [
-          { id: 'dummy_scope_attribute_key', value: 'Dummy Scope Attribute key' }
-        ],
-        monitored_scope_attributes_values_backend: [
-          { id: 'dummy_scope_attribute_value', value: 'Dummy Scope Attribute value' }
-        ],
-        monitored_data_point_attributes_keys_backend: [
-          { id: 'dummy_data_point_attribute_key', value: 'Dummy Data Point Attribute key' }
-        ],
-        monitored_data_point_attributes_values_backend: [
-          { id: 'dummy_data_point_attribute_value', value: 'Dummy Data Point Attribute value' }
-        ]
-      }
-
       return HttpResponse.json({
         choices: choicesByIdent[ident] || []
       })
@@ -573,12 +582,11 @@ describe('Adding a Query graph line', { timeout: 10_000 }, () => {
     server.resetHandlers()
   })
 
-  test.skip('works as expected', async () => {
-    const graphLines: GraphLines = []
+  test('works as expected', async () => {
     render(GraphDesignerApp, {
       props: {
         graph_id: 'add_query_graph_line',
-        graph_lines: graphLines,
+        graph_lines: [],
         graph_options: {
           unit: 'first_entry_with_unit',
           explicit_vertical_range: 'auto',
@@ -593,61 +601,18 @@ describe('Adding a Query graph line', { timeout: 10_000 }, () => {
     // Verify the graph lines table is initially empty
     expect(screen.queryAllByRole('row', { name: /^Graph line / }).length).toBe(0)
 
-    // Metric name
-    const metricNameDropdown = screen.getByRole('combobox', { name: 'Metric name' })
-    await fireEvent.click(metricNameDropdown)
-    await screen.findByRole('option', { name: 'Dummy Metric Name' })
-    await userEvent.keyboard('[Enter]')
-
-    // Resource attribute key
-    const resourceAttributeKeyDropdown = screen.getByRole('combobox', {
-      name: 'Resource attributes key'
-    })
-    await fireEvent.click(resourceAttributeKeyDropdown)
-    await screen.findByRole('option', { name: 'Dummy Resource Attribute key' })
-    await userEvent.keyboard('[Enter]')
-
-    // Resource attribute value
-    const resourceValueDropdown = screen.getByRole('combobox', {
-      name: 'Resource attributes value'
-    })
-    await fireEvent.click(resourceValueDropdown)
-    await screen.findByRole('option', { name: 'Dummy Resource Attribute value' })
-    await userEvent.keyboard('[Enter]')
-
-    // Scope attribute key
-    const scopeAttributeKeyDropdown = screen.getByRole('combobox', { name: 'Scope attributes key' })
-    await fireEvent.click(scopeAttributeKeyDropdown)
-    await screen.findByRole('option', { name: 'Dummy Scope Attribute key' })
-    await userEvent.keyboard('[Enter]')
-
-    // Scope attribute value
-    const scopeAttributeValueDropdown = screen.getByRole('combobox', {
-      name: 'Scope attributes value'
-    })
-    await fireEvent.click(scopeAttributeValueDropdown)
-    await screen.findByRole('option', { name: 'Dummy Scope Attribute value' })
-    await userEvent.keyboard('[Enter]')
-
-    // Data point attribute key
-    const dataPointAttributeKeyDropdown = screen.getByRole('combobox', {
-      name: 'Data point attributes key'
-    })
-    await fireEvent.click(dataPointAttributeKeyDropdown)
-    await screen.findByRole('option', { name: 'Dummy Data Point Attribute key' })
-    await userEvent.keyboard('[Enter]')
-
-    // Data point attribute value
-    const dataPointAttributeValueDropdown = screen.getByRole('combobox', {
-      name: 'Data point attributes value'
-    })
-    await fireEvent.click(dataPointAttributeValueDropdown)
-    await screen.findByRole('option', { name: 'Dummy Data Point Attribute value' })
-    await userEvent.keyboard('[Enter]')
+    // Select metric and attributes
+    await selectDropdownOption('Metric name', 'Dummy Metric Name')
+    await selectDropdownOption('Resource attributes key', 'Dummy Resource Attribute key')
+    await selectDropdownOption('Resource attributes value', 'Dummy Resource Attribute value')
+    await selectDropdownOption('Scope attributes key', 'Dummy Scope Attribute key')
+    await selectDropdownOption('Scope attributes value', 'Dummy Scope Attribute value')
+    await selectDropdownOption('Data point attributes key', 'Dummy Data Point Attribute key')
+    await selectDropdownOption('Data point attributes value', 'Dummy Data Point Attribute value')
 
     // Add the graph line
     const addButton = screen.getByRole('button', { name: 'Add query' })
-    await fireEvent.click(addButton)
+    await userEvent.click(addButton)
 
     expect(screen.queryAllByRole('row', { name: /^Graph line / }).length).toBe(1)
     expect(
