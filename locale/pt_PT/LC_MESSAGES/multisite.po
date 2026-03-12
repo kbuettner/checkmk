@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Checkmk user interface translation 0.1\n"
 "Report-Msgid-Bugs-To: feedback@checkmk.com\n"
 "POT-Creation-Date: 2011-05-13 09:42+0200\n"
-"PO-Revision-Date: 2026-03-10 18:36+0000\n"
+"PO-Revision-Date: 2026-03-11 18:36+0000\n"
 "Language-Team: Portuguese (Portugal) <https://translate.checkmk.com/projects/"
 "checkmk/dev/pt_PT/>\n"
 "Language: pt_PT\n"
@@ -6459,9 +6459,6 @@ msgstr "Armazenamento alocado"
 msgid "Allocation method"
 msgstr "Método de afectação"
 
-msgid "Allow access via TCP"
-msgstr "Permitir o acesso via TCP"
-
 msgid "Allow all users to refer to rules contained in this pack"
 msgstr ""
 "Permitir que todos os usuários consultem as regras contidas neste pacote"
@@ -12098,9 +12095,6 @@ msgstr "Ler o rendimento"
 msgid "Cache requests"
 msgstr "Pedidos falhados"
 
-msgid "Cache several non-status queries"
-msgstr "Cache várias consultas sem status"
-
 #, fuzzy
 msgid "Cache size"
 msgstr "Tamanho da Cache"
@@ -15201,6 +15195,10 @@ msgstr "Nome Comum"
 msgid "Common name (subject)"
 msgstr "Nome Comum"
 
+#, fuzzy
+msgid "Common password wordlist"
+msgstr "Da loja de senhas"
+
 msgid ""
 "Communication between different components of Checkmk (e.g. GUI and check "
 "engine) will be logged in this log level."
@@ -16131,10 +16129,6 @@ msgstr "Ligue-se directamente ao destino em vez de utilizar um proxy."
 msgid "Connect directly to the license server instead of using a proxy."
 msgstr "Ligue-se directamente ao destino em vez de utilizar um proxy."
 
-#, fuzzy
-msgid "Connect directly, without Livestatus proxy"
-msgstr "Ligue directamente, sem o Livestatus Proxy"
-
 msgid "Connect timeout"
 msgstr "Tempo limite de ligação"
 
@@ -16717,9 +16711,6 @@ msgstr ""
 msgid "Cooling device"
 msgstr "Dispositivo de arrefecimento"
 
-msgid "Cooling period after failed connect/heartbeat"
-msgstr "Período de arrefecimento após a ligação/batimento cardíaco falhado"
-
 #, fuzzy
 msgid "Coordinates"
 msgstr "Estados de administração"
@@ -17121,14 +17112,6 @@ msgstr ""
 "Não foi possível consultar o ifid para o endereço '%s' do host_address. O "
 "seu usuário ntopng pode não ter direitos suficientes para consultar esta "
 "informação."
-
-#, fuzzy, python-format
-msgid ""
-"Could not reload Livestatus proxy: %s. See web.log and liveproxyd.log for "
-"further information."
-msgstr ""
-"Não foi possível recarregar o Livestatus Proxy: %s. Veja web.log e "
-"liveproxyd.log para mais informações."
 
 #, fuzzy, python-format
 msgid "Could not retrieve identity token. (%s)"
@@ -24129,9 +24112,6 @@ msgstr "Habilitar 'Run As <b>User</b>' para scripts"
 #, fuzzy
 msgid "Enable AI-based explanations"
 msgstr "Habilitar a replicação"
-
-msgid "Enable Caching"
-msgstr "Habilitar Caching"
 
 msgid "Enable Livestatus access via network (TCP)"
 msgstr "Habilitar o acesso ao Livestatus via rede (TCP)"
@@ -40644,10 +40624,6 @@ msgstr ""
 msgid "Live search active"
 msgstr "ativo / ativo"
 
-#, fuzzy
-msgid "Liveproxy daemon"
-msgstr "Daemon Liveproxy"
-
 msgid "Liveproxyd status"
 msgstr "Estado do Liveproxyd"
 
@@ -40688,15 +40664,6 @@ msgstr "Livestatus overflows"
 
 msgid "Livestatus problem"
 msgstr "Problema do Livestatus"
-
-msgid "Livestatus proxy"
-msgstr "Livestatus proxy"
-
-msgid "Livestatus proxy default connection parameters"
-msgstr "Parâmetros de ligação por defeito do proxy Livestatus"
-
-msgid "Livestatus proxy logging"
-msgstr "Registo de proxy Livestatus"
 
 msgid "Livestatus requests"
 msgstr "Pedidos de Livestatus"
@@ -48372,9 +48339,6 @@ msgstr "Número de executores ocupados"
 msgid "Number of changes since last dump"
 msgstr "Número de mudanças desde a última lixeira"
 
-msgid "Number of channels to keep open"
-msgstr "Número de canais a manter abertos"
-
 msgid "Number of character groups to use"
 msgstr "Número de grupos de caracteres a utilizar"
 
@@ -49532,9 +49496,6 @@ msgstr "Um RRD por host/serviço (salva IO de disco, somente com CMC)"
 #, fuzzy
 msgid "One condition needs to match (offensive)"
 msgstr "As condições das regras não coincidem."
-
-msgid "One heartbeat every"
-msgstr "Um batimento cardíaco a cada"
 
 msgid ""
 "One host is created for each unique value of this resource attribute key."
@@ -54803,6 +54764,11 @@ msgstr "Impedir o carregamento de HTML da saída de serviço ou mensagens de log
 msgid "Prevent other users from making modifications to Setup."
 msgstr "Impedir que outros utilizadores façam modificações na Configuração."
 
+msgid ""
+"Prevent users from setting new passwords which are within the Checkmk common "
+"password list or include their username."
+msgstr ""
+
 msgid "Preview"
 msgstr "Pré-visualização"
 
@@ -56967,9 +56933,6 @@ msgstr ""
 #, fuzzy
 msgid "Regular expressions to expect"
 msgstr "Expressão regular a esperar no conteúdo"
-
-msgid "Regular heartbeat"
-msgstr "Ritmo cardíaco regular"
 
 msgid "Rejected connection requests"
 msgstr "Pedidos de ligação rejeitados"
@@ -64272,6 +64235,12 @@ msgstr ""
 msgid "Someone before 1.6"
 msgstr "Alguém antes de 1.6"
 
+#, python-brace-format
+msgid ""
+"Something went wrong trying to enable the metric backend. Details can be "
+"found in the log file: {_CH_ERROR_LOG}"
+msgstr ""
+
 #, python-format
 msgid "Something went wrong: %s"
 msgstr ""
@@ -65418,10 +65387,6 @@ msgstr "Estrelas"
 
 msgid "Start"
 msgstr "Início"
-
-#, fuzzy
-msgid "Start Livestatus proxy"
-msgstr "Iniciar o proxy livestatus"
 
 #, fuzzy
 msgid "Start RAM"
@@ -69150,16 +69115,6 @@ msgstr ""
 "de origem configurados. Você pode configurar endereços IP específicos ou "
 "redes na sintaxe <tt>10.3.3.0/24</tt>."
 
-#, fuzzy
-msgid ""
-"The access to the Livestatus proxy via TCP will only be allowed from the "
-"configured source IP addresses. For an IP address to be allowed, it must "
-"exactly match one of the specified values."
-msgstr ""
-"O acesso ao Livestatus via TCP só será permitido a partir dos endereços IP "
-"de origem configurados. Você pode configurar endereços IP específicos ou "
-"redes na sintaxe <tt>10.3.3.0/24</tt>."
-
 msgid ""
 "The access to the event status via TCP will only be allowed from this source "
 "IP addresses or an IPv4/IPv6 network in the notation X.X.X.X/Bits or X:X:.../"
@@ -71982,6 +71937,11 @@ msgstr "A senha utilizada para se conectar à base de dados"
 
 msgid "The password used to connect to the database"
 msgstr "A senha utilizada para se conectar à base de dados"
+
+msgid ""
+"The password was found in the common password list. Please choose a "
+"different password."
+msgstr ""
 
 msgid ""
 "The path to the value within the MBean, for example NonHeapMemoryUsage/used"
@@ -75341,20 +75301,6 @@ msgstr ""
 "de 70% dos servidores alcançáveis</tt>. Essa mensagem também é mostrada nos "
 "plugins de verificação de agregação do BI."
 
-#, fuzzy
-msgid ""
-"This option can be useful to build a cascading distributed setup. The "
-"Livestatus proxy of this site connects to the site configured here via "
-"Livestatus and opens up a TCP port for clients. The requests of the clients "
-"are forwarded to the destination site. You need to configure a TCP port here "
-"that has not been used on the local system yet."
-msgstr ""
-"Esta opção pode ser útil para construir uma configuração distribuída em "
-"cascata. O Livestatus Proxy deste site liga-se ao site aqui configurado "
-"através do Livestatus e abre uma porta TCP para clientes. Os pedidos dos "
-"clientes são encaminhados para o site de destino. Você precisa configurar "
-"aqui uma porta TCP que ainda não é utilizada no sistema local."
-
 msgid ""
 "This option can only be used with the permission \"Can add or modify "
 "executables\"."
@@ -75590,15 +75536,6 @@ msgstr ""
 "Esta opção ativa o registro da execução das regras. Para cada mensagem "
 "recebida, os detalhes de execução de cada regra são registrados. Isto cria "
 "um imenso volume de registro e nunca deve ser usado em operações produtivas."
-
-msgid ""
-"This option will enable the caching of several queries that need no current "
-"data. This reduces the number of Livestatus queries to sites and cuts down "
-"the response time of remote sites with large latencies."
-msgstr ""
-"Esta opção irá permitir o cache de várias consultas que não necessitam de "
-"dados actuais. Isto reduz o número de consultas de Livestatus a sites e "
-"reduz o tempo de resposta de sites remotos com grandes latências."
 
 msgid ""
 "This options creates additional log messages in various phases of the "
@@ -77980,14 +77917,6 @@ msgstr ""
 "daemon do Checkmk Micro Core. O histórico do objecto (alertas de serviço, "
 "eventos, etc.) não é <b>afectado</b> por esta definição."
 
-#, fuzzy, python-format
-msgid ""
-"This setting decides which types of messages to log into the log of the "
-"Livestatus proxy (%s)."
-msgstr ""
-"Esta definição decide quais os tipos de mensagens a registar no registo do "
-"proxy livestatus (%s)."
-
 #, python-format
 msgid ""
 "This setting decides which types of messages to log into the web log <tt>%s</"
@@ -79311,9 +79240,6 @@ msgstr "Tempo esgotado em segundos antes do processo de script ser terminado"
 msgid "Timeout occurred"
 msgstr "Ocorreu um timeout"
 
-msgid "Timeout waiting for a free channel"
-msgstr "Tempo esgotado à espera de um canal gratuito"
-
 msgid "Timer"
 msgstr "Temporizador"
 
@@ -80158,9 +80084,6 @@ msgstr "Bits por segundo"
 
 msgid "Total printed pages"
 msgstr "Total de páginas impressas"
-
-msgid "Total query timeout"
-msgstr "Tempo limite total de consulta"
 
 msgid "Total reachability failures (up to 8)"
 msgstr ""
@@ -85070,9 +84993,6 @@ msgstr "Use fonte em negrito"
 msgid "Use container name"
 msgstr "Nome do Container"
 
-msgid "Use custom connection parameters"
-msgstr "Use parâmetros de conexão personalizados"
-
 #, fuzzy
 msgid "Use custom path"
 msgstr "Definir tema personalizado"
@@ -85152,9 +85072,6 @@ msgstr "Usar largura fixa (em relação ao tamanho da fonte)"
 
 msgid "Use for all connections"
 msgstr "Utilização para todas as ligações"
-
-msgid "Use global connection parameters"
-msgstr "Use parâmetros de conexão global"
 
 #, fuzzy
 msgid "Use global hard/soft limit behavior"
@@ -85295,10 +85212,6 @@ msgstr "Use o prefixo de identificação do local"
 
 msgid "Use system wide CAs"
 msgstr "Usar CAs de todo o sistema"
-
-#, python-format
-msgid "Use the <a href=\"%s\">global parameters</a> for this connection"
-msgstr "Use o parâmetro <a href=\"%s\">global</a> para esta conexão"
 
 #, fuzzy
 msgid "Use the Checkmk username as ntopng username"
@@ -85521,15 +85434,6 @@ msgstr ""
 "usando estes proxies HTTP."
 
 msgid ""
-"Use this option to disable startup of the livestatus proxy daemon. It can "
-"improve stability of the GUI if you have a large number of sites with "
-"connections that sometimes break down."
-msgstr ""
-"Use esta opção para desactivar o arranque do daemon proxy livestatus. Esta "
-"opção pode melhorar a estabilidade do GUI se tiver um grande número de sites "
-"com ligações que por vezes falham."
-
-msgid ""
 "Use this option to not process all messages found in the inbox, but only the "
 "those whose subject matches the given regular expression."
 msgstr ""
@@ -85722,16 +85626,6 @@ msgstr ""
 "dependendo da quantidade de dados que os seus anfitriões ou serviços colocam "
 "no longo output. Você deve habilitar isso apenas para os objetos para os "
 "quais você precisa dele."
-
-#, fuzzy
-msgid ""
-"Use this setting to specify the parameters of sites connected using the "
-"Livestatus proxy. These options are used by all connections that don't have "
-"custom settings set."
-msgstr ""
-"Use esta definição para especificar os parâmetros dos sites ligados usando o "
-"proxy livestatus. Estas opções são utilizadas por todas as ligações que não "
-"tenham definições personalizadas."
 
 msgid "Use this syslog application for all created events"
 msgstr "Utilize esta aplicação syslog para todos os eventos criados"
@@ -94743,9 +94637,6 @@ msgstr "semanalmente"
 msgid "width"
 msgstr "largura"
 
-msgid "with a timeout of"
-msgstr "com um timeout de"
-
 msgid "with context"
 msgstr "com contexto"
 
@@ -94847,26 +94738,6 @@ msgid ""
 "‘Activate changes' is blocked until you go below your service limit. In case "
 "you want to increase your service limit, "
 msgstr ""
-
-msgid "This string was translated outside of a vue component."
-msgstr ""
-
-#, fuzzy
-msgid "Hello %{name}!"
-msgstr "Nome completo"
-
-#, fuzzy
-msgid "Loading translations..."
-msgstr "%d traduções"
-
-#, fuzzy
-msgid "Translations loaded"
-msgstr "Traduções"
-
-msgid "There is %{ n } apple"
-msgid_plural "There are %{ n } apples"
-msgstr[0] ""
-msgstr[1] ""
 
 #, fuzzy
 msgid "Checkmk AI feature usage notice"
@@ -95457,10 +95328,6 @@ msgid "Display user messages, sidebar elements, text or embed a URL"
 msgstr ""
 
 #, fuzzy
-msgid "Select graph"
-msgstr "Ligações rejeitadas"
-
-#, fuzzy
 msgid "Select custom graph"
 msgstr "Clonar gráfico personalizado"
 
@@ -95576,6 +95443,10 @@ msgstr ""
 #, fuzzy
 msgid "Choose how to display your data"
 msgstr "Não mostrar uma data"
+
+#, fuzzy
+msgid "Visualization types"
+msgstr "Níveis de visualização"
 
 msgid "Automatically adjusted to available data"
 msgstr "Ajuste automático aos dados disponíveis"
@@ -96019,8 +95890,8 @@ msgid "Widget settings"
 msgstr "Editar definições"
 
 #, fuzzy
-msgid "Choose a visualization type."
-msgstr "visualização do BI"
+msgid "Show as"
+msgstr "Mostrar %s"
 
 msgid "Time resolution"
 msgstr "Resolução temporal"
@@ -96060,8 +95931,8 @@ msgid "Custom"
 msgstr "Cliente"
 
 #, fuzzy
-msgid "At least one scope must be selected."
-msgstr "Indique quando falta o arquivo"
+msgid "Select at least one scope."
+msgstr "Por favor, selecione pelo menos um elemento"
 
 msgid ""
 "Dashboards can display one or multiple entries depending on the selected "
@@ -96334,12 +96205,8 @@ msgid "Inventory path"
 msgstr "Árvore de Inventário"
 
 #, fuzzy
-msgid "Single graph"
+msgid "Select graph"
 msgstr "Ligações rejeitadas"
-
-#, fuzzy
-msgid "Scatterplot"
-msgstr "Gráfico de dispersão da média"
 
 #, fuzzy
 msgid "Metric (single)"
@@ -96368,6 +96235,10 @@ msgstr ""
 #, fuzzy
 msgid "Service graph"
 msgstr "Gráficos de serviços"
+
+#, fuzzy
+msgid "Scatterplot"
+msgstr "Gráfico de dispersão da média"
 
 #, fuzzy
 msgid "Metric selection"
@@ -96439,7 +96310,7 @@ msgid "Value out of range"
 msgstr "O valor deve ser uma cadeia de caracteres"
 
 #, fuzzy
-msgid "Rankin order"
+msgid "Ranking order"
 msgstr "Alerta se acabou"
 
 msgid "Top (highest) N"
@@ -96844,9 +96715,9 @@ msgid "Open full view"
 msgstr "Arquivos abertos"
 
 msgid ""
-"Changes are saved in a temporary environment first, letting you review and "
-"adjust them safely.\n"
-"             Activate changes to apply them to live monitoring."
+"Changes are saved without affecting live monitoring, allowing you to review "
+"and adjust them safely.\n"
+"              Click 'Activate pending changes' to apply them."
 msgstr ""
 
 #, fuzzy
@@ -97493,10 +97364,37 @@ msgstr ""
 "Especifique um, vários ou todos os sítios em que esta ligação deve ser "
 "executada."
 
+#, fuzzy
+msgid "Failed to load sites. Please try again."
+msgstr "Adicionar elemento de barra lateral"
+
+#, fuzzy
+msgid "Configuration name is required but not specified."
+msgstr "Credenciais JSON para a conta de serviço"
+
+#, fuzzy
 msgid ""
-"Provide a title for the configuration and select the site where the "
-"OpenTelemetry collector will run."
+"The name must only consist of letters, digits, dash and underscore and it "
+"must start with a letter or underscore."
 msgstr ""
+"Um identificador deve consistir apenas de letras, dígitos, traço e "
+"sublinhado e deve começar com uma letra ou sublinhado."
+
+#, fuzzy
+msgid "Site is required but not specified."
+msgstr "Credenciais JSON para a conta de serviço"
+
+#, fuzzy
+msgid ""
+"Set the configuration name and select the site the OpenTelemetry Collector "
+"will run on."
+msgstr ""
+"Especifique um, vários ou todos os sítios em que esta ligação deve ser "
+"executada."
+
+#, fuzzy
+msgid "opentelemetry_config_1"
+msgstr "Configuração do anfitrião"
 
 #, fuzzy
 msgid "Select the folder your host(s) will be created in."
@@ -98502,6 +98400,163 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#~ msgid "Allow access via TCP"
+#~ msgstr "Permitir o acesso via TCP"
+
+#~ msgid "Cache several non-status queries"
+#~ msgstr "Cache várias consultas sem status"
+
+#, fuzzy
+#~ msgid "Connect directly, without Livestatus proxy"
+#~ msgstr "Ligue directamente, sem o Livestatus Proxy"
+
+#~ msgid "Cooling period after failed connect/heartbeat"
+#~ msgstr "Período de arrefecimento após a ligação/batimento cardíaco falhado"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "Could not reload Livestatus proxy: %s. See web.log and liveproxyd.log for "
+#~ "further information."
+#~ msgstr ""
+#~ "Não foi possível recarregar o Livestatus Proxy: %s. Veja web.log e "
+#~ "liveproxyd.log para mais informações."
+
+#~ msgid "Enable Caching"
+#~ msgstr "Habilitar Caching"
+
+#, fuzzy
+#~ msgid "Liveproxy daemon"
+#~ msgstr "Daemon Liveproxy"
+
+#~ msgid "Livestatus proxy"
+#~ msgstr "Livestatus proxy"
+
+#~ msgid "Livestatus proxy default connection parameters"
+#~ msgstr "Parâmetros de ligação por defeito do proxy Livestatus"
+
+#~ msgid "Livestatus proxy logging"
+#~ msgstr "Registo de proxy Livestatus"
+
+#~ msgid "Number of channels to keep open"
+#~ msgstr "Número de canais a manter abertos"
+
+#~ msgid "One heartbeat every"
+#~ msgstr "Um batimento cardíaco a cada"
+
+#~ msgid "Regular heartbeat"
+#~ msgstr "Ritmo cardíaco regular"
+
+#, fuzzy
+#~ msgid "Start Livestatus proxy"
+#~ msgstr "Iniciar o proxy livestatus"
+
+#, fuzzy
+#~ msgid ""
+#~ "The access to the Livestatus proxy via TCP will only be allowed from the "
+#~ "configured source IP addresses. For an IP address to be allowed, it must "
+#~ "exactly match one of the specified values."
+#~ msgstr ""
+#~ "O acesso ao Livestatus via TCP só será permitido a partir dos endereços "
+#~ "IP de origem configurados. Você pode configurar endereços IP específicos "
+#~ "ou redes na sintaxe <tt>10.3.3.0/24</tt>."
+
+#, fuzzy
+#~ msgid ""
+#~ "This option can be useful to build a cascading distributed setup. The "
+#~ "Livestatus proxy of this site connects to the site configured here via "
+#~ "Livestatus and opens up a TCP port for clients. The requests of the "
+#~ "clients are forwarded to the destination site. You need to configure a "
+#~ "TCP port here that has not been used on the local system yet."
+#~ msgstr ""
+#~ "Esta opção pode ser útil para construir uma configuração distribuída em "
+#~ "cascata. O Livestatus Proxy deste site liga-se ao site aqui configurado "
+#~ "através do Livestatus e abre uma porta TCP para clientes. Os pedidos dos "
+#~ "clientes são encaminhados para o site de destino. Você precisa configurar "
+#~ "aqui uma porta TCP que ainda não é utilizada no sistema local."
+
+#~ msgid ""
+#~ "This option will enable the caching of several queries that need no "
+#~ "current data. This reduces the number of Livestatus queries to sites and "
+#~ "cuts down the response time of remote sites with large latencies."
+#~ msgstr ""
+#~ "Esta opção irá permitir o cache de várias consultas que não necessitam de "
+#~ "dados actuais. Isto reduz o número de consultas de Livestatus a sites e "
+#~ "reduz o tempo de resposta de sites remotos com grandes latências."
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "This setting decides which types of messages to log into the log of the "
+#~ "Livestatus proxy (%s)."
+#~ msgstr ""
+#~ "Esta definição decide quais os tipos de mensagens a registar no registo "
+#~ "do proxy livestatus (%s)."
+
+#~ msgid "Timeout waiting for a free channel"
+#~ msgstr "Tempo esgotado à espera de um canal gratuito"
+
+#~ msgid "Total query timeout"
+#~ msgstr "Tempo limite total de consulta"
+
+#~ msgid "Use custom connection parameters"
+#~ msgstr "Use parâmetros de conexão personalizados"
+
+#~ msgid "Use global connection parameters"
+#~ msgstr "Use parâmetros de conexão global"
+
+#, python-format
+#~ msgid "Use the <a href=\"%s\">global parameters</a> for this connection"
+#~ msgstr "Use o parâmetro <a href=\"%s\">global</a> para esta conexão"
+
+#~ msgid ""
+#~ "Use this option to disable startup of the livestatus proxy daemon. It can "
+#~ "improve stability of the GUI if you have a large number of sites with "
+#~ "connections that sometimes break down."
+#~ msgstr ""
+#~ "Use esta opção para desactivar o arranque do daemon proxy livestatus. "
+#~ "Esta opção pode melhorar a estabilidade do GUI se tiver um grande número "
+#~ "de sites com ligações que por vezes falham."
+
+#, fuzzy
+#~ msgid ""
+#~ "Use this setting to specify the parameters of sites connected using the "
+#~ "Livestatus proxy. These options are used by all connections that don't "
+#~ "have custom settings set."
+#~ msgstr ""
+#~ "Use esta definição para especificar os parâmetros dos sites ligados "
+#~ "usando o proxy livestatus. Estas opções são utilizadas por todas as "
+#~ "ligações que não tenham definições personalizadas."
+
+#~ msgid "with a timeout of"
+#~ msgstr "com um timeout de"
+
+#, fuzzy
+#~ msgid "Hello %{name}!"
+#~ msgstr "Nome completo"
+
+#, fuzzy
+#~ msgid "Loading translations..."
+#~ msgstr "%d traduções"
+
+#, fuzzy
+#~ msgid "Translations loaded"
+#~ msgstr "Traduções"
+
+#, fuzzy
+#~ msgid "Choose a visualization type."
+#~ msgstr "visualização do BI"
+
+#, fuzzy
+#~ msgid "At least one scope must be selected."
+#~ msgstr "Indique quando falta o arquivo"
+
+#, fuzzy
+#~ msgid "Single graph"
+#~ msgstr "Ligações rejeitadas"
+
+#, fuzzy
+#~ msgid "Rankin order"
+#~ msgstr "Alerta se acabou"
 
 #~ msgid ""
 #~ "An internal error occurred while processing your request. You can report "
@@ -99952,10 +100007,6 @@ msgstr ""
 
 #~ msgid "RRD consolidation"
 #~ msgstr "consolidação do RRD"
-
-#, fuzzy
-#~ msgid "Ranking order"
-#~ msgstr "Alerta se acabou"
 
 #~ msgid ""
 #~ "Select the range in between which the values are displayed. This only "
