@@ -10,9 +10,18 @@ from typing import Any
 
 import pytest
 
+from cmk.agent_based.internal import evaluate_snmp_detection
 from cmk.agent_based.v2 import StringTable
-from cmk.legacy_checks.hwg_humidity import check_hwg_humidity, discover_hwg_humidity
+from cmk.legacy_checks.hwg_humidity import check_hwg_humidity, check_info, discover_hwg_humidity
 from cmk.legacy_includes.hwg import parse_hwg
+
+
+def test_detect_hwg_humidity() -> None:
+    assert (detect_spec := check_info["hwg_humidity"].detect)
+    assert evaluate_snmp_detection(
+        detect_spec=detect_spec,
+        oid_value_getter={".1.3.6.1.2.1.1.1.0": "contains lower HWG"}.get,
+    )
 
 
 @pytest.mark.parametrize(

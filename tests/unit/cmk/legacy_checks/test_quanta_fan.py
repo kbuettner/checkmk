@@ -10,9 +10,37 @@ from typing import Any
 
 import pytest
 
+from cmk.agent_based.internal import evaluate_snmp_detection
 from cmk.agent_based.v2 import StringTable
 from cmk.legacy_checks.quanta_fan import check_quanta_fan, discover_quanta_fan
 from cmk.legacy_includes.quanta import parse_quanta
+from cmk.plugins.quanta.lib import DETECT_QUANTA
+
+
+@pytest.mark.parametrize(
+    "oids_data, expected_result",
+    [
+        (
+            {".1.3.6.1.2.1.1.2.0": ".1.3.6.1.4.1.8072.3.2.10"},
+            False,
+        ),
+        (
+            {
+                ".1.3.6.1.2.1.1.2.0": ".1.3.6.1.4.1.8072.3.2.10",
+                ".1.3.6.1.4.1.7244.1.2.1.1.1.0": "exists",
+            },
+            True,
+        ),
+    ],
+)
+def test_detect_quanta_fan(
+    oids_data: dict[str, str | None],
+    expected_result: bool,
+) -> None:
+    assert (
+        evaluate_snmp_detection(detect_spec=DETECT_QUANTA, oid_value_getter=oids_data.get)
+        is expected_result
+    )
 
 
 @pytest.mark.parametrize(

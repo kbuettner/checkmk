@@ -11,15 +11,25 @@
 # If you encounter something weird in here, do not hesitate to replace this
 # test by something more appropriate.
 
+from cmk.agent_based.internal import evaluate_snmp_detection
 from cmk.legacy_checks.hwg_humidity import (
     check_hwg_humidity,
     discover_hwg_humidity,
 )
 from cmk.legacy_checks.hwg_temp import (
     check_hwg_temp,
+    check_info,
     discover_hwg_temp,
 )
 from cmk.legacy_includes.hwg import parse_hwg
+
+
+def test_detect_hwg_ste2() -> None:
+    assert (detect_spec := check_info["hwg_ste2"].detect)
+    assert evaluate_snmp_detection(
+        detect_spec=detect_spec,
+        oid_value_getter={".1.3.6.1.2.1.1.1.0": "contains STE2"}.get,
+    )
 
 
 def test_hwg_ste2_parse() -> None:
