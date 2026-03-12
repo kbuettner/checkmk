@@ -67,6 +67,7 @@
         "cmk_agent_connection": { "type": "string" },
         "tag_agent": { "type": "string" },
         "tag_snmp_ds": { "type": "string" },
+        "snmp_community": { "type": "string" },
         "cb_change": { "type": "string" }
       },
       "required": [
@@ -80,6 +81,7 @@
         "cmk_agent_connection",
         "tag_agent",
         "tag_snmp_ds",
+        "snmp_community",
         "cb_change"
       ]
     },

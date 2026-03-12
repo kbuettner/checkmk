@@ -17,6 +17,7 @@ import { type Ref, onMounted, ref } from 'vue'
 
 import AgentConnectionTest from '@/mode-host/agent-connection-test/AgentConnectionTest.vue'
 import PingHost from '@/mode-host/ping-host/PingHost.vue'
+import SnmpConnectionTest from '@/mode-host/snmp-connection-test/SnmpConnectionTest.vue'
 
 const props = defineProps<{
   i18n_ping_host: I18NPingHost
@@ -51,6 +52,9 @@ const tagAgentDefaultElement: Ref<HTMLDivElement | null> = ref(null)
 const cmkConnectionModeSelectElement: Ref<HTMLSelectElement | null> = ref(null)
 const cmkConnectionModeDefaultElement: Ref<HTMLDivElement | null> = ref(null)
 const cmkConnectionModeInputButtonElement: Ref<HTMLInputElement | null> = ref(null)
+const tagSnmpDsSelectElement: Ref<HTMLSelectElement | null> = ref(null)
+const tagSnmpDsInputButtonElement: Ref<HTMLInputElement | null> = ref(null)
+const tagSnmpDsDefaultElement: Ref<HTMLDivElement | null> = ref(null)
 
 onMounted(() => {
   formElement.value = getElementBySelector(`form[id="form_${props.form_keys.form}"]`)
@@ -115,6 +119,15 @@ onMounted(() => {
   relaySelectElement.value = document.querySelector(`select[name="${props.form_keys.relay}"]`)
   relayDefaultElement.value = document.querySelector(
     `div[id="attr_default_${props.form_keys.relay}"]`
+  )
+  tagSnmpDsSelectElement.value = document.querySelector(
+    `select[name="${props.form_keys.tag_snmp_ds}"]`
+  )
+  tagSnmpDsInputButtonElement.value = document.querySelector(
+    `input[id="${props.form_keys.cb_change}_${props.form_keys.tag_snmp_ds}"]`
+  )
+  tagSnmpDsDefaultElement.value = document.querySelector(
+    `div[id="attr_default_${props.form_keys.tag_snmp_ds}"]`
   )
 })
 
@@ -204,4 +217,38 @@ function getElementBySelector<T>(selector: string): T {
     :agent-slideout="agent_slideout"
     :setup-error="setupError"
   ></AgentConnectionTest>
+  <SnmpConnectionTest
+    v-if="
+      formElement &&
+      hostnameInputElement &&
+      siteSelectElement &&
+      siteInputElement &&
+      siteDefaultElement &&
+      ipv4InputElement &&
+      ipv4InputButtonElement &&
+      ipv6InputButtonElement &&
+      ipv6InputElement &&
+      ipAddressFamilySelectElement &&
+      ipAddressFamilyInputElement &&
+      tagSnmpDsSelectElement &&
+      tagSnmpDsInputButtonElement &&
+      tagSnmpDsDefaultElement
+    "
+    :form-element="formElement"
+    :change-tag-snmp-ds="tagSnmpDsInputButtonElement"
+    :tag-snmp-ds="tagSnmpDsSelectElement"
+    :tag-snmp-ds-default="tagSnmpDsDefaultElement"
+    :hostname-input-element="hostnameInputElement"
+    :ipv4-input-element="ipv4InputElement"
+    :ipv4-input-button-element="ipv4InputButtonElement"
+    :ipv6-input-element="ipv6InputElement"
+    :ipv6-input-button-element="ipv6InputButtonElement"
+    :site-select-element="siteSelectElement"
+    :site-input-element="siteInputElement"
+    :site-default-element="siteDefaultElement"
+    :ip-address-family-select-element="ipAddressFamilySelectElement"
+    :ip-address-family-input-element="ipAddressFamilyInputElement"
+    :sites="sites"
+    :form-keys="form_keys"
+  ></SnmpConnectionTest>
 </template>

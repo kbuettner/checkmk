@@ -1469,7 +1469,9 @@ div.user_messages {
 
 #form_edit_host table#monitoring_agents {
   div#attr_default_tag_agent,
-  div#attr_entry_tag_agent {
+  div#attr_entry_tag_agent,
+  div#attr_default_tag_snmp_ds,
+  div#attr_entry_tag_snmp_ds {
     display: flex; /* move port field to the top */
     align-items: flex-start; /* make sure select2 dropdown does not break */
     div.cmk-vue-app {

@@ -410,6 +410,7 @@ class ABCHostMode(WatoMode, abc.ABC):
                         cmk_agent_connection="cmk_agent_connection",
                         tag_agent="tag_agent",
                         tag_snmp_ds="tag_snmp_ds",
+                        snmp_community="snmp_community",
                         cb_change="cb_host_change"
                         if not self._is_cluster()
                         else "cb_cluster_change",
