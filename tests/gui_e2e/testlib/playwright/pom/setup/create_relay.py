@@ -89,6 +89,11 @@ class CreateRelay(CmkPage):
         """Return the relay alias text input in the Name step."""
         return self.active_step.get_by_role("textbox")
 
+    @property
+    def generate_token_button(self) -> Locator:
+        """Return the 'Generate token' button in the active step."""
+        return self.active_step.get_by_role("button", name="Generate token")
+
     def os_toggle_button(self, os_name: str) -> Locator:
         """Return the OS toggle button by label (e.g. 'Ubuntu', 'Red Hat')."""
         return self.active_step.get_by_role("button", name=f"Toggle {os_name}")
