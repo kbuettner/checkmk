@@ -122,8 +122,11 @@ VARIABLES:
     - NAME: CHANGED_CC_FILES
       SH: "echo '${CHANGED_FILES_REL}' | grep -e '^packages/livestatus/' -e '^packages/neb/' -e '^packages/unixcat/' -e '^non-free/packages/cmc/' || true"
 
+    - NAME: CHANGED_RUST_WORKSPACE_FILES
+      SH: "echo '${CHANGED_FILES_REL}' | grep -E '^(Cargo\\..*|\\.cargo/config\\.toml|packages/[^/]+/BUILD)$' || true"
+
     - NAME: CHANGED_MK_ORACLE_FILES
-      SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/mk-oracle/\\|^requirements/rust/host' || true"
+      SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/mk-oracle/\\|^packages/[^/]*$' || true"
 
     - NAME: CHANGED_CMK_AGENT_RECEIVER_FILES
       SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/cmk-agent-receiver/' || true"
@@ -320,7 +323,7 @@ STAGES:
       RESULT_CHECK_FILE_PATTERN: "results/cmk-frontend-vue.txt"
 
     - NAME: "Package mk-oracle"
-      ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_MK_ORACLE_FILES
+      ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_MK_ORACLE_FILES,CHANGED_RUST_WORKSPACE_FILES
       SEC_VAR_LIST:
           - "CI_TEST_SQL_DB_ENDPOINT"
           - "CI_ORA2_DB_TEST_PASSWORD"

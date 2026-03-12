@@ -64,7 +64,12 @@ checkmk_path="${git_path}/checkmk_ci_checkout_$(make --no-print-directory -C "${
 ssh -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" -i "${KEYFILE}" "${REMOTE_USER}@${REMOTE_HOST}" mkdir -p "${checkmk_path}"
 
 # shellcheck disable=SC2154 # ${checkout_dir} is set via groovy
-rsync -avz --relative -e "ssh -o UserKnownHostsFile=\"${KNOWN_HOSTS_FILE}\" -i \"${KEYFILE}\"" "${checkout_dir}/./requirements/rust/host" "${checkout_dir}/./packages/"{cmk-agent-ctl,mk-oracle,mk-sql} "${REMOTE_USER}@${REMOTE_HOST}:${checkmk_path}"
+rsync -avz --relative -e "ssh -o UserKnownHostsFile=\"${KNOWN_HOSTS_FILE}\" -i \"${KEYFILE}\"" \
+    "${checkout_dir}/./Cargo.toml" \
+    "${checkout_dir}/./Cargo.lock" \
+    "${checkout_dir}/./.cargo" \
+    "${checkout_dir}/./packages/"{cmk-agent-ctl,mk-oracle,mk-sql,check-cert,check-http} \
+    "${REMOTE_USER}@${REMOTE_HOST}:${checkmk_path}"
 
 # shellcheck disable=SC2087 # We want variable expansion here and not on remote host
 ssh -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" -i "${KEYFILE}" "${REMOTE_USER}@${REMOTE_HOST}" <<EOF
@@ -83,4 +88,4 @@ ssh -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" -i "${KEYFILE}" "${REMOTE_USER}@
     "${checkmk_path}/packages/mk-oracle/run" "${RUN_CMD}"
 EOF
 
-scp -o UserKnownHostsFile="${KNOWN_HOSTS_FILE}" -i "${KEYFILE}" "${REMOTE_USER}@${REMOTE_HOST}:${checkmk_path}/requirements/rust/host/target/release/mk-oracle" "mk-oracle.${REMOTE_OS}"
+scp -o UserKnownHostsFile="${KNOWN_HOSTS_FILE}" -i "${KEYFILE}" "${REMOTE_USER}@${REMOTE_HOST}:${checkmk_path}/target/release/mk-oracle" "mk-oracle.${REMOTE_OS}"

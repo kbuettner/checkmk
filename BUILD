@@ -26,6 +26,11 @@ exports_files(
         ".shellcheckrc",
         ".stylelintrc.mjs",
         ".stylelintignore",
+        "Cargo.toml",
+        "Cargo.lock",
+        "site.Cargo.lock.bazel",
+        "host.Cargo.lock.bazel",
+        ".cargo/config.toml",
     ],
     visibility = ["//:__subpackages__"],
 )
