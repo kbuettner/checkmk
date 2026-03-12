@@ -415,9 +415,8 @@ class IndexSearcher:
         This way, the code which displays the results can request as many results as it wants to
         render only, thus avoiding checking the permissions for all found results.
         """
-        yield from self._filter_results_by_user_permissions(
-            self._sort_search_results(self._search_redis(query, config)), config
-        )
+        sorted_results = self._sort_search_results(self._search_redis(query, config))
+        yield from self._filter_results_by_user_permissions(sorted_results, config)
 
     def _search_redis(
         self, query: SearchQuery, config: Config
