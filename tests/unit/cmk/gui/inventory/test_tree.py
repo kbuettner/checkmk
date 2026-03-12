@@ -4,8 +4,6 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 # mypy: disable-error-code="comparison-overlap"
-# mypy: disable-error-code="misc"
-# mypy: disable-error-code="type-arg"
 
 import os
 from pathlib import Path
@@ -455,19 +453,10 @@ def test_get_history_corrupted_files(tmp_path: Path, request_context: None) -> N
     assert corrupted_history_files == ["inventory_archive/inv-host/foo"]
 
 
-@pytest.mark.parametrize(
-    "search_timestamp, expected_raw_delta_tree",
-    [
-        (0, {"inv": (None, "attr-0")}),
-        (1, {"inv": ("attr-0", "attr-1")}),
-        (2, {"inv": ("attr-1", None), "inv-2": (None, "attr")}),
-        (3, {"inv": (None, "attr-3"), "inv-2": ("attr", None)}),
-    ],
-)
+@pytest.mark.parametrize("search_timestamp", [0, 1, 2, 3])
 def test_load_delta_tree(
     tmp_path: Path,
     search_timestamp: int,
-    expected_raw_delta_tree: dict,
     request_context: None,
 ) -> None:
     history_store = HistoryStore(tmp_path)
