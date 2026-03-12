@@ -503,18 +503,14 @@ class TestRealisticSearch:
     )
     def test_real_search_without_exception(
         self,
-        config: Config,
         clean_redis_client: "Redis",
-        permissions_handler: PermissionsHandler,
+        index_searcher: IndexSearcher,
     ) -> None:
         IndexBuilder(real_match_item_generator_registry, clean_redis_client).build_full_index(
             UserPermissions({}, {}, {}, [])
         )
         assert IndexBuilder.index_is_built(clean_redis_client)
-        assert (
-            len(list(IndexSearcher(config, clean_redis_client, permissions_handler).search("Host")))
-            > 4
-        )
+        assert len(list(index_searcher.search("Host"))) > 4
 
     def _livestatus_mock(
         self,
@@ -534,9 +530,8 @@ class TestRealisticSearch:
     )
     def test_index_is_built_as_super_user(
         self,
-        config: Config,
         clean_redis_client: "Redis",
-        permissions_handler: PermissionsHandler,
+        index_searcher: IndexSearcher,
     ) -> None:
         """
         We test that the index is always built as a super user.
@@ -549,11 +544,7 @@ class TestRealisticSearch:
         # if the search index did not internally use the super user while building, this item would
         # be missing, because the match item generator for the setup menu only yields entries which
         # the current user is allowed to see
-        assert list(
-            IndexSearcher(config, clean_redis_client, permissions_handler).search(
-                "custom host attributes"
-            )
-        )
+        assert list(index_searcher.search("custom host attributes"))
 
     @pytest.mark.usefixtures(
         "with_admin_login",
@@ -566,9 +557,8 @@ class TestRealisticSearch:
     def test_dcd_not_found_if_not_super_user(
         self,
         monkeypatch: MonkeyPatch,
-        config: Config,
         clean_redis_client: "Redis",
-        permissions_handler: PermissionsHandler,
+        index_searcher: IndexSearcher,
     ) -> None:
         """
         This test ensures that test_index_is_built_as_super_user makes sense, ie. that if we do not
@@ -590,8 +580,4 @@ class TestRealisticSearch:
                 UserPermissions({}, {}, {}, [])
             )
 
-        assert not list(
-            IndexSearcher(config, clean_redis_client, permissions_handler).search(
-                "custom host attributes"
-            )
-        )
+        assert not list(index_searcher.search("custom host attributes"))
