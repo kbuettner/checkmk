@@ -204,12 +204,18 @@ def fixture_config() -> Config:
     return Config()
 
 
+@pytest.fixture(name="permissions_handler")
+def fixture_permissions_handler() -> PermissionsHandler:
+    return PermissionsHandler()
+
+
 @pytest.fixture(name="index_searcher")
 def fixture_index_searcher(
     config: Config,
     clean_redis_client: "Redis",
+    permissions_handler: PermissionsHandler,
 ) -> IndexSearcher:
-    return IndexSearcher(config, clean_redis_client, PermissionsHandler())
+    return IndexSearcher(config, clean_redis_client, permissions_handler)
 
 
 class TestIndexBuilder:
@@ -377,6 +383,7 @@ class TestIndexSearcher:
         self,
         config: Config,
         clean_redis_client: "Redis",
+        permissions_handler: PermissionsHandler,
         mocker: MockerFixture,
     ) -> None:
         get_config = mocker.patch(
@@ -385,7 +392,7 @@ class TestIndexSearcher:
 
         with pytest.raises(IndexNotFoundException):
             list(
-                IndexSearcher(config, clean_redis_client, PermissionsHandler()).search("change_dep")
+                IndexSearcher(config, clean_redis_client, permissions_handler).search("change_dep")
             )
         get_config.assert_called()
 
@@ -498,15 +505,14 @@ class TestRealisticSearch:
         self,
         config: Config,
         clean_redis_client: "Redis",
+        permissions_handler: PermissionsHandler,
     ) -> None:
         IndexBuilder(real_match_item_generator_registry, clean_redis_client).build_full_index(
             UserPermissions({}, {}, {}, [])
         )
         assert IndexBuilder.index_is_built(clean_redis_client)
         assert (
-            len(
-                list(IndexSearcher(config, clean_redis_client, PermissionsHandler()).search("Host"))
-            )
+            len(list(IndexSearcher(config, clean_redis_client, permissions_handler).search("Host")))
             > 4
         )
 
@@ -530,6 +536,7 @@ class TestRealisticSearch:
         self,
         config: Config,
         clean_redis_client: "Redis",
+        permissions_handler: PermissionsHandler,
     ) -> None:
         """
         We test that the index is always built as a super user.
@@ -543,11 +550,9 @@ class TestRealisticSearch:
         # be missing, because the match item generator for the setup menu only yields entries which
         # the current user is allowed to see
         assert list(
-            IndexSearcher(
-                config,
-                clean_redis_client,
-                PermissionsHandler(),
-            ).search("custom host attributes")
+            IndexSearcher(config, clean_redis_client, permissions_handler).search(
+                "custom host attributes"
+            )
         )
 
     @pytest.mark.usefixtures(
@@ -563,6 +568,7 @@ class TestRealisticSearch:
         monkeypatch: MonkeyPatch,
         config: Config,
         clean_redis_client: "Redis",
+        permissions_handler: PermissionsHandler,
     ) -> None:
         """
         This test ensures that test_index_is_built_as_super_user makes sense, ie. that if we do not
@@ -585,9 +591,7 @@ class TestRealisticSearch:
             )
 
         assert not list(
-            IndexSearcher(
-                config,
-                clean_redis_client,
-                PermissionsHandler(),
-            ).search("custom host attributes")
+            IndexSearcher(config, clean_redis_client, permissions_handler).search(
+                "custom host attributes"
+            )
         )
