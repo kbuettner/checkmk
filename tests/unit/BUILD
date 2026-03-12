@@ -11,6 +11,10 @@ py_library(
         "conftest.py",
         "mocks_and_helpers.py",
     ],
+    visibility = [
+        ":__subpackages__",
+        "//non-free/packages/cmk-robotmk:__pkg__",
+    ],
     deps = [
         "//cmk/base",
         "//cmk/checkengine:cmk_checkengine",
@@ -571,44 +575,6 @@ py_test(
         requirement("time-machine"),
         requirement("vcrpy"),
     ],
-)
-
-py_test(
-    name = "plugins_pro",
-    srcs = ["__test__.py"] + glob(
-        include = ["cmk/plugins/**/nonfree/**/pro/**/*.py"],
-        allow_empty = True,
-    ),
-    args = [
-        "--config-file=$(location @//:pyproject.toml)",
-        "--import-mode=importlib",
-        "--random-order-bucket=global",
-        "--dist=loadfile",
-        "--numprocesses=4",
-    ],
-    data = ["@//:pyproject.toml"] + glob(
-        include = ["**/*.xml"],
-        allow_empty = True,
-    ),
-    main = ":__test__.py",
-    target_compatible_with = select({
-        "@//:gpl+nonfree_repo": [],
-        "@//:gpl_repo": ["@platforms//:incompatible"],
-    }),
-    visibility = ["//tests:__subpackages__"],
-    deps = [
-        ":__test__",
-        requirement("polyfactory"),
-        requirement("marshmallow"),
-        requirement("pytest"),
-        requirement("pytest-asyncio"),
-        requirement("pytest-random-order"),
-    ] + select({
-        "@//:gpl+nonfree_repo": [
-            "//cmk/plugins:cmk_plugins_robotmk_nonfree_srcs",
-        ],
-        "@//:gpl_repo": [],
-    }),
 )
 
 py_test(

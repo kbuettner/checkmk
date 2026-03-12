@@ -68,7 +68,6 @@ redis
 reportlab
 requests
 requests-oauthlib
-robotframework
 roman
 setproctitle
 setuptools

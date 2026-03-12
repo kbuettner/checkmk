@@ -4865,12 +4865,6 @@ rlpycairo==0.4.0 \
     # via
     #   -c requirements.txt
     #   svglib
-robotframework==7.4.1 \
-    --hash=sha256:3f75cae8a24797f1953efdb51399569767d742bb31f549ee9856db5545062728 \
-    --hash=sha256:d645487248a86db1e1a865ce792502792edf5342873f4e4f35d333219cd246c5
-    # via
-    #   -c requirements.txt
-    #   -r cmk/requirements.in
 roman==5.2 \
     --hash=sha256:275fe9f46290f7d0ffaea1c33251b92b8e463ace23660508ceef522e7587cb6f \
     --hash=sha256:89d3b47400388806d06ff77ea77c79ab080bc127820dea6bf34e1f1c1b8e676e

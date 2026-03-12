@@ -3278,7 +3278,9 @@ ply==3.11 \
 polyfactory==3.2.0 \
     --hash=sha256:5945799cce4c56cd44ccad96fb0352996914553cc3efaa5a286930599f569571 \
     --hash=sha256:879242f55208f023eee1de48522de5cb1f9fd2d09b2314e999a9592829d596d1
-    # via -r tests/dev-requirements.in
+    # via
+    #   -r non-free/packages/cmk-robotmk/requirements.in
+    #   -r tests/dev-requirements.in
 pre-commit==4.5.1 \
     --hash=sha256:3b3afd891e97337708c1674210f8eba659b52a38ea5f822ff142d10786221f77 \
     --hash=sha256:eb545fcff725875197837263e977ea257a402056661f09dae08e4b149b030a61
@@ -3609,6 +3611,7 @@ pydantic==2.12.5 \
     #   -r non-free/packages/cmk-metric-backend/requirements.in
     #   -r non-free/packages/cmk-otel-collector/requirements.in
     #   -r non-free/packages/cmk-relay-engine/requirements.in
+    #   -r non-free/packages/cmk-robotmk/requirements.in
     #   -r packages/cmk-agent-receiver/requirements.in
     #   -r packages/cmk-messaging/requirements.in
     #   -r packages/cmk-mkp-tool/requirements.in
@@ -4003,6 +4006,7 @@ pytest==8.3.5 \
     #   -r non-free/packages/cmk-otel-collector/dev-requirements.in
     #   -r non-free/packages/cmk-plugins-nonfree/dev-requirements.in
     #   -r non-free/packages/cmk-relay-engine/dev-requirements.in
+    #   -r non-free/packages/cmk-robotmk/dev-requirements.in
     #   -r non-free/packages/cmk-update-agent/dev-requirements.in
     #   -r packages/cmk-agent-receiver/dev-requirements.in
     #   -r packages/cmk-ccc/dev-requirements.in
@@ -4070,6 +4074,7 @@ pytest-mock==3.15.1 \
     --hash=sha256:1849a238f6f396da19762269de72cb1814ab44416fa73a8686deac10b0d87a0f
     # via
     #   -r non-free/packages/cmk-mknotifyd/dev-requirements.in
+    #   -r non-free/packages/cmk-robotmk/dev-requirements.in
     #   -r non-free/packages/cmk-update-agent/dev-requirements.in
     #   -r packages/cmk-agent-receiver/dev-requirements.in
     #   -r tests/dev-requirements.in
@@ -4342,6 +4347,7 @@ pyyaml==6.0.3 \
     # via
     #   -r cmk/requirements.in
     #   -r non-free/packages/cmk-otel-collector/requirements.in
+    #   -r non-free/packages/cmk-robotmk/requirements.in
     #   bandit
     #   datamodel-code-generator
     #   djlint
@@ -4632,7 +4638,7 @@ rlpycairo==0.4.0 \
 robotframework==7.4.1 \
     --hash=sha256:3f75cae8a24797f1953efdb51399569767d742bb31f549ee9856db5545062728 \
     --hash=sha256:d645487248a86db1e1a865ce792502792edf5342873f4e4f35d333219cd246c5
-    # via -r cmk/requirements.in
+    # via -r non-free/packages/cmk-robotmk/requirements.in
 roman==5.2 \
     --hash=sha256:275fe9f46290f7d0ffaea1c33251b92b8e463ace23660508ceef522e7587cb6f \
     --hash=sha256:89d3b47400388806d06ff77ea77c79ab080bc127820dea6bf34e1f1c1b8e676e
@@ -5141,6 +5147,7 @@ time-machine==3.2.0 \
     #   -r non-free/packages/cmk-mknotifyd/dev-requirements.in
     #   -r non-free/packages/cmk-otel-collector/dev-requirements.in
     #   -r non-free/packages/cmk-relay-engine/dev-requirements.in
+    #   -r non-free/packages/cmk-robotmk/dev-requirements.in
     #   -r packages/cmk-agent-receiver/dev-requirements.in
     #   -r packages/cmk-crypto/dev-requirements.in
     #   -r packages/cmk-ec/dev-requirements.in

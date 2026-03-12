@@ -22,6 +22,7 @@ py_library(
         "//cmk:__subpackages__",
         "//non-free/packages/cmk-dcd:__pkg__",
         "//non-free/packages/cmk-liveproxyd:__pkg__",
+        "//non-free/packages/cmk-robotmk:__pkg__",
         "//tests:__subpackages__",
     ],
     deps = [
@@ -127,12 +128,7 @@ py_library(
             "**/nonfree/**/ultimate/**",
             "**/nonfree/**/ultimatemt/**",
         ],
-    ) + select({
-        "@//:gpl+nonfree_repo": [
-            "//cmk/nonfree/pro/robotmk:gui",
-        ],
-        "@//:gpl_repo": [],
-    }),
+    ),
     imports = ["../.."],
     visibility = [
         "//cmk:__subpackages__",
@@ -156,14 +152,15 @@ py_library(
         requirement("roman"),
     ] + select({
         "@//:gpl+nonfree_repo": [
-            "//cmk/nonfree/pro/robotmk",
-            "//cmk/nonfree/pro/robotmk:bakery",
             "//cmk/utils:pro",
             "//non-free/packages/cmk-bakery",
             "//non-free/packages/cmk-dcd:gui",
             "//non-free/packages/cmk-dcd:protocols",
             "//non-free/packages/cmk-liveproxyd:gui",
             "//non-free/packages/cmk-mknotifyd",
+            "//non-free/packages/cmk-robotmk",
+            "//non-free/packages/cmk-robotmk:bakery",
+            "//non-free/packages/cmk-robotmk:gui",
         ],
         "@//:gpl_repo": [],
     }),

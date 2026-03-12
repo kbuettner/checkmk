@@ -17,7 +17,10 @@ py_library(
         ],
     ),
     imports = ["../../.."],
-    visibility = ["//tests:__subpackages__"],
+    visibility = [
+        "//non-free/packages/cmk-robotmk:__pkg__",
+        "//tests:__subpackages__",
+    ],
     deps = [
         "//cmk/base",
         "//cmk/gui",

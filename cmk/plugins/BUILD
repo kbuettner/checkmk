@@ -82,29 +82,6 @@ py_library(
     ],
 )
 
-# Robotmk nonfree files import from cmk.nonfree.pro.robotmk.* - their sources are added
-# directly to //cmk:pro so type checking happens with the nonfree packages available.
-py_library(
-    name = "cmk_plugins_robotmk_nonfree_srcs",
-    srcs = glob(
-        ["robotmk/**/nonfree/**/*.py"],
-        allow_empty = True,
-    ),
-    imports = ["../.."],
-    target_compatible_with = select({
-        "@//:gpl+nonfree_repo": [],
-        "@//:gpl_repo": ["@platforms//:incompatible"],
-    }),
-    deps = [
-        "//cmk/nonfree/pro/robotmk",
-        "//cmk/nonfree/pro/robotmk:bakery",
-        "//packages/cmk-plugin-apis:agent_based",
-        "//packages/cmk-plugin-apis:graphing",
-        "//packages/cmk-plugin-apis:rulesets",
-        requirement("robotframework"),
-    ],
-)
-
 # Otel and custom_query_metric_backend nonfree files import from cmk.metric_backend.*,
 # cmk.otel_collector.*, etc. - their sources are added directly to //cmk:ultimate
 # so type checking happens with the nonfree packages available.
@@ -161,9 +138,6 @@ py_library(
             "**/nonfree/**/cloud/**",
             "**/nonfree/**/ultimate/**",
             "**/nonfree/**/ultimatemt/**",
-            # Exclude robotmk nonfree files - they import from cmk.nonfree.pro.robotmk.*
-            # which lives in cmk/nonfree/pro/robotmk/ and is part of //cmk:pro
-            "robotmk/**/nonfree/**",
         ],
     ),
     imports = ["../.."],
@@ -171,13 +145,7 @@ py_library(
         ":cmk_plugins",
         ":cmk_plugins_community",
         requirement("robotframework"),
-    ] + select({
-        "@//:gpl+nonfree_repo": [
-            "//cmk/nonfree/pro/robotmk",
-            "//cmk/nonfree/pro/robotmk:bakery",
-        ],
-        "@//:gpl_repo": [],
-    }),
+    ],
 )
 
 py_library(

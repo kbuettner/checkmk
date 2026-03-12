@@ -60,7 +60,7 @@ py_library(
         "//cmk/utils:pro",
     ] + select({
         "@//:gpl+nonfree_repo": [
-            "//cmk/nonfree/pro/robotmk",
+            "//non-free/packages/cmk-robotmk",
         ],
         "@//:gpl_repo": [],
     }),
