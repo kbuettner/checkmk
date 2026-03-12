@@ -1,5 +1,5 @@
 # docker build \
-# --build-arg IMAGE_BASE=$(buildscripts/docker_image_aliases/resolve.py IMAGE_PYTHON_3_12) \
+# --build-arg IMAGE_BASE=$(buildscripts/docker_image_aliases/resolve.py IMAGE_PYTHON_3_13) \
 # --tag minimal-alpine-checkmk-ci-master \
 # -f buildscripts/scripts/Dockerfile .
 #
@@ -12,9 +12,9 @@
 
 ARG IMAGE_BASE
 FROM ${IMAGE_BASE}
-# above image is python:3.12-alpine3.21
+# above image is python:3.13-alpine3.23
 # docker inspect -f "{{ .Size }}" minimal-alpine-checkmk-ci-master:latest
-# 136MB (136943554)
+# 135MB (135631657)
 # bash is required to be used in Jenkins with image.inside(), requires +3MB
 # git is required to use checkmk-dev-tools, requires +13MB
 # make is required by scripts/fake-artifacts, see CMK-21338, requires +9MB
