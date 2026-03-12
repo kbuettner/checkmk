@@ -557,6 +557,7 @@ py_test(
         "//tests/testlib/unit:unit_free",
         requirement("exchangelib"),
         requirement("feedparser"),
+        requirement("google-cloud-asset"),
         requirement("google-cloud-monitoring"),
         requirement("polyfactory"),
         requirement("pysmb"),
