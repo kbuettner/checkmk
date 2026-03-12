@@ -1,5 +1,4 @@
 set noparent  # don't inherit owners information from parent folders
-
 file:/component_owners/plugins/OWNERS_DEFINITION
 
 # Please
