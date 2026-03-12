@@ -395,9 +395,11 @@ class PermissionsHandler:
 class IndexSearcher:
     def __init__(
         self,
+        config: Config,
         redis_client: redis.Redis,
         permissions_handler: PermissionsHandler,
     ) -> None:
+        self._config = config
         self._redis_client = redis_client
         if not redis_server_reachable(self._redis_client):
             raise RuntimeError("Redis server is not reachable")
@@ -405,7 +407,7 @@ class IndexSearcher:
         self._may_see_item_func = permissions_handler.may_see_items()
         self._user_id = user.ident
 
-    def search(self, query: SearchQuery, config: Config) -> SearchResultsByTopic:
+    def search(self, query: SearchQuery) -> SearchResultsByTopic:
         """
         Sorted search results restricted according to the permissions of the current user.
 
@@ -415,14 +417,14 @@ class IndexSearcher:
         This way, the code which displays the results can request as many results as it wants to
         render only, thus avoiding checking the permissions for all found results.
         """
-        sorted_results = self._sort_search_results(self._search_redis(query, config))
-        yield from self._filter_results_by_user_permissions(sorted_results, config)
+        sorted_results = self._sort_search_results(self._search_redis(query))
+        yield from self._filter_results_by_user_permissions(sorted_results)
 
     def _search_redis(
-        self, query: SearchQuery, config: Config
+        self, query: SearchQuery
     ) -> dict[str, list[_SearchResultWithVisibilityCheck]]:
         if not IndexBuilder.index_is_built(self._redis_client):
-            self._launch_index_building_in_background_job(config)
+            self._launch_index_building_in_background_job(self._config)
             raise IndexNotFoundException
 
         query_preprocessed = f"*{query.lower().replace(' ', '*')}*"
@@ -576,10 +578,8 @@ class IndexSearcher:
             # _("Maintenance"),
         )
 
-    @staticmethod
     def _filter_results_by_user_permissions(
-        results_by_topic: Iterable[tuple[str, Iterable[_SearchResultWithVisibilityCheck]]],
-        config: Config,
+        self, results_by_topic: Iterable[tuple[str, Iterable[_SearchResultWithVisibilityCheck]]]
     ) -> SearchResultsByTopic:
         yield from (
             (
@@ -587,7 +587,7 @@ class IndexSearcher:
                 (
                     result.result
                     for result in results
-                    if result.visibility_check(result.result.url, config)
+                    if result.visibility_check(result.result.url, self._config)
                 ),
             )
             for topic, results in results_by_topic
@@ -725,8 +725,8 @@ class SetupSearchEngine:
         redis_client: redis.Redis | None = None,
         permissions_handler: PermissionsHandler | None = None,
     ) -> None:
-        self._config = config
         self._legacy_engine = IndexSearcher(
+            config=config,
             redis_client=redis_client or get_redis_client(),
             permissions_handler=permissions_handler or PermissionsHandler(),
         )
@@ -734,5 +734,5 @@ class SetupSearchEngine:
     def search(self, query: str) -> Iterable[UnifiedSearchResultItem]:
         return itertools.chain.from_iterable(
             transform_legacy_results_to_unified(results, topic, provider=ProviderName.setup)
-            for topic, results in self._legacy_engine.search(query, self._config)
+            for topic, results in self._legacy_engine.search(query)
         )

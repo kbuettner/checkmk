@@ -203,7 +203,7 @@ def fixture_index_builder(
 def fixture_index_searcher(
     clean_redis_client: "Redis",
 ) -> IndexSearcher:
-    return IndexSearcher(clean_redis_client, PermissionsHandler())
+    return IndexSearcher(Config(), clean_redis_client, PermissionsHandler())
 
 
 class TestIndexBuilder:
@@ -255,7 +255,7 @@ class TestIndexBuilderAndSearcher:
         index_searcher: IndexSearcher,
     ) -> None:
         index_builder.build_full_index(UserPermissions({}, {}, {}, []))
-        assert self._evaluate_search_results_by_topic(index_searcher.search("**", Config())) == [
+        assert self._evaluate_search_results_by_topic(index_searcher.search("**")) == [
             ("Change-dependent", [SearchResult(title="change_dependent", url="")]),
             ("Localization-dependent", [SearchResult(title="localization_dependent", url="")]),
         ]
@@ -268,7 +268,7 @@ class TestIndexBuilderAndSearcher:
     ) -> None:
         index_builder._mark_index_as_built()
         index_builder.build_changed_sub_indices(["something"], UserPermissions({}, {}, {}, []))
-        assert not self._evaluate_search_results_by_topic(index_searcher.search("**", Config()))
+        assert not self._evaluate_search_results_by_topic(index_searcher.search("**"))
 
     @pytest.mark.usefixtures("with_admin_login")
     def test_update_and_search_with_update(
@@ -280,7 +280,7 @@ class TestIndexBuilderAndSearcher:
         index_builder.build_changed_sub_indices(
             ["some_change_dependent_whatever"], UserPermissions({}, {}, {}, [])
         )
-        assert self._evaluate_search_results_by_topic(index_searcher.search("**", Config())) == [
+        assert self._evaluate_search_results_by_topic(index_searcher.search("**")) == [
             ("Change-dependent", [SearchResult(title="change_dependent", url="")]),
         ]
 
@@ -310,7 +310,7 @@ class TestIndexBuilderAndSearcher:
         index_builder.build_changed_sub_indices(
             ["some_change_dependent_whatever"], UserPermissions({}, {}, {}, [])
         )
-        assert self._evaluate_search_results_by_topic(index_searcher.search("**", Config())) == [
+        assert self._evaluate_search_results_by_topic(index_searcher.search("**")) == [
             ("Localization-dependent", [SearchResult(title="localization_dependent", url="")]),
         ]
 
@@ -369,8 +369,8 @@ class TestIndexSearcher:
 
         with pytest.raises(IndexNotFoundException):
             list(
-                IndexSearcher(clean_redis_client, PermissionsHandler()).search(
-                    "change_dep", Config()
+                IndexSearcher(Config(), clean_redis_client, PermissionsHandler()).search(
+                    "change_dep"
                 )
             )
         get_config.assert_called()
@@ -491,7 +491,7 @@ class TestRealisticSearch:
         assert (
             len(
                 list(
-                    IndexSearcher(clean_redis_client, PermissionsHandler()).search("Host", Config())
+                    IndexSearcher(Config(), clean_redis_client, PermissionsHandler()).search("Host")
                 )
             )
             > 4
@@ -530,9 +530,10 @@ class TestRealisticSearch:
         # the current user is allowed to see
         assert list(
             IndexSearcher(
+                Config(),
                 clean_redis_client,
                 PermissionsHandler(),
-            ).search("custom host attributes", Config())
+            ).search("custom host attributes")
         )
 
     @pytest.mark.usefixtures(
@@ -570,7 +571,8 @@ class TestRealisticSearch:
 
         assert not list(
             IndexSearcher(
+                Config(),
                 clean_redis_client,
                 PermissionsHandler(),
-            ).search("custom host attributes", Config())
+            ).search("custom host attributes")
         )
