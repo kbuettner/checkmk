@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="comparison-overlap"
-
 import os
 from pathlib import Path
 
@@ -485,13 +483,12 @@ def test_load_delta_tree(
         {"inv": "attr"},
     )
 
-    delta_tree, corrupted_history_files = load_delta_tree(
+    _delta_tree, corrupted_history_files = load_delta_tree(
         history_store,
         hostname,
         search_timestamp,
     )
 
-    assert delta_tree is not None
     assert len(corrupted_history_files) == 0
 
 
@@ -556,11 +553,11 @@ def test_load_latest_delta_tree(tmp_path: Path, request_context: None) -> None:
 
     search_timestamp = int((tmp_path / "var/check_mk/inventory" / hostname).stat().st_mtime)
 
-    delta_tree, corrupted_history_files = load_delta_tree(history_store, hostname, search_timestamp)
+    _delta_tree, corrupted_history_files = load_delta_tree(
+        history_store, hostname, search_timestamp
+    )
 
-    assert delta_tree is not None
     assert len(corrupted_history_files) == 0
-    assert load_latest_delta_tree(history_store, hostname) is not None
 
 
 def test_load_latest_delta_tree_no_archive_and_inv_tree(
@@ -576,43 +573,3 @@ def test_load_latest_delta_tree_no_archive_and_inv_tree(
     )
 
     assert not load_latest_delta_tree(history_store, hostname)
-
-
-def test_load_latest_delta_tree_one_archive_and_inv_tree(
-    tmp_path: Path, request_context: None
-) -> None:
-    history_store = HistoryStore(tmp_path)
-    hostname = HostName("inv-host")
-
-    # history
-    cmk.ccc.store.save_object_to_file(
-        tmp_path / "var/check_mk/inventory_archive" / hostname / "0",
-        {"inv": "attr-0"},
-    )
-
-    # current tree
-    cmk.ccc.store.save_object_to_file(
-        tmp_path / "var/check_mk/inventory" / hostname,
-        {"inv": "attr"},
-    )
-
-    delta_tree = load_latest_delta_tree(history_store, hostname)
-
-    assert delta_tree is not None
-
-
-def test_load_latest_delta_tree_one_archive_and_no_inv_tree(
-    tmp_path: Path, request_context: None
-) -> None:
-    history_store = HistoryStore(tmp_path)
-    hostname = HostName("inv-host")
-
-    # history
-    cmk.ccc.store.save_object_to_file(
-        tmp_path / "var/check_mk/inventory_archive" / hostname / "0",
-        {"inv": "attr-0"},
-    )
-
-    delta_tree = load_latest_delta_tree(history_store, hostname)
-
-    assert delta_tree is not None
