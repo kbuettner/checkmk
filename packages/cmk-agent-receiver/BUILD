@@ -1,4 +1,4 @@
-load("@aspect_rules_py//py:defs.bzl", "py_library", "py_pytest_main", "py_test")
+load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 load("@rules_python//python:packaging.bzl", "py_wheel")
@@ -70,6 +70,7 @@ py_library(
     imports = ["."],
     visibility = [
         "//cmk:__pkg__",
+        "//packages/cmk-agent-receiver/tests:__subpackages__",
         "//tests:__subpackages__",
     ],
     deps = [
@@ -97,6 +98,7 @@ py_library(
         "@wiremock_standalone//file",
     ],
     imports = ["."],
+    visibility = ["//packages/cmk-agent-receiver/tests:__subpackages__"],
     deps = [
         ":cmk-agent-receiver",
         requirement("cryptography"),
@@ -110,116 +112,6 @@ py_doc_test(
     size = "small",
     srcs = ["cmk-agent-receiver"],
     tags = ["no-mypy"],
-)
-
-py_pytest_main(
-    name = "__test__",
-    deps = [
-        requirement("pytest"),
-    ],
-)
-
-py_test(
-    name = "unit",
-    size = "small",
-    srcs = glob(["tests/unit/**/*.py"]) + [":__test__.py"],
-    args = [
-        "--random-order",
-        "--random-order-bucket=global",
-        "--disable-socket",
-        "--allow-unix-socket",
-        "--durations=5",
-        "-W",
-        "error",
-    ],
-    main = "__test__.py",
-    deps = [
-        ":__test__",
-        ":cmk-agent-receiver",
-        ":testlib",
-        ":unit_testlib",
-        requirement("cryptography"),
-        requirement("fastapi"),
-        requirement("pytest"),
-        requirement("httpx"),
-        requirement("pytest-asyncio"),
-        requirement("pytest-xdist"),
-        requirement("pytest-socket"),
-        requirement("pytest-random-order"),
-        requirement("pytest-mock"),
-        requirement("requests"),
-        requirement("starlette"),
-        requirement("time-machine"),
-        requirement("python-dateutil"),
-    ],
-)
-
-py_pytest_main(
-    name = "__testlib_test__",
-    deps = [
-        requirement("pytest"),
-    ],
-)
-
-py_test(
-    name = "unit_testlib",
-    size = "medium",
-    srcs = glob(["tests/unit/testlib/**/*.py"]) + [":__testlib_test__.py"],
-    args = [
-        "--random-order",
-        "--random-order-bucket=global",
-        "--durations=5",
-    ],
-    main = "__testlib_test__.py",
-    deps = [
-        ":__testlib_test__",
-        ":testlib",
-        requirement("pytest"),
-        requirement("pytest-xdist"),
-        requirement("httpx"),
-        requirement("pytest-random-order"),
-    ],
-)
-
-py_pytest_main(
-    name = "__component_test__",
-    deps = [
-        requirement("pytest"),
-    ],
-)
-
-py_test(
-    name = "component",
-    size = "medium",
-    srcs = glob(["tests/component/**/*.py"]) + [":__component_test__.py"],
-    args = [
-        "--random-order",
-        "--random-order-bucket=global",
-        "--durations=5",
-    ],
-    data = [
-        "@remotejdk11_linux//:bin/java",
-        "@wiremock_standalone//file",
-    ],
-    env = {
-        "JAVA_BIN": "$(rootpath @remotejdk11_linux//:bin/java)",
-        "WIREMOCK_JAR": "$(rootpath @wiremock_standalone//file)",
-    },
-    main = "__component_test__.py",
-    tags = ["component"],
-    deps = [
-        ":__component_test__",
-        ":cmk-agent-receiver",
-        ":testlib",
-        requirement("pytest"),
-        requirement("pytest-xdist"),
-        requirement("pytest-socket"),
-        requirement("pytest-random-order"),
-        requirement("fastapi"),
-        requirement("starlette"),
-        requirement("httpx"),
-        requirement("python-dateutil"),
-    ],
 )
 
 py_wheel(
