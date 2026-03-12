@@ -354,7 +354,8 @@ def _try_page(file_name: str, config: Config) -> None:
 
 
 class PermissionsHandler:
-    def __init__(self) -> None:
+    def __init__(self, config: Config) -> None:
+        self._config = config
         self._category_permissions = {
             "global_settings": user.may("wato.global") or user.may("wato.seeall"),
             "folders": user.may("wato.hosts"),
@@ -386,7 +387,7 @@ class PermissionsHandler:
             "rules": self._permissions_rule,
             "hosts": lambda url, config: (
                 any(user.may(perm) for perm in ("wato.all_folders", "wato.see_all_folders"))
-                or may_see_url(url, active_config)
+                or may_see_url(url, self._config)
             ),
             "setup": may_see_url,
         }
@@ -715,7 +716,7 @@ class SetupSearchEngine:
         self._legacy_engine = IndexSearcher(
             config=config,
             redis_client=redis_client or get_redis_client(),
-            permissions_handler=permissions_handler or PermissionsHandler(),
+            permissions_handler=permissions_handler or PermissionsHandler(config),
         )
 
     def search(self, query: str) -> Iterable[UnifiedSearchResultItem]:

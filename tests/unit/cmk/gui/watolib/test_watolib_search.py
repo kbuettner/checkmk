@@ -202,8 +202,8 @@ def fixture_config() -> Config:
 
 
 @pytest.fixture(name="permissions_handler")
-def fixture_permissions_handler() -> PermissionsHandler:
-    return PermissionsHandler()
+def fixture_permissions_handler(config: Config) -> PermissionsHandler:
+    return PermissionsHandler(config)
 
 
 @pytest.fixture(name="index_searcher")
@@ -368,8 +368,8 @@ def test_may_see_url_host_false(
 
 class TestPermissionHandler:
     @pytest.mark.usefixtures("with_admin_login")
-    def test_may_see_category(self) -> None:
-        permissions_handler = PermissionsHandler()
+    def test_may_see_category(self, config: Config) -> None:
+        permissions_handler = PermissionsHandler(config)
         for category in permissions_handler._category_permissions:
             assert permissions_handler.may_see_category(category)
 
