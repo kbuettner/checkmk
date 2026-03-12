@@ -59,7 +59,7 @@ function navigateUrl(url: string) {
             ? 'optional'
             : props.header.trigger_button.color
         "
-        @click="navigateUrl(props.header.trigger_button.url)"
+        @click="navigateUrl(props.header.trigger_button.target_url)"
       >
         {{ mainMenu.triggerHeader(props.header.trigger_button.mode) }}
       </CmkButton>

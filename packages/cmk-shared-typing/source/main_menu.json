@@ -131,9 +131,9 @@
       "properties": {
         "mode": { "$ref": "#/$defs/header_trigger_mode_enum" },
         "color": { "$ref": "#/$defs/color_enum" },
-        "url": { "type": "string" }
+        "target_url": { "type": "string" }
       },
-      "required": ["mode", "url"]
+      "required": ["mode", "target_url"]
     },
     "nav_item_badge": {
       "type": "object",

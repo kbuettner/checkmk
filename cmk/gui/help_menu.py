@@ -57,7 +57,7 @@ def register(
                 trigger_button=NavItemHeaderTriggerButton(
                     mode=HeaderTriggerModeEnum.unack_incomp_werks,
                     color=ColorEnum.danger,
-                    url="ajax_sidebar_get_unack_incomp_werks.py",
+                    target_url=makeuri_contextless(request, vars_=[], filename="change_log.py"),
                 ),
             ),
             hint=_l("Docs, references and guides"),
