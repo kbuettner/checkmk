@@ -266,6 +266,5 @@ sh_library(
     name = "helpers",
     srcs = [
         ".f12",
-        "run",
     ],
 )

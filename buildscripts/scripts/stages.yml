@@ -344,7 +344,7 @@ STAGES:
     - NAME: "Package cmk-agent-receiver"
       ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_PYPROJECT_TOML_FILE,CHANGED_CMK_AGENT_RECEIVER_FILES,CHANGED_PYTHON_REQUIREMENTS,CHANGED_CMK_RELAY_PROTOCOLS_FILES
       DIR: "packages/cmk-agent-receiver"
-      COMMAND: "./run --component-tests --testlib-tests &> ${RESULTS}/cmk-agent-receiver.txt"
+      COMMAND: "bazel test ... &> ${RESULTS}/cmk-agent-receiver.txt"
       BAZEL_LOCKS_AMOUNT: 1
       TEXT_ON_SKIP: "No cmk-agent-receiver files changed"
       RESULT_CHECK_FILE_PATTERN: "results/cmk-agent-receiver.txt"

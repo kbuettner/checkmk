@@ -1,4 +1,4 @@
 {
-  "command_line": "./run --all",
+  "command_line": "./run",
   "maintainers": ["team-main@checkmk.com"]
 }
