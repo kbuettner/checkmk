@@ -40,7 +40,7 @@ from cmk.livestatus_client.testing import (
     MockLiveStatusConnection,
 )
 from cmk.utils import redis
-from tests.unit.mocks_and_helpers import DummyLicensingHandler, FixPluginLegacy
+from tests.unit.mocks_and_helpers import DummyLicensingHandler
 
 # TODO: Can we somehow push some of the registrations below to the subdirectories?
 # Needs to be executed before the import of those modules
@@ -438,11 +438,6 @@ def agent_based_plugins(tmp_path_factory: pytest.TempPathFactory) -> Generator[A
         plugins = config.load_all_pluginX(repo_path() / "cmk/legacy_checks")
         assert not plugins.errors
         yield plugins
-
-
-@pytest.fixture(scope="session")
-def fix_plugin_legacy() -> Iterator[FixPluginLegacy]:
-    yield FixPluginLegacy()
 
 
 @pytest.fixture(autouse=True, scope="module")

@@ -3,14 +3,22 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
+from collections.abc import Mapping
+
 import pytest
 
+from cmk.agent_based.legacy import discover_legacy_checks, find_legacy_check_modules
 from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
 from cmk.checkengine.plugins import AgentBasedPlugins, SectionName
 from cmk.discover_plugins import PluginLocation
-from tests.unit.mocks_and_helpers import FixPluginLegacy
 
 pytestmark = pytest.mark.checks
+
+
+@pytest.fixture(scope="module")
+def check_info() -> Mapping[str, LegacyCheckDefinition]:
+    result = discover_legacy_checks(find_legacy_check_modules(), raise_errors=True)
+    return {p.name: p for p in result.sane_check_info}
 
 
 def _was_maincheck(lcd: LegacyCheckDefinition) -> bool:
@@ -18,9 +26,9 @@ def _was_maincheck(lcd: LegacyCheckDefinition) -> bool:
 
 
 def test_create_section_plugin_from_legacy(
-    fix_plugin_legacy: FixPluginLegacy, agent_based_plugins: AgentBasedPlugins
+    check_info: Mapping[str, LegacyCheckDefinition], agent_based_plugins: AgentBasedPlugins
 ) -> None:
-    for check_info_dict in fix_plugin_legacy.check_info.values():
+    for check_info_dict in check_info.values():
         # only test main checks
         if not _was_maincheck(check_info_dict):
             continue
@@ -36,8 +44,8 @@ def test_create_section_plugin_from_legacy(
             assert original_parse_function.__name__ == section.parse_function.__name__
 
 
-def test_snmp_info_snmp_detect_equal(fix_plugin_legacy: FixPluginLegacy) -> None:
-    for check_info_element in fix_plugin_legacy.check_info.values():
+def test_snmp_info_snmp_detect_equal(check_info: Mapping[str, LegacyCheckDefinition]) -> None:
+    for check_info_element in check_info.values():
         assert (check_info_element.detect is None) is (check_info_element.fetch is None)
 
 
@@ -60,14 +68,14 @@ def _is_section_migrated(name: str, agent_based_plugins: AgentBasedPlugins) -> b
 
 
 def test_sections_definitions_exactly_in_mainchecks(
-    fix_plugin_legacy: FixPluginLegacy, agent_based_plugins: AgentBasedPlugins
+    check_info: Mapping[str, LegacyCheckDefinition], agent_based_plugins: AgentBasedPlugins
 ) -> None:
     """Test where section definitions occur.
 
     Make sure that sections are defined if and only if it is a main check
     for which no migrated section exists.
     """
-    for check_info_element in fix_plugin_legacy.check_info.values():
+    for check_info_element in check_info.values():
         if not _was_maincheck(check_info_element):  # subcheck
             assert not _defines_section(check_info_element)
         else:
@@ -77,10 +85,10 @@ def test_sections_definitions_exactly_in_mainchecks(
 
 
 def test_all_checks_migrated(
-    fix_plugin_legacy: FixPluginLegacy, agent_based_plugins: AgentBasedPlugins
+    check_info: Mapping[str, LegacyCheckDefinition], agent_based_plugins: AgentBasedPlugins
 ) -> None:
     migrated = {str(name) for name in agent_based_plugins.check_plugins}
     # we don't expect pure section declarations anymore
-    true_checks = {lcd.name for lcd in fix_plugin_legacy.check_info.values() if lcd.check_function}
+    true_checks = {lcd.name for lcd in check_info.values() if lcd.check_function}
     failures = true_checks - migrated
     assert not failures, f"failed to migrate: {failures!r}"

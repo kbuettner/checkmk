@@ -4,24 +4,12 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 
-from cmk.agent_based.legacy import discover_legacy_checks, find_legacy_check_modules
 from cmk.utils.licensing.handler import (
     LicenseState,
     LicensingHandler,
     NotificationHandler,
     UserEffect,
 )
-
-
-class FixPluginLegacy:
-    """Access legacy dicts like `check_info`"""
-
-    def __init__(self) -> None:
-        result = discover_legacy_checks(
-            find_legacy_check_modules(),
-            raise_errors=True,
-        )
-        self.check_info = {p.name: p for p in result.sane_check_info}
 
 
 class DummyNotificationHandler(NotificationHandler):
