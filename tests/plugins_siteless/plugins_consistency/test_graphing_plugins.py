@@ -328,7 +328,7 @@ def test_bundles() -> None:
 _ALLOWED_BUNDLE_VIOLATIONS = (
     {
         # we cannot have sub-modules below the cee folder, so we have to allow the following violations
-        # in cmk.nonfree.pro.robotmk, the module layout of the metric etc. defintions is correct
+        # in cmk.robotmk, the module layout of the metric etc. defintions is correct
         "cmk.plugins.robotmk.graphing.nonfree",
         "cmk.plugins.azure_v2.graphing.nonfree",
         "cmk.plugins.otel.graphing.nonfree",

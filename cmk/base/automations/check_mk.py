@@ -2499,7 +2499,7 @@ class ABCDeleteHosts:
     def _delete_robotmk_html_log_dir(self, hostname: HostName) -> None:
         with suppress(FileNotFoundError):
             shutil.rmtree(
-                # Keep in sync with cmk.nonfree.pro.robotmk.html_log_dir
+                # Keep in sync with cmk.robotmk.html_log_dir
                 omd_root / "var" / "robotmk" / "html_logs" / hostname
             )
 
