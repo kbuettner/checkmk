@@ -95,6 +95,10 @@ class ExpandableLegendAppearance(Enum):
     FOLDABLE = auto()
 
 
+# The ajax context will be passed back to us to the page handler ajax_graph() whenever
+# an update of the graph should be done. It must contain everything that we need to
+# create the HTML code of the graph. The entry "graph_id" will be set by the javascript
+# code since it is not known to us.
 class AjaxContext(BaseModel):
     """Round-trip envelope sent to the browser and echoed back on graph updates."""
 
@@ -237,29 +241,14 @@ def _render_graph_html(
             json.dumps(str(html_code)),
             json.dumps(graph_artwork.model_dump()),
             json.dumps(
-                _graph_ajax_context(
-                    graph_recipe, display_id, graph_data_range, graph_render_config
+                AjaxContext(
+                    graph_recipe=graph_recipe,
+                    data_range=graph_data_range,
+                    render_config=graph_render_config,
+                    display_id=display_id,
                 ).model_dump()
             ),
         )
-    )
-
-
-# The ajax context will be passed back to us to the page handler ajax_graph() whenever
-# an update of the graph should be done. It must contain everything that we need to
-# create the HTML code of the graph. The entry "graph_id" will be set by the javascript
-# code since it is not known to us.
-def _graph_ajax_context(
-    graph_recipe: GraphRecipe,
-    display_id: str,
-    graph_data_range: GraphDataRange,
-    graph_render_config: GraphRenderConfig,
-) -> AjaxContext:
-    return AjaxContext(
-        graph_recipe=graph_recipe,
-        data_range=graph_data_range,
-        render_config=graph_render_config,
-        display_id=display_id,
     )
 
 
@@ -380,8 +369,11 @@ def _show_graph_html_content(
             data=[
                 "pnpgraph",
                 None,
-                _graph_ajax_context(
-                    graph_recipe, display_id, graph_data_range, graph_render_config
+                AjaxContext(
+                    graph_recipe=graph_recipe,
+                    data_range=graph_data_range,
+                    render_config=graph_render_config,
+                    display_id=display_id,
                 ).model_dump(),
             ],
             style="z-index:2",
