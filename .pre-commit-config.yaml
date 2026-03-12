@@ -146,3 +146,10 @@ repos:
             name: Check qa-test-data submodule commit-id is not updated
             entry: scripts/check-qa-test-data
             language: script
+          - id: format-check
+            name: Run complete format check
+            entry: bazel run //bazel/tools/format:format.check
+            pass_filenames: true
+            verbose: true
+            language: system
+            require_serial: true
