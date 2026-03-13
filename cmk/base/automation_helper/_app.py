@@ -64,12 +64,14 @@ class _State:
     get_builtin_host_labels: Callable[[SiteId], Labels]
 
     def load_new(self, *, continue_on_error: bool) -> None:
-        if self.plugins is None:
-            self.plugins = config.load_all_pluginX(paths.checks_dir)
-
-        # Do not yet set `self.last_reload_at`. We don't know if we succeed.
-        time_right_before_reload = time.time()
         try:
+            # We might be running under the debug flag. In that case
+            # we *must* be in the try/except block.
+            if self.plugins is None:
+                self.plugins = config.load_all_pluginX(paths.checks_dir)
+
+            # Do not yet set `self.last_reload_at`. We don't know if we succeed.
+            time_right_before_reload = time.time()
             self.loading_result = self.reload_config(self.plugins, self.get_builtin_host_labels)
             self.last_reload_at = time_right_before_reload
         except (Exception, BaseException) as e:
