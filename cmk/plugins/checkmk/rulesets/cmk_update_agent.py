@@ -41,7 +41,7 @@ def _migrate(obj: object) -> Mapping[str, object]:
 
     if not obj:
         return {
-            "updater_registration": ("manual", None),
+            "updater_registration": "manual",
         }
 
     return obj
