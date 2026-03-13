@@ -296,14 +296,6 @@ def _set_query_vars(query_vars: QueryVars) -> None:
         request.set_var(name, vals[0])
 
 
-def _set_current_folder(folder_name: str) -> None:
-    # this attribute is set when calling cmk.gui.watolib.hosts_and_folders.Folder.all_folders
-    # if it is not set now, then it will be set for sure upon the next call
-    if not hasattr(g, "wato_folders"):
-        return
-    g.wato_current_folder = g.wato_folders[folder_name]
-
-
 type VisibilityCheck = Callable[[str], bool]
 
 
@@ -354,8 +346,11 @@ class PermissionsHandler:
 
         mode = modes[0] if (modes := query_vars.get("mode", [])) else None
 
-        if mode == "edit_host":
-            _set_current_folder(query_vars.get("folder", [""])[0])  # "" means root dir
+        # This attribute is set when calling cmk.gui.watolib.hosts_and_folders.Folder.all_folders
+        # if it is not set now, then it will be set for sure upon the next call.
+        if mode == "edit_host" and hasattr(g, "wato_folders"):
+            folder_name = query_vars.get("folder", [""])[0]  # "" means root dir
+            g.wato_current_folder = g.wato_folders[folder_name]
 
         try:
             if mode:
