@@ -1350,56 +1350,44 @@ def render_graph_hover_for_recipe(
     response.set_content_type("application/json")
     try:
         hover_time = ctx.request.get_integer_input_mandatory("hover_time")
-        response_data = _render_ajax_graph_hover(
-            graph_recipe,
-            graph_data_range,
-            hover_time,
-            metrics_from_api,
-            temperature_unit=get_temperature_unit(user, ctx.config.default_temperature_unit),
-            backend_time_series_fetcher=metric_backend_registry[
-                str(edition(paths.omd_root))
-            ].get_time_series_fetcher(),
+        temperature_unit = get_temperature_unit(user, ctx.config.default_temperature_unit)
+        backend_time_series_fetcher = metric_backend_registry[
+            str(edition(paths.omd_root))
+        ].get_time_series_fetcher()
+        response.set_data(
+            json.dumps(
+                {
+                    "rendered_hover_time": cmk.utils.render.date_and_time(hover_time),
+                    "curve_values": list(
+                        compute_curve_values_at_timestamp(
+                            order_graph_curves_for_legend_and_mouse_hover(
+                                [
+                                    c
+                                    for r in compute_graph_artwork_curves(
+                                        graph_recipe,
+                                        graph_data_range,
+                                        metrics_from_api,
+                                        temperature_unit=temperature_unit,
+                                        backend_time_series_fetcher=backend_time_series_fetcher,
+                                    )
+                                    if r.is_ok()
+                                    for c in r.ok.curves
+                                ]
+                            ),
+                            user_specific_unit(
+                                graph_recipe.unit_spec, temperature_unit
+                            ).formatter.render,
+                            hover_time,
+                        )
+                    ),
+                }
+            )
         )
-        response.set_data(json.dumps(response_data))
     except Exception as e:
         logger.error("Ajax call ajax_graph_hover failed: %s\n%s", e, traceback.format_exc())
         if ctx.config.debug:
             raise
         response.set_data("ERROR: %s" % e)
-
-
-def _render_ajax_graph_hover(
-    graph_recipe: GraphRecipe,
-    graph_data_range: GraphDataRange,
-    hover_time: int,
-    registered_metrics: Mapping[str, RegisteredMetric],
-    *,
-    temperature_unit: TemperatureUnit,
-    backend_time_series_fetcher: FetchTimeSeries | None,
-) -> dict[str, object]:
-    return {
-        "rendered_hover_time": cmk.utils.render.date_and_time(hover_time),
-        "curve_values": list(
-            compute_curve_values_at_timestamp(
-                order_graph_curves_for_legend_and_mouse_hover(
-                    [
-                        c
-                        for r in compute_graph_artwork_curves(
-                            graph_recipe,
-                            graph_data_range,
-                            registered_metrics,
-                            temperature_unit=temperature_unit,
-                            backend_time_series_fetcher=backend_time_series_fetcher,
-                        )
-                        if r.is_ok()
-                        for c in r.ok.curves
-                    ]
-                ),
-                user_specific_unit(graph_recipe.unit_spec, temperature_unit).formatter.render,
-                hover_time,
-            )
-        ),
-    }
 
 
 # .
