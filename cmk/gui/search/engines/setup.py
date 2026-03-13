@@ -332,7 +332,7 @@ class PermissionsHandler:
         _, query_vars = file_name_and_query_vars_from_url(url)
         return get_global_config().global_settings.is_activated(query_vars["varname"][0])
 
-    def may_see_items(self) -> Mapping[str, Callable[[str], bool]]:
+    def get_visibility_check(self, category: str) -> Callable[[str], bool]:
         return {
             "global_settings": self._permission_global_setting,
             "rules": self._permissions_rule,
@@ -341,7 +341,7 @@ class PermissionsHandler:
                 or self.may_see_url(url)
             ),
             "setup": self.may_see_url,
-        }
+        }.get(category, lambda _: True)
 
     def may_see_url(self, url: str) -> bool:
         file_name, query_vars = file_name_and_query_vars_from_url(url)
@@ -486,8 +486,7 @@ class IndexSearcher:
                 key_prefix_match_items,
                 category,
             )
-            may_see_item_handlers = self._permissions_handler.may_see_items()
-            visibility_check = may_see_item_handlers.get(category, lambda _: True)
+            visibility_check = self._permissions_handler.get_visibility_check(category)
 
             for _matched_text, idx_matched_item in self._redis_client.hscan_iter(
                 IndexBuilder.key_match_texts(prefix_category),
