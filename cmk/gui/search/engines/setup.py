@@ -317,25 +317,8 @@ class PermissionsHandler:
             "notification_parameter": user.may("wato.notifications") or user.may("wato.seeall"),
         }
 
-    @staticmethod
-    def _check_rule_visibility(url: str) -> bool:
-        _, query_vars = file_name_and_query_vars_from_url(url)
-        return may_edit_ruleset(query_vars["varname"][0])
-
     def may_see_category(self, category: str) -> bool:
         return user.may("wato.use") and self._category_permissions.get(category, True)
-
-    @staticmethod
-    def _check_global_setting_visibility(url: str) -> bool:
-        if edition(paths.omd_root) is not Edition.CLOUD:
-            return True
-        _, query_vars = file_name_and_query_vars_from_url(url)
-        return get_global_config().global_settings.is_activated(query_vars["varname"][0])
-
-    def _check_host_visibility(self, url: str) -> bool:
-        perms_to_see_all_hosts = ("wato.all_folders", "wato.see_all_folders")
-        can_see_all_hosts = any(user.may(perm) for perm in perms_to_see_all_hosts)
-        return can_see_all_hosts or self._check_page_handler(url)
 
     def get_visibility_check(self, category: str) -> Callable[[str], bool]:
         return {
@@ -344,6 +327,23 @@ class PermissionsHandler:
             "hosts": self._check_host_visibility,
             "setup": self._check_page_handler,
         }.get(category, lambda _: True)
+
+    @staticmethod
+    def _check_global_setting_visibility(url: str) -> bool:
+        if edition(paths.omd_root) is not Edition.CLOUD:
+            return True
+        _, query_vars = file_name_and_query_vars_from_url(url)
+        return get_global_config().global_settings.is_activated(query_vars["varname"][0])
+
+    @staticmethod
+    def _check_rule_visibility(url: str) -> bool:
+        _, query_vars = file_name_and_query_vars_from_url(url)
+        return may_edit_ruleset(query_vars["varname"][0])
+
+    def _check_host_visibility(self, url: str) -> bool:
+        perms_to_see_all_hosts = ("wato.all_folders", "wato.see_all_folders")
+        can_see_all_hosts = any(user.may(perm) for perm in perms_to_see_all_hosts)
+        return can_see_all_hosts or self._check_page_handler(url)
 
     def _check_page_handler(self, url: str) -> bool:
         file_name, query_vars = file_name_and_query_vars_from_url(url)
