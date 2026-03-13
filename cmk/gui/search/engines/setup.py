@@ -46,7 +46,7 @@ from cmk.gui.type_defs import SearchQuery, SearchResult, SearchResultsByTopic
 from cmk.gui.utils.loading_transition import LoadingTransition
 from cmk.gui.utils.output_funnel import output_funnel
 from cmk.gui.utils.roles import UserPermissions, UserPermissionSerializableConfig
-from cmk.gui.utils.urls import file_name_and_query_vars_from_url, QueryVars
+from cmk.gui.utils.urls import file_name_and_query_vars_from_url
 from cmk.gui.watolib.mode_permissions import mode_permissions_ensurance_registry
 from cmk.gui.watolib.rulesets import may_edit_ruleset
 from cmk.shared_typing.unified_search import ProviderName, UnifiedSearchResultItem
@@ -291,11 +291,6 @@ class IndexBuilder:
         return client.exists(cls._KEY_INDEX_BUILT) == 1
 
 
-def _set_query_vars(query_vars: QueryVars) -> None:
-    for name, vals in query_vars.items():
-        request.set_var(name, vals[0])
-
-
 type VisibilityCheck = Callable[[str], bool]
 
 
@@ -342,7 +337,9 @@ class PermissionsHandler:
 
     def _check_page_handler(self, url: str) -> bool:
         file_name, query_vars = file_name_and_query_vars_from_url(url)
-        _set_query_vars(query_vars)
+
+        for name, vals in query_vars.items():
+            request.set_var(name, vals[0])
 
         mode = modes[0] if (modes := query_vars.get("mode", [])) else None
 
