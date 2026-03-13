@@ -23,10 +23,10 @@ out=$(
 )
 
 count=$(echo "$out" | wc -l)
-echo "Found $count \".$ext\" files not declared as $kind, threshold is $limit"
+echo "Found $count \".$ext\" files not declared as $kind, expected exactly $limit"
 echo "-----"
 echo "$out"
 
-if ((count > limit)); then
+if ((count != limit)); then
     exit 1
 fi
