@@ -11,7 +11,7 @@ limit=${3:-0}
 
 out=$(
     comm -23 \
-        <(git ls-files "*\.$ext" ":!doc/*" | sort) \
+        <(git ls-files "*\.$ext" ":!doc/*" ":!.claude/*" | sort) \
         <(
             bazel cquery '
             kind("source file", deps(kind("'"$kind"'", //...)))
