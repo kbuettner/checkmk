@@ -3,32 +3,39 @@ name: jenkins
 description: Interacts with the Jenkins CI to get build and test job results
 ---
 
-# Commands you can use to interact with Jenkins
+# Diagnosing a CI failure
 
+Always start here — stages, test failures, and sub-job URLs in one call:
+
+```bash
+jenkins_build_data.py <URL> --include=stages,tests --failed-only
 ```
-# Fetch the Jenkins job results
-jenkins_build_data.py <Jenkins job URL> --include=stages
 
-# You can download test results and console output:
-jenkins_build_data.py <Jenkins stage job URL> --include=console,tests
+Drill into a triggered sub-job (shown as `Job: <url>` in stage output):
 
-# In case the truncated console log does not provide enough information, download the full log
-jenkins_build_data.py <Jenkins stage job URL> --include=full-console
-
-# in case the jenkins job/build is still BUILDING, you can poll until it is finished (defaults 2 minutes):
-jenkins_build_data.py <url> --poll [--poll-interval=SECONDS]
-
-# Usage:
-# jenkins_build_data.py [-h] [--include INCLUDE] [--download SPEC] [--download-dir DOWNLOAD_DIR] [--json] [-q] url
-#
-# INCLUDE can be: console,tests,artifacts,stages,full-console
+```bash
+jenkins_build_data.py <triggered-job-url> --include=console,tests
 ```
+
+Full console (default shows last 100 lines):
+
+```bash
+jenkins_build_data.py <URL> --include=full-console
+```
+
+Poll a running build:
+
+```bash
+jenkins_build_data.py <URL> --include=stages,tests --poll --poll-interval=60
+```
+
+Do NOT use curl — the tool handles auth, stage correlation, and test parsing.
 
 # Downloading artifacts
 
 Always use `/tmp/jenkins-artifacts` as the download directory:
 
-```
+```bash
 jenkins_build_data.py <url> --download "<artifact>" --download-dir /tmp/jenkins-artifacts
 ```
 
