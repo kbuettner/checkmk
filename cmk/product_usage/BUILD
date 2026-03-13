@@ -29,7 +29,8 @@ py_library(
     imports = ["../.."],
     visibility = ["//:__subpackages__"],
     deps = [
-        "//cmk/base",
+        "//cmk/base:app",
+        "//cmk/base:config",
         "//cmk/product_usage:cmk_product_usage",
         "//cmk/utils",
         "//packages/cmk-ccc:version",

@@ -22,7 +22,8 @@ py_library(
         "//tests:__subpackages__",
     ],
     deps = [
-        "//cmk/base",
+        "//cmk/base:app",
+        "//cmk/base:config",
         "//cmk/gui",
         "//packages/cmk-ccc:crash-reporting",
         "//tests/testlib/common",

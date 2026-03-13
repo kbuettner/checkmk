@@ -7,7 +7,7 @@ py_library(
     imports = ["../../.."],
     visibility = ["//tests:__subpackages__"],
     deps = [
-        "//cmk/base",
+        "//cmk/base:configlib",
         "//cmk/utils",
         "//packages/cmk-trace",
         requirement("beautifulsoup4"),

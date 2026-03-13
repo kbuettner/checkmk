@@ -50,7 +50,7 @@ py_library(
     imports = [".."],
     visibility = ["//:__subpackages__"],
     deps = [
-        "//cmk/base",
+        "//cmk/base:config",
         "//cmk/checkengine:cmk_checkengine",
         "//cmk/gui",
         "//cmk/server_side_calls_backend:cmk_server_side_calls_backend",

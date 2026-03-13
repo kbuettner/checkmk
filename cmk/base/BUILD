@@ -177,6 +177,7 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/base:__subpackages__",
+        "//tests:__subpackages__",
     ],
     deps = [
         ":default-config",
@@ -201,6 +202,9 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/base:__subpackages__",
+        "//cmk/product_usage:__pkg__",
+        "//cmk/update_config:__pkg__",
+        "//tests:__subpackages__",
     ],
     deps = [
         ":configlib",
@@ -561,6 +565,9 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/base:__subpackages__",
+        "//cmk/product_usage:__pkg__",
+        "//cmk/update_config:__pkg__",
+        "//tests:__subpackages__",
     ],
     deps = [
         ":base-app",
