@@ -5,13 +5,17 @@
 
 import json
 import time
+from io import BytesIO
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
 from ..authenticate import (
     _find_available_port,
     _load_cached_token,
+    _OAuthCallbackHandler,
+    _OAuthResult,
     _save_token,
     get_cached_bearer_token,
 )
@@ -136,3 +140,69 @@ class TestFindAvailablePort:
     def test_returns_port_in_range(self) -> None:
         port = _find_available_port()
         assert 18520 <= port < 18530
+
+
+def _simulate_callback(handler_class: type, oauth_result: _OAuthResult, path: str) -> None:
+    """Simulate an HTTP GET request to the callback handler."""
+    handler: _OAuthCallbackHandler = object.__new__(handler_class)
+    handler.server = MagicMock()
+    handler.server.oauth_result = oauth_result
+    handler.path = path
+    handler.wfile = BytesIO()
+    handler.send_response = MagicMock()  # type: ignore[method-assign]
+    handler.send_header = MagicMock()  # type: ignore[method-assign]
+    handler.end_headers = MagicMock()  # type: ignore[method-assign]
+    handler.do_GET()
+
+
+class TestOAuthCallbackHandler:
+    def test_extracts_token_and_state(self) -> None:
+        result = _OAuthResult(expected_state="mystate")
+        _simulate_callback(
+            _OAuthCallbackHandler,
+            result,
+            "/?token=jwt123&state=mystate&expires_in=7200",
+        )
+        assert result.token == "jwt123"
+        assert result.expires_in == 7200
+        assert result.auth_error is None
+
+    def test_state_mismatch(self) -> None:
+        result = _OAuthResult(expected_state="expected")
+        _simulate_callback(
+            _OAuthCallbackHandler,
+            result,
+            "/?token=jwt123&state=wrong",
+        )
+        assert result.token is None
+        assert result.auth_error == "State mismatch (possible CSRF)"
+
+    def test_error_param(self) -> None:
+        result = _OAuthResult(expected_state="mystate")
+        _simulate_callback(
+            _OAuthCallbackHandler,
+            result,
+            "/?error=access_denied&state=mystate",
+        )
+        assert result.token is None
+        assert result.auth_error == "access_denied"
+
+    def test_missing_token(self) -> None:
+        result = _OAuthResult(expected_state="mystate")
+        _simulate_callback(
+            _OAuthCallbackHandler,
+            result,
+            "/?state=mystate",
+        )
+        assert result.token is None
+        assert result.auth_error == "No token received"
+
+    def test_invalid_expires_in_defaults_to_3600(self) -> None:
+        result = _OAuthResult(expected_state="mystate")
+        _simulate_callback(
+            _OAuthCallbackHandler,
+            result,
+            "/?token=jwt123&state=mystate&expires_in=notanumber",
+        )
+        assert result.token == "jwt123"
+        assert result.expires_in == 3600

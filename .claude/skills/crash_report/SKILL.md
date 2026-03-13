@@ -15,21 +15,13 @@ The skill authenticates with crash.checkmk.com using **Google OAuth** (preferred
 
 ### Option 1: Google OAuth (recommended)
 
-1. Set the Google OAuth client ID (get it from the crash.checkmk.com server config or a team admin):
-
-```bash
-export CRASH_REPORTING_GOOGLE_CLIENT_ID='<client-id>'
-```
-
-Add this to your shell profile (`~/.zshrc`, `~/.bashrc`) for persistence.
-
-2. Run the authentication script — it opens a browser for Google Sign-In:
+Run the authentication script — it opens a browser for Google Sign-In:
 
 ```bash
 PYTHONPATH=.claude/skills python3 -m crash_report.authenticate
 ```
 
-This caches a temporary bearer token at `~/.cache/cmk-crash-reporting/token.json` (valid for 1 hour). The token is automatically used by all subsequent API calls. Re-run with `--force` to re-authenticate before expiry.
+No setup required — the server handles the Google OAuth flow. This caches a temporary bearer token at `~/.cache/cmk-crash-reporting/token.json` (valid for 1 hour). The token is automatically used by all subsequent API calls. Re-run with `--force` to re-authenticate before expiry.
 
 ### Option 2: Legacy static token
 
