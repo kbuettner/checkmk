@@ -356,7 +356,7 @@ class PermissionsHandler:
             if mode:
                 mode_permissions_ensurance_registry[mode]().ensure_permissions()
             else:
-                self._try_page(file_name)
+                self._check_if_handling_page_triggers_exception(file_name)
             return True
         except MKAuthException:
             return False
@@ -376,18 +376,15 @@ class PermissionsHandler:
             # a MKUserError because the host does not exist anymore.
             return False
 
-    def _try_page(self, file_name: str) -> None:
-        handler = get_page_handler(file_name)
-        if not handler:
-            return
+    # TODO: see if there is a better way to check for permission than this.
+    def _check_if_handling_page_triggers_exception(self, file_name: str) -> None:
+        if (handler := get_page_handler(file_name)) is None:
+            return None
 
+        # This context manager is needed to prevent HTML from being outputed to the response.
+        # TODO: see if this is still relevant now that we are rendering from Vue.
         with output_funnel.plugged():
-            handler(
-                PageContext(
-                    config=self._config,
-                    request=request,
-                )
-            )
+            handler(PageContext(config=self._config, request=request))
             output_funnel.drain()
 
 
