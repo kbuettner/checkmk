@@ -13,6 +13,7 @@ py_library(
         "//cmk/legacy_includes:cmk_legacy_includes",
         "//cmk/plugins:cmk_plugins",
         "//packages/cmk-plugin-apis:agent_based",
+        "//packages/cmk-plugins:graylog",
         "//packages/cmk-plugins:lib",
         requirement("pydantic"),
         requirement("python-dateutil"),
