@@ -25,7 +25,10 @@ py_library(
         "cmk/plugins/logwatch/checkman/*",
     ]),
     imports = ["."],
-    visibility = ["//cmk:__subpackages__"],
+    visibility = [
+        "//cmk:__subpackages__",
+        "//tests:__subpackages__",
+    ],
     deps = [
         ":config",
         "//packages/cmk-ccc:debug",

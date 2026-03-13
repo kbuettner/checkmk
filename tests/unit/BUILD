@@ -154,6 +154,12 @@ py_test(
         ":__test__",
         ":conftest",
         "//tests/testlib/unit:unit_free",
+        # TODO: investigate why we need these (graylog + logwatch) here.
+        # Or rather: why do we only need them for the github actions.
+        # `cmk.plugins.graylog` is a dependency of cmk/legacy_checks,
+        # "logwatch" is explicitly expected in some tests
+        "//packages/cmk-plugins:graylog",
+        "//packages/cmk-logwatch:plugins",
         requirement("pytest-mock"),
         requirement("pytest-asyncio"),
         requirement("pytest-random-order"),
