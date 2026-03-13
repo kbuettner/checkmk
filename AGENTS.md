@@ -31,3 +31,7 @@ Report any remaining non-autofixable findings (including mypy) to the user.
 The codebase supports five editions: `community`, `pro`, `ultimate`,
 `ultimatemt`, `cloud`. The active edition controls which `cmk` targets and
 Python modules are available; pass `--cmk_edition=<edition>` to Bazel.
+
+## Commit rules
+
+Before a commit do a sanity check of your changes and run the linters and formatters.
