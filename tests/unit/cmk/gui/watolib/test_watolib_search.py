@@ -344,11 +344,11 @@ class TestPermissionHandler:
 
     @pytest.mark.usefixtures("request_context")
     def test_may_see_url_false(self, permissions_handler: PermissionsHandler) -> None:
-        assert not permissions_handler.may_see_url("wato.py?folder=&mode=service_groups")
+        assert not permissions_handler._check_page_handler("wato.py?folder=&mode=service_groups")
 
     @pytest.mark.usefixtures("with_admin_login")
     def test_may_see_url_true(self, permissions_handler: PermissionsHandler) -> None:
-        assert permissions_handler.may_see_url("wato.py?folder=&mode=service_groups")
+        assert permissions_handler._check_page_handler("wato.py?folder=&mode=service_groups")
 
     @pytest.mark.usefixtures("with_admin_login")
     def test_may_see_url_host_true(
@@ -356,7 +356,7 @@ class TestPermissionHandler:
         permissions_handler: PermissionsHandler,
         created_host_url: str,
     ) -> None:
-        assert permissions_handler.may_see_url(created_host_url)
+        assert permissions_handler._check_page_handler(created_host_url)
 
     @pytest.mark.usefixtures("with_admin_login")
     def test_may_see_url_host_false(
@@ -367,7 +367,7 @@ class TestPermissionHandler:
     ) -> None:
         with monkeypatch.context() as m:
             m.setattr(user, "may", lambda pname: False)
-            assert not permissions_handler.may_see_url(created_host_url)
+            assert not permissions_handler._check_page_handler(created_host_url)
 
 
 class TestIndexSearcher:

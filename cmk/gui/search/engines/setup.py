@@ -318,7 +318,7 @@ class PermissionsHandler:
         }
 
     @staticmethod
-    def _permissions_rule(url: str) -> bool:
+    def _check_rule_visibility(url: str) -> bool:
         _, query_vars = file_name_and_query_vars_from_url(url)
         return may_edit_ruleset(query_vars["varname"][0])
 
@@ -326,7 +326,7 @@ class PermissionsHandler:
         return user.may("wato.use") and self._category_permissions.get(category, True)
 
     @staticmethod
-    def _permission_global_setting(url: str) -> bool:
+    def _check_global_setting_visibility(url: str) -> bool:
         if edition(paths.omd_root) is not Edition.CLOUD:
             return True
         _, query_vars = file_name_and_query_vars_from_url(url)
@@ -335,17 +335,17 @@ class PermissionsHandler:
     def _check_host_visibility(self, url: str) -> bool:
         perms_to_see_all_hosts = ("wato.all_folders", "wato.see_all_folders")
         can_see_all_hosts = any(user.may(perm) for perm in perms_to_see_all_hosts)
-        return can_see_all_hosts or self.may_see_url(url)
+        return can_see_all_hosts or self._check_page_handler(url)
 
     def get_visibility_check(self, category: str) -> Callable[[str], bool]:
         return {
-            "global_settings": self._permission_global_setting,
-            "rules": self._permissions_rule,
+            "global_settings": self._check_global_setting_visibility,
+            "rules": self._check_rule_visibility,
             "hosts": self._check_host_visibility,
-            "setup": self.may_see_url,
+            "setup": self._check_page_handler,
         }.get(category, lambda _: True)
 
-    def may_see_url(self, url: str) -> bool:
+    def _check_page_handler(self, url: str) -> bool:
         file_name, query_vars = file_name_and_query_vars_from_url(url)
         _set_query_vars(query_vars)
 
