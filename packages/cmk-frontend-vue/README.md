@@ -64,15 +64,15 @@ persist, reach out to Team Bug.
 
 To try our reusable components outside a checkmk site, you can
 
-* run `ibazel run :vite -- --config vite.config.demo.ts`
+* run `ibazel run :vite -- --config vite.config.ucl.ts`
 * surf to `http://localhost:5174/`
 
 or
 
-* Visit https://devdocs.lan.checkmk.net/frontend-demo/
+* Visit https://devdocs.lan.checkmk.net/ui-component-library/
 
 The hosted UI component library is built from the master branch daily. It can also
-be manually deployed by triggering the "Build and deploy frontend-demo"
+be manually deployed by triggering the "Build and deploy ui-component-library"
 jenkins job.
 
 ## Package management
