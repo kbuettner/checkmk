@@ -221,24 +221,27 @@ def format_field(value: object) -> str:
     return str(value)
 
 
-def format_issue_header(issue: Issue) -> str:
+def format_issue_header(issue: Issue, optional_fields: bool = False) -> str:
     f = issue.fields
-    browse_url = f"{JIRA_URL}/browse/{issue.key}"
-    affects_versions: list[Version] = getattr(f, "versions", [])
+
+    def _get(name: str, default: object = None) -> object:
+        return getattr(f, name, default) if optional_fields else getattr(f, name)
+
+    affects_versions: list[Version] = _get("versions", [])  # type: ignore[assignment]
     lines = [
-        f"**{issue.key}**: {f.summary}",
-        f"URL: {browse_url}",
+        f"**{issue.key}**: {_get('summary', '(no summary)')}",
+        f"URL: {JIRA_URL}/browse/{issue.key}",
         "",
         "| Field | Value |",
         "|-------|-------|",
-        f"| Status | {format_field(f.status)} |",
-        f"| Type | {format_field(f.issuetype)} |",
-        f"| Priority | {format_field(f.priority)} |",
-        f"| Assignee | {anonymize_name(format_field(f.assignee))} |",
-        f"| Labels | {format_field(f.labels)} |",
+        f"| Status | {format_field(_get('status'))} |",
+        f"| Type | {format_field(_get('issuetype'))} |",
+        f"| Priority | {format_field(_get('priority'))} |",
+        f"| Assignee | {anonymize_name(format_field(_get('assignee')))} |",
+        f"| Labels | {format_field(_get('labels', []))} |",
         f"| Affects Versions | {format_field(affects_versions)} |",
-        f"| Fix Versions | {format_field(f.fixVersions)} |",
-        f"| Components | {format_field(f.components)} |",
+        f"| Fix Versions | {format_field(_get('fixVersions', []))} |",
+        f"| Components | {format_field(_get('components', []))} |",
     ]
     return "\n".join(lines)
 
@@ -313,7 +316,7 @@ def format_linked_issue(client: JIRA, key: str, link_desc: str) -> str:
     linked_desc = anonymize_user_mentions(issue.fields.description or "")
     linked_desc = jira_wiki_to_markdown(linked_desc)
     parts = [
-        f"### [{link_desc}] {format_issue_header(issue)}",
+        f"### [{link_desc}] {format_issue_header(issue, optional_fields=True)}",
         "",
         "#### Description",
         truncate(linked_desc, MAX_LINKED_DESCRIPTION_CHARS),
