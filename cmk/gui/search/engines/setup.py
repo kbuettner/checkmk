@@ -332,14 +332,16 @@ class PermissionsHandler:
         _, query_vars = file_name_and_query_vars_from_url(url)
         return get_global_config().global_settings.is_activated(query_vars["varname"][0])
 
+    def _check_host_visibility(self, url: str) -> bool:
+        perms_to_see_all_hosts = ("wato.all_folders", "wato.see_all_folders")
+        can_see_all_hosts = any(user.may(perm) for perm in perms_to_see_all_hosts)
+        return can_see_all_hosts or self.may_see_url(url)
+
     def get_visibility_check(self, category: str) -> Callable[[str], bool]:
         return {
             "global_settings": self._permission_global_setting,
             "rules": self._permissions_rule,
-            "hosts": lambda url: (
-                any(user.may(perm) for perm in ("wato.all_folders", "wato.see_all_folders"))
-                or self.may_see_url(url)
-            ),
+            "hosts": self._check_host_visibility,
             "setup": self.may_see_url,
         }.get(category, lambda _: True)
 
