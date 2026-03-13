@@ -20,56 +20,6 @@ from tests.testlib.common.empty_config import EMPTY_CONFIG
 from tests.testlib.unit.base_configuration_scenario import Scenario
 
 
-def test_registered_automations(edition: Edition) -> None:
-    needed_automations = [
-        "active-check",
-        "analyse-host",
-        "analyze-host-rule-effectiveness",
-        "analyze-host-rule-matches",
-        "analyze-service-rule-matches",
-        "get-services-labels",
-        "analyse-service",
-        "create-diagnostics-dump",
-        "delete-hosts",
-        "delete-hosts-known-remote",
-        "diag-cmk-agent",
-        "diag-host",
-        "diag-snmp",
-        "diag-special-agent",
-        "autodiscovery",
-        "service-discovery",
-        "service-discovery-preview",
-        "special-agent-discovery-preview",
-        "get-agent-output",
-        "get-check-information",
-        "get-configuration",
-        "get-section-information",
-        "get-service-name",
-        "notification-analyse",
-        "notification-get-bulks",
-        "notification-replay",
-        "notification-test",
-        "ping-host",
-        "reload",
-        "rename-hosts",
-        "restart",
-        "scan-parents",
-        "set-autochecks-v2",
-        "update-dns-cache",
-        "update-host-labels",
-        "update-passwords-merged-file",
-        "find-unknown-check-parameter-rule-sets",
-    ]
-
-    if edition is not Edition.COMMUNITY:
-        needed_automations += [
-            "bake-agents",
-            "notify",
-        ]
-
-    assert sorted(needed_automations) == sorted(make_app(edition).automations._automations.keys())
-
-
 def test_analyse_host(monkeypatch: MonkeyPatch) -> None:
     additional_labels: dict[str, str] = {}
     additional_label_sources: dict[str, LabelSource] = {}

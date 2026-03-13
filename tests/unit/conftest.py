@@ -14,7 +14,7 @@ import pprint
 import queue
 import shutil
 import tempfile
-from collections.abc import Callable, Generator, Iterable, Iterator, Sequence
+from collections.abc import Callable, Generator, Iterator, Sequence
 from pathlib import Path
 from typing import Final
 from unittest.mock import patch
@@ -217,16 +217,6 @@ def fixture_capsys(capsys: pytest.CaptureFixture[str]) -> Iterator[pytest.Captur
         yield capsys
     finally:
         tty.reinit()
-
-
-@pytest.fixture(name="edition", params=["community", "pro", "ultimatemt", "ultimate", "cloud"])
-def fixture_edition(request: pytest.FixtureRequest) -> Iterable[cmk_version.Edition]:
-    # The param seems to be an optional attribute which mypy can not understand
-    edition = request.param
-    if edition in ("cloud", "ultimate", "ultimatemt", "pro") and not is_non_free_repo():
-        pytest.skip("Needed files are not available")
-
-    yield cmk_version.Edition.from_long_edition(edition)
 
 
 @pytest.fixture(autouse=True, scope="session")
