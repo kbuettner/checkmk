@@ -306,6 +306,16 @@ const weHavePendingChanges = computed((): boolean => {
   return sitesAndChanges.value.pendingChanges.length > 0
 })
 
+const activateChangesButtonTooltip = computed((): string => {
+  if (!activateChangesButtonDisabled.value) {
+    return ''
+  }
+  if (sitesAndChanges.value.pendingChanges.length === 0) {
+    return _t('No changes available for activation')
+  }
+  return ''
+})
+
 const sitesWithWarningsOrErrors = computed((): boolean => {
   return sitesAndChanges.value.sites.some(
     (site) =>
@@ -384,6 +394,7 @@ onMounted(async () => {
         <CmkButtonSubmit
           class="cmk-button-submit"
           :disabled="activateChangesButtonDisabled"
+          :title="activateChangesButtonTooltip"
           @click="() => activateAllChanges()"
         >
           {{ _t('Activate pending changes') }}
