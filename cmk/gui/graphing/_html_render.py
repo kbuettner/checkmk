@@ -1334,26 +1334,30 @@ class AjaxGraphHover(Page):
             json.loads(ctx.request.get_str_input_mandatory("context"))
         )
         render_graph_hover_for_recipe(
-            ctx,
             context.graph_recipe,
             context.data_range,
+            debug=ctx.config.debug,
+            hover_time=ctx.request.get_integer_input_mandatory("hover_time"),
+            temperature_unit=get_temperature_unit(user, ctx.config.default_temperature_unit),
+            backend_time_series_fetcher=metric_backend_registry[
+                str(edition(paths.omd_root))
+            ].get_time_series_fetcher(),
         )
         return None
 
 
 def render_graph_hover_for_recipe(
-    ctx: PageContext,
     graph_recipe: GraphRecipe,
     graph_data_range: GraphDataRange,
+    *,
+    debug: bool,
+    hover_time: int,
+    temperature_unit: TemperatureUnit,
+    backend_time_series_fetcher: FetchTimeSeries | None,
 ) -> None:
     """Write the JSON graph hover response for a pre-built recipe and data range."""
     response.set_content_type("application/json")
     try:
-        hover_time = ctx.request.get_integer_input_mandatory("hover_time")
-        temperature_unit = get_temperature_unit(user, ctx.config.default_temperature_unit)
-        backend_time_series_fetcher = metric_backend_registry[
-            str(edition(paths.omd_root))
-        ].get_time_series_fetcher()
         response.set_data(
             json.dumps(
                 {
@@ -1385,7 +1389,7 @@ def render_graph_hover_for_recipe(
         )
     except Exception as e:
         logger.error("Ajax call ajax_graph_hover failed: %s\n%s", e, traceback.format_exc())
-        if ctx.config.debug:
+        if debug:
             raise
         response.set_data("ERROR: %s" % e)
 

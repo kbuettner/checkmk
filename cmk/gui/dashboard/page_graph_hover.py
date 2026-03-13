@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from typing import cast, override
 
+from cmk.ccc.version import edition
 from cmk.gui.dashboard.api import GraphDashletConfig
 from cmk.gui.dashboard.api.model.widget_content import content_from_internal
 from cmk.gui.dashboard.api.model.widget_content.graph import (
@@ -27,14 +28,20 @@ from cmk.gui.dashboard.token_util import (
     InvalidWidgetError,
 )
 from cmk.gui.dashboard.type_defs import ABCGraphDashletConfig
+from cmk.gui.graphing import get_temperature_unit, metric_backend_registry
 from cmk.gui.graphing._graph_render_config import GraphRenderConfigBase
 from cmk.gui.graphing._graph_specification import GraphSpecification
-from cmk.gui.graphing._html_render import make_graph_data_range, render_graph_hover_for_recipe
+from cmk.gui.graphing._html_render import (
+    make_graph_data_range,
+    render_graph_hover_for_recipe,
+)
+from cmk.gui.logged_in import user
 from cmk.gui.pages import PageContext, PageResult
 from cmk.gui.permissions import permission_registry
 from cmk.gui.token_auth import AuthToken, DashboardToken
 from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.valuespec import Timerange
+from cmk.utils import paths
 
 __all__ = ["GraphHoverTokenAuthPage"]
 
@@ -110,6 +117,15 @@ class GraphHoverTokenAuthPage(DashboardTokenAuthenticatedPage):
             )[1]
             graph_data_range = make_graph_data_range((start_time, end_time), height_in_ex)
 
-            render_graph_hover_for_recipe(ctx, recipes[0], graph_data_range)
+            render_graph_hover_for_recipe(
+                recipes[0],
+                graph_data_range,
+                debug=ctx.config.debug,
+                hover_time=ctx.request.get_integer_input_mandatory("hover_time"),
+                temperature_unit=get_temperature_unit(user, ctx.config.default_temperature_unit),
+                backend_time_series_fetcher=metric_backend_registry[
+                    str(edition(paths.omd_root))
+                ].get_time_series_fetcher(),
+            )
 
         return None
