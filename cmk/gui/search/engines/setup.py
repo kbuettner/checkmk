@@ -402,10 +402,9 @@ class IndexSearcher:
     ) -> None:
         self._config = config
         self._redis_client = redis_client
+        self._permissions_handler = permissions_handler
         if not redis_server_reachable(self._redis_client):
             raise RuntimeError("Redis server is not reachable")
-        self._may_see_category = permissions_handler.may_see_category
-        self._may_see_item_func = permissions_handler.may_see_items()
         self._user_id = user.ident
 
     def search(self, query: SearchQuery) -> SearchResultsByTopic:
@@ -486,14 +485,15 @@ class IndexSearcher:
         categories = self._redis_client.smembers(key_categories)
         assert not isinstance(categories, Awaitable)
         for category in categories:
-            if not self._may_see_category(category):
+            if not self._permissions_handler.may_see_category(category):
                 continue
 
             prefix_category = IndexBuilder.add_to_prefix(
                 key_prefix_match_items,
                 category,
             )
-            visibility_check = self._may_see_item_func.get(category, lambda _url, _config: True)
+            may_see_item_handlers = self._permissions_handler.may_see_items()
+            visibility_check = may_see_item_handlers.get(category, lambda _url, _config: True)
 
             for _matched_text, idx_matched_item in self._redis_client.hscan_iter(
                 IndexBuilder.key_match_texts(prefix_category),
