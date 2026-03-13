@@ -1463,8 +1463,14 @@ function remove_pin(event: Event, graph: GraphArtwork) {
 }
 
 function set_pin_position(event: Event, graph: GraphArtwork, timestamp: number): boolean | void {
-  if (graph.render_config.interaction && graph.render_config.show_pin)
-    return update_graph(event, graph, 0.0, null, null, null, Math.trunc(timestamp), null)
+  if (graph.render_config.interaction && graph.render_config.show_pin) {
+    const pin_time = Math.trunc(timestamp)
+    // Immediately update the canvas so the pin appears without waiting for the server round-trip.
+    // The server response will then fill in the formatted pin values in the legend.
+    graph.pin_time = pin_time > 0 ? pin_time : null
+    render_graph(graph)
+    return update_graph(event, graph, 0.0, null, null, null, pin_time, null)
+  }
 }
 
 // move is used for dragging and also for resizing
