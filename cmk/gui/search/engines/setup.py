@@ -405,7 +405,6 @@ class IndexSearcher:
         self._permissions_handler = permissions_handler
         if not redis_server_reachable(self._redis_client):
             raise RuntimeError("Redis server is not reachable")
-        self._user_id = user.ident
 
     def search(self, query: SearchQuery) -> SearchResultsByTopic:
         """
