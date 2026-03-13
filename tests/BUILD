@@ -23,7 +23,8 @@ py_library(
         "//cmk/gui",
         "//cmk/utils",
         "//packages/cmk-relay-protocols",
-        "//tests/testlib/common",
+        "//tests/testlib/common:repo",
+        "//tests/testlib/common:utils",
         requirement("beautifulsoup4"),
         requirement("clickhouse-connect"),
         requirement("cryptography"),
@@ -41,7 +42,10 @@ py_library(
         requirement("pytest-mock"),
         requirement("requests"),
     ] + select({
-        "//:gpl+nonfree_repo": ["//cmk/editions/nonfree:cloud"],
+        "//:gpl+nonfree_repo": [
+            "//cmk/editions/nonfree:cloud",
+            "//non-free/packages/cmk-metric-backend",
+        ],
         "//:gpl_repo": [],
     }),
 )
@@ -51,11 +55,13 @@ py_library(
     testonly = True,
     srcs = ["conftest.py"],
     deps = [
-        ":testlib",
+        "//tests/testlib/common:repo",
+        "//tests/testlib/common:utils",
         requirement("playwright"),
         requirement("pytest"),
         requirement("pytest-check"),
         requirement("pytest-metadata"),
+        ":testlib",
     ],
 )
 
@@ -78,7 +84,8 @@ py_library(
         "//cmk/gui",
         "//cmk/utils",
         "//packages/cmk-relay-protocols",
-        "//tests/testlib/common",
+        "//tests/testlib/common:repo",
+        "//tests/testlib/common:utils",
         requirement("beautifulsoup4"),
         requirement("clickhouse-connect"),
         requirement("cryptography"),
@@ -109,7 +116,7 @@ py_library(
     ),
     imports = [".."],
     deps = [
-        ":testlib",
+        "//tests/testlib/common:repo",
         requirement("docker"),
         requirement("pytest"),
     ],
@@ -124,6 +131,8 @@ py_library(
     imports = [".."],
     deps = [
         ":testlib",
+        "//tests/testlib/common:repo",
+        "//tests/testlib/common:utils",
         requirement("docker"),
         requirement("pytest"),
     ],
@@ -162,7 +171,10 @@ py_library(
     ),
     imports = [".."],
     deps = [
-        ":testlib",
+        "//cmk/utils",
+        "//packages/cmk-ccc:version",
+        "//packages/cmk-werks",
+        "//tests/testlib/common:repo",
         requirement("pytest"),
         requirement("isort"),
         requirement("requirements-parser"),
@@ -187,6 +199,7 @@ py_library(
     deps = [
         ":scripts",
         ":testlib",
+        "//tests/testlib/common:utils",
         requirement("clickhouse_connect"),
         requirement("pytest"),
         requirement("cryptography"),
@@ -235,6 +248,7 @@ py_library(
     ),
     imports = [".."],
     deps = [
+        "//tests/testlib/common:repo",
         requirement("pytest"),
         ":testlib",
     ],
@@ -272,6 +286,8 @@ py_library(
     }),
     imports = [".."],
     deps = [
+        "//tests/testlib/common:repo",
+        "//tests/testlib/common:utils",
         requirement("playwright"),
         requirement("pytest"),
         requirement("requests"),
@@ -318,6 +334,7 @@ py_library(
         ":testlib",
         "//cmk/post_rename_site:cmk_post_rename_site",
         "//packages/cmk-agent-receiver",
+        "//tests/testlib/common:utils",
     ],
 )
 
@@ -345,8 +362,9 @@ py_library(
     ),
     imports = [".."],
     deps = [
-        requirement("pytest"),
         ":testlib",
+        "//tests/testlib/common:utils",
+        requirement("pytest"),
     ],
 )
 
@@ -368,6 +386,8 @@ py_library(
         requirement("playwright"),
         requirement("pytest_benchmark"),
         ":testlib",
+        "//tests/testlib/common:repo",
+        "//tests/testlib/common:utils",
     ],
 )
 
@@ -436,6 +456,7 @@ py_library(
     }),
     imports = [".."],
     deps = [
+        "//tests/testlib/common:repo",
         requirement("cryptography"),
         requirement("requests"),
         requirement("psycopg"),
@@ -473,6 +494,7 @@ py_library(
     imports = [".."],
     deps = [
         ":testlib",
+        "//tests/testlib/common:utils",
         requirement("pytest"),
     ],
 )

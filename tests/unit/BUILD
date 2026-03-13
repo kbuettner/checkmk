@@ -21,7 +21,7 @@ py_library(
         "//cmk/utils",
         "//packages/cmk-livestatus-client:py_livestatus",
         "//packages/cmk-plugin-apis:agent_based",
-        "//tests:testlib",
+        "//tests/testlib/common:repo",
         requirement("fakeredis"),
         requirement("pytest_metadata"),
     ],
@@ -153,13 +153,20 @@ py_test(
     deps = [
         ":__test__",
         ":conftest",
+        "//tests/testlib/common:empty_config",
+        "//tests/testlib/common:utils",
         "//tests/testlib/unit:unit_free",
-        # TODO: investigate why we need these (graylog + logwatch) here.
-        # Or rather: why do we only need them for the github actions.
-        # `cmk.plugins.graylog` is a dependency of cmk/legacy_checks,
-        # "logwatch" is explicitly expected in some tests
+        # -----------------------------------------
+        # TODO: some base tests rely on plugins
+        # being discoverable.
+        # As long as these tests are not cleaned
+        # up (== work with dedicated plugins)
+        # we need to add the required plugins here.
+        "//cmk/plugins:cmk_plugins",
+        "//cmk/legacy_checks:cmk_legacy_checks",
         "//packages/cmk-plugins:graylog",
         "//packages/cmk-logwatch:plugins",
+        # -----------------------------------------
         requirement("pytest-mock"),
         requirement("pytest-asyncio"),
         requirement("pytest-random-order"),
@@ -201,7 +208,20 @@ py_test(
     deps = [
         ":__test__",
         ":conftest",
+        "//tests/testlib/common:empty_config",
+        "//tests/testlib/common:utils",
         "//tests/testlib/unit:unit_free",
+        # -----------------------------------------
+        # TODO: some base tests rely on plugins
+        # being discoverable.
+        # As long as these tests are not cleaned
+        # up (== work with dedicated plugins)
+        # we need to add the required plugins here.
+        "//cmk/plugins:cmk_plugins",
+        "//cmk/legacy_checks:cmk_legacy_checks",
+        "//packages/cmk-plugins:graylog",
+        "//packages/cmk-logwatch:plugins",
+        # -----------------------------------------
         requirement("protobuf"),
         requirement("pyyaml"),
         requirement("pytest-mock"),
@@ -210,7 +230,12 @@ py_test(
         requirement("time-machine"),
     ] + select({
         "@//:gpl+nonfree_repo": [
+            "//cmk/base/nonfree:pro",
+            "//cmk/base/nonfree/bakery:core",
+            "//cmk/base/nonfree/bakery:core_bakelets_ultimate",  # FIXME
+            "//cmk/base/nonfree/bakery:nonfree_bakery",
             "//non-free/packages/cmc-protocols:py_config_proto",
+            "//non-free/packages/cmk-robotmk:plugins",  # see above
         ],
         "@//:gpl_repo": [],
     }),
@@ -239,10 +264,20 @@ py_test(
     deps = [
         ":__test__",
         ":conftest",
+        "//tests/testlib/common:empty_config",
         requirement("time-machine"),
+        requirement("marshmallow"),
         requirement("pytest-asyncio"),
         requirement("pytest-random-order"),
-    ],
+    ] + select({
+        "@//:gpl+nonfree_repo": [
+            "//cmk/base/nonfree:pro",
+            "//cmk/core_client:cmk_core_client_pro",
+            "//cmk/utils:pro",
+            "//packages/cmk-relay-protocols",
+        ],
+        "@//:gpl_repo": [],
+    }),
 )
 
 py_test(
@@ -289,8 +324,23 @@ py_test(
         "//cmk/bi:cmk_bi",
         "//cmk/gui",
         "//omd/packages/omd:omdlib",
+        "//tests/testlib/common:empty_config",
+        "//tests/testlib/common:utils",
         "//tests/testlib/unit:unit_free",
-    ],
+    ] + select({
+        "@//:gpl+nonfree_repo": [
+            "//cmk/gui:pro",
+            "//non-free/packages/cmc-protocols:py_config_proto",
+            "//non-free/packages/cmc-protocols:py_state_proto",
+            "//non-free/packages/cmk-core-helpers:fetcher-helper",
+            "//non-free/packages/cmk-dcd:gui",  # FIXME
+            "//non-free/packages/cmk-metric-backend",  # FIXME
+            "//non-free/packages/cmk-notification-plugins-nonfree:rulesets",
+            "//non-free/packages/cmk-otel-collector",  # FIXME
+            "//packages/cmk-ccc:observer",
+        ],
+        "@//:gpl_repo": [],
+    }),
 )
 
 py_test(
@@ -324,6 +374,7 @@ py_test(
         ":conftest",
         ":conftest_gui",
         "//cmk/utils",
+        "//tests/testlib/common:utils",
         "//tests/testlib/unit:unit_free",
         requirement("fakeredis"),
         requirement("lxml"),
@@ -340,6 +391,11 @@ py_test(
     ] + select({
         "@//:gpl+nonfree_repo": [
             "//cmk/gui:pro",
+            "//non-free/packages/cmk-dcd:gui",
+            "//non-free/packages/cmk-dcd:piggyback-connector",
+            "//non-free/packages/cmk-metric-backend",
+            "//non-free/packages/cmk-metric-backend:cmk-metric-backend-dcd-connector",
+            "//non-free/packages/cmk-otel-collector",
             "//tests/testlib/unit:unit_nonfree",
         ],
         "@//:gpl_repo": [],
@@ -495,6 +551,7 @@ py_test(
         ":__test__",
         "//cmk/legacy_checks:cmk_legacy_checks",
         "//cmk/plugins:cmk_plugins",
+        "//tests/testlib/common:repo",
         "//tests/testlib/unit:unit_free",
         requirement("exchangelib"),
         requirement("feedparser"),
@@ -586,7 +643,23 @@ py_test(
         requirement("werkzeug"),
         requirement("flask"),
         requirement("pytest-random-order"),
-    ],
+    ] + select({
+        "@//:gpl+nonfree_repo": [
+            "//non-free/packages/cmk-bakery",
+            "//non-free/packages/cmk-dcd:gui",
+            "//non-free/packages/cmk-liveproxyd:gui",
+            "//non-free/packages/cmk-metric-backend",
+            "//non-free/packages/cmk-mknotifyd",
+            "//non-free/packages/cmk-otel-collector",
+            "//non-free/packages/cmk-robotmk",
+            "//non-free/packages/cmk-robotmk:gui",
+            requirement("numpy"),
+            requirement("pypdf"),
+            requirement("pysaml2"),
+            requirement("roman"),
+        ],
+        "@//:gpl_repo": [],
+    }),
 )
 
 py_test(
@@ -624,6 +697,10 @@ py_test(
     ] + select({
         "@//:gpl+nonfree_repo": [
             "//cmk/post_rename_site:cmk_post_rename_site_pro",
+            "//non-free/packages/cmk-dcd:gui",
+            "//non-free/packages/cmk-metric-backend",
+            "//non-free/packages/cmk-otel-collector",
+            requirement("pypdf"),
             #"//tests/testlib/unit:unit_nonfree",
         ],
         "@//:gpl_repo": [],
@@ -656,7 +733,23 @@ py_test(
         requirement("pytest-asyncio"),
         requirement("pytest-random-order"),
         requirement("pytest-mock"),
-    ],
+    ] + select({
+        "@//:gpl+nonfree_repo": [
+            "//non-free/packages/cmk-bakery",
+            "//non-free/packages/cmk-dcd:gui",
+            "//non-free/packages/cmk-liveproxyd:gui",
+            "//non-free/packages/cmk-metric-backend",
+            "//non-free/packages/cmk-mknotifyd",
+            "//non-free/packages/cmk-otel-collector",
+            "//non-free/packages/cmk-robotmk",
+            "//non-free/packages/cmk-robotmk:gui",
+            requirement("numpy"),
+            requirement("pypdf"),
+            requirement("pysaml2"),
+            requirement("roman"),
+        ],
+        "@//:gpl_repo": [],
+    }),
 )
 
 py_test(
@@ -690,7 +783,11 @@ py_test(
         "@//:gpl+nonfree_repo": [
             "//cmk/update_config:cmk_update_config_pro",
             "//cmk/utils:pro",
+            "//non-free/packages/cmk-dcd:gui",
+            "//non-free/packages/cmk-metric-backend",
+            "//non-free/packages/cmk-otel-collector",
             "//tests/testlib/unit:unit_nonfree",
+            requirement("pypdf"),
         ],
         "@//:gpl_repo": [],
     }),
@@ -790,6 +887,8 @@ py_test(
         "//packages/cmk-ccc:exceptions",
         "//packages/cmk-crypto",
         "//packages/cmk-plugin-apis:discover_plugins",
+        "//tests/testlib/common:empty_config",
+        "//tests/testlib/common:utils",
         "//tests/testlib/unit:unit_free",
         requirement("fakeredis"),
         requirement("time-machine"),

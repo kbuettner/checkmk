@@ -1,7 +1,12 @@
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 
-package(default_visibility = ["//cmk:__subpackages__"])
+package(
+    default_visibility = [
+        "//cmk:__subpackages__",
+        "//tests:__subpackages__",
+    ],
+)
 
 exports_files([
     "password_store/cli.py",

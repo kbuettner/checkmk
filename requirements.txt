@@ -2899,6 +2899,7 @@ numpy==2.4.2 \
     # via
     #   -r cmk/requirements.in
     #   -r non-free/packages/cmk-metric-backend/dev-requirements.in
+    #   -r non-free/packages/cmk-robotmk/dev-requirements.in
     #   contourpy
     #   matplotlib
 oauthlib==3.3.1 \
@@ -3960,7 +3961,9 @@ pyparsing==3.3.2 \
 pypdf==6.7.0 \
     --hash=sha256:62e85036d50839cbdf45b8067c2c1a1b925517514d7cba4cbe8755a6c2829bc9 \
     --hash=sha256:eb95e244d9f434e6cfd157272283339ef586e593be64ee699c620f756d5c3f7e
-    # via -r cmk/requirements.in
+    # via
+    #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-robotmk/dev-requirements.in
 pyprof2calltree==1.4.5 \
     --hash=sha256:a635672ff31677486350b2be9a823ef92f740e6354a6aeda8fa4a8a3768e8f2f
     # via -r cmk/requirements.in
@@ -3971,7 +3974,9 @@ pyproject-hooks==1.2.0 \
 pysaml2==7.5.0 \
     --hash=sha256:bc6627cc344476a83c757f440a73fda1369f13b6fda1b4e16bca63ffbabb5318 \
     --hash=sha256:f36871d4e5ee857c6b85532e942550d2cf90ea4ee943d75eb681044bbc4f54f7
-    # via -r cmk/requirements.in
+    # via
+    #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-robotmk/dev-requirements.in
 pysmb==1.2.13 \
     --hash=sha256:3b1a4fc4b8a02293bbb5032f8397a737e760048c7ae7869681317e5c41195fc2 \
     --hash=sha256:89d37fc4f061acecf40e6864e555898f2ecc49994ec06949edbb94b94239a808
@@ -4642,7 +4647,9 @@ robotframework==7.4.1 \
 roman==5.2 \
     --hash=sha256:275fe9f46290f7d0ffaea1c33251b92b8e463ace23660508ceef522e7587cb6f \
     --hash=sha256:89d3b47400388806d06ff77ea77c79ab080bc127820dea6bf34e1f1c1b8e676e
-    # via -r cmk/requirements.in
+    # via
+    #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-robotmk/dev-requirements.in
 roman-numerals==4.1.0 \
     --hash=sha256:1af8b147eb1405d5839e78aeb93131690495fe9da5c91856cb33ad55a7f1e5b2 \
     --hash=sha256:647ba99caddc2cc1e55a51e4360689115551bf4476d90e8162cf8c345fe233c7
