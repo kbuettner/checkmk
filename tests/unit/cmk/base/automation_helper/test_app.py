@@ -272,7 +272,7 @@ async def test_reloader_single_change(mocker: MockerFixture, cache: Cache) -> No
         last_reload_at=1,
         automation_or_reload_lock=asyncio.Lock(),
         reload_config=mock_reload_callback,
-        plugins=None,
+        plugins=AgentBasedPlugins.empty(),
         loading_result=None,
         get_builtin_host_labels=get_builtin_host_labels,
     )
@@ -315,7 +315,7 @@ async def test_reloader_two_changes(mocker: MockerFixture, cache: Cache) -> None
     state = _State(
         last_reload_at=1,
         automation_or_reload_lock=asyncio.Lock(),
-        plugins=None,
+        plugins=AgentBasedPlugins.empty(),
         reload_config=mock_reload_callback,
         loading_result=None,
         get_builtin_host_labels=get_builtin_host_labels,
