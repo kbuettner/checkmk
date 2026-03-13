@@ -13,6 +13,7 @@ exports_files([
 py_library(
     name = "cmk-notification-plugins",
     srcs = glob(["cmk/notification_plugins/**/*.py"]),
+    data = ["cmk/notification_plugins/py.typed"],
     imports = ["."],
     visibility = [
         "//visibility:public",
