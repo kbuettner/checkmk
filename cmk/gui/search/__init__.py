@@ -20,7 +20,6 @@ from .engines.setup import (
     MatchItem,
     MatchItemGeneratorRegistry,
     MatchItems,
-    may_see_url,
     PermissionsHandler,
     SearchIndexBackgroundJob,
     SetupSearchEngine,
@@ -46,5 +45,4 @@ __all__ = [
     "UnifiedSearch",
     "launch_requests_processing_background",
     "match_item_generator_registry",
-    "may_see_url",
 ]

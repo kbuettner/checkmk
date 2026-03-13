@@ -29,7 +29,6 @@ from cmk.gui.search import (
     MatchItem,
     MatchItemGeneratorRegistry,
     MatchItems,
-    may_see_url,
     PermissionsHandler,
 )
 from cmk.gui.search.engines import setup as search
@@ -338,32 +337,32 @@ def fixture_created_host_url() -> str:
 
 
 @pytest.mark.usefixtures("request_context")
-def test_may_see_url_false(config: Config) -> None:
-    assert not may_see_url("wato.py?folder=&mode=service_groups", config)
+def test_may_see_url_false(permissions_handler: PermissionsHandler) -> None:
+    assert not permissions_handler.may_see_url("wato.py?folder=&mode=service_groups")
 
 
 @pytest.mark.usefixtures("with_admin_login")
-def test_may_see_url_true(config: Config) -> None:
-    assert may_see_url("wato.py?folder=&mode=service_groups", config)
+def test_may_see_url_true(permissions_handler: PermissionsHandler) -> None:
+    assert permissions_handler.may_see_url("wato.py?folder=&mode=service_groups")
 
 
 @pytest.mark.usefixtures("with_admin_login")
 def test_may_see_url_host_true(
-    config: Config,
+    permissions_handler: PermissionsHandler,
     created_host_url: str,
 ) -> None:
-    assert may_see_url(created_host_url, config)
+    assert permissions_handler.may_see_url(created_host_url)
 
 
 @pytest.mark.usefixtures("with_admin_login")
 def test_may_see_url_host_false(
     monkeypatch: MonkeyPatch,
-    config: Config,
+    permissions_handler: PermissionsHandler,
     created_host_url: str,
 ) -> None:
     with monkeypatch.context() as m:
         m.setattr(user, "may", lambda pname: False)
-        assert not may_see_url(created_host_url, config)
+        assert not permissions_handler.may_see_url(created_host_url)
 
 
 class TestPermissionHandler:
@@ -394,7 +393,7 @@ class TestIndexSearcher:
         get_config.assert_called()
 
     def test_sort_search_results(self) -> None:
-        def fake_permissions_check(_url: str, config: Config) -> bool:
+        def fake_permissions_check(_url: str) -> bool:
             return True
 
         assert list(

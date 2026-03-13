@@ -304,55 +304,6 @@ def _set_current_folder(folder_name: str) -> None:
     g.wato_current_folder = g.wato_folders[folder_name]
 
 
-def may_see_url(url: str, config: Config) -> bool:
-    file_name, query_vars = file_name_and_query_vars_from_url(url)
-    _set_query_vars(query_vars)
-
-    mode = modes[0] if (modes := query_vars.get("mode", [])) else None
-
-    if mode == "edit_host":
-        _set_current_folder(query_vars.get("folder", [""])[0])  # "" means root dir
-
-    try:
-        if mode:
-            mode_permissions_ensurance_registry[mode]().ensure_permissions()
-        else:
-            _try_page(file_name, config)
-        return True
-    except MKAuthException:
-        return False
-    except MKUserError:
-        # In case a page initialization fails with a user error (invalid input) for some reason,
-        # we don't want to show the search result.
-        #
-        # A possible scenario is (see also CMK-22600):
-        #
-        # 1. We are a non-admin user (which triggers this function)
-        # 2. A host xyz exists, is in the search index and can be searched.
-        # 3. The host is deleted in setup
-        # 4. Before the search index is being rebuilt and the entry for the hosts edit mode is
-        #    removed from the index, the search is used to find the host xyz.
-        #
-        # In this case the code above would create an instance of ModeEditHost, which would raise
-        # a MKUserError because the host does not exist anymore.
-        return False
-
-
-def _try_page(file_name: str, config: Config) -> None:
-    handler = get_page_handler(file_name)
-    if not handler:
-        return
-
-    with output_funnel.plugged():
-        handler(
-            PageContext(
-                config=config,
-                request=request,
-            )
-        )
-        output_funnel.drain()
-
-
 class PermissionsHandler:
     def __init__(self, config: Config) -> None:
         self._config = config
@@ -367,7 +318,7 @@ class PermissionsHandler:
         }
 
     @staticmethod
-    def _permissions_rule(url: str, config: Config) -> bool:
+    def _permissions_rule(url: str) -> bool:
         _, query_vars = file_name_and_query_vars_from_url(url)
         return may_edit_ruleset(query_vars["varname"][0])
 
@@ -375,22 +326,69 @@ class PermissionsHandler:
         return user.may("wato.use") and self._category_permissions.get(category, True)
 
     @staticmethod
-    def _permission_global_setting(url: str, config: Config) -> bool:
+    def _permission_global_setting(url: str) -> bool:
         if edition(paths.omd_root) is not Edition.CLOUD:
             return True
         _, query_vars = file_name_and_query_vars_from_url(url)
         return get_global_config().global_settings.is_activated(query_vars["varname"][0])
 
-    def may_see_items(self) -> Mapping[str, Callable[[str, Config], bool]]:
+    def may_see_items(self) -> Mapping[str, Callable[[str], bool]]:
         return {
             "global_settings": self._permission_global_setting,
             "rules": self._permissions_rule,
-            "hosts": lambda url, config: (
+            "hosts": lambda url: (
                 any(user.may(perm) for perm in ("wato.all_folders", "wato.see_all_folders"))
-                or may_see_url(url, self._config)
+                or self.may_see_url(url)
             ),
-            "setup": may_see_url,
+            "setup": self.may_see_url,
         }
+
+    def may_see_url(self, url: str) -> bool:
+        file_name, query_vars = file_name_and_query_vars_from_url(url)
+        _set_query_vars(query_vars)
+
+        mode = modes[0] if (modes := query_vars.get("mode", [])) else None
+
+        if mode == "edit_host":
+            _set_current_folder(query_vars.get("folder", [""])[0])  # "" means root dir
+
+        try:
+            if mode:
+                mode_permissions_ensurance_registry[mode]().ensure_permissions()
+            else:
+                self._try_page(file_name)
+            return True
+        except MKAuthException:
+            return False
+        except MKUserError:
+            # In case a page initialization fails with a user error (invalid input) for some reason,
+            # we don't want to show the search result.
+            #
+            # A possible scenario is (see also CMK-22600):
+            #
+            # 1. We are a non-admin user (which triggers this function)
+            # 2. A host xyz exists, is in the search index and can be searched.
+            # 3. The host is deleted in setup
+            # 4. Before the search index is being rebuilt and the entry for the hosts edit mode is
+            #    removed from the index, the search is used to find the host xyz.
+            #
+            # In this case the code above would create an instance of ModeEditHost, which would raise
+            # a MKUserError because the host does not exist anymore.
+            return False
+
+    def _try_page(self, file_name: str) -> None:
+        handler = get_page_handler(file_name)
+        if not handler:
+            return
+
+        with output_funnel.plugged():
+            handler(
+                PageContext(
+                    config=self._config,
+                    request=request,
+                )
+            )
+            output_funnel.drain()
 
 
 class IndexSearcher:
@@ -492,7 +490,7 @@ class IndexSearcher:
                 category,
             )
             may_see_item_handlers = self._permissions_handler.may_see_items()
-            visibility_check = may_see_item_handlers.get(category, lambda _url, _config: True)
+            visibility_check = may_see_item_handlers.get(category, lambda _: True)
 
             for _matched_text, idx_matched_item in self._redis_client.hscan_iter(
                 IndexBuilder.key_match_texts(prefix_category),
@@ -571,11 +569,7 @@ class IndexSearcher:
         yield from (
             (
                 topic,
-                (
-                    result.result
-                    for result in results
-                    if result.visibility_check(result.result.url, self._config)
-                ),
+                (result.result for result in results if result.visibility_check(result.result.url)),
             )
             for topic, results in results_by_topic
         )
@@ -584,7 +578,7 @@ class IndexSearcher:
 @dataclass(frozen=True)
 class _SearchResultWithVisibilityCheck:
     result: SearchResult
-    visibility_check: Callable[[str, Config], bool]
+    visibility_check: Callable[[str], bool]
 
 
 def _index_building_in_background_job(
