@@ -3,13 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="misc"
-# mypy: disable-error-code="no-any-return"
-# mypy: disable-error-code="no-untyped-def"
-# mypy: disable-error-code="type-arg"
-# ruff: noqa: ARG002, ARG004, ARG005, SLF001
-
-
 from __future__ import annotations
 
 import os
@@ -17,7 +10,7 @@ import socket
 import time
 from collections.abc import Mapping, Sequence, Sized
 from pathlib import Path
-from typing import Generic, NamedTuple, NoReturn, TypeAlias, TypeVar
+from typing import Any, cast, Generic, NamedTuple, NoReturn, TypeAlias, TypeVar
 
 import pytest
 from pyghmi.exceptions import IpmiException  # type: ignore[import-untyped,unused-ignore]
@@ -121,7 +114,7 @@ class SensorReading(NamedTuple):
     unavailable: int
 
 
-def clone_file_cache(file_cache: FileCache) -> FileCache:
+def clone_file_cache(file_cache: FileCache[Sized]) -> FileCache[Sized]:
     return type(file_cache)(
         base_path=file_cache.base_path,
         relative_path_template=file_cache.relative_path_template,
@@ -134,17 +127,20 @@ def clone_file_cache(file_cache: FileCache) -> FileCache:
 
 class TestFileCache:
     @pytest.fixture(params=[AgentFileCache, SNMPFileCache])
-    def file_cache(self, request: pytest.FixtureRequest) -> FileCache:
-        return request.param(
-            base_path=Path("/"),
-            relative_path_template="dev/null",
-            max_age=MaxAge.zero(),
-            simulation=True,
-            use_only_cache=True,
-            file_cache_mode=FileCacheMode.DISABLED,
+    def file_cache(self, request: pytest.FixtureRequest) -> FileCache[Sized]:
+        return cast(
+            FileCache[Sized],
+            request.param(
+                base_path=Path("/"),
+                relative_path_template="dev/null",
+                max_age=MaxAge.zero(),
+                simulation=True,
+                use_only_cache=True,
+                file_cache_mode=FileCacheMode.DISABLED,
+            ),
         )
 
-    def test_repr(self, file_cache: FileCache) -> None:
+    def test_repr(self, file_cache: FileCache[Sized]) -> None:
         assert isinstance(repr(file_cache), str)
 
 
@@ -159,26 +155,29 @@ class TestAgentFileCache_and_SNMPFileCache:
     def file_cache(
         self, path: Path, request: pytest.FixtureRequest
     ) -> AgentFileCache | SNMPFileCache:
-        return request.param(
-            base_path=Path("/"),
-            relative_path_template=str(path),
-            max_age=MaxAge(checking=0, discovery=999, inventory=0),
-            simulation=False,
-            use_only_cache=False,
-            file_cache_mode=FileCacheMode.DISABLED,
+        return cast(
+            AgentFileCache | SNMPFileCache,
+            request.param(
+                base_path=Path("/"),
+                relative_path_template=str(path),
+                max_age=MaxAge(checking=0, discovery=999, inventory=0),
+                simulation=False,
+                use_only_cache=False,
+                file_cache_mode=FileCacheMode.DISABLED,
+            ),
         )
 
     @pytest.fixture
-    def raw_data(self, file_cache):
+    def raw_data(self, file_cache: AgentFileCache | SNMPFileCache) -> AgentRawData | SNMPRawData:
         if isinstance(file_cache, AgentFileCache):
             return AgentRawData(b"<<<check_mk>>>\nagent raw data")
         assert isinstance(file_cache, SNMPFileCache)
         table: Sequence[SNMPTable] = []
-        return {SectionName("X"): table}
+        return {SNMPSectionMarker("X"): table}
 
     def test_read_write(
         self,
-        file_cache: FileCache,
+        file_cache: FileCache[Sized],
         path: Path,
         raw_data: AgentRawData | SNMPRawData,
     ) -> None:
@@ -201,9 +200,9 @@ class TestAgentFileCache_and_SNMPFileCache:
 
     def test_read_only(
         self,
-        file_cache: FileCache,
+        file_cache: FileCache[Sized],
         path: Path,
-        raw_data: object,
+        raw_data: Sized,
     ) -> None:
         mode = Mode.DISCOVERY
         file_cache.file_cache_mode = FileCacheMode.READ
@@ -215,7 +214,7 @@ class TestAgentFileCache_and_SNMPFileCache:
         assert not path.exists()
         assert file_cache.read(mode) is None
 
-    def test_write_only(self, file_cache: FileCache, path: Path, raw_data: object) -> None:
+    def test_write_only(self, file_cache: FileCache[Sized], path: Path, raw_data: Sized) -> None:
         mode = Mode.DISCOVERY
         file_cache.file_cache_mode = FileCacheMode.WRITE
 
@@ -232,22 +231,22 @@ _TRawData = TypeVar("_TRawData", bound=Sized)
 class StubFileCache(Generic[_TRawData], FileCache[_TRawData]):
     """Holds the data to be cached in-memory for testing"""
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.cache: _TRawData | None = None
 
     @staticmethod
-    def _from_cache_file(raw_data: bytes) -> _TRawData:
+    def _from_cache_file(_raw_data: bytes) -> _TRawData:
         assert 0, "unreachable"
 
     @staticmethod
-    def _to_cache_file(raw_data: _TRawData) -> bytes:
+    def _to_cache_file(_raw_data: _TRawData) -> bytes:
         assert 0, "unreachable"
 
-    def write(self, raw_data: _TRawData, mode: Mode) -> None:
+    def write(self, raw_data: _TRawData, _mode: Mode) -> None:
         self.cache = raw_data
 
-    def read(self, mode: Mode) -> _TRawData | None:
+    def read(self, _mode: Mode) -> _TRawData | None:
         return self.cache
 
 
@@ -576,11 +575,11 @@ class TestSNMPFetcherFetch:
     def test_mode_inventory_do_status_data_inventory(
         self, tmp_path: Path, monkeypatch: MonkeyPatch
     ) -> None:
-        monkeypatch.setattr(snmp, "get_snmp_table", lambda tree, **__: [["1"]])
+        monkeypatch.setattr(snmp, "get_snmp_table", lambda *_, **__: [["1"]])
         monkeypatch.setattr(
             SNMPFetcher,
             "inventory_sections",
-            property(lambda self: {SNMPSectionName("pim"), SNMPSectionName("pam")}),
+            property(lambda _self: {SNMPSectionName("pim"), SNMPSectionName("pam")}),
         )
         fetcher = _create_fetcher(
             path=tmp_path,
@@ -596,7 +595,7 @@ class TestSNMPFetcherFetch:
         monkeypatch.setattr(
             fetcher,
             "_detect",
-            lambda *_, **__: fetcher._get_detected_sections(Mode.INVENTORY),
+            lambda *_, **__: fetcher._get_detected_sections(Mode.INVENTORY),  # noqa: SLF001
         )
         file_cache = SNMPFileCache(
             base_path=Path("/"),
@@ -613,11 +612,11 @@ class TestSNMPFetcherFetch:
     def test_mode_inventory_not_do_status_data_inventory(
         self, tmp_path: Path, monkeypatch: MonkeyPatch
     ) -> None:
-        monkeypatch.setattr(snmp, "get_snmp_table", lambda tree, **__: [["1"]])
+        monkeypatch.setattr(snmp, "get_snmp_table", lambda *_, **__: [["1"]])
         monkeypatch.setattr(
             SNMPFetcher,
             "inventory_sections",
-            property(lambda self: {SectionName("pim"), SectionName("pam")}),
+            property(lambda _self: {SectionName("pim"), SectionName("pam")}),
         )
         fetcher = _create_fetcher(
             path=tmp_path,
@@ -632,7 +631,7 @@ class TestSNMPFetcherFetch:
         monkeypatch.setattr(
             fetcher,
             "_detect",
-            lambda *_, **__: fetcher._get_detected_sections(Mode.INVENTORY),
+            lambda *_, **__: fetcher._get_detected_sections(Mode.INVENTORY),  # noqa: SLF001
         )
         file_cache = SNMPFileCache(
             base_path=Path("/"),
@@ -649,11 +648,11 @@ class TestSNMPFetcherFetch:
     def test_mode_checking_do_status_data_inventory(
         self, tmp_path: Path, monkeypatch: MonkeyPatch
     ) -> None:
-        monkeypatch.setattr(snmp, "get_snmp_table", lambda tree, **__: [["1"]])
+        monkeypatch.setattr(snmp, "get_snmp_table", lambda *_, **__: [["1"]])
         monkeypatch.setattr(
             SNMPFetcher,
             "inventory_sections",
-            property(lambda self: {SNMPSectionName("pim"), SNMPSectionName("pam")}),
+            property(lambda _self: {SNMPSectionName("pim"), SNMPSectionName("pam")}),
         )
         fetcher = _create_fetcher(
             path=tmp_path,
@@ -669,7 +668,7 @@ class TestSNMPFetcherFetch:
         monkeypatch.setattr(
             fetcher,
             "_detect",
-            lambda *_, **__: fetcher._get_detected_sections(Mode.CHECKING),
+            lambda *_, **__: fetcher._get_detected_sections(Mode.CHECKING),  # noqa: SLF001
         )
         file_cache = SNMPFileCache(
             base_path=Path("/"),
@@ -690,7 +689,7 @@ class TestSNMPFetcherFetch:
         monkeypatch.setattr(
             fetcher,
             "_detect",
-            lambda *_, **__: fetcher._get_detected_sections(Mode.CHECKING),
+            lambda *_, **__: fetcher._get_detected_sections(Mode.CHECKING),  # noqa: SLF001
         )
         file_cache = SNMPFileCache(
             base_path=Path("/"),
@@ -709,7 +708,7 @@ class TestSNMPFetcherConfiguredCaching:
     @pytest.fixture(autouse=True, scope="function")
     def _get_snmp_table(self, monkeypatch: pytest.MonkeyPatch) -> None:
         vals = iter("ab")
-        monkeypatch.setattr(snmp, "get_snmp_table", lambda section_name, **__: [[next(vals)]])
+        monkeypatch.setattr(snmp, "get_snmp_table", lambda *_, **__: [[next(vals)]])
 
     @staticmethod
     def _create_fetcher(
@@ -733,7 +732,7 @@ class TestSNMPFetcherConfiguredCaching:
             .ok
         )
 
-    def test_uncached(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    def test_uncached(self, tmp_path: Path) -> None:
         fetcher = self._create_fetcher(tmp_path, caching_config={})
 
         assert self._fetch(fetcher, Mode.CHECKING) == {SNMPSectionMarker("pim"): [[["a"]]]}
@@ -781,7 +780,7 @@ class TestSNMPFetcherConfiguredCaching:
 
 
 class SNMPFetcherStub(SNMPFetcher):
-    def _fetch_from_io(self, mode: Mode) -> SNMPRawData:
+    def _fetch_from_io(self, _mode: Mode) -> SNMPRawData:
         return {SNMPSectionMarker("section"): [[b"fetched"]]}
 
 
@@ -949,7 +948,7 @@ class TestFetcherCaching:
             def close(self) -> None:
                 pass
 
-            def _fetch_from_io(self, *args: object, **kw: object) -> AgentRawData:
+            def _fetch_from_io(self, *_args: object, **_kw: object) -> AgentRawData:
                 return AgentRawData(b"fetched_section")
 
         return _Fetcher()
@@ -997,7 +996,7 @@ class TestFetcherTimeout:
         def close(self) -> None:
             pass
 
-        def _fetch_from_io(self, *args: object, **kw: object) -> NoReturn:
+        def _fetch_from_io(self, *_args: object, **_kw: object) -> NoReturn:
             raise MKTimeout()
 
     with pytest.raises(MKTimeout):
