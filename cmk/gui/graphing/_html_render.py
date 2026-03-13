@@ -62,7 +62,6 @@ from ._artwork import (
     GraphArtwork,
     GraphArtworkOrErrors,
     order_graph_curves_for_legend_and_mouse_hover,
-    save_graph_pin,
 )
 from ._from_api import metrics_from_api, RegisteredMetric
 from ._graph_metric_expressions import GraphMetricExpression
@@ -107,6 +106,19 @@ class AjaxContext(BaseModel):
     data_range: GraphDataRange
     render_config: GraphRenderConfig
     display_id: str = ""
+
+
+def _load_graph_pin() -> int | None:
+    raw_pin_time = user.load_file("graph_pin", None)
+    return None if raw_pin_time is None else int(raw_pin_time)
+
+
+def _save_graph_pin(request: Request) -> None:
+    try:
+        pin_timestamp = request.get_integer_input("pin")
+    except ValueError:
+        pin_timestamp = None
+    user.save_file("graph_pin", None if pin_timestamp == -1 else pin_timestamp)
 
 
 #   .--HTML-Graphs---------------------------------------------------------.
@@ -811,7 +823,7 @@ def render_ajax_graph(
         vertical_range = None
 
     if request.has_var("pin"):
-        save_graph_pin()
+        _save_graph_pin(request)
 
     if request.has_var("consolidation_function"):
         graph_recipe = graph_recipe.model_copy(
@@ -840,6 +852,7 @@ def render_ajax_graph(
         registered_metrics,
         temperature_unit=temperature_unit,
         backend_time_series_fetcher=backend_time_series_fetcher,
+        pin_time=_load_graph_pin(),
     )
 
     if graph_artwork_or_errors.errors:
@@ -1021,6 +1034,7 @@ def render_graphs_from_specification_html(
                     metrics_from_api,
                     temperature_unit=temperature_unit,
                     backend_time_series_fetcher=backend_time_series_fetcher,
+                    pin_time=_load_graph_pin(),
                 ),
                 debug=debug,
                 graph_timeranges=graph_timeranges,
@@ -1099,6 +1113,7 @@ class AjaxRenderGraphContent(AjaxPage):
                 metrics_from_api,
                 temperature_unit=temperature_unit,
                 backend_time_series_fetcher=backend_time_series_fetcher,
+                pin_time=_load_graph_pin(),
             ),
             debug=ctx.config.debug,
             graph_timeranges=ctx.config.graph_timeranges,
@@ -1269,6 +1284,7 @@ def _render_time_range_selection(
             registered_metrics,
             temperature_unit=temperature_unit,
             backend_time_series_fetcher=backend_time_series_fetcher,
+            pin_time=_load_graph_pin(),
         ).artwork
         rows.append(
             HTMLWriter.render_td(
@@ -1486,6 +1502,7 @@ def host_service_graph_dashlet_cmk(
         registered_metrics,
         temperature_unit=temperature_unit,
         backend_time_series_fetcher=backend_time_series_fetcher,
+        pin_time=_load_graph_pin(),
     )
 
     # When the legend is enabled, we need to reduce the height by the height of the legend to

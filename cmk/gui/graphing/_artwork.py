@@ -23,9 +23,7 @@ from pydantic import BaseModel
 
 import cmk.utils.render
 from cmk.ccc.resulttype import Error, OK, Result
-from cmk.gui.http import request
 from cmk.gui.i18n import _
-from cmk.gui.logged_in import user
 from cmk.gui.unit_formatter import (
     Label,
     NegativeYRange,
@@ -162,6 +160,7 @@ def compute_graph_artwork(
     *,
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
+    pin_time: int | None = None,
 ) -> GraphArtworkOrErrors:
     unit_spec = user_specific_unit(graph_recipe.unit_spec, temperature_unit)
 
@@ -182,7 +181,6 @@ def compute_graph_artwork(
         else:
             errors.append(result.error)
 
-    pin_time = _load_graph_pin()
     # do stacking, mirroring
     layouted_curves, mirrored = _layout_graph_curves(unit_spec.formatter.render, pin_time, curves)
     width, height = size
@@ -1109,29 +1107,3 @@ def get_step_label(step: Seconds) -> str:
     if step < 86400:
         return "%dh" % (step / 3600)
     return "%dd" % (step / 86400)
-
-
-# .
-#   .--Graph-Pin-----------------------------------------------------------.
-#   |            ____                 _           ____  _                  |
-#   |           / ___|_ __ __ _ _ __ | |__       |  _ \(_)_ __             |
-#   |          | |  _| '__/ _` | '_ \| '_ \ _____| |_) | | '_ \            |
-#   |          | |_| | | | (_| | |_) | | | |_____|  __/| | | | |           |
-#   |           \____|_|  \__,_| .__/|_| |_|     |_|   |_|_| |_|           |
-#   |                          |_|                                         |
-#   +----------------------------------------------------------------------+
-#   | Users can position a pin on the graph to mark a time to show the     |
-#   | shown metrics values in the legend                                   |
-#   '----------------------------------------------------------------------'
-
-
-def _load_graph_pin() -> int | None:
-    return user.load_file("graph_pin", None)
-
-
-def save_graph_pin() -> None:
-    try:
-        pin_timestamp = request.get_integer_input("pin")
-    except ValueError:
-        pin_timestamp = None
-    user.save_file("graph_pin", None if pin_timestamp == -1 else pin_timestamp)
