@@ -11,11 +11,13 @@ from cmk.gui.watolib.notification_parameter import (
 
 from . import _cisco_webex_teams as cisco_webex_teams
 from . import _ilert as ilert
+from . import _jira_issues as jira_issues
 from . import _mail as mail
 from . import _ms_teams as ms_teams
 from . import _opsgenie_issues as opsgenie_issues
 from . import _pagerduty as pagerduty
 from . import _pushover as pushover
+from . import _servicenow as servicenow
 from . import _signl4 as signl4
 from . import _slack as slack
 from . import _sms_api as sms_api
@@ -71,6 +73,20 @@ def register(notification_parameter_registry: NotificationParameterRegistry) -> 
             ident="ilert",
             spec=lambda: convert_dictionary_formspec_to_valuespec(ilert.form_spec),
             form_spec=ilert.form_spec,
+        )
+    )
+    notification_parameter_registry.register(
+        NotificationParameter(
+            ident="jira_issues",
+            spec=lambda: convert_dictionary_formspec_to_valuespec(jira_issues.form_spec),
+            form_spec=jira_issues.form_spec,
+        )
+    )
+    notification_parameter_registry.register(
+        NotificationParameter(
+            ident="servicenow",
+            spec=lambda: convert_dictionary_formspec_to_valuespec(servicenow.form_spec),
+            form_spec=servicenow.form_spec,
         )
     )
     notification_parameter_registry.register(
