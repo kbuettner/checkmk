@@ -343,21 +343,20 @@ class TestPermissionHandler:
             assert permissions_handler.may_see_category(category)
 
     @pytest.mark.usefixtures("request_context")
-    def test_may_see_url_false(self, permissions_handler: PermissionsHandler) -> None:
+    def test_may_see_url_false(self, config: Config) -> None:
+        permissions_handler = PermissionsHandler(config)
         visibility_check = permissions_handler.get_visibility_check("setup")
         assert not visibility_check("wato.py?folder=&mode=service_groups")
 
     @pytest.mark.usefixtures("with_admin_login")
-    def test_may_see_url_true(self, permissions_handler: PermissionsHandler) -> None:
+    def test_may_see_url_true(self, config: Config) -> None:
+        permissions_handler = PermissionsHandler(config)
         visibility_check = permissions_handler.get_visibility_check("setup")
         assert visibility_check("wato.py?folder=&mode=service_groups")
 
     @pytest.mark.usefixtures("with_admin_login")
-    def test_may_see_url_host_true(
-        self,
-        permissions_handler: PermissionsHandler,
-        created_host_url: str,
-    ) -> None:
+    def test_may_see_url_host_true(self, config: Config, created_host_url: str) -> None:
+        permissions_handler = PermissionsHandler(config)
         visibility_check = permissions_handler.get_visibility_check("setup")
         assert visibility_check(created_host_url)
 
@@ -365,9 +364,10 @@ class TestPermissionHandler:
     def test_may_see_url_host_false(
         self,
         monkeypatch: MonkeyPatch,
-        permissions_handler: PermissionsHandler,
+        config: Config,
         created_host_url: str,
     ) -> None:
+        permissions_handler = PermissionsHandler(config)
         visibility_check = permissions_handler.get_visibility_check("setup")
         with monkeypatch.context() as m:
             m.setattr(user, "may", lambda pname: False)
