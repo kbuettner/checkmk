@@ -1377,24 +1377,24 @@ def _render_ajax_graph_hover(
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
 ) -> dict[str, object]:
-    curves = [
-        c
-        for r in compute_graph_artwork_curves(
-            graph_recipe,
-            graph_data_range,
-            registered_metrics,
-            temperature_unit=temperature_unit,
-            backend_time_series_fetcher=backend_time_series_fetcher,
-        )
-        if r.is_ok()
-        for c in r.ok.curves
-    ]
-
     return {
         "rendered_hover_time": cmk.utils.render.date_and_time(hover_time),
         "curve_values": list(
             compute_curve_values_at_timestamp(
-                order_graph_curves_for_legend_and_mouse_hover(curves),
+                order_graph_curves_for_legend_and_mouse_hover(
+                    [
+                        c
+                        for r in compute_graph_artwork_curves(
+                            graph_recipe,
+                            graph_data_range,
+                            registered_metrics,
+                            temperature_unit=temperature_unit,
+                            backend_time_series_fetcher=backend_time_series_fetcher,
+                        )
+                        if r.is_ok()
+                        for c in r.ok.curves
+                    ]
+                ),
                 user_specific_unit(graph_recipe.unit_spec, temperature_unit).formatter.render,
                 hover_time,
             )
