@@ -11,6 +11,7 @@ from typing import Any
 from cmk.gui.form_specs.unstable import CascadingSingleChoiceExtended
 from cmk.gui.form_specs.unstable.cascading_single_choice_extended import (
     CascadingSingleChoiceElementExtended,
+    CascadingSingleChoiceLayout,
 )
 from cmk.rulesets.v1 import Help, Label, Message, Title
 from cmk.rulesets.v1.form_specs import (
@@ -25,7 +26,6 @@ from cmk.rulesets.v1.form_specs import (
     String,
 )
 from cmk.rulesets.v1.form_specs.validators import LengthInRange, ValidationError
-from cmk.shared_typing.vue_formspec_components import CascadingSingleChoiceLayout
 
 
 def _validate_aws_tags(values: Sequence[Any]) -> object:

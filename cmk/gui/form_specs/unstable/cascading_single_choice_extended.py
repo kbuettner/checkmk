@@ -8,7 +8,9 @@ from typing import override
 
 from cmk.rulesets.v1 import Message
 from cmk.rulesets.v1.form_specs import CascadingSingleChoice, CascadingSingleChoiceElement
-from cmk.shared_typing.vue_formspec_components import CascadingSingleChoiceLayout
+from cmk.shared_typing.vue_formspec_components import (
+    CascadingSingleChoiceLayout as CascadingSingleChoiceLayout,
+)
 
 
 @dataclass(frozen=True, kw_only=True)

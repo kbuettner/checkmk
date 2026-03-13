@@ -9,7 +9,8 @@ from typing import Literal, TypeAlias
 
 from cmk.rulesets.v1 import Label
 from cmk.rulesets.v1.form_specs import FormSpec
-from cmk.shared_typing.vue_formspec_components import ConditionGroup
+from cmk.shared_typing.vue_formspec_components import Condition as Condition
+from cmk.shared_typing.vue_formspec_components import ConditionGroup as ConditionGroup
 
 ConditionID: TypeAlias = str
 ConditionGroupID: TypeAlias = str
@@ -17,12 +18,12 @@ _IsCondition: TypeAlias = ConditionID
 _IsNotCondition: TypeAlias = Mapping[Literal["$ne"], ConditionID]
 _OrCondition: TypeAlias = Mapping[Literal["$or"], Sequence[ConditionID]]
 _NorCondition: TypeAlias = Mapping[Literal["$nor"], Sequence[ConditionID]]
-Condition: TypeAlias = _OrCondition | _NorCondition | _IsNotCondition | _IsCondition
-Conditions: TypeAlias = Mapping[ConditionGroupID, Condition]
+ConditionTypeDisk: TypeAlias = _OrCondition | _NorCondition | _IsNotCondition | _IsCondition
+ConditionsTypeDisk: TypeAlias = Mapping[ConditionGroupID, ConditionTypeDisk]
 
 
 @dataclass(frozen=True, kw_only=True)
-class ConditionChoices(FormSpec[Conditions]):
+class ConditionChoices(FormSpec[ConditionsTypeDisk]):
     add_condition_group_label: Label
     select_condition_group_to_add: Label
     no_more_condition_groups_to_add: Label

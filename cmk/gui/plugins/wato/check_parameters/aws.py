@@ -13,6 +13,7 @@ from cmk.gui.form_specs.generators.alternative_utils import enable_deprecated_al
 from cmk.gui.form_specs.unstable import CascadingSingleChoiceExtended
 from cmk.gui.form_specs.unstable.cascading_single_choice_extended import (
     CascadingSingleChoiceElementExtended,
+    CascadingSingleChoiceLayout,
 )
 from cmk.gui.form_specs.unstable.legacy_converter import (
     TransformDataForLegacyFormatOrRecomposeFunction,
@@ -44,7 +45,6 @@ from cmk.rulesets.v1.form_specs import (
     validators,
 )
 from cmk.rulesets.v1.rule_specs import CheckParameters, HostAndItemCondition, HostCondition, Topic
-from cmk.shared_typing.vue_formspec_components import CascadingSingleChoiceLayout
 
 
 def _fs_s3_buckets() -> Mapping[str, DictElement]:

@@ -3,6 +3,13 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
+from cmk.shared_typing.vue_formspec_components import (
+    Autocompleter,
+    AutocompleterData,
+    AutocompleterParams,
+    FetchMethod,
+)
+
 from .binary_condition_choices import BinaryConditionChoices
 from .cascading_single_choice_extended import CascadingSingleChoiceExtended
 from .catalog import Catalog, Topic, TopicElement, TopicGroup
@@ -22,12 +29,16 @@ from .two_column_dictionary import TwoColumnDictionary
 from .validators import not_empty
 
 __all__ = [
+    "Autocompleter",
+    "AutocompleterData",
+    "AutocompleterParams",
     "BinaryConditionChoices",
     "CascadingSingleChoiceExtended",
     "Catalog",
     "CommentTextArea",
     "ConditionChoices",
     "DatePicker",
+    "FetchMethod",
     "Labels",
     "LegacyValueSpec",
     "ListUniqueSelection",

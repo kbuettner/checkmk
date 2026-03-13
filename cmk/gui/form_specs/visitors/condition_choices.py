@@ -5,10 +5,10 @@
 from typing import cast, Literal, override
 
 from cmk.gui.form_specs.unstable.condition_choices import (
-    Condition,
     ConditionChoices,
     ConditionGroupID,
-    Conditions,
+    ConditionsTypeDisk,
+    ConditionTypeDisk,
 )
 from cmk.gui.i18n import _
 from cmk.shared_typing import vue_formspec_components as shared_type_defs
@@ -27,7 +27,9 @@ _UNSUPPORTED_VALUE_FROM_FRONTEND = Literal["Unsupported value received from fron
 _FallbackModel = list[shared_type_defs.ConditionChoicesValue]
 
 
-def _condition_to_value(name: str, condition: Condition) -> shared_type_defs.ConditionChoicesValue:
+def _condition_to_value(
+    name: str, condition: ConditionTypeDisk
+) -> shared_type_defs.ConditionChoicesValue:
     match condition:
         # All following assignments and assertions shouldn't be necessary, mypy just doesn't
         # understand narrowing on unions in match statements yet as other tooling like pyright does.
@@ -62,7 +64,7 @@ def _condition_to_value(name: str, condition: Condition) -> shared_type_defs.Con
             raise TypeError(other)
 
 
-def _value_to_condition(condition_value: object) -> tuple[ConditionGroupID, Condition]:
+def _value_to_condition(condition_value: object) -> tuple[ConditionGroupID, ConditionTypeDisk]:
     assert isinstance(condition_value, dict)
     try:
         name = condition_value["group_name"]
@@ -101,7 +103,7 @@ def _value_to_condition(condition_value: object) -> tuple[ConditionGroupID, Cond
         raise TypeError(_UNSUPPORTED_VALUE_FROM_FRONTEND)
 
 
-def _parse_frontend(raw_value: object) -> Conditions | InvalidValue[_FallbackModel]:
+def _parse_frontend(raw_value: object) -> ConditionsTypeDisk | InvalidValue[_FallbackModel]:
     if not isinstance(raw_value, list):
         return InvalidValue(reason=_("Invalid data"), fallback_value=[])
 
@@ -111,7 +113,7 @@ def _parse_frontend(raw_value: object) -> Conditions | InvalidValue[_FallbackMod
         return InvalidValue(reason=_("Invalid data"), fallback_value=[])
 
 
-def _parse_disk(raw_value: object) -> Conditions | InvalidValue[_FallbackModel]:
+def _parse_disk(raw_value: object) -> ConditionsTypeDisk | InvalidValue[_FallbackModel]:
     if not isinstance(raw_value, dict):
         return InvalidValue(reason=_("Invalid data"), fallback_value=[])
 
@@ -134,12 +136,16 @@ def _parse_disk(raw_value: object) -> Conditions | InvalidValue[_FallbackModel]:
         if not isinstance(group, str):
             return InvalidValue(reason=_("Invalid data"), fallback_value=[])
 
-    return cast(Conditions, raw_value)
+    return cast(ConditionsTypeDisk, raw_value)
 
 
-class ConditionChoicesVisitor(FormSpecVisitor[ConditionChoices, Conditions, _FallbackModel]):
+class ConditionChoicesVisitor(
+    FormSpecVisitor[ConditionChoices, ConditionsTypeDisk, _FallbackModel]
+):
     @override
-    def _parse_value(self, raw_value: IncomingData) -> Conditions | InvalidValue[_FallbackModel]:
+    def _parse_value(
+        self, raw_value: IncomingData
+    ) -> ConditionsTypeDisk | InvalidValue[_FallbackModel]:
         if isinstance(raw_value, DefaultValue):
             return InvalidValue(
                 fallback_value=[], reason=_("No default values can be set for condition choices.")
@@ -152,7 +158,7 @@ class ConditionChoicesVisitor(FormSpecVisitor[ConditionChoices, Conditions, _Fal
 
     @override
     def _to_vue(
-        self, parsed_value: Conditions | InvalidValue[_FallbackModel]
+        self, parsed_value: ConditionsTypeDisk | InvalidValue[_FallbackModel]
     ) -> tuple[shared_type_defs.ConditionChoices, object]:
         title, help_text = get_title_and_help(self.form_spec)
 
@@ -190,7 +196,9 @@ class ConditionChoicesVisitor(FormSpecVisitor[ConditionChoices, Conditions, _Fal
         )
 
     @override
-    def _validate(self, parsed_value: Conditions) -> list[shared_type_defs.ValidationMessage]:
+    def _validate(
+        self, parsed_value: ConditionsTypeDisk
+    ) -> list[shared_type_defs.ValidationMessage]:
         vue_value = (
             [_condition_to_value(name, c) for name, c in parsed_value.items()]
             if not isinstance(parsed_value, InvalidValue)
@@ -202,5 +210,5 @@ class ConditionChoicesVisitor(FormSpecVisitor[ConditionChoices, Conditions, _Fal
         )
 
     @override
-    def _to_disk(self, parsed_value: Conditions) -> Conditions:
+    def _to_disk(self, parsed_value: ConditionsTypeDisk) -> ConditionsTypeDisk:
         return parsed_value

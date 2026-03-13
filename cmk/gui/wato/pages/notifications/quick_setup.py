@@ -14,6 +14,9 @@ from cmk.ccc.user import UserId
 from cmk.ccc.version import Edition, edition
 from cmk.gui.config import active_config
 from cmk.gui.form_specs.unstable import (
+    Autocompleter,
+    AutocompleterData,
+    AutocompleterParams,
     CascadingSingleChoiceExtended,
     CommentTextArea,
     ConditionChoices,
@@ -26,6 +29,11 @@ from cmk.gui.form_specs.unstable import (
 )
 from cmk.gui.form_specs.unstable.cascading_single_choice_extended import (
     CascadingSingleChoiceElementExtended,
+    CascadingSingleChoiceLayout,
+)
+from cmk.gui.form_specs.unstable.condition_choices import (
+    Condition,
+    ConditionGroup,
 )
 from cmk.gui.form_specs.unstable.legacy_converter import Tuple
 from cmk.gui.form_specs.unstable.list_unique_selection import (
@@ -126,14 +134,6 @@ from cmk.rulesets.v1.form_specs.validators import (
     ValidationError,
 )
 from cmk.shared_typing.configuration_entity import ConfigEntityType
-from cmk.shared_typing.vue_formspec_components import (
-    Autocompleter,
-    AutocompleterData,
-    AutocompleterParams,
-    CascadingSingleChoiceLayout,
-    Condition,
-    ConditionGroup,
-)
 from cmk.utils.notify_types import HostEventType, ServiceEventType
 from cmk.utils.tags import AuxTag, TagGroup
 from cmk.utils.timeperiod import TimeperiodName

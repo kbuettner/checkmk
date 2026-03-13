@@ -30,12 +30,20 @@ from cmk.gui.exceptions import MKAuthException, MKUserError
 from cmk.gui.form_specs import DEFAULT_VALUE, get_visitor, RawDiskData, VisitorOptions
 from cmk.gui.form_specs.generators.config_host_name import create_config_host_name
 from cmk.gui.form_specs.unstable import (
+    Autocompleter,
+    AutocompleterData,
+    AutocompleterParams,
     BinaryConditionChoices,
     CommentTextArea,
     ConditionChoices,
+    FetchMethod,
     not_empty,
 )
 from cmk.gui.form_specs.unstable.catalog import Catalog, Locked, Topic, TopicElement
+from cmk.gui.form_specs.unstable.condition_choices import (
+    Condition,
+    ConditionGroup,
+)
 from cmk.gui.form_specs.unstable.time_specific import TimeSpecific
 from cmk.gui.form_specs.unstable.validators import HostAddressList
 from cmk.gui.hooks import request_memoize
@@ -84,14 +92,6 @@ from cmk.server_side_calls_backend.config_processing import (
     GlobalProxiesWithLookup,
     OAuth2Connection,
     process_configuration_to_parameters,
-)
-from cmk.shared_typing.vue_formspec_components import (
-    Autocompleter,
-    AutocompleterData,
-    AutocompleterParams,
-    Condition,
-    ConditionGroup,
-    FetchMethod,
 )
 from cmk.utils import paths
 from cmk.utils.automation_config import LocalAutomationConfig, RemoteAutomationConfig
