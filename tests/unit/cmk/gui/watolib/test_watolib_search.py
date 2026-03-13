@@ -329,48 +329,45 @@ class TestIndexBuilderAndSearcher:
         return [(topic, list(results)) for topic, results in results_by_topic]
 
 
-@pytest.fixture(name="created_host_url")
-def fixture_created_host_url() -> str:
-    folder = folder_tree().root_folder()
-    folder.create_hosts([(HostName("host"), {}, [])], pprint_value=False, use_git=False)
-    return "wato.py?folder=&host=host&mode=edit_host"
-
-
-@pytest.mark.usefixtures("request_context")
-def test_may_see_url_false(permissions_handler: PermissionsHandler) -> None:
-    assert not permissions_handler.may_see_url("wato.py?folder=&mode=service_groups")
-
-
-@pytest.mark.usefixtures("with_admin_login")
-def test_may_see_url_true(permissions_handler: PermissionsHandler) -> None:
-    assert permissions_handler.may_see_url("wato.py?folder=&mode=service_groups")
-
-
-@pytest.mark.usefixtures("with_admin_login")
-def test_may_see_url_host_true(
-    permissions_handler: PermissionsHandler,
-    created_host_url: str,
-) -> None:
-    assert permissions_handler.may_see_url(created_host_url)
-
-
-@pytest.mark.usefixtures("with_admin_login")
-def test_may_see_url_host_false(
-    monkeypatch: MonkeyPatch,
-    permissions_handler: PermissionsHandler,
-    created_host_url: str,
-) -> None:
-    with monkeypatch.context() as m:
-        m.setattr(user, "may", lambda pname: False)
-        assert not permissions_handler.may_see_url(created_host_url)
-
-
 class TestPermissionHandler:
+    @pytest.fixture(name="created_host_url")
+    def fixture_created_host_url(self) -> str:
+        folder = folder_tree().root_folder()
+        folder.create_hosts([(HostName("host"), {}, [])], pprint_value=False, use_git=False)
+        return "wato.py?folder=&host=host&mode=edit_host"
+
     @pytest.mark.usefixtures("with_admin_login")
     def test_may_see_category(self, config: Config) -> None:
         permissions_handler = PermissionsHandler(config)
         for category in permissions_handler._category_permissions:
             assert permissions_handler.may_see_category(category)
+
+    @pytest.mark.usefixtures("request_context")
+    def test_may_see_url_false(self, permissions_handler: PermissionsHandler) -> None:
+        assert not permissions_handler.may_see_url("wato.py?folder=&mode=service_groups")
+
+    @pytest.mark.usefixtures("with_admin_login")
+    def test_may_see_url_true(self, permissions_handler: PermissionsHandler) -> None:
+        assert permissions_handler.may_see_url("wato.py?folder=&mode=service_groups")
+
+    @pytest.mark.usefixtures("with_admin_login")
+    def test_may_see_url_host_true(
+        self,
+        permissions_handler: PermissionsHandler,
+        created_host_url: str,
+    ) -> None:
+        assert permissions_handler.may_see_url(created_host_url)
+
+    @pytest.mark.usefixtures("with_admin_login")
+    def test_may_see_url_host_false(
+        self,
+        monkeypatch: MonkeyPatch,
+        permissions_handler: PermissionsHandler,
+        created_host_url: str,
+    ) -> None:
+        with monkeypatch.context() as m:
+            m.setattr(user, "may", lambda pname: False)
+            assert not permissions_handler.may_see_url(created_host_url)
 
 
 class TestIndexSearcher:
