@@ -94,7 +94,6 @@ const pendingChangesRef = computed(() => sitesAndChanges.value.pendingChanges)
 const userCanActivateForeignRef = computed(() => props.user_has_activate_foreign)
 
 const {
-  hasSitesWithChangesOrErrors,
   siteSelectionIsDisabled,
   allSitesWithChangesAreNotSelectable,
   sitesWithStatusProblems,
@@ -356,16 +355,6 @@ const sitesWithErrors = computed((): boolean => {
   )
 })
 
-const noPendingChangesOrWarningsOrErrors = computed((): boolean => {
-  return sitesAndChanges.value.sites.every(
-    (site) =>
-      site.changes === 0 &&
-      (!site.lastActivationStatus ||
-        (site.lastActivationStatus.state !== 'warning' &&
-          site.lastActivationStatus.state !== 'error'))
-  )
-})
-
 const numberOfForeignChanges = computed((): number => {
   // Count the number of pending changes that are foreign (not by the current user)
   return sitesAndChanges.value.pendingChanges.filter((change) => change.user !== props.user_name)
@@ -470,7 +459,6 @@ onMounted(async () => {
         :restart-info="restartInfoShown"
       >
       </ChangesActivating>
-
       <ChangesActivationResult
         v-if="
           !activateChangesInProgress &&
@@ -483,20 +471,6 @@ onMounted(async () => {
         class="cmk-div-activation-result-container"
       >
       </ChangesActivationResult>
-
-      <ChangesActivationResult
-        v-if="
-          noPendingChangesOrWarningsOrErrors &&
-          !activateChangesInProgress &&
-          recentlyActivatedSites.length === 0
-        "
-        type="success"
-        :title="_t('No pending changes')"
-        :info="_t('Everything is up to date')"
-        class="cmk-div-activation-result-container"
-      >
-      </ChangesActivationResult>
-
       <CmkDialog
         v-if="sitesWithWarningsOrErrors && !activateChangesInProgress"
         :title="_t('Problems detected during activation')"
@@ -519,14 +493,8 @@ onMounted(async () => {
         :site-problems="sitesWithStatusProblems.length"
       />
 
-      <div
-        v-if="
-          recentlyActivatedSites.length > 0 || sitesWithWarningsOrErrors || weHavePendingChanges
-        "
-        class="cmk-div-sites-and-pending-changes-container"
-      >
+      <div class="cmk-div-sites-and-pending-changes-container">
         <SiteStatusList
-          v-if="hasSitesWithChangesOrErrors"
           v-model="selectedSites"
           :sites="sitesAndChanges.sites"
           :open="activationStatusCollapsible"
