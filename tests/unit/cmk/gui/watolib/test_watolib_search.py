@@ -15,12 +15,14 @@ from fakeredis import FakeRedis
 from pytest import MonkeyPatch
 from pytest_mock import MockerFixture
 from redis import Redis
+from werkzeug.test import create_environ
 
 from cmk.automations.results import GetConfigurationResult
 from cmk.ccc.hostaddress import HostName
 from cmk.gui.config import Config
+from cmk.gui.http import Request
 from cmk.gui.i18n import localize
-from cmk.gui.logged_in import LoggedInNobody, user
+from cmk.gui.logged_in import LoggedInNobody
 from cmk.gui.search import (
     ABCMatchItemGenerator,
     IndexBuilder,
@@ -200,9 +202,14 @@ def fixture_config() -> Config:
     return Config()
 
 
+@pytest.fixture(name="http_request")
+def fixture_http_request() -> Request:
+    return Request(create_environ())
+
+
 @pytest.fixture(name="permissions_handler")
-def fixture_permissions_handler(config: Config) -> PermissionsHandler:
-    return PermissionsHandler(config)
+def fixture_permissions_handler(config: Config, http_request: Request) -> PermissionsHandler:
+    return PermissionsHandler(config, http_request)
 
 
 @pytest.fixture(name="index_searcher")
@@ -337,41 +344,48 @@ class TestPermissionHandler:
         return "wato.py?folder=&host=host&mode=edit_host"
 
     @pytest.mark.usefixtures("with_admin_login")
-    def test_may_see_category(self, config: Config) -> None:
-        permissions_handler = PermissionsHandler(config)
+    def test_may_see_category(self, config: Config, http_request: Request) -> None:
+        permissions_handler = PermissionsHandler(config, http_request)
         for category in permissions_handler._category_permissions:
             assert permissions_handler.may_see_category(category)
 
     @pytest.mark.usefixtures("request_context")
-    def test_may_see_url_false(self, config: Config) -> None:
-        permissions_handler = PermissionsHandler(config)
+    def test_may_see_url_false(self, config: Config, http_request: Request) -> None:
+        permissions_handler = PermissionsHandler(config, http_request)
         visibility_check = permissions_handler.get_visibility_check("setup")
         assert not visibility_check("wato.py?folder=&mode=service_groups")
 
     @pytest.mark.usefixtures("with_admin_login")
-    def test_may_see_url_true(self, config: Config) -> None:
-        permissions_handler = PermissionsHandler(config)
+    def test_may_see_url_true(self, config: Config, http_request: Request) -> None:
+        permissions_handler = PermissionsHandler(config, http_request)
         visibility_check = permissions_handler.get_visibility_check("setup")
         assert visibility_check("wato.py?folder=&mode=service_groups")
 
     @pytest.mark.usefixtures("with_admin_login")
     def test_may_see_url_host_true(self, config: Config, created_host_url: str) -> None:
-        permissions_handler = PermissionsHandler(config)
+        # NOTE: unfortunately, a test request fixture is difficult to create here since the host and
+        # folders code relies heavily on adapting the global request proxy. For now, we will just
+        # import the global proxy here explicitly as it's implicitly shared by the
+        # `created_host_url` fixture.
+        from cmk.gui.http import request
+
+        permissions_handler = PermissionsHandler(config, request)
         visibility_check = permissions_handler.get_visibility_check("setup")
         assert visibility_check(created_host_url)
 
     @pytest.mark.usefixtures("with_admin_login")
     def test_may_see_url_host_false(
         self,
-        monkeypatch: MonkeyPatch,
         config: Config,
+        http_request: Request,
         created_host_url: str,
     ) -> None:
-        permissions_handler = PermissionsHandler(config)
+        # NOTE: the created host is not visible because it was not created with the passed request
+        # context. This is because the host and folders code relies heavily on adapting the global
+        # request proxy.
+        permissions_handler = PermissionsHandler(config, http_request)
         visibility_check = permissions_handler.get_visibility_check("setup")
-        with monkeypatch.context() as m:
-            m.setattr(user, "may", lambda pname: False)
-            assert not visibility_check(created_host_url)
+        assert not visibility_check(created_host_url)
 
 
 class TestIndexSearcher:

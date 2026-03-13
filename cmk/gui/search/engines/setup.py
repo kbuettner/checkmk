@@ -30,7 +30,7 @@ from cmk.gui.config import active_config, Config
 from cmk.gui.ctx_stack import g
 from cmk.gui.exceptions import MKAuthException, MKUserError
 from cmk.gui.global_config import get_global_config
-from cmk.gui.http import request
+from cmk.gui.http import Request
 from cmk.gui.i18n import (
     _,
     get_current_language,
@@ -295,8 +295,9 @@ type VisibilityCheck = Callable[[str], bool]
 
 
 class PermissionsHandler:
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, request: Request) -> None:
         self._config = config
+        self._request = request
         self._category_permissions = {
             "global_settings": user.may("wato.global") or user.may("wato.seeall"),
             "folders": user.may("wato.hosts"),
@@ -339,7 +340,7 @@ class PermissionsHandler:
         file_name, query_vars = file_name_and_query_vars_from_url(url)
 
         for name, vals in query_vars.items():
-            request.set_var(name, vals[0])
+            self._request.set_var(name, vals[0])
 
         mode = modes[0] if (modes := query_vars.get("mode", [])) else None
 
@@ -381,7 +382,7 @@ class PermissionsHandler:
         # This context manager is needed to prevent HTML from being outputed to the response.
         # TODO: see if this is still relevant now that we are rendering from Vue.
         with output_funnel.plugged():
-            handler(PageContext(config=self._config, request=request))
+            handler(PageContext(config=self._config, request=self._request))
             output_funnel.drain()
 
 
@@ -697,6 +698,7 @@ class SetupSearchEngine:
     def __init__(
         self,
         config: Config,
+        request: Request,
         *,
         redis_client: redis.Redis | None = None,
         permissions_handler: PermissionsHandler | None = None,
@@ -704,7 +706,7 @@ class SetupSearchEngine:
         self._legacy_engine = IndexSearcher(
             config=config,
             redis_client=redis_client or get_redis_client(),
-            permissions_handler=permissions_handler or PermissionsHandler(config),
+            permissions_handler=permissions_handler or PermissionsHandler(config, request),
         )
 
     def search(self, query: str) -> Iterable[UnifiedSearchResultItem]:

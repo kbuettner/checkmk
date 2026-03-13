@@ -41,7 +41,7 @@ class PageUnifiedSearch(AjaxPage):
         collapser_disabled = self._parse_disabled_collapser(ctx.request)
 
         unified_search_engine = UnifiedSearch(
-            setup_engine=SetupSearchEngine(ctx.config),
+            setup_engine=SetupSearchEngine(ctx.config, ctx.request),
             monitoring_engine=MonitoringSearchEngine(
                 user_permissions=UserPermissions.from_config(ctx.config, permission_registry),
                 row_limit=_MONITORING_ENGINE_ROW_LIMIT,
