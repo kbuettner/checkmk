@@ -612,6 +612,8 @@ def _build_index(
     job_interface.send_result_message(_("Search index successfully built"))
 
 
+# TODO: need to pass the active config dependency during registration of this hook.
+# For now, it will still rely on the global `active_config` proxy.
 def launch_requests_processing_background() -> None:
     if not updates_requested() or not redis_enabled():
         return
