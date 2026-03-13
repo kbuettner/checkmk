@@ -304,6 +304,9 @@ def _set_current_folder(folder_name: str) -> None:
     g.wato_current_folder = g.wato_folders[folder_name]
 
 
+type VisibilityCheck = Callable[[str], bool]
+
+
 class PermissionsHandler:
     def __init__(self, config: Config) -> None:
         self._config = config
@@ -320,7 +323,7 @@ class PermissionsHandler:
     def may_see_category(self, category: str) -> bool:
         return user.may("wato.use") and self._category_permissions.get(category, True)
 
-    def get_visibility_check(self, category: str) -> Callable[[str], bool]:
+    def get_visibility_check(self, category: str) -> VisibilityCheck:
         return {
             "global_settings": self._check_global_setting_visibility,
             "rules": self._check_rule_visibility,
@@ -576,7 +579,7 @@ class IndexSearcher:
 @dataclass(frozen=True)
 class _SearchResultWithVisibilityCheck:
     result: SearchResult
-    visibility_check: Callable[[str], bool]
+    visibility_check: VisibilityCheck
 
 
 def _index_building_in_background_job(
