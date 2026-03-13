@@ -11,12 +11,10 @@ cd "$(git rev-parse --show-toplevel)" || exit $?
 # shellcheck disable=SC2046  # we want word splitting here
 bazel run //:format $(git diff --name-only) || exit $?
 
-bazel lint --fix //cmk/... || exit $?
+bazel lint --fix //cmk/... //tests/unit/... || exit $?
 
-# run mypy on more than the changed files. Takes longer, but coming back later takes even more time.
-bazel build --config=mypy //cmk/... || exit $?
+bazel build --config=mypy //cmk/... //tests/unit/... || exit $?
 
-# at least exclude gui. Only collecting what we need keeps failing :-/
-bazel test //tests/unit:repo --test_arg=--ignore --test_arg=tests/unit/cmk/gui || exit $?
+bazel test //tests/unit/... || exit $?
 
 make -C tests test-plugins-consistency
