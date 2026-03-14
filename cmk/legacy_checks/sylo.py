@@ -3,9 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-# mypy: disable-error-code="possibly-undefined"
-
 # Author: Lars Michelsen <lm@mathias-kettner.de
 
 # Example output of agent:
@@ -30,32 +27,43 @@
 
 
 import time
+from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import get_rate, get_value_store, StringTable
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_rate,
+    get_value_store,
+    Metric,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
-check_info = {}
+
+def discover_sylo(section: StringTable) -> DiscoveryResult:
+    if len(section) > 0 and len(section[0]) == 4:
+        yield Service()
 
 
-def discover_sylo(info):
-    if len(info) > 0 and len(info[0]) == 4:
-        return [(None, {})]
-    return []
+def check_sylo(params: Mapping[str, Any], section: StringTable) -> CheckResult:
+    if len(section) != 1:
+        yield Result(
+            state=State.CRIT, summary="No hint file (sylo probably never ran on this system)"
+        )
+        return
 
-
-def check_sylo(item, params, info):
-    if len(info) != 1:
-        return (2, "No hint file (sylo probably never ran on this system)")
-
-    if len(info[0]) == 4:
-        msg = ""
-
+    if len(section[0]) == 4:
         usage_warn_perc, usage_crit_perc = params["levels_usage_perc"]
 
-        mtime = int(info[0][0])
-        inOffset = int(info[0][1])
-        outOffset = int(info[0][2])
-        size = int(info[0][3])
+        mtime = int(section[0][0])
+        inOffset = int(section[0][1])
+        outOffset = int(section[0][2])
+        size = int(section[0][3])
         size_mb = size / (1024 * 1024.0)
         warn_mb = size_mb * usage_warn_perc / 100.0
         crit_mb = size_mb * usage_crit_perc / 100.0
@@ -64,15 +72,18 @@ def check_sylo(item, params, info):
         now = int(time.time())
         age = now - mtime
         if age > params["max_age_secs"]:
-            status = 2
-            return (2, "Sylo not running (Hintfile too old: last update %d secs ago)" % age)
+            yield Result(
+                state=State.CRIT,
+                summary=f"Sylo not running (Hintfile too old: last update {age} secs ago)",
+            )
+            return
 
         # Current fill state
         if inOffset == outOffset:
             bytesUsed = 0
         elif inOffset > outOffset:
             bytesUsed = inOffset - outOffset
-        elif inOffset < outOffset:
+        else:
             bytesUsed = size - outOffset + inOffset
         percUsed = float(bytesUsed) / size * 100
         used_mb = bytesUsed / (1024 * 1024.0)
@@ -81,34 +92,35 @@ def check_sylo(item, params, info):
         value_store = get_value_store()
         in_rate = get_rate(value_store, "sylo.in", mtime, inOffset, raise_overflow=True)
         out_rate = get_rate(value_store, "sylo.out", mtime, outOffset, raise_overflow=True)
-        msg += f"Silo is filled {bytesUsed / (1024 * 1024.0):.1f}MB ({percUsed:.1f}%), in {in_rate:.1f} B/s, out {out_rate:.1f} B/s"
+        msg = f"Silo is filled {used_mb:.1f}MB ({percUsed:.1f}%), in {in_rate:.1f} B/s, out {out_rate:.1f} B/s"
 
-        status = 0
-        if percUsed >= usage_crit_perc and status < 2:
-            status = 2
-        elif percUsed >= usage_warn_perc and status < 1:
-            status = 1
+        if percUsed >= usage_crit_perc:
+            state = State.CRIT
+        elif percUsed >= usage_warn_perc:
+            state = State.WARN
+        else:
+            state = State.OK
 
-        return (
-            status,
-            msg,
-            [
-                ("in", "%f" % in_rate),
-                ("out", "%f" % out_rate),
-                ("used", "%f" % used_mb, warn_mb, crit_mb, 0, size_mb),
-            ],
-        )
+        yield Result(state=state, summary=msg)
+        yield Metric("in", in_rate)
+        yield Metric("out", out_rate)
+        yield Metric("used", used_mb, levels=(warn_mb, crit_mb), boundaries=(0, size_mb))
+        return
 
-    return (3, "Invalid hint file contents: %s" % info)
+    yield Result(state=State.UNKNOWN, summary=f"Invalid hint file contents: {section}")
 
 
 def parse_sylo(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["sylo"] = LegacyCheckDefinition(
+agent_section_sylo = AgentSection(
     name="sylo",
     parse_function=parse_sylo,
+)
+
+check_plugin_sylo = CheckPlugin(
+    name="sylo",
     service_name="Sylo",
     discovery_function=discover_sylo,
     check_function=check_sylo,
