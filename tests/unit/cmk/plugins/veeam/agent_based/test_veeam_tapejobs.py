@@ -12,7 +12,7 @@ import pytest
 import time_machine
 
 from cmk.agent_based.v2 import Result, Service, State
-from cmk.legacy_checks import veeam_tapejobs
+from cmk.plugins.veeam.agent_based import veeam_tapejobs
 
 
 @pytest.fixture(name="string_table")
