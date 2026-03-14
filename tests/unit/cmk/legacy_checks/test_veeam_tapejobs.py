@@ -3,9 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-any-return"
-# mypy: disable-error-code="no-untyped-call"
-
 # NOTE: This file has been created by an LLM (from something that was worse).
 # It mostly serves as test to ensure we don't accidentally break anything.
 # If you encounter something weird in here, do not hesitate to replace this
@@ -14,6 +11,7 @@
 import pytest
 import time_machine
 
+from cmk.agent_based.v2 import Result, Service, State
 from cmk.legacy_checks import veeam_tapejobs
 
 
@@ -38,7 +36,9 @@ def fixture_string_table() -> list[list[str]]:
 
 
 @pytest.fixture(name="parsed_data")
-def fixture_parsed_data(string_table: list[list[str]]) -> dict[str, dict[str, str]]:
+def fixture_parsed_data(
+    string_table: list[list[str]],
+) -> veeam_tapejobs.Section:
     """Parsed Veeam tape job data with job information."""
     return veeam_tapejobs.parse_veeam_tapejobs(string_table)
 
@@ -89,22 +89,22 @@ def test_parse_veeam_tapejobs_incomplete_lines() -> None:
     assert "Incomplete" not in parsed
 
 
-def test_discover_veeam_tapejobs(parsed_data: dict[str, dict[str, str]]) -> None:
+def test_discover_veeam_tapejobs(parsed_data: veeam_tapejobs.Section) -> None:
     """Test discovery of all Veeam tape backup jobs."""
     assert list(veeam_tapejobs.discover_veeam_tapejobs(parsed_data)) == [
-        ("Job One", {}),
-        ("Job Two", {}),
-        ("Job Three", {}),
-        ("Job Four", {}),
-        ("Job Five (older)", {}),
-        ("Job Six", {}),
-        ("Job Seven (older)", {}),
+        Service(item="Job One"),
+        Service(item="Job Two"),
+        Service(item="Job Three"),
+        Service(item="Job Four"),
+        Service(item="Job Five (older)"),
+        Service(item="Job Six"),
+        Service(item="Job Seven (older)"),
     ]
 
 
 @time_machine.travel(1562056877.0)
 def test_check_veeam_tapejobs_completed_success(
-    parsed_data: dict[str, dict[str, str]], monkeypatch: pytest.MonkeyPatch
+    parsed_data: veeam_tapejobs.Section, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Test check for successfully completed backup job."""
     value_store: dict[str, object] = {}
@@ -117,14 +117,14 @@ def test_check_veeam_tapejobs_completed_success(
     )
 
     assert results == [
-        (0, "Last backup result: Success"),
-        (0, "Last state: Stopped"),
+        Result(state=State.OK, summary="Last backup result: Success"),
+        Result(state=State.OK, summary="Last state: Stopped"),
     ]
 
 
 @time_machine.travel(1562056877.0)
 def test_check_veeam_tapejobs_completed_warning(
-    parsed_data: dict[str, dict[str, str]], monkeypatch: pytest.MonkeyPatch
+    parsed_data: veeam_tapejobs.Section, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Test check for backup job completed with warning."""
     value_store: dict[str, object] = {}
@@ -137,14 +137,14 @@ def test_check_veeam_tapejobs_completed_warning(
     )
 
     assert results == [
-        (1, "Last backup result: Warning"),
-        (0, "Last state: Stopped"),
+        Result(state=State.WARN, summary="Last backup result: Warning"),
+        Result(state=State.OK, summary="Last state: Stopped"),
     ]
 
 
 @time_machine.travel(1562056877.0)
 def test_check_veeam_tapejobs_completed_failed(
-    parsed_data: dict[str, dict[str, str]], monkeypatch: pytest.MonkeyPatch
+    parsed_data: veeam_tapejobs.Section, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Test check for failed backup job."""
     value_store: dict[str, object] = {}
@@ -157,20 +157,17 @@ def test_check_veeam_tapejobs_completed_failed(
     )
 
     assert results == [
-        (2, "Last backup result: Failed"),
-        (0, "Last state: Stopped"),
+        Result(state=State.CRIT, summary="Last backup result: Failed"),
+        Result(state=State.OK, summary="Last state: Stopped"),
     ]
 
 
 @time_machine.travel(1562056877.0)
 def test_check_veeam_tapejobs_working_normal_runtime(
-    parsed_data: dict[str, dict[str, str]], monkeypatch: pytest.MonkeyPatch
+    parsed_data: veeam_tapejobs.Section, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Test check for working job with normal runtime."""
-    # Pre-populate value store with runtime tracking
-    # 2019-07-02 08:41:17 timestamp is 1562056877.0
-    # Job Four: ~14 minutes ago would be 1562056000
-    value_store: dict[str, object] = {"4.running_since": 1562056000}  # Job Four: ~14 minutes ago
+    value_store: dict[str, object] = {"4.running_since": 1562056000}
     monkeypatch.setattr(veeam_tapejobs, "get_value_store", lambda: value_store)
 
     results = list(
@@ -180,25 +177,22 @@ def test_check_veeam_tapejobs_working_normal_runtime(
     )
 
     assert len(results) == 2
-    # First result: status message
-    assert results[0][0] == 0  # OK status
-    assert "Backup in progress since" in results[0][1]
-    assert "currently working" in results[0][1]
+    assert isinstance(results[0], Result)
+    assert results[0].state == State.OK
+    assert "Backup in progress since" in results[0].summary
+    assert "currently working" in results[0].summary
 
-    # Second result: runtime check (should be OK, ~14 minutes)
-    assert results[1][0] == 0  # OK status
-    assert "Running time:" in results[1][1]
+    assert isinstance(results[1], Result)
+    assert results[1].state == State.OK
+    assert "Running time:" in results[1].summary
 
 
 @time_machine.travel(1562056877.0)
 def test_check_veeam_tapejobs_working_long_runtime(
-    parsed_data: dict[str, dict[str, str]], monkeypatch: pytest.MonkeyPatch
+    parsed_data: veeam_tapejobs.Section, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Test check for working job with excessive runtime."""
-    # Pre-populate value store with old runtime tracking
-    # 2019-07-02 08:41:17 timestamp is 1562056877.0
-    # Job Five: ~24 days ago would be 1560006000
-    value_store: dict[str, object] = {"5.running_since": 1560006000}  # Job Five: ~24 days ago
+    value_store: dict[str, object] = {"5.running_since": 1560006000}
     monkeypatch.setattr(veeam_tapejobs, "get_value_store", lambda: value_store)
 
     results = list(
@@ -208,26 +202,23 @@ def test_check_veeam_tapejobs_working_long_runtime(
     )
 
     assert len(results) == 2
-    # First result: status message
-    assert results[0][0] == 0  # OK status
-    assert "Backup in progress since" in results[0][1]
-    assert "currently working" in results[0][1]
+    assert isinstance(results[0], Result)
+    assert results[0].state == State.OK
+    assert "Backup in progress since" in results[0].summary
+    assert "currently working" in results[0].summary
 
-    # Second result: runtime check (should be CRITICAL, ~24 days)
-    assert results[1][0] == 2  # CRITICAL status
-    assert "Running time:" in results[1][1]
-    assert "warn/crit at" in results[1][1]
+    assert isinstance(results[1], Result)
+    assert results[1].state == State.CRIT
+    assert "Running time:" in results[1].summary
+    assert "warn/crit at" in results[1].summary
 
 
 @time_machine.travel(1562056877.0)
 def test_check_veeam_tapejobs_idle_normal_runtime(
-    parsed_data: dict[str, dict[str, str]], monkeypatch: pytest.MonkeyPatch
+    parsed_data: veeam_tapejobs.Section, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Test check for idle job with normal runtime."""
-    # Pre-populate value store with runtime tracking
-    # 2019-07-02 08:41:17 timestamp is 1562056877.0
-    # Job Six: ~14 minutes ago would be 1562056000
-    value_store: dict[str, object] = {"6.running_since": 1562056000}  # Job Six: ~14 minutes ago
+    value_store: dict[str, object] = {"6.running_since": 1562056000}
     monkeypatch.setattr(veeam_tapejobs, "get_value_store", lambda: value_store)
 
     results = list(
@@ -237,22 +228,21 @@ def test_check_veeam_tapejobs_idle_normal_runtime(
     )
 
     assert len(results) == 2
-    # First result: status message
-    assert results[0][0] == 0  # OK status
-    assert "Backup in progress since" in results[0][1]
-    assert "currently idle" in results[0][1]
+    assert isinstance(results[0], Result)
+    assert results[0].state == State.OK
+    assert "Backup in progress since" in results[0].summary
+    assert "currently idle" in results[0].summary
 
-    # Second result: runtime check (should be OK, ~14 minutes)
-    assert results[1][0] == 0  # OK status
-    assert "Running time:" in results[1][1]
+    assert isinstance(results[1], Result)
+    assert results[1].state == State.OK
+    assert "Running time:" in results[1].summary
 
 
 @time_machine.travel(1562056877.0)
 def test_check_veeam_tapejobs_new_job_no_runtime_tracking(
-    parsed_data: dict[str, dict[str, str]], monkeypatch: pytest.MonkeyPatch
+    parsed_data: veeam_tapejobs.Section, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Test check for new working job without existing runtime tracking."""
-    # Value store is empty (initialized but no data)
     value_store: dict[str, object] = {}
     monkeypatch.setattr(veeam_tapejobs, "get_value_store", lambda: value_store)
 
@@ -263,19 +253,21 @@ def test_check_veeam_tapejobs_new_job_no_runtime_tracking(
     )
 
     assert len(results) == 2
-    # Should initialize runtime tracking and show minimal runtime
-    assert results[0][0] == 0  # OK status
-    assert "Backup in progress since" in results[0][1]
-    assert results[1][0] == 0  # OK status (minimal runtime)
+    assert isinstance(results[0], Result)
+    assert results[0].state == State.OK
+    assert "Backup in progress since" in results[0].summary
+    assert isinstance(results[1], Result)
+    assert results[1].state == State.OK
 
 
 def test_check_veeam_tapejobs_nonexistent_item(
-    parsed_data: dict[str, dict[str, str]],
+    parsed_data: veeam_tapejobs.Section,
 ) -> None:
     """Test check for non-existent job item."""
-    result = veeam_tapejobs.check_veeam_tapejobs(
-        "Nonexistent Job", {"levels_upper": (86400, 172800)}, parsed_data
+    result = list(
+        veeam_tapejobs.check_veeam_tapejobs(
+            "Nonexistent Job", {"levels_upper": (86400, 172800)}, parsed_data
+        )
     )
 
-    # Should return None/empty generator for missing items
-    assert result is None or not list(result)
+    assert result == []

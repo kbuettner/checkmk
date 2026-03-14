@@ -3,23 +3,38 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 
 import time
+from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import get_value_store, render
+from cmk.agent_based.v2 import (
+    AgentSection,
+    check_levels,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    render,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
-check_info = {}
-
-BACKUP_STATE = {"Success": 0, "Warning": 1, "Failed": 2}
+BACKUP_STATE: Mapping[str, State] = {
+    "Success": State.OK,
+    "Warning": State.WARN,
+    "Failed": State.CRIT,
+}
 
 _DAY = 3600 * 24
 
+Section = dict[str, dict[str, str]]
 
-def parse_veeam_tapejobs(string_table):
-    parsed = {}
+
+def parse_veeam_tapejobs(string_table: StringTable) -> Section:
+    parsed: Section = {}
     columns = [s.lower() for s in string_table[0]]
 
     for line in string_table[1:]:
@@ -37,13 +52,12 @@ def parse_veeam_tapejobs(string_table):
     return parsed
 
 
-def discover_veeam_tapejobs(parsed):
-    for job in parsed:
-        yield job, {}
+def discover_veeam_tapejobs(section: Section) -> DiscoveryResult:
+    yield from (Service(item=job) for job in section)
 
 
-def check_veeam_tapejobs(item, params, parsed):
-    if not (data := parsed.get(item)):
+def check_veeam_tapejobs(item: str, params: Mapping[str, Any], section: Section) -> CheckResult:
+    if not (data := section.get(item)):
         return
 
     value_store = get_value_store()
@@ -52,8 +66,11 @@ def check_veeam_tapejobs(item, params, parsed):
     last_state = data["last_state"]
 
     if last_result != "None" or last_state not in ("Working", "Idle"):
-        yield BACKUP_STATE.get(last_result, 2), "Last backup result: %s" % last_result
-        yield 0, "Last state: %s" % last_state
+        yield Result(
+            state=BACKUP_STATE.get(last_result, State.CRIT),
+            summary=f"Last backup result: {last_result}",
+        )
+        yield Result(state=State.OK, summary=f"Last state: {last_state}")
         value_store[f"{job_id}.running_since"] = None
         return
 
@@ -64,22 +81,25 @@ def check_veeam_tapejobs(item, params, parsed):
         value_store[f"{job_id}.running_since"] = now
     running_time = now - running_since
 
-    yield (
-        0,
-        f"Backup in progress since {render.datetime(running_since)} (currently {last_state.lower()})",
+    yield Result(
+        state=State.OK,
+        summary=f"Backup in progress since {render.datetime(running_since)} (currently {last_state.lower()})",
     )
-    yield check_levels(
+    yield from check_levels(
         running_time,
-        None,
-        params["levels_upper"],
-        human_readable_func=render.timespan,
-        infoname="Running time",
+        levels_upper=("fixed", params["levels_upper"]),
+        render_func=render.timespan,
+        label="Running time",
     )
 
 
-check_info["veeam_tapejobs"] = LegacyCheckDefinition(
+agent_section_veeam_tapejobs = AgentSection(
     name="veeam_tapejobs",
     parse_function=parse_veeam_tapejobs,
+)
+
+check_plugin_veeam_tapejobs = CheckPlugin(
+    name="veeam_tapejobs",
     service_name="VEEAM Tape Job %s",
     discovery_function=discover_veeam_tapejobs,
     check_function=check_veeam_tapejobs,
