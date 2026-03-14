@@ -9,12 +9,6 @@
 import pytest
 
 
-@pytest.fixture(autouse=True, scope="session")
-def _autouse_fix_register(agent_based_plugins):
-    # make agent_based_plugins autouse for this package. "Check(.)" requires it.
-    pass
-
-
 # patch cmk.utils.paths
 @pytest.fixture(autouse=True, scope="function")
 def patch_cmk_utils_paths(monkeypatch, tmp_path):

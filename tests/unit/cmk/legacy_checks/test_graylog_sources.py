@@ -7,14 +7,12 @@ from collections.abc import Sequence
 
 import pytest
 
-from cmk.agent_based.v2 import Metric, Result, State, StringTable
-from cmk.checkengine.plugins import AgentBasedPlugins, CheckPlugin, CheckPluginName, SectionName
+from cmk.agent_based.v2 import StringTable
+from cmk.legacy_checks.graylog_sources import (
+    check_graylog_sources,
+    parse_graylog_sources,
+)
 from cmk.plugins.graylog import lib as graylog
-
-
-@pytest.fixture(name="check")
-def _graylog_sources_check_plugin(agent_based_plugins: AgentBasedPlugins) -> CheckPlugin:
-    return agent_based_plugins.check_plugins[CheckPluginName("graylog_sources")]
 
 
 @pytest.mark.parametrize(
@@ -30,18 +28,17 @@ def _graylog_sources_check_plugin(agent_based_plugins: AgentBasedPlugins) -> Che
             [['{"sources": {"172.18.0.1": {"messages": 457, "has_since_argument": false}}}']],
             "172.18.0.1",
             [
-                Result(state=State.OK, summary="Total number of messages: 457"),
-                Metric("messages", 457.0),
-                Result(
-                    state=State.OK,
-                    summary="Average number of messages (30 minutes 0 seconds): 0.00",
+                (0, "Total number of messages: 457", [("messages", 457, None, None)]),
+                (
+                    0,
+                    "Average number of messages (30 minutes 0 seconds): 0.00",
+                    [("msgs_avg", 0.0, None, None)],
                 ),
-                Metric("msgs_avg", 0.0),
-                Result(
-                    state=State.OK,
-                    summary="Total number of messages since last check (within 30 minutes 0 seconds): 0",
+                (
+                    0,
+                    "Total number of messages since last check (within 30 minutes 0 seconds): 0",
+                    [("graylog_diff", 0.0, None, None)],
                 ),
-                Metric("graylog_diff", 0.0),
             ],
             id="Timeframe for 'source_since' not configured.",
         ),
@@ -53,18 +50,17 @@ def _graylog_sources_check_plugin(agent_based_plugins: AgentBasedPlugins) -> Che
             ],
             "172.18.0.1",
             [
-                Result(state=State.OK, summary="Total number of messages: 457"),
-                Metric("messages", 457.0),
-                Result(
-                    state=State.OK,
-                    summary="Average number of messages (30 minutes 0 seconds): 0.00",
+                (0, "Total number of messages: 457", [("messages", 457, None, None)]),
+                (
+                    0,
+                    "Average number of messages (30 minutes 0 seconds): 0.00",
+                    [("msgs_avg", 0.0, None, None)],
                 ),
-                Metric("msgs_avg", 0.0),
-                Result(
-                    state=State.OK,
-                    summary="Total number of messages in the last 30 minutes 0 seconds: 5",
+                (
+                    0,
+                    "Total number of messages in the last 30 minutes 0 seconds: 5",
+                    [("graylog_diff", 5.0, None, None)],
                 ),
-                Metric("graylog_diff", 5.0),
             ],
             id="Timeframe for 'source_since' configured. Now the check gives information about the total number of messages received in the timeframe.",
         ),
@@ -72,23 +68,19 @@ def _graylog_sources_check_plugin(agent_based_plugins: AgentBasedPlugins) -> Che
 )
 def test_check_graylog_sources(
     monkeypatch: pytest.MonkeyPatch,
-    check: CheckPlugin,
-    agent_based_plugins: AgentBasedPlugins,
     section: StringTable,
     item: str,
-    expected_check_result: Sequence[Result | Metric],
+    expected_check_result: Sequence[
+        tuple[int, str, list[tuple[str, float, float | None, float | None]]]
+    ],
 ) -> None:
-    parse_graylog_sources = agent_based_plugins.agent_sections[
-        SectionName("graylog_sources")
-    ].parse_function
-
     monkeypatch.setattr(
         graylog, "get_value_store", lambda: {"graylog_msgs_avg.rate": (1670328674.09963, 457)}
     )
 
     assert (
         list(
-            check.check_function(
+            check_graylog_sources(
                 item=item,
                 params={},
                 section=parse_graylog_sources(section),

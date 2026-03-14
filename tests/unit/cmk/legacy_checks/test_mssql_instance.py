@@ -3,21 +3,12 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-import pytest
-
 from cmk.agent_based.v2 import Result, State
-from cmk.checkengine.plugins import AgentBasedPlugins, CheckPlugin, CheckPluginName
+from cmk.plugins.mssql.agent_based.mssql_instance import check_mssql_instance
 
 
-@pytest.fixture
-def check_plugin(agent_based_plugins: AgentBasedPlugins) -> CheckPlugin:
-    return agent_based_plugins.check_plugins[CheckPluginName("mssql_instance")]
-
-
-def test_check_mssql_instance_vanished(
-    check_plugin: CheckPlugin,
-) -> None:
-    assert list(check_plugin.check_function(item="MSSQL instance", params={}, section={})) == [
+def test_check_mssql_instance_vanished() -> None:
+    assert list(check_mssql_instance(item="MSSQL instance", params={}, section={})) == [
         Result(
             state=State.CRIT, summary="Database or necessary processes not running or login failed"
         ),

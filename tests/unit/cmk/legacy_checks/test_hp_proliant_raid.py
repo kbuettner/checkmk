@@ -6,126 +6,58 @@
 # mypy: disable-error-code="misc"
 # mypy: disable-error-code="no-untyped-def"
 
-
-import pytest
-
-from cmk.agent_based.v2 import Result, Service, State
-from cmk.checkengine.plugins import (
-    AgentBasedPlugins,
-    CheckPlugin,
-    CheckPluginName,
-    SectionName,
-    SNMPSectionPlugin,
+from cmk.agent_based.v2 import render
+from cmk.legacy_checks.hp_proliant_raid import (
+    check_hp_proliant_raid,
+    discover_hp_proliant_raid,
+    parse_hp_proliant_raid,
 )
 
-
-@pytest.fixture(name="check_plugin")
-def check_plugin_from_fix_register(agent_based_plugins: AgentBasedPlugins) -> CheckPlugin:
-    return agent_based_plugins.check_plugins[CheckPluginName("hp_proliant_raid")]
-
-
-@pytest.fixture(name="section_plugin")
-def section_plugin_from_fix_register(agent_based_plugins: AgentBasedPlugins) -> SNMPSectionPlugin:
-    return agent_based_plugins.snmp_sections[SectionName("hp_proliant_raid")]
-
-
-@pytest.fixture(name="string_table")
-def snmp_section():
-    return [
-        [
-            ["1", "", "2", "286070", "4294967295"],
-            ["2", "", "2", "25753986", "4294967295"],
-            ["3", "", "2", "30523320", "4294967295"],
-            ["4", "", "2", "15", "4294967295"],
-            ["5", "", "2", "15", "4294967295"],
-            ["6", "", "2", "17169273", "4294967295"],
-        ],
-    ]
+STRING_TABLE = [
+    ["1", "", "2", "286070", "4294967295"],
+    ["2", "", "2", "25753986", "4294967295"],
+    ["3", "", "2", "30523320", "4294967295"],
+    ["4", "", "2", "15", "4294967295"],
+    ["5", "", "2", "15", "4294967295"],
+    ["6", "", "2", "17169273", "4294967295"],
+]
 
 
-def test_discover_hp_proliant_raid_no_snmp_data(
-    check_plugin: CheckPlugin,
-    section_plugin: SNMPSectionPlugin,
-) -> None:
-    assert not list(check_plugin.discovery_function({}))
+def test_discover_hp_proliant_raid_no_snmp_data() -> None:
+    assert not list(discover_hp_proliant_raid({}))
 
 
-def test_discover_hp_proliant_raid_aa(
-    check_plugin: CheckPlugin,
-    section_plugin: SNMPSectionPlugin,
-    string_table,
-) -> None:
-    discovery_results = list(
-        check_plugin.discovery_function(section_plugin.parse_function(string_table))
-    )
+def test_discover_hp_proliant_raid_aa() -> None:
+    discovery_results = list(discover_hp_proliant_raid(parse_hp_proliant_raid(STRING_TABLE)))
     assert discovery_results == [
-        Service(item="1"),
-        Service(item="2"),
-        Service(item="3"),
-        Service(item="4"),
-        Service(item="5"),
-        Service(item="6"),
+        ("1", None),
+        ("2", None),
+        ("3", None),
+        ("4", None),
+        ("5", None),
+        ("6", None),
     ]
 
 
-def test_check_hp_proliant_raid_item_not_found(
-    check_plugin: CheckPlugin,
-    section_plugin: SNMPSectionPlugin,
-    string_table,
-) -> None:
-    assert not list(
-        check_plugin.check_function(
-            item="!111elf",
-            params={},
-            section=section_plugin.parse_function(string_table),
-        )
+def test_check_hp_proliant_raid_item_not_found() -> None:
+    assert not list(check_hp_proliant_raid("!111elf", None, parse_hp_proliant_raid(STRING_TABLE)))
+
+
+def test_check_hp_proliant_raid() -> None:
+    assert list(check_hp_proliant_raid("1", None, parse_hp_proliant_raid(STRING_TABLE))) == [
+        (0, "Status: OK"),
+        (0, f"Logical volume size: {render.bytes(286070 * 1024 * 1024)}"),
+    ]
+
+
+def test_check_hp_proliant_raid_progress_cannot_be_determined() -> None:
+    parsed = parse_hp_proliant_raid(
+        [
+            ["1", "banana", "7", "286070", "4294967295"],
+        ]
     )
-
-
-def test_check_hp_proliant_raid(
-    check_plugin: CheckPlugin,
-    section_plugin: SNMPSectionPlugin,
-    string_table,
-) -> None:
-    assert list(
-        check_plugin.check_function(
-            item="1",
-            params={},
-            section=section_plugin.parse_function(string_table),
-        )
-    ) == [
-        Result(state=State.OK, summary="Status: OK"),
-        Result(state=State.OK, summary="Logical volume size: 279 GiB"),
-    ]
-
-
-def test_check_hp_proliant_raid_progress_cannot_be_determined(
-    check_plugin: CheckPlugin,
-    section_plugin: SNMPSectionPlugin,
-) -> None:
-    assert list(
-        check_plugin.check_function(
-            item="banana 1",
-            params={},
-            section=section_plugin.parse_function(
-                [
-                    [
-                        ["1", "banana", "7", "286070", "4294967295"],
-                    ],
-                ]
-            ),
-        )
-    ) == [
-        Result(
-            state=State.WARN,
-            summary="Status: rebuilding",
-        ),
-        Result(
-            state=State.OK,
-            summary="Logical volume size: 279 GiB",
-        ),
-        Result(
-            state=State.OK,
-            summary="Rebuild: undetermined",
-        ),
+    assert list(check_hp_proliant_raid("banana 1", None, parsed)) == [
+        (1, "Status: rebuilding"),
+        (0, f"Logical volume size: {render.bytes(286070 * 1024 * 1024)}"),
+        (0, "Rebuild: undetermined"),
     ]
