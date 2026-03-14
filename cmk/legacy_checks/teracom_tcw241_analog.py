@@ -3,15 +3,21 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
-
+from collections.abc import Sequence
 from typing import NamedTuple
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import contains, SNMPTree
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    check_levels,
+    CheckPlugin,
+    CheckResult,
+    contains,
+    DiscoveryResult,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    StringTable,
+)
 
 
 class AnalogSensor(NamedTuple):
@@ -23,8 +29,10 @@ class AnalogSensor(NamedTuple):
 
 _TABLES = ["1", "2", "3", "4"]
 
+Section = dict[str, AnalogSensor]
 
-def parse_tcw241_analog(string_table):
+
+def parse_tcw241_analog(string_table: Sequence[StringTable]) -> Section:
     """
     parse string_table data and create list of namedtuples for 4 analog sensors.
 
@@ -47,7 +55,7 @@ def parse_tcw241_analog(string_table):
     except IndexError:
         return {}
 
-    info_dict = {}
+    info_dict: Section = {}
     for item, ((description, maximum, minimum),), voltage in zip(
         _TABLES, sensor_parameter, voltages
     ):
@@ -70,31 +78,30 @@ def parse_tcw241_analog(string_table):
     return info_dict
 
 
-def check_tcw241_analog(item, params, parsed):
+def check_tcw241_analog(item: str, section: Section) -> CheckResult:
     """
     Check sensor data if value is in range
 
     :param item: sensor number
-    :param params: <not used>
-    :param sensor: analog sensor data
+    :param section: analog sensor data
     :return: status
     """
-    if not (sensor := parsed.get(item)):
+    if not (sensor := section.get(item)):
         return
-    yield check_levels(
+    yield from check_levels(
         sensor.voltage,
-        "voltage",
-        (sensor.minimum, sensor.maximum),
-        human_readable_func=lambda x: f"{x:.2f} V",
-        infoname="[%s]" % sensor.description,
+        metric_name="voltage",
+        levels_upper=("fixed", (sensor.minimum, sensor.maximum)),
+        render_func=lambda x: f"{x:.2f} V",
+        label=f"[{sensor.description}]",
     )
 
 
-def discover_teracom_tcw241_analog(section):
-    yield from ((item, {}) for item in section)
+def discover_teracom_tcw241_analog(section: Section) -> DiscoveryResult:
+    yield from (Service(item=item) for item in section)
 
 
-check_info["teracom_tcw241_analog"] = LegacyCheckDefinition(
+snmp_section_teracom_tcw241_analog = SNMPSection(
     name="teracom_tcw241_analog",
     detect=contains(".1.3.6.1.2.1.1.1.0", "Teracom"),
     fetch=[
@@ -115,6 +122,10 @@ check_info["teracom_tcw241_analog"] = LegacyCheckDefinition(
         ),
     ],
     parse_function=parse_tcw241_analog,
+)
+
+check_plugin_teracom_tcw241_analog = CheckPlugin(
+    name="teracom_tcw241_analog",
     service_name="Analog Sensor %s",
     discovery_function=discover_teracom_tcw241_analog,
     check_function=check_tcw241_analog,
