@@ -3,9 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-# mypy: disable-error-code="possibly-undefined"
-
 # Header: Schedule Name, Application Name, Schedule Description, Failures
 # <<<unitrends_backup:sep(124)>>>
 # HEADER|DMZ-SR01|Hyper-V 2012|DMZ-HV01|0
@@ -14,24 +11,29 @@
 # owncloud-test|18762|Incremental|Successful
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
-check_info = {}
 
-
-def discover_unitrends_backup(info):
-    inventory = []
-    for line in info:
+def discover_unitrends_backup(section: StringTable) -> DiscoveryResult:
+    for line in section:
         if line[0] == "HEADER":
-            inventory.append((line[1], None))
-    return inventory
+            yield Service(item=line[1])
 
 
-def check_unitrends_backup(item, _no_params, info):
+def check_unitrends_backup(item: str, section: StringTable) -> CheckResult:
     message = None
+    failures = ""
     details: list[str] = []
-    for line in info:
+    for line in section:
         if line[0] == "HEADER" and message is not None:
             # We are finish collection detail informatoinen
             break
@@ -49,18 +51,24 @@ def check_unitrends_backup(item, _no_params, info):
     if message is not None:
         message += "\n" + "\n".join(details)
         if failures == "0":
-            return 0, message
-        return 2, message
-    return 3, "Schedule not found in Agent Output"
+            yield Result(state=State.OK, summary=message)
+        else:
+            yield Result(state=State.CRIT, summary=message)
+        return
+    yield Result(state=State.UNKNOWN, summary="Schedule not found in Agent Output")
 
 
 def parse_unitrends_backup(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["unitrends_backup"] = LegacyCheckDefinition(
+agent_section_unitrends_backup = AgentSection(
     name="unitrends_backup",
     parse_function=parse_unitrends_backup,
+)
+
+check_plugin_unitrends_backup = CheckPlugin(
+    name="unitrends_backup",
     service_name="Schedule %s",
     discovery_function=discover_unitrends_backup,
     check_function=check_unitrends_backup,
