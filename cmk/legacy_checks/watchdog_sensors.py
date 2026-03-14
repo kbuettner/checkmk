@@ -3,17 +3,27 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-call"
-# mypy: disable-error-code="no-untyped-def"
 
+from collections.abc import Generator, Mapping, Sequence
+from typing import Any
 
-# mypy: disable-error-code="var-annotated"
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import any_of, OIDEnd, SNMPTree, startswith
-from cmk.legacy_includes.temperature import check_temperature
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    any_of,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    Metric,
+    OIDEnd,
+    Result,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
 
 # very odd and confusing example outputs:
 
@@ -38,57 +48,59 @@ check_info = {}
 # .1.3.6.1.4.1.21239.5.1.2.1.6.1 46
 # .1.3.6.1.4.1.21239.5.1.2.1.7.1 56
 
+Section = dict[str, dict[str, Any]]
 
-def _translate_availability(availability):
-    return {
-        "0": (2, "unavailable"),
-        "1": (0, "available"),
-        "2": (1, "partially unavailable"),
-    }[availability]
+_AVAILABILITY_MAP: Mapping[str, tuple[State, str]] = {
+    "0": (State.CRIT, "unavailable"),
+    "1": (State.OK, "available"),
+    "2": (State.WARN, "partially unavailable"),
+}
 
 
-def _parse_legacy_line(line, temp_unit):
+def _parse_legacy_line(
+    line: Sequence[str], temp_unit: str
+) -> Generator[tuple[str, dict[str, Any]]]:
     """
     >>> [i for i in _parse_legacy_line(['1', 'blah', '2CD', '1', '30', '20', '8'], 'C')]
-    [('general', {'Watchdog 1': {'descr': 'blah', 'availability': (0, 'available')}}), ('temp', {'Temperature 1': ('30', 'C')}), ('humidity', {'Humidity 1': '20'}), ('dew', {'Dew point 1': ('8', 'C')})]
+    [('general', {'Watchdog 1': {'descr': 'blah', 'availability': ('1',)}}), ('temp', {'Temperature 1': ('30', 'C')}), ('humidity', {'Humidity 1': '20'}), ('dew', {'Dew point 1': ('8', 'C')})]
     """
     sensor_id = line[0]
     yield (
         "general",
         {
-            "Watchdog %s" % sensor_id: {
+            f"Watchdog {sensor_id}": {
                 "descr": line[1],
-                "availability": _translate_availability(line[3]),
+                "availability": (line[3],),
             },
         },
     )
-    yield "temp", {"Temperature %s" % sensor_id: (line[4], temp_unit)}
-    yield "humidity", {"Humidity %s" % sensor_id: line[5]}
-    yield "dew", {"Dew point %s" % sensor_id: (line[6], temp_unit)}
+    yield "temp", {f"Temperature {sensor_id}": (line[4], temp_unit)}
+    yield "humidity", {f"Humidity {sensor_id}": line[5]}
+    yield "dew", {f"Dew point {sensor_id}": (line[6], temp_unit)}
 
 
-def _parse_line(line, temp_unit):
+def _parse_line(line: Sequence[str], temp_unit: str) -> Generator[tuple[str, dict[str, Any]]]:
     """
     >>> [i for i in _parse_line(['1', 'blah', '1', '30', '20', '8'], 'C')]
-    [('general', {'Watchdog 1': {'descr': 'blah', 'availability': (0, 'available')}}), ('temp', {'Temperature 1': ('30', 'C')}), ('humidity', {'Humidity 1': '20'}), ('dew', {'Dew point 1': ('8', 'C')})]
+    [('general', {'Watchdog 1': {'descr': 'blah', 'availability': ('1',)}}), ('temp', {'Temperature 1': ('30', 'C')}), ('humidity', {'Humidity 1': '20'}), ('dew', {'Dew point 1': ('8', 'C')})]
     """
     sensor_id = line[0]
     yield (
         "general",
         {
-            "Watchdog %s" % sensor_id: {
+            f"Watchdog {sensor_id}": {
                 "descr": line[1],
-                "availability": _translate_availability(line[2]),
+                "availability": (line[2],),
             },
         },
     )
-    yield "temp", {"Temperature %s" % sensor_id: (line[3], temp_unit)}
-    yield "humidity", {"Humidity %s" % sensor_id: line[4]}
-    yield "dew", {"Dew point %s" % sensor_id: (line[5], temp_unit)}
+    yield "temp", {f"Temperature {sensor_id}": (line[3], temp_unit)}
+    yield "humidity", {f"Humidity {sensor_id}": line[4]}
+    yield "dew", {f"Dew point {sensor_id}": (line[5], temp_unit)}
 
 
-def parse_watchdog_sensors(string_table):
-    parsed = {}
+def parse_watchdog_sensors(string_table: Sequence[StringTable]) -> Section:
+    parsed: Section = {}
 
     general, data = string_table
     if not general:
@@ -115,39 +127,30 @@ def parse_watchdog_sensors(string_table):
 
 
 # .
-#   .--general-------------------------------------------------------------.
-#   |                                                  _                   |
-#   |                   __ _  ___ _ __   ___ _ __ __ _| |                  |
-#   |                  / _` |/ _ \ '_ \ / _ \ '__/ _` | |                  |
-#   |                 | (_| |  __/ | | |  __/ | | (_| | |                  |
-#   |                  \__, |\___|_| |_|\___|_|  \__,_|_|                  |
-#   |                  |___/                                               |
-#   +----------------------------------------------------------------------+
-#   |                                                                      |
-#   '----------------------------------------------------------------------'
+#   .--general-------------------------------------------------------------
 
 
-def discover_watchdog_sensors(parsed):
-    for key in parsed.get("general", {}):
-        yield (key, {})
+def discover_watchdog_sensors(section: Section) -> DiscoveryResult:
+    yield from (Service(item=key) for key in section.get("general", {}))
 
 
-def check_watchdog_sensors(item, params, parsed):
-    data = parsed.get("general", {}).get(item)
+def check_watchdog_sensors(item: str, section: Section) -> CheckResult:
+    data = section.get("general", {}).get(item)
 
     if not data:
         return
 
     descr = data["descr"]
-    state, state_readable = data["availability"]
+    (availability_raw,) = data["availability"]
+    state, state_readable = _AVAILABILITY_MAP[availability_raw]
 
-    yield state, state_readable
+    yield Result(state=state, summary=state_readable)
 
-    if not descr == "":
-        yield 0, "Location: %s" % descr
+    if descr != "":
+        yield Result(state=State.OK, summary=f"Location: {descr}")
 
 
-check_info["watchdog_sensors"] = LegacyCheckDefinition(
+snmp_section_watchdog_sensors = SNMPSection(
     name="watchdog_sensors",
     detect=any_of(
         startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.21239.5.1"),
@@ -164,73 +167,61 @@ check_info["watchdog_sensors"] = LegacyCheckDefinition(
         ),
     ],
     parse_function=parse_watchdog_sensors,
+)
+
+check_plugin_watchdog_sensors = CheckPlugin(
+    name="watchdog_sensors",
     service_name="%s",
     discovery_function=discover_watchdog_sensors,
     check_function=check_watchdog_sensors,
 )
 
 # .
-#   .--temp----------------------------------------------------------------.
-#   |                       _                                              |
-#   |                      | |_ ___ _ __ ___  _ __                         |
-#   |                      | __/ _ \ '_ ` _ \| '_ \                        |
-#   |                      | ||  __/ | | | | | |_) |                       |
-#   |                       \__\___|_| |_| |_| .__/                        |
-#   |                                        |_|                           |
-#   +----------------------------------------------------------------------+
-#   |                                                                      |
-#   '----------------------------------------------------------------------'
+#   .--temp----------------------------------------------------------------
 
 
-def discover_watchdog_sensors_temp(parsed):
-    for key in parsed.get("temp", {}):
-        yield (key, {})
+def discover_watchdog_sensors_temp(section: Section) -> DiscoveryResult:
+    yield from (Service(item=key) for key in section.get("temp", {}))
 
 
-def check_watchdog_sensors_temp(item, params, parsed):
-    data = parsed.get("temp", {}).get(item)
+def check_watchdog_sensors_temp(item: str, params: TempParamType, section: Section) -> CheckResult:
+    data = section.get("temp", {}).get(item)
 
     if not data:
-        return None
+        return
 
     temperature_str, unit = data
-    return check_temperature(
-        float(temperature_str) / 10.0,
-        params,
-        "check_watchdog_sensors.%s" % item,
+    yield from check_temperature(
+        reading=float(temperature_str) / 10.0,
+        params=params,
+        unique_name=f"check_watchdog_sensors.{item}",
+        value_store=get_value_store(),
         dev_unit=unit.lower(),
     )
 
 
-check_info["watchdog_sensors.temp"] = LegacyCheckDefinition(
+check_plugin_watchdog_sensors_temp = CheckPlugin(
     name="watchdog_sensors_temp",
     service_name="%s ",
     sections=["watchdog_sensors"],
     discovery_function=discover_watchdog_sensors_temp,
     check_function=check_watchdog_sensors_temp,
     check_ruleset_name="temperature",
+    check_default_parameters={},
 )
 
 # .
-#   .--humidity------------------------------------------------------------.
-#   |              _                     _     _ _ _                       |
-#   |             | |__  _   _ _ __ ___ (_) __| (_) |_ _   _               |
-#   |             | '_ \| | | | '_ ` _ \| |/ _` | | __| | | |              |
-#   |             | | | | |_| | | | | | | | (_| | | |_| |_| |              |
-#   |             |_| |_|\__,_|_| |_| |_|_|\__,_|_|\__|\__, |              |
-#   |                                                  |___/               |
-#   +----------------------------------------------------------------------+
-#   |                                                                      |
-#   '----------------------------------------------------------------------'
+#   .--humidity------------------------------------------------------------
 
 
-def discover_watchdog_sensors_humidity(parsed):
-    for key in parsed.get("humidity", {}):
-        yield (key, {})
+def discover_watchdog_sensors_humidity(section: Section) -> DiscoveryResult:
+    yield from (Service(item=key) for key in section.get("humidity", {}))
 
 
-def check_watchdog_sensors_humidity(item, params, parsed):
-    data = parsed.get("humidity", {}).get(item)
+def check_watchdog_sensors_humidity(
+    item: str, params: Mapping[str, Any], section: Section
+) -> CheckResult:
+    data = section.get("humidity", {}).get(item)
 
     if not data:
         return
@@ -239,19 +230,30 @@ def check_watchdog_sensors_humidity(item, params, parsed):
     warn, crit = params["levels"]
     warn_lower, crit_lower = params["levels_lower"]
 
-    yield 0, "%.1f%%" % humidity, [("humidity", humidity, warn, crit)]
-
     if humidity >= crit:
-        yield 2, f"warn/crit at {warn}/{crit}"
+        state = State.CRIT
     elif humidity <= crit_lower:
-        yield 2, f"warn/crit at {warn}/{crit}"
+        state = State.CRIT
     elif humidity >= warn:
-        yield 1, f"warn/crit below {warn}/{crit}"
+        state = State.WARN
     elif humidity <= warn_lower:
-        yield 1, f"warn/crit below {warn}/{crit}"
+        state = State.WARN
+    else:
+        state = State.OK
+
+    summary = f"{humidity:.1f}%"
+    if state is not State.OK:
+        summary += (
+            f" (warn/crit at {warn}/{crit})"
+            if humidity >= warn
+            else f" (warn/crit below {warn_lower}/{crit_lower})"
+        )
+
+    yield Result(state=state, summary=summary)
+    yield Metric("humidity", humidity, levels=(warn, crit))
 
 
-check_info["watchdog_sensors.humidity"] = LegacyCheckDefinition(
+check_plugin_watchdog_sensors_humidity = CheckPlugin(
     name="watchdog_sensors_humidity",
     service_name="%s",
     sections=["watchdog_sensors"],
@@ -265,25 +267,15 @@ check_info["watchdog_sensors.humidity"] = LegacyCheckDefinition(
 )
 
 # .
-#   .--dew-----------------------------------------------------------------.
-#   |                             _                                        |
-#   |                          __| | _____      __                         |
-#   |                         / _` |/ _ \ \ /\ / /                         |
-#   |                        | (_| |  __/\ V  V /                          |
-#   |                         \__,_|\___| \_/\_/                           |
-#   |                                                                      |
-#   +----------------------------------------------------------------------+
-#   |                                                                      |
-#   '----------------------------------------------------------------------'
+#   .--dew-----------------------------------------------------------------
 
 
-def discover_watchdog_sensors_dew(parsed):
-    for key in parsed.get("dew", {}):
-        yield (key, {})
+def discover_watchdog_sensors_dew(section: Section) -> DiscoveryResult:
+    yield from (Service(item=key) for key in section.get("dew", {}))
 
 
-def check_watchdog_sensors_dew(item, params, parsed):
-    data = parsed.get("dew", {}).get(item)
+def check_watchdog_sensors_dew(item: str, params: TempParamType, section: Section) -> CheckResult:
+    data = section.get("dew", {}).get(item)
 
     if not data:
         return
@@ -292,14 +284,20 @@ def check_watchdog_sensors_dew(item, params, parsed):
     unit = data[1]
     if unit == "F":
         dew = 5.0 / 9.0 * (dew - 32)
-    yield check_temperature(dew, params, "check_watchdog_sensors.%s" % item)
+    yield from check_temperature(
+        reading=dew,
+        params=params,
+        unique_name=f"check_watchdog_sensors.{item}",
+        value_store=get_value_store(),
+    )
 
 
-check_info["watchdog_sensors.dew"] = LegacyCheckDefinition(
+check_plugin_watchdog_sensors_dew = CheckPlugin(
     name="watchdog_sensors_dew",
     service_name="%s",
     sections=["watchdog_sensors"],
     discovery_function=discover_watchdog_sensors_dew,
     check_function=check_watchdog_sensors_dew,
     check_ruleset_name="temperature",
+    check_default_parameters={},
 )

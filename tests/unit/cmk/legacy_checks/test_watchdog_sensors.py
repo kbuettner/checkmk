@@ -3,15 +3,11 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="misc"
-# mypy: disable-error-code="no-untyped-call"
-
-from collections.abc import Mapping, Sequence
-from typing import Any
+from collections.abc import Sequence
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Result, Service, State, StringTable
 from cmk.legacy_checks.watchdog_sensors import (
     check_watchdog_sensors,
     discover_watchdog_sensors,
@@ -30,25 +26,25 @@ from cmk.legacy_checks.watchdog_sensors import (
                     ["2", "Second Floor Ambient", "1", "200", "30", "40", ""],
                 ],
             ],
-            [("Watchdog 1", {}), ("Watchdog 2", {})],
+            [Service(item="Watchdog 1"), Service(item="Watchdog 2")],
         ),
     ],
 )
 def test_discover_watchdog_sensors(
-    string_table: StringTable, expected_discoveries: Sequence[tuple[str, Mapping[str, Any]]]
+    string_table: Sequence[StringTable], expected_discoveries: Sequence[Service]
 ) -> None:
-    """Test discovery function for watchdog_sensors check."""
     parsed = parse_watchdog_sensors(string_table)
     result = list(discover_watchdog_sensors(parsed))
-    assert sorted(result) == sorted(expected_discoveries)
+    assert sorted(result, key=lambda s: s.item or "") == sorted(
+        expected_discoveries, key=lambda s: s.item or ""
+    )
 
 
 @pytest.mark.parametrize(
-    "item, params, string_table, expected_results",
+    "item, string_table, expected_results",
     [
         (
             "Watchdog 1",
-            {},
             [
                 [["3.2.0", "1"]],
                 [
@@ -56,11 +52,13 @@ def test_discover_watchdog_sensors(
                     ["2", "Second Floor Ambient", "1", "200", "30", "40", ""],
                 ],
             ],
-            [(0, "available"), (0, "Location: First Floor Ambient")],
+            [
+                Result(state=State.OK, summary="available"),
+                Result(state=State.OK, summary="Location: First Floor Ambient"),
+            ],
         ),
         (
             "Watchdog 2",
-            {},
             [
                 [["3.2.0", "1"]],
                 [
@@ -68,14 +66,16 @@ def test_discover_watchdog_sensors(
                     ["2", "Second Floor Ambient", "1", "200", "30", "40", ""],
                 ],
             ],
-            [(0, "available"), (0, "Location: Second Floor Ambient")],
+            [
+                Result(state=State.OK, summary="available"),
+                Result(state=State.OK, summary="Location: Second Floor Ambient"),
+            ],
         ),
     ],
 )
 def test_check_watchdog_sensors(
-    item: str, params: Mapping[str, Any], string_table: StringTable, expected_results: Sequence[Any]
+    item: str, string_table: Sequence[StringTable], expected_results: Sequence[Result]
 ) -> None:
-    """Test check function for watchdog_sensors check."""
     parsed = parse_watchdog_sensors(string_table)
-    result = list(check_watchdog_sensors(item, params, parsed))
+    result = list(check_watchdog_sensors(item, parsed))
     assert result == expected_results
