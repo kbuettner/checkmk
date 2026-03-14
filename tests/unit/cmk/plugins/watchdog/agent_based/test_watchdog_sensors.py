@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.watchdog_sensors import (
+from cmk.plugins.watchdog.agent_based.watchdog_sensors import (
     check_watchdog_sensors,
     discover_watchdog_sensors,
     parse_watchdog_sensors,
