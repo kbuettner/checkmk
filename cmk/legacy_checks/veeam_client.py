@@ -3,23 +3,31 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-call"
-# mypy: disable-error-code="no-untyped-def"
-# mypy: disable-error-code="possibly-undefined"
-
-
-# mypy: disable-error-code="var-annotated"
 
 import time
+from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import render
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Metric,
+    render,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
-check_info = {}
+Section = dict[str, dict[str, str]]
 
 
-def parse_veeam_client(string_table):
-    data = {}
+def parse_veeam_client(string_table: StringTable) -> Section:
+    data: Section = {}
+    last_status: str | bool = False
+    last_found: str = ""
     for line in string_table:
         if line[0] == "Status":
             if len(line) == 2:
@@ -31,18 +39,19 @@ def parse_veeam_client(string_table):
             if last_status:
                 last_found = line[1]
                 data[last_found] = {}
-                data[last_found]["Status"] = last_status
+                data[last_found]["Status"] = str(last_status)
         elif last_status and len(line) == 2:
             data[last_found][line[0]] = line[1]
     return data
 
 
-def discover_veeam_client(parsed):
-    for job in parsed:
-        yield job, {}
+def discover_veeam_client(section: Section) -> DiscoveryResult:
+    yield from (Service(item=job) for job in section)
 
 
-def _check_backup_age(data, params, state):
+def _check_backup_age(
+    data: dict[str, str], params: Mapping[str, Any], state: State
+) -> tuple[State, str | None]:
     if (backup_age := data.get("LastBackupAge")) is not None:
         age = float(backup_age)
     # elif section (StopTime) kept for compatibility with old agent version
@@ -52,66 +61,67 @@ def _check_backup_age(data, params, state):
         if stop_time == "01.01.1900 00:00:00":
             return state, None
 
-        stop_time = time.mktime(time.strptime(stop_time, "%d.%m.%Y %H:%M:%S"))
-        age = time.time() - stop_time
+        stop_time_epoch = time.mktime(time.strptime(stop_time, "%d.%m.%Y %H:%M:%S"))
+        age = time.time() - stop_time_epoch
     else:
-        return 2, "No complete Backup(!!)"
+        return State.CRIT, "No complete Backup(!!)"
 
     warn, crit = params["age"]
     levels = ""
     label = ""
     if age >= crit:
-        state = 2
+        state = State.CRIT
         label = "(!!)"
         levels = f" (Warn/Crit: {render.timespan(warn)}/{render.timespan(crit)})"
     elif age >= warn:
-        state = max(state, 1)
+        state = State.worst(state, State.WARN)
         label = "(!)"
         levels = f" (Warn/Crit: {render.timespan(warn)}/{render.timespan(crit)})"
 
     return state, f"Last backup: {render.timespan(age)} ago{label}{levels}"
 
 
-def check_veeam_client(item, params, parsed):
+def check_veeam_client(item: str, params: Mapping[str, Any], section: Section) -> CheckResult:
     try:
-        data = parsed[item]
+        data = section[item]
     except KeyError:
-        return 3, "Client not found in agent output"
+        yield Result(state=State.UNKNOWN, summary="Client not found in agent output")
+        return
 
-    perfdata = []
     infotexts = []
 
-    state = 0
+    state = State.OK
     # Append current Status to Output
     if data["Status"] == "Warning":
-        state = 1
+        state = State.WARN
     if data["Status"] == "Failed":
-        state = 2
-    infotexts.append("Status: %s" % data["Status"])
+        state = State.CRIT
+    infotexts.append(f"Status: {data['Status']}")
 
     # Only output the Job name
     if data.get("JobName"):
-        infotexts.append("Job: %s" % data["JobName"])
+        infotexts.append(f"Job: {data['JobName']}")
 
     size_info = []
     size_legend = []
+    metrics = []
 
-    TotalSizeByte = int(data["TotalSizeByte"])
-    perfdata.append(("totalsize", TotalSizeByte))
-    size_info.append(render.bytes(TotalSizeByte))
+    total_size_byte = int(data["TotalSizeByte"])
+    metrics.append(Metric("totalsize", total_size_byte))
+    size_info.append(render.bytes(total_size_byte))
     size_legend.append("total")
 
     # Output ReadSize and TransferedSize if available
     if "ReadSizeByte" in data:
-        ReadSizeByte = int(data["ReadSizeByte"])
-        perfdata.append(("readsize", ReadSizeByte))
-        size_info.append(render.bytes(ReadSizeByte))
+        read_size_byte = int(data["ReadSizeByte"])
+        metrics.append(Metric("readsize", read_size_byte))
+        size_info.append(render.bytes(read_size_byte))
         size_legend.append("read")
 
     if "TransferedSizeByte" in data:
-        TransferedSizeByte = int(data["TransferedSizeByte"])
-        perfdata.append(("transferredsize", TransferedSizeByte))
-        size_info.append(render.bytes(TransferedSizeByte))
+        transfered_size_byte = int(data["TransferedSizeByte"])
+        metrics.append(Metric("transferredsize", transfered_size_byte))
+        size_info.append(render.bytes(transfered_size_byte))
         size_legend.append("transferred")
 
     infotexts.append("Size ({}): {}".format("/".join(size_legend), "/ ".join(size_info)))
@@ -132,24 +142,29 @@ def check_veeam_client(item, params, parsed):
             duration += minutes * 60
             duration += hours * 60 * 60
             duration += days * 60 * 60 * 24
-            infotexts.append("Duration: %s" % render.timespan(duration))
-            perfdata.append(("duration", duration))
+            infotexts.append(f"Duration: {render.timespan(duration)}")
+            metrics.append(Metric("duration", duration))
 
     if "AvgSpeedBps" in data:
         avg_speed_bps = int(data["AvgSpeedBps"])
-        perfdata.append(("avgspeed", avg_speed_bps))
-        infotexts.append("Average Speed: %s" % render.iobandwidth(avg_speed_bps))
+        metrics.append(Metric("avgspeed", avg_speed_bps))
+        infotexts.append(f"Average Speed: {render.iobandwidth(avg_speed_bps)}")
 
     # Append backup server if available
     if "BackupServer" in data:
-        infotexts.append("Backup server: %s" % data["BackupServer"])
+        infotexts.append(f"Backup server: {data['BackupServer']}")
 
-    return state, ", ".join(infotexts), perfdata
+    yield Result(state=state, summary=", ".join(infotexts))
+    yield from metrics
 
 
-check_info["veeam_client"] = LegacyCheckDefinition(
+agent_section_veeam_client = AgentSection(
     name="veeam_client",
     parse_function=parse_veeam_client,
+)
+
+check_plugin_veeam_client = CheckPlugin(
+    name="veeam_client",
     service_name="VEEAM Client %s",
     discovery_function=discover_veeam_client,
     check_function=check_veeam_client,

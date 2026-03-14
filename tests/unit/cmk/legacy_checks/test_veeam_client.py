@@ -3,16 +3,14 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-call"
-
 import datetime
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from zoneinfo import ZoneInfo
 
 import pytest
 import time_machine
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Result, Service, State, StringTable
 from cmk.legacy_checks.veeam_client import (
     check_veeam_client,
     discover_veeam_client,
@@ -34,19 +32,19 @@ from cmk.legacy_checks.veeam_client import (
                 ["AvgSpeedBps", "100"],
                 ["DisplayName", "name"],
             ],
-            [("JOB_NAME", {})],
+            [Service(item="JOB_NAME")],
             id="section with status",
         ),
     ],
 )
 def test_discover_veeam_client(
-    string_table: StringTable, expected_result: Sequence[tuple[str, Mapping[str, object]]]
+    string_table: StringTable, expected_result: Sequence[Service]
 ) -> None:
     assert list(discover_veeam_client(parse_veeam_client(string_table))) == expected_result
 
 
 @pytest.mark.parametrize(
-    "item, string_table, expected_result",
+    "item, string_table, expected_summary, expected_state",
     [
         pytest.param(
             "JOB_NAME",
@@ -59,12 +57,9 @@ def test_discover_veeam_client(
                 ["AvgSpeedBps", "100"],
                 ["DisplayName", "name"],
             ],
-            [
-                2,
-                "Status: Success, Size (total): 100 B, No complete Backup(!!), Duration: 1 "
-                "hour 0 minutes, Average Speed: 100 B/s",
-                [("totalsize", 100), ("duration", 3600), ("avgspeed", 100)],
-            ],
+            "Status: Success, Size (total): 100 B, No complete Backup(!!), Duration: 1 "
+            "hour 0 minutes, Average Speed: 100 B/s",
+            State.CRIT,
             id="section without StopTime or LastBackupAge",
         ),
         pytest.param(
@@ -79,12 +74,9 @@ def test_discover_veeam_client(
                 ["AvgSpeedBps", "100"],
                 ["DisplayName", "name"],
             ],
-            [
-                0,
-                "Status: Success, Size (total): 100 B, Last backup: 5 seconds ago, Duration: "
-                "1 hour 0 minutes, Average Speed: 100 B/s",
-                [("totalsize", 100), ("duration", 3600), ("avgspeed", 100)],
-            ],
+            "Status: Success, Size (total): 100 B, Last backup: 5 seconds ago, Duration: "
+            "1 hour 0 minutes, Average Speed: 100 B/s",
+            State.OK,
             id="section success LastBackupAge",
         ),
         pytest.param(
@@ -99,11 +91,8 @@ def test_discover_veeam_client(
                 ["AvgSpeedBps", "100"],
                 ["DisplayName", "name"],
             ],
-            [
-                0,
-                "Status: InProgress, Size (total): 100 B, Average Speed: 100 B/s",
-                [("totalsize", 100), ("avgspeed", 100)],
-            ],
+            "Status: InProgress, Size (total): 100 B, Average Speed: 100 B/s",
+            State.OK,
             id="section in progress StopTime",
         ),
         pytest.param(
@@ -118,11 +107,8 @@ def test_discover_veeam_client(
                 ["AvgSpeedBps", "100"],
                 ["DisplayName", "name"],
             ],
-            [
-                0,
-                "Status: InProgress, Size (total): 100 B, Average Speed: 100 B/s",
-                [("totalsize", 100), ("avgspeed", 100)],
-            ],
+            "Status: InProgress, Size (total): 100 B, Average Speed: 100 B/s",
+            State.OK,
             id="section in progress LastBackupAge",
         ),
     ],
@@ -130,17 +116,18 @@ def test_discover_veeam_client(
 def test_check_veeam_client(
     item: str,
     string_table: StringTable,
-    expected_result: Sequence[tuple[int, str, Sequence[tuple[str, int]]]],
+    expected_summary: str,
+    expected_state: State,
 ) -> None:
     with time_machine.travel(
         datetime.datetime.fromisoformat("2015-02-01 21:05:50").replace(tzinfo=ZoneInfo("CET")),
         tick=False,
     ):
-        assert (
-            list(
-                check_veeam_client(
-                    item, params={"age": (20, 40)}, parsed=parse_veeam_client(string_table)
-                )
+        results = list(
+            check_veeam_client(
+                item, params={"age": (20, 40)}, section=parse_veeam_client(string_table)
             )
-            == expected_result
         )
+        result_obj = [r for r in results if isinstance(r, Result)][0]
+        assert result_obj.state == expected_state
+        assert result_obj.summary == expected_summary
