@@ -13,47 +13,49 @@
 # 0.00 0.00 15.00
 
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import (
+from cmk.agent_based.v2 import (
+    AgentSection,
     check_levels,
-    LegacyCheckDefinition,
-    LegacyCheckResult,
-    LegacyResult,
-    LegacyService,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Metric,
+    Result,
+    Service,
+    State,
+    StringTable,
 )
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
 
 
 def parse_vms_system(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["vms_system"] = LegacyCheckDefinition(
+agent_section_vms_system = AgentSection(
     name="vms_system",
     parse_function=parse_vms_system,
 )
 
 
-def discover_vms_system(info: StringTable) -> Sequence[LegacyService]:
-    if len(info) > 0:
-        return [(None, {})]
-    return []
+def discover_vms_system(section: StringTable) -> DiscoveryResult:
+    if len(section) > 0:
+        yield Service()
 
 
-def check_vms_system_ios(_no_item: None, _no_params: None, info: StringTable) -> LegacyResult:
-    direct_ios, buffered_ios = map(float, info[0][:2])
-    return (
-        0,
-        f"Direct IOs: {direct_ios:.2f}/sec, Buffered IOs: {buffered_ios:.2f}/sec",
-        [("direct", direct_ios), ("buffered", buffered_ios)],
+def check_vms_system_ios(section: StringTable) -> CheckResult:
+    direct_ios, buffered_ios = map(float, section[0][:2])
+    yield Result(
+        state=State.OK,
+        summary=f"Direct IOs: {direct_ios:.2f}/sec, Buffered IOs: {buffered_ios:.2f}/sec",
     )
+    yield Metric("direct", direct_ios)
+    yield Metric("buffered", buffered_ios)
 
 
-check_info["vms_system.ios"] = LegacyCheckDefinition(
+check_plugin_vms_system_ios = CheckPlugin(
     name="vms_system_ios",
     service_name="IOs",
     sections=["vms_system"],
@@ -62,22 +64,22 @@ check_info["vms_system.ios"] = LegacyCheckDefinition(
 )
 
 
-def check_vms_system_procs(
-    _no_item: None, params: Mapping[str, Any], info: StringTable
-) -> LegacyCheckResult:
-    procs = int(float(info[0][2]))
+def check_vms_system_procs(params: Mapping[str, Any], section: StringTable) -> CheckResult:
+    procs = int(float(section[0][2]))
 
-    yield check_levels(
+    raw_levels: tuple[int, int] | None = params["levels_upper"]
+
+    yield from check_levels(
         procs,
-        "procs",
-        params["levels_upper"],
-        human_readable_func=str,
-        infoname="Processes",
+        metric_name="procs",
+        levels_upper=("fixed", raw_levels) if raw_levels is not None else None,
+        render_func=str,
+        label="Processes",
         boundaries=(0, None),
     )
 
 
-check_info["vms_system.procs"] = LegacyCheckDefinition(
+check_plugin_vms_system_procs = CheckPlugin(
     name="vms_system_procs",
     service_name="Number of processes",
     sections=["vms_system"],
