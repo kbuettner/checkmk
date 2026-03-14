@@ -3,36 +3,46 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 # Example output from agent:
 # List of Objects, else Empty
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Metric,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
-check_info = {}
+
+def discover_symantec_av_quarantine(section: StringTable) -> DiscoveryResult:
+    yield Service()
 
 
-def discover_symantec_av_quarantine(info):
-    return [(None, None)]
-
-
-def check_symantec_av_quarantine(_no_item, _no_params, info):
-    perf = [("objects", len(info))]
-    if len(info) > 0:
-        return 2, "%d objects in quarantine" % len(info), perf
-    return 0, "No objects in quarantine", perf
+def check_symantec_av_quarantine(section: StringTable) -> CheckResult:
+    if len(section) > 0:
+        yield Result(state=State.CRIT, summary=f"{len(section)} objects in quarantine")
+    else:
+        yield Result(state=State.OK, summary="No objects in quarantine")
+    yield Metric("objects", len(section))
 
 
 def parse_symantec_av_quarantine(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["symantec_av_quarantine"] = LegacyCheckDefinition(
+agent_section_symantec_av_quarantine = AgentSection(
     name="symantec_av_quarantine",
     parse_function=parse_symantec_av_quarantine,
+)
+
+check_plugin_symantec_av_quarantine = CheckPlugin(
+    name="symantec_av_quarantine",
     service_name="AV Quarantine",
     discovery_function=discover_symantec_av_quarantine,
     check_function=check_symantec_av_quarantine,
