@@ -11,13 +11,17 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from typing import Any
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Metric,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 
 def saveint(i: str) -> int:
@@ -33,39 +37,40 @@ def saveint(i: str) -> int:
         return 0
 
 
-def discover_vms_users(info: StringTable) -> list[tuple[None, Mapping[str, object]]]:
-    if len(info) > 0:
-        return [(None, {})]
-    return []
+def discover_vms_users(section: StringTable) -> DiscoveryResult:
+    if len(section) > 0:
+        yield Service()
 
 
-def check_vms_users(
-    item: str | None, params: Mapping[str, Any], info: StringTable
-) -> tuple[int, str, list[tuple[str, float]]]:
+def check_vms_users(section: StringTable) -> CheckResult:
     infos = []
     num_sessions = 0
-    for line in info:
+    for line in section:
         # complete missing columns
         padding = [0] * (5 - len(line))
         interactive, _subproc, _batch, _network = list(map(saveint, line[1:])) + padding
         if interactive:
             num_sessions += interactive
-            infos.append("%s: %d" % (line[0], interactive))
-
-    perfdata: list[tuple[str, float]] = [("sessions", float(num_sessions))]
+            infos.append(f"{line[0]}: {interactive}")
 
     if num_sessions:
-        return (0, "Interactive users: " + ", ".join(infos), perfdata)
-    return (0, "No interactive users", perfdata)
+        yield Result(state=State.OK, summary="Interactive users: " + ", ".join(infos))
+    else:
+        yield Result(state=State.OK, summary="No interactive users")
+    yield Metric("sessions", float(num_sessions))
 
 
 def parse_vms_users(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["vms_users"] = LegacyCheckDefinition(
+agent_section_vms_users = AgentSection(
     name="vms_users",
     parse_function=parse_vms_users,
+)
+
+check_plugin_vms_users = CheckPlugin(
+    name="vms_users",
     service_name="VMS Users",
     discovery_function=discover_vms_users,
     check_function=check_vms_users,
