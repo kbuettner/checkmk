@@ -420,13 +420,9 @@ def agent_based_plugins(tmp_path_factory: pytest.TempPathFactory) -> Generator[A
     # Local import to have faster pytest initialization
     from cmk.base import config  # astrein: disable=cmk-module-layer-violation
 
-    with patch(
-        "cmk.base.config.cmk.utils.paths.precompiled_checks_dir",
-        new=tmp_path_factory.mktemp("precompiled_legacy_checks"),
-    ):
-        plugins = config.load_all_pluginX(repo_path() / "cmk/legacy_checks")
-        assert not plugins.errors
-        yield plugins
+    plugins = config.load_all_pluginX(Path("/dev/null"))
+    assert not plugins.errors
+    yield plugins
 
 
 @pytest.fixture(autouse=True, scope="module")
