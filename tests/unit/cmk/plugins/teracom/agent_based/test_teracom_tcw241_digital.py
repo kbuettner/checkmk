@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.teracom_tcw241_digital import (
+from cmk.plugins.teracom.agent_based.teracom_tcw241_digital import (
     check_tcw241_digital,
     discover_teracom_tcw241_digital,
     parse_tcw241_digital,
