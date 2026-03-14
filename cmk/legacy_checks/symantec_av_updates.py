@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 # <<<symantec_av_updates>>>
 # 15.05.2015 rev. 1
 
@@ -16,19 +14,27 @@
 
 
 import time
+from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import render, StringTable
+from cmk.agent_based.v2 import (
+    AgentSection,
+    check_levels,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    render,
+    Service,
+    StringTable,
+)
 
-check_info = {}
+
+def discover_symantec_av_updates(section: StringTable) -> DiscoveryResult:
+    yield Service()
 
 
-def discover_symantec_av_updates(info):
-    return [(None, {})]
-
-
-def check_symantec_av_updates(_no_item, params, info):
-    last_text = info[0][0]
+def check_symantec_av_updates(params: Mapping[str, Any], section: StringTable) -> CheckResult:
+    last_text = section[0][0]
     if "/" in last_text:
         if len(last_text) == 10:
             last_broken = time.strptime(last_text, "%m/%d/%Y")
@@ -40,12 +46,12 @@ def check_symantec_av_updates(_no_item, params, info):
     last_timestamp = time.mktime(last_broken)
     age = time.time() - last_timestamp
 
-    return check_levels(
+    warn, crit = params["levels"]
+    yield from check_levels(
         age,
-        None,
-        params["levels"],
-        human_readable_func=render.timespan,
-        infoname="Time since last update",
+        levels_upper=("fixed", (warn, crit)),
+        render_func=render.timespan,
+        label="Time since last update",
     )
 
 
@@ -53,9 +59,13 @@ def parse_symantec_av_updates(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["symantec_av_updates"] = LegacyCheckDefinition(
+agent_section_symantec_av_updates = AgentSection(
     name="symantec_av_updates",
     parse_function=parse_symantec_av_updates,
+)
+
+check_plugin_symantec_av_updates = CheckPlugin(
+    name="symantec_av_updates",
     service_name="AV Update Status",
     discovery_function=discover_symantec_av_updates,
     check_function=check_symantec_av_updates,
