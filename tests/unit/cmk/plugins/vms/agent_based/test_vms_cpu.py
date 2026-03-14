@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Metric, Result, Service, StringTable
-from cmk.legacy_checks.vms_cpu import check_vms_cpu, discover_vms_cpu, parse_vms_cpu
+from cmk.plugins.vms.agent_based.vms_cpu import check_vms_cpu, discover_vms_cpu, parse_vms_cpu
 
 
 @pytest.mark.parametrize(
@@ -26,7 +26,7 @@ def test_discover_vms_cpu(
 
 
 def test_check_vms_cpu(monkeypatch: pytest.MonkeyPatch) -> None:
-    from cmk.legacy_checks import vms_cpu
+    from cmk.plugins.vms.agent_based import vms_cpu
 
     value_store: dict[str, object] = {}
     monkeypatch.setattr(vms_cpu, "get_value_store", lambda: value_store)
