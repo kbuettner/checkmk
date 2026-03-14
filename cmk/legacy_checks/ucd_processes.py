@@ -3,14 +3,20 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, StringTable
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Metric,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
 from cmk.plugins.lib import ucd_hr_detection
-
-check_info = {}
 
 # .1.3.6.1.4.1.2021.2.1.2.1 Web-Processes  --> UCD-SNMP-MIB::prNames.1
 # .1.3.6.1.4.1.2021.2.1.2.2 SMTP-Processes --> UCD-SNMP-MIB::prNames.2
@@ -38,32 +44,32 @@ check_info = {}
 # .1.3.6.1.4.1.2021.2.1.101.4              --> UCD-SNMP-MIB::prErrMessage.4
 
 
-def discover_ucd_processes(info):
-    return [(line[0].replace("-Processes", ""), None) for line in info]
+def discover_ucd_processes(section: StringTable) -> DiscoveryResult:
+    yield from (Service(item=line[0].replace("-Processes", "")) for line in section)
 
 
-def check_ucd_processes(item, _no_params, info):
-    for pr_name, pr_min_str, pr_max_str, pr_count_str, pr_err_flag, pr_err_msg in info:
+def check_ucd_processes(item: str, section: StringTable) -> CheckResult:
+    for pr_name, pr_min_str, pr_max_str, pr_count_str, pr_err_flag, pr_err_msg in section:
         if pr_name.replace("-Processes", "") == item:
-            state = 0
-            infotext = "Total: %s" % pr_count_str
+            infotext = f"Total: {pr_count_str}"
             if int(pr_err_flag) == 0:
-                state = 0
+                state = State.OK
             else:
-                state = 2
+                state = State.CRIT
                 if pr_err_msg:
-                    infotext += ", %s" % pr_err_msg
+                    infotext += f", {pr_err_msg}"
                 infotext += f" (lower/upper crit at {pr_min_str}/{pr_max_str})"
 
-            return state, infotext, [("processes", int(pr_count_str))]
-    return None
+            yield Result(state=state, summary=infotext)
+            yield Metric("processes", int(pr_count_str))
+            return
 
 
 def parse_ucd_processes(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["ucd_processes"] = LegacyCheckDefinition(
+snmp_section_ucd_processes = SimpleSNMPSection(
     name="ucd_processes",
     parse_function=parse_ucd_processes,
     detect=ucd_hr_detection.PREFER_HR_ELSE_UCD,
@@ -71,6 +77,10 @@ check_info["ucd_processes"] = LegacyCheckDefinition(
         base=".1.3.6.1.4.1.2021.2.1",
         oids=["2", "3", "4", "5", "100", "101"],
     ),
+)
+
+check_plugin_ucd_processes = CheckPlugin(
+    name="ucd_processes",
     service_name="Processes %s",
     discovery_function=discover_ucd_processes,
     check_function=check_ucd_processes,
