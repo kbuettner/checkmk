@@ -198,10 +198,6 @@ msgstr " săptămâna viitoare"
 msgid " notification %s"
 msgstr "Notificări de testare"
 
-#, python-format
-msgid " of service %s on host %s"
-msgstr " de serviciu %s pe gazdă %s"
-
 msgid " or "
 msgstr " sau "
 
@@ -762,10 +758,6 @@ msgstr "%s proprietăți"
 msgid "%s rate"
 msgstr "%s rata"
 
-#, fuzzy, python-format
-msgid "%s rules"
-msgstr "%s Cereri"
-
 #, python-format
 msgid "%s running for %s"
 msgstr "%s rulează pentru %s"
@@ -885,6 +877,11 @@ msgstr "Stare \"critică"
 msgid "'Custom notifications' by comment"
 msgstr "Comentariu de notificare a meciului"
 
+msgid ""
+"'Enforce TLS 1.3' is not supported in compatibility mode. Please select a "
+"lower minimum TLS version or disable compatibility mode."
+msgstr ""
+
 msgid "'Info' state"
 msgstr "Starea 'Info'"
 
@@ -915,16 +912,8 @@ msgstr ""
 "versiunea configurației.Vă rugăm să instalați 'git' sau să dezactivați "
 "urmărirea configurației git în WATO."
 
-#, fuzzy, python-format
-msgid "(%s more items)"
-msgstr "Intrări eliminate"
-
 msgid "(0 is current period)"
 msgstr "(0 reprezintă perioada curentă)"
-
-#, fuzzy
-msgid "(1 more item)"
-msgstr "(nici o intrare)"
 
 #, fuzzy
 msgid "(Do not impose levels, always be OK)"
@@ -1054,20 +1043,12 @@ msgstr "(setat de câtre syslog)"
 msgid "(syslog)"
 msgstr "(syslog)"
 
-#, fuzzy
-msgid "(unknown)"
-msgstr "necunoscut"
-
 #, python-format
 msgid "(unknown: %d)"
 msgstr "(necunoscut: %d)"
 
 msgid "(unset)"
 msgstr "(neconfigurat)"
-
-#, fuzzy
-msgid "(untitled rule set)"
-msgstr "(Modul fără titlu)"
 
 msgid ", "
 msgstr ""
@@ -1143,10 +1124,6 @@ msgstr "1 schimbare"
 
 msgid "1 row"
 msgstr "1 rând"
-
-#, fuzzy
-msgid "1 rule"
-msgstr "regula"
 
 msgid "1 year"
 msgstr "1 an"
@@ -2187,13 +2164,6 @@ msgstr ""
 msgid "<tt>not</tt> is the abbreviation for <tt>and not</tt>"
 msgstr ""
 
-msgid ""
-"<tt>robot.yaml</tt> is the main RCC configuration file. It is specified "
-"relative to the base directory of Robot Framework projects. This file also "
-"references the <tt>conda.yaml</tt> file which lists all environment "
-"dependencies."
-msgstr ""
-
 #, python-format
 msgid "<tt>sqlnet.ora</tt> permission group %s"
 msgstr ""
@@ -2388,10 +2358,6 @@ msgstr ""
 #, fuzzy
 msgid "A graphical user interface (GUI) view"
 msgstr "URL-ul Multisite trebuie să se termine cu /check_mk/"
-
-#, fuzzy
-msgid "A group execution interval of 0 is too low."
-msgstr "Intervalul de execuție a grupului"
 
 msgid "A heading for the graphs"
 msgstr "Un titlu pentru grafice"
@@ -3195,10 +3161,6 @@ msgstr "Absolut"
 msgid "Absolute %s space"
 msgstr "Spațiu absolut %s"
 
-#, fuzzy
-msgid "Absolute archive path"
-msgstr "Spațiu liber exact"
-
 msgid "Absolute difference"
 msgstr "Diferența absolută"
 
@@ -3299,10 +3261,6 @@ msgstr "Numărul absolut de conexiuni inactive"
 
 msgid "Absolute number of incoming connections"
 msgstr "Numărul absolut de conexiuni primite"
-
-#, fuzzy
-msgid "Absolute path to catalog ZIP file"
-msgstr "O cale absolută către un certificat CA"
 
 #, fuzzy
 msgid "Absolute time of alert"
@@ -3747,10 +3705,6 @@ msgstr "Activarea modificărilor Scheduler pornit"
 msgid "Activate configuration"
 msgstr "Activați configurația"
 
-#, fuzzy
-msgid "Activate exit on failure"
-msgstr "Eșecuri de autentificare"
-
 msgid "Activate foreign changes"
 msgstr "Activați modificările străine"
 
@@ -4148,6 +4102,10 @@ msgid "Add Prometheus scraper configuration"
 msgstr "Configurația stilului selectat"
 
 #, fuzzy
+msgid "Add Prometheus scraping configuration"
+msgstr "Configurația stilului selectat"
+
+#, fuzzy
 msgid "Add Relay configuration"
 msgstr "Configurația RRA"
 
@@ -4505,10 +4463,6 @@ msgstr "Adăugați o nouă condiție de nod"
 msgid "Add new pattern"
 msgstr "Adăugați un nou model"
 
-#, fuzzy
-msgid "Add new plan"
-msgstr "Adăugați un nou model"
-
 msgid "Add new project"
 msgstr "Adăugați un nou proiect"
 
@@ -4524,10 +4478,6 @@ msgstr "Adăugați o nouă regulă"
 #, fuzzy
 msgid "Add new scrape configuration"
 msgstr "Adaugp o noua configurație de utilizator"
-
-#, fuzzy
-msgid "Add new sequence"
-msgstr "Adăugați un nou serviciu"
 
 #, fuzzy
 msgid "Add new service"
@@ -5032,10 +4982,6 @@ msgstr "Statul administratorului"
 msgid "Admin states to discover"
 msgstr "Statele administrației de descoperit"
 
-#, fuzzy
-msgid "Administrate robots"
-msgstr "Statele administrative"
-
 msgid "Administrative port states to discover"
 msgstr "Stări administrative ale portului pentru a descoperi"
 
@@ -5440,9 +5386,6 @@ msgstr "Plugin-uri bazate pe agent (depreciat)"
 msgid "Agent certificates"
 msgstr "Certificate de agent"
 
-msgid "Agent controller"
-msgstr "Controlor agent"
-
 #, fuzzy
 msgid "Agent controller user"
 msgstr "Controlor agent"
@@ -5806,9 +5749,6 @@ msgstr ""
 msgid "Alert if value has increased since discovery"
 msgstr "Efectuați descoperirea automată a serviciilor"
 
-msgid "Alert manager rule state"
-msgstr "Starea regulii de gestionare a alertelor"
-
 #, fuzzy
 msgid "Alert on connection loss"
 msgstr "Nu alertați la pierderea conexiunii"
@@ -5887,10 +5827,15 @@ msgstr "Alertat"
 msgid "Alertmanager discovery"
 msgstr "Descoperirea Alertmanager"
 
+#, fuzzy
+msgid "Alertmanager rule state"
+msgstr "Regula Alertmanager prevede"
+
 msgid "Alertmanager rule states"
 msgstr "Regula Alertmanager prevede"
 
-msgid "Alertmanager rule states (Summary)"
+#, fuzzy
+msgid "Alertmanager rule states (summary)"
 msgstr "Stări ale regulilor Alertmanager (Rezumat)"
 
 msgid "Alerts"
@@ -6583,11 +6528,6 @@ msgid ""
 "Graph Editor, and graphs containing metric-backend queries cannot be "
 "displayed."
 msgstr ""
-
-#, fuzzy
-msgid ""
-"Allows the assignment of the Robotmk plan/test services to another host."
-msgstr "Permite atribuirea de servicii Robotmk unei alte gazde."
 
 #, fuzzy
 msgid ""
@@ -7347,11 +7287,6 @@ msgstr "Balansatoare de încărcare a aplicațiilor"
 msgid "Application name"
 msgstr "Numele aplicației"
 
-msgid ""
-"Application names are restricted to the following characters: a-z, A-Z, 0-9, "
-"`-`, `_`, `.`"
-msgstr ""
-
 msgid "Application pending requests"
 msgstr "Cereri în așteptare"
 
@@ -7363,10 +7298,6 @@ msgstr "Prezentare generală a aplicațiilor"
 
 msgid "Applications, Processes & Services"
 msgstr "Aplicații, procese & Servicii"
-
-#, fuzzy
-msgid "Applied to"
-msgstr "Aplicați la"
 
 msgid "Apply"
 msgstr "Aplicați"
@@ -7553,9 +7484,6 @@ msgstr "Arhiva evenimentelor"
 msgid "Archive events of hosts"
 msgstr "Arhiva evenimentelor de gazde"
 
-msgid "Archive exceeds total size limit"
-msgstr ""
-
 msgid "Archive log"
 msgstr "Jurnal de arhivă"
 
@@ -7585,10 +7513,6 @@ msgstr "Copii de rezervă Arcserve (germană) (Windows)"
 msgid "Are you sure you want to delete this Relay?"
 msgstr "Nu aveți voie să ștergeți acest %s."
 
-#, python-format
-msgid "Argument files (%s)"
-msgstr "Fișiere de argumente (%s)"
-
 msgid "Arguments:"
 msgstr "Argumente:"
 
@@ -7596,7 +7520,8 @@ msgstr "Argumente:"
 msgid "Array Controllers"
 msgstr "Array-uri (controlere)"
 
-msgid "Arrays (Controllers)"
+#, fuzzy
+msgid "Arrays (controllers)"
 msgstr "Array-uri (controlere)"
 
 #, fuzzy
@@ -7661,16 +7586,6 @@ msgstr ""
 "verificarea va emite răspunsul - atâta timp cât nu îl ascundeți cu această "
 "opțiune."
 
-msgid ""
-"As the Checkmk agent is started together with the scheduler at boot time, "
-"even before the desktop user logs on. The scheduling of such desktop tests "
-"can be delayed via this option until the desktop session is established."
-msgstr ""
-"Deoarece agentul Checkmk este pornit împreună cu planificatorul în momentul "
-"pornirii, chiar înainte ca utilizatorul desktopului să se conecteze. "
-"Programarea unor astfel de teste desktop poate fi amânată prin intermediul "
-"acestei opțiuni până la stabilirea sesiunii desktop."
-
 msgid "Ascending"
 msgstr "Ascendant"
 
@@ -7694,10 +7609,6 @@ msgid ""
 "Assign created issues to defined user. This is the username of the user (not "
 "email)."
 msgstr ""
-
-#, fuzzy
-msgid "Assign plan/test result to piggyback host"
-msgstr "Atribuiți rezultatul la gazda piggyback"
 
 msgid "Assign service to following host"
 msgstr "Atribuiți serviciul la următoarea gazdă"
@@ -8192,10 +8103,6 @@ msgstr "Extinderea automată va fi ignorată"
 
 msgid "Autoextensible"
 msgstr "Autoextensibil"
-
-#, fuzzy
-msgid "Automated environment setup"
-msgstr "Configurarea automată a mediului (prin RCC)"
 
 msgid "Automatic"
 msgstr "Automat"
@@ -9747,6 +9654,10 @@ msgid "Back to view with checkboxes reset"
 msgstr "Înapoi la vizualizarea cu casetele de selectare resetate"
 
 #, fuzzy
+msgid "Back-end IP config"
+msgstr "Configurație IP backend"
+
+#, fuzzy
 msgid "Back-end conn. failures"
 msgstr "Backend Conn. %s."
 
@@ -9783,26 +9694,23 @@ msgid "Back-end conn. was closed"
 msgstr "Backend Conn. %s."
 
 #, fuzzy
-msgid "Backend IP config"
-msgstr "Configurație IP backend"
-
-msgid "Backend connection errors"
-msgstr "Erori de conexiune backend"
-
-#, fuzzy
-msgid "Backend pool"
+msgid "Back-end pool"
 msgstr "Pool de backend"
 
 #, fuzzy
-msgid "Backend pools"
+msgid "Back-end pools"
 msgstr "Grupuri Backend"
 
 #, fuzzy
-msgid "Backend port"
+msgid "Back-end port"
 msgstr "Port backend"
 
-msgid "Backends"
+#, fuzzy
+msgid "Back-ends"
 msgstr "Backends"
+
+msgid "Backend connection errors"
+msgstr "Erori de conexiune backend"
 
 msgid "Background job acknowledged"
 msgstr "Recunoașterea muncii de fond"
@@ -9929,10 +9837,6 @@ msgstr "Agent specific gazdei coapte"
 msgid "Bakery plug-in"
 msgstr "Numele plugin-ului"
 
-#, fuzzy
-msgid "Bakery rules"
-msgstr "Reguli de descoperire"
-
 #, fuzzy, python-format
 msgid "Baking agents in a <a href=\"%s\">background job</a>."
 msgstr "Agentul %s rulează în prezent în <a href=\"%s\">lucru de fundal</a>."
@@ -10003,22 +9907,11 @@ msgid "Base URL for Docker API engine"
 msgstr "URL de bază pentru motorul API docker"
 
 #, fuzzy
-msgid "Base directory"
-msgstr "Director de date"
-
-#, fuzzy
 msgid "Base directory for <tt>plug-ins</tt> and <tt>local</tt>"
 msgstr "Director de bază pentru <tt>plugins</tt> și <tt>local</tt>."
 
-msgid "Base directory for ROBOCORP_HOME directories"
-msgstr ""
-
 msgid "Base directory for variable data (caches, state files)"
 msgstr "Director de bază pentru datele variabile (cache-uri, fișiere de stare)"
-
-#, fuzzy
-msgid "Base directory of Robot Framework projects"
-msgstr "Fiecare serviciu monitorizează testele Robot Framework.\n"
 
 msgid "Base layout"
 msgstr "Schema de bază"
@@ -10133,8 +10026,9 @@ msgstr "Ghidul începătorului's: Crearea de dosare"
 msgid "Beginner's Guide: Host folder structures"
 msgstr "Ghidul începătorului's: Structuri de foldere gazdă"
 
+#, fuzzy
 msgid ""
-"Below the specified value alert rules will be monitored as asingle service."
+"Below the specified value, alert rules will be monitored as a single service."
 msgstr ""
 "Sub valoarea specificată, regulile de alertă vor fi monitorizate ca un "
 "singur serviciu."
@@ -10774,9 +10668,6 @@ msgstr ""
 "cel puțin o regulă, vor fi monitorizate numai gazdele cu o regulă "
 "corespunzătoare."
 
-msgid "By age of Robotmk executions"
-msgstr "În funcție de vârsta execuțiilor Robotmk"
-
 #, fuzzy
 msgid "By aggregation group"
 msgstr "Grupuri de agregare BI"
@@ -10918,13 +10809,6 @@ msgstr ""
 "site-ului la distanță cu site-ul central în numele actualizatorului de "
 "agenți."
 
-msgid ""
-"By default the certificate validity in general will be checked. With this "
-"option you can choose to check additionally for the remeinaing time the "
-"certificate will be valid or ignore the certificate completely. Please use "
-"the latter as last resort and with caution!"
-msgstr ""
-
 #, python-format
 msgid ""
 "By default the server will try to contact the monitored host and pull the "
@@ -11062,56 +10946,6 @@ msgstr ""
 "utilizarea fie a versiunii Python 2, fie a versiunii Python 3.În plus, "
 "puteți furniza o comandă care va fi utilizată pentru executarea pluginurilor "
 "python."
-
-#, fuzzy
-msgid ""
-"By default, Robot Framework will execute <i>every</i> test.<br>But sometimes "
-"tests are interdependent - in the event of a failed login, for example, it "
-"is impossible to successfully complete the subsequent tests.<br>If this "
-"option is active, Robot Framework will <b>immediately stop</b> the suite "
-"execution if a test fails. <br>The results of subsequent tests (which would "
-"have failed) will then not be passed to Checkmk; depending on the discovery "
-"settings, their results will either be <b>missing</b> (if within a suite "
-"result) or the services generated for them will <b>go stale</b>."
-"<br><br><b>Important note</b>: this is where Robotmk deviates from Robot "
-"Framework behavior. The HTML log will still contain the omitted tests and "
-"show them as <tt>FAIL</tt> (even though they were not executed).<br>See also "
-"\"<a href=\"http://robotframework.org/robotframework/latest/"
-"RobotFrameworkUserGuide.html#stopping-when-first-test-case-fails\" "
-"target=\"_blank\">How to stop a suite when the first test fails</a>\". "
-msgstr ""
-"În mod implicit, Robot Framework va executa <i>fiecare</i> test.<br>Dar "
-"uneori testele sunt interdependente - în cazul unei autentificări eșuate, de "
-"exemplu, este imposibil să se finalizeze cu succes testele următoare."
-"<br>Dacă această opțiune este activă, Robot Framework va <b>opri imediat</b> "
-"execuția suitei dacă un test eșuează. <br>Rezultatele testelor ulterioare "
-"(care ar fi eșuat) nu vor fi apoi transmise către Checkmk; în funcție de "
-"setările de descoperire,rezultatele lor vor fi fie <b>lipsate</b> (dacă se "
-"află în cadrul unui rezultat al suitei), fie serviciile generate pentru "
-"acestea vor <b>deveni vechi</b>.<br> <br> <b>Nota importantă</b>: acesta "
-"este punctul în care Robotmk se abate de la comportamentul Robot Framework. "
-"Jurnalul HTML va conține în continuare testele omise și le va afișa ca "
-"<tt>FAIL</tt> (chiar dacă nu au fost executate). <br>Vezi și \"<a "
-"href=\"http://robotframework.org/robotframework/latest/"
-"RobotFrameworkUserGuide.html#stopping-when-first-test-case-fails\">Cum să "
-"oprești o suită atunci când primul test eșuează</a>\". "
-
-#, fuzzy
-msgid ""
-"By default, Robotmk executes all plans in the user context of the Checkmk "
-"agent, which does not have access to the desktop of the Windows computer. To "
-"run tests on Windows GUI applications, you can specify the name of a user "
-"who is permanently logged on to a desktop session. The prerequisites for "
-"this are security-related and must be fulfilled by you (auto-login, screen "
-"saver, session lock, ...)."
-msgstr ""
-"În mod implicit, Robotmk execută toate suitele în contextul de utilizator al "
-"agentului Checkmk, care nu are acces la desktop-ul computerului Windows. "
-"Pentru a executa teste pe aplicațiile Windows GUI, puteți specifica numele "
-"unui utilizator care este conectat permanent la o sesiune desktop. "
-"Condițiile prealabile pentru aceasta sunt legate de securitate și trebuie "
-"îndeplinite de dumneavoastră (logare automată, screen saver, blocare a "
-"sesiunii, ...)"
 
 msgid ""
 "By default, all mailboxes are checked with these parameters. If you specify "
@@ -11293,6 +11127,13 @@ msgid ""
 "well-known locations. You can specify a full path here instead."
 msgstr ""
 
+msgid ""
+"By default, the check will use any IP address protocol. Selecting a specific "
+"protocol or using the primary protocol of a host will enforce the usage of "
+"your choice. This gives you more control if you want to ensure the "
+"availability of your web endpoint through either IPv4 or IPv6."
+msgstr ""
+
 #, fuzzy
 msgid ""
 "By default, the file system checks will create a single service for each "
@@ -11312,6 +11153,13 @@ msgstr ""
 "monitorizate ca un singur sistem de fișiere mare într-un singur serviciu. "
 "Sistemele de fișiere care corespund unuia dintre tiparele de excludere vor "
 "fi excluse din grup și vor fi monitorizate individual."
+
+msgid ""
+"By default, the general certificate validity will be checked. With this "
+"option you can choose to additionally check for the remaining time the "
+"certificate is still valid or to ignore the certificate completely. Please "
+"use the latter as a last resort and with caution!"
+msgstr ""
 
 msgid ""
 "By default, the ntopng host filter is enabled, however, disabling this can "
@@ -11371,9 +11219,6 @@ msgstr "gazdă"
 msgid "By host group"
 msgstr "În funcție de grupul gazdă"
 
-msgid "By number of Robotmk executions"
-msgstr "În funcție de numărul de execuții Robotmk"
-
 #, fuzzy
 msgid "By plug-in output"
 msgstr "Ieșirea plugin-ului"
@@ -11420,39 +11265,6 @@ msgstr ""
 "gazdei acestora ca stare de accesibilitate a site-ului la distanță. Vă rugăm "
 "să consultați <a target=_blank href='%s'>documentația online</a> pentru "
 "detalii."
-
-msgid "Bypass Proxy for certain hosts"
-msgstr "Bypassarea Proxy pentru anumite gazde"
-
-#, fuzzy
-msgid ""
-"Bypass Proxy for certain hosts: Specifies a list of destination hosts/"
-"adresses which should not be accessed through the given proxy.<br>The proxy "
-"setting is used for access to the internet, where Conda needs to download "
-"the installation files from. (In order to access a page through a proxy "
-"inside of the test suite, use the libraries capabilities)"
-msgstr ""
-"Omiteți Proxy pentru anumite gazde: Specifică o listă de gazde/adrese de "
-"destinație care nu ar trebui să fie accesate prin intermediul proxy-ului "
-"dat. <br>Setarea proxy este utilizată pentru accesul la internet, de unde "
-"RCC trebuie să descarce fișierele de instalare. (Pentru a accesa o pagină "
-"prin intermediul unui proxy în interiorul suitei de testare, utilizați "
-"capacitățile bibliotecilor)"
-
-#, fuzzy
-msgid ""
-"Bypass Proxy for certain hosts: Specifies a list of destination hosts/"
-"adresses which should not be accessed through the given proxy.<br>The proxy "
-"setting is used for access to the internet, where RCC needs to download the "
-"installation files from. (In order to access a page through a proxy inside "
-"of the test suite, use the libraries capabilities)"
-msgstr ""
-"Omiteți Proxy pentru anumite gazde: Specifică o listă de gazde/adrese de "
-"destinație care nu ar trebui să fie accesate prin intermediul proxy-ului "
-"dat. <br>Setarea proxy este utilizată pentru accesul la internet, de unde "
-"RCC trebuie să descarce fișierele de instalare. (Pentru a accesa o pagină "
-"prin intermediul unui proxy în interiorul suitei de testare, utilizați "
-"capacitățile bibliotecilor)"
 
 #, fuzzy
 msgid "Bypass per second"
@@ -12877,10 +12689,6 @@ msgstr "A fost schimbată variabila de configurare %s în %s."
 msgid "Changed alert handler rule %d"
 msgstr "Regula de gestionare a alertelor a fost modificată %d"
 
-#, fuzzy
-msgid "Changed by"
-msgstr "Modificat"
-
 msgid "Changed entries"
 msgstr "Intrări modificate"
 
@@ -13446,7 +13254,7 @@ msgstr "Verificarea monitoarelor Datadog"
 
 msgid ""
 "Checking this option allows self-signed certificates by ignoring OpenSSL "
-"error 18 (self signed certificate), and the service will not warn when this "
+"error 18 (self-signed certificate). The service will not warn when this "
 "error is returned. Other errors will still trigger an alert."
 msgstr ""
 
@@ -13455,9 +13263,6 @@ msgstr "Checkmk"
 
 msgid "Checkmk $PERIODNAME$ '$TITLE$'"
 msgstr "Verifică $PERIODNAME$ '$TITLE$'"
-
-msgid "Checkmk Agent"
-msgstr "Agent Checkmk"
 
 # georgem ##############
 #, fuzzy
@@ -14524,9 +14329,6 @@ msgstr "Mesaje de curățare"
 msgid "Cleanup messages"
 msgstr "Mesaje de curățare"
 
-msgid "Cleanup of working directory"
-msgstr "Curățarea directorului de lucru"
-
 #, fuzzy
 msgid "Cleanup parameters"
 msgstr "Parametrii impliciți"
@@ -14584,8 +14386,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Click the \"Add Prometheus scraper configuration\" button to start setting "
-"up your first Prometheus scraper configuration."
+"Click the \"Add Prometheus configuration\" button to start setting up your "
+"first Prometheus scraper configuration."
 msgstr ""
 
 msgid ""
@@ -14756,10 +14558,6 @@ msgstr "Clonarea gazdei"
 msgid "Clone hosts"
 msgstr "Gazde clone"
 
-#, fuzzy, python-format
-msgid "Clone managed robot %s"
-msgstr "Obiecte gestionate"
-
 #, python-format
 msgid "Clone report schedule entry %s"
 msgstr "Clonarea înregistrării din programul de raportare %s"
@@ -14784,10 +14582,6 @@ msgstr "Clonarea acestei conexiuni pentru a crea una nouă"
 
 msgid "Clone this element"
 msgstr "Clonarea acestui element"
-
-#, fuzzy
-msgid "Clone this managed robot"
-msgstr "Obiecte gestionate"
 
 msgid "Clone this schedule entry"
 msgstr "Clonați această intrare în program"
@@ -15352,9 +15146,6 @@ msgstr "Lucrări compatibile"
 msgid "Compatible and incompatible Werks"
 msgstr "Werks compatibile și incompatibile"
 
-msgid "Complete"
-msgstr "Complet"
-
 msgid "Complete the restore"
 msgstr "Finalizați restaurarea"
 
@@ -15434,22 +15225,6 @@ msgstr "Execuții concurente"
 
 msgid "Concurrent executions in percent"
 msgstr "Execuții simultane în procente"
-
-#, fuzzy
-msgid "Conda"
-msgstr "Luni"
-
-#, fuzzy
-msgid "Conda configuration"
-msgstr "Configurația RRA"
-
-msgid ""
-"Conda environments can be packed into .tar.gz archives using <tt>conda-pack</"
-"tt>."
-msgstr ""
-
-msgid "Conda manifest (yaml file)"
-msgstr ""
 
 msgid "Condition"
 msgstr "Stare"
@@ -15564,9 +15339,6 @@ msgstr "Configurarea regulilor de eveniment"
 #, fuzzy
 msgid "Configuration of individual event logs"
 msgstr "Configurarea de Eventlogs individuale"
-
-msgid "Configuration of managed robots for Synthetic Monitoring."
-msgstr ""
 
 msgid "Configuration of monitoring agents for Linux, Windows and Unix"
 msgstr "Configurarea agenților de monitorizare pentru Linux, Windows și Unix"
@@ -15779,14 +15551,6 @@ msgstr "Configurați utilizarea serverului proxy"
 
 msgid "Configure restrictions manually"
 msgstr "Configurarea manuală a restricțiilor"
-
-msgid ""
-"Configure secret environment variables that will be set when executing Robot "
-"Framework. This can for example be used together with <tt>CryptoLibrary</tt> "
-"for encrypting login data on the target hosts. <b>Note</b>: The configured "
-"values will be written in plain text to the configuration deployed to the "
-"target hosts."
-msgstr ""
 
 #, fuzzy
 msgid "Configure services to monitor"
@@ -16061,11 +15825,6 @@ msgstr "Configurați nivelurile superioare"
 msgid ""
 "Configure warning and critical upper thresholds for Corosync link latency: "
 "both instantaneous maximum values and the averaged latency."
-msgstr ""
-
-msgid ""
-"Configure whether RCC validates TLS certificates when downloading or pulling "
-"dependencies."
 msgstr ""
 
 #, fuzzy
@@ -16559,10 +16318,6 @@ msgstr "Tipul senzorului de contact"
 
 msgid "Contact the dashboard owner if you need access."
 msgstr ""
-
-#, fuzzy
-msgid "Contact us"
-msgstr "Contacte"
 
 msgid "Contacts"
 msgstr "Contacte"
@@ -17625,10 +17380,6 @@ msgid "Create regular time-schedule for this report"
 msgstr "Creați un orar regulat pentru acest raport"
 
 #, fuzzy
-msgid "Create robot"
-msgstr "Creați gazde"
-
-#, fuzzy
 msgid "Create separate bulk notifications based on"
 msgstr "Creați grupe de notificare separate pe baza"
 
@@ -18222,10 +17973,6 @@ msgid "Currently, there is one pending change not yet activated."
 msgstr ""
 "În prezent, există o modificare în așteptare care nu a fost încă activată."
 
-#, fuzzy
-msgid "Custom CA certificate"
-msgstr "Certificat CA"
-
 #, python-format
 msgid "Custom GUI design of %s"
 msgstr "Proiectare GUI personalizată de %s"
@@ -18375,9 +18122,6 @@ msgstr "Gazdă personalizată"
 
 msgid "Custom probe state"
 msgstr "Starea sondei personalizate"
-
-msgid "Custom profile"
-msgstr "Profil personalizat"
 
 #, fuzzy
 msgid "Custom query result"
@@ -19467,9 +19211,6 @@ msgid ""
 "of apache."
 msgstr ""
 
-msgid "Default profile"
-msgstr "Profil implicit"
-
 msgid "Default reporting time range"
 msgstr "Interval de timp de raportare implicit"
 
@@ -19985,10 +19726,6 @@ msgstr "Ștergeți postul #%d"
 msgid "Delete last alert handler rule"
 msgstr "Ștergeți ultima regulă de gestionare a alertelor"
 
-#, fuzzy
-msgid "Delete managed robot"
-msgstr "Obiecte gestionate"
-
 #, fuzzy, python-format
 msgid "Delete notification parameter #%d"
 msgstr "Ștergerea regulii de notificare #%d"
@@ -20146,10 +19883,6 @@ msgstr "Ștergeți această cheie"
 
 msgid "Delete this logo"
 msgstr "Ștergeți acest logo"
-
-#, fuzzy
-msgid "Delete this managed robot"
-msgstr "Ștergeți acest grup de etichete"
 
 #, fuzzy
 msgid "Delete this notification parameter"
@@ -20333,13 +20066,6 @@ msgstr "Demonstrație"
 msgid "Deny"
 msgstr "Refuzați"
 
-msgid ""
-"Depending on how a Robot Framework suite is written, the keywords directly "
-"below the test level are describing the test logic, completely decoupled "
-"from the implementation technology (so-called \"high-level keywords\"). "
-"Enable this option to get a graph for each high-level keyword."
-msgstr ""
-
 #, fuzzy, python-format
 msgid ""
 "Depending on the chosen data source, a %s can list <i>multiple</i> or "
@@ -20367,19 +20093,6 @@ msgid ""
 msgstr ""
 "În funcție de unitatea de măsură (valoarea implicită este bit), nivelurile "
 "absolute sunt stabilite în biți sau octeți pe secundă."
-
-#, fuzzy
-msgid ""
-"Depending on the package dependencies listed in <tt>conda.yaml</tt> used in "
-"a plan, building its Python environment for the very first time can take "
-"some minutes. This setting ensures that a hanging/failing environment "
-"creation for a single plan does not block the scheduling phase of other "
-"plans."
-msgstr ""
-"În funcție de bibliotecile utilizate într-o suită, crearea mediului Python "
-"pentru prima dată poate dura câteva minute. Această setare asigură că o "
-"creare de mediu suspendată/nereușită pentru o singură suită nu blochează "
-"faza de programare a altor suite. "
 
 msgid ""
 "Depending on the precision the unit can be either milliseconds or "
@@ -20470,10 +20183,6 @@ msgstr "Implementarea plugin-ului Arcserve"
 #, fuzzy
 msgid "Deploy Podman plug-in"
 msgstr "Implementați plugin-ul Mailman"
-
-#, fuzzy
-msgid "Deploy Robotmk scheduler and agent plug-in"
-msgstr "Implementați Robotmk Scheduler și Agent Plugin"
 
 #, fuzzy
 msgid "Deploy SMART Posix plug-in"
@@ -22216,9 +21925,6 @@ msgstr "Nu implementați plugin-ul pentru baze de date ORACLE"
 msgid "Do not deploy Oracle plug-in"
 msgstr "Nu implementați plugin-ul iptables"
 
-msgid "Do not deploy Robotmk"
-msgstr "Nu implementați Robotmk"
-
 #, fuzzy
 msgid "Do not deploy SMART plug-in"
 msgstr "Nu implementați pluginul SMART"
@@ -22663,10 +22369,6 @@ msgstr "Nu utilizați un prefix"
 msgid "Do not use absolute levels"
 msgstr "Nu utilizați niveluri absolute"
 
-#, fuzzy
-msgid "Do not validate TLS certificates"
-msgstr "Certificat invalid"
-
 msgid "Do not validate server certificate during port query"
 msgstr "Nu validați certificatul serverului în timpul interogării portului"
 
@@ -22889,10 +22591,6 @@ msgstr "Descarca"
 #, python-format
 msgid "Download %s package of agent for %s"
 msgstr "Descărcați pachetul %s de agent pentru %s."
-
-#, fuzzy
-msgid "Download (internet connection)"
-msgstr "Conexiuni client"
 
 msgid "Download Checkmk agent Vanilla"
 msgstr "Descărcați Checkmk agent Vanilla"
@@ -23466,9 +23164,6 @@ msgstr ""
 "Fiecare etichetă trebuie să fie unică și nu poate fi folosită de mai multe "
 "ori."
 
-msgid "Each service monitors on Robot Framework tests.\n"
-msgstr "Fiecare serviciu monitorizează testele Robot Framework.\n"
-
 #, fuzzy
 msgid ""
 "Each tag group will create one drop-down choice in the host configuration."
@@ -23661,14 +23356,6 @@ msgid "Edit layout only available if header is enabled"
 msgstr "Editarea aspectului este disponibilă numai dacă este activat antetul"
 
 #, fuzzy, python-format
-msgid "Edit managed robot %s"
-msgstr "Obiecte gestionate"
-
-#, fuzzy
-msgid "Edit managed robots"
-msgstr "Obiecte gestionate"
-
-#, fuzzy, python-format
 msgid "Edit message broker connection %s"
 msgstr "Editați conexiunea site-ului %s"
 
@@ -23829,10 +23516,6 @@ msgstr "Editați acest element"
 
 msgid "Edit this host"
 msgstr "Editați această gazdă"
-
-#, fuzzy
-msgid "Edit this managed robot"
-msgstr "Statele administrative"
 
 #, fuzzy
 msgid "Edit this notification parameter"
@@ -24212,10 +23895,6 @@ msgid "Enable TLS"
 msgstr "Activați TLS"
 
 #, fuzzy
-msgid "Enable TLS certificate revocation checks"
-msgstr "Verificarea certificatului SSL"
-
-#, fuzzy
 msgid "Enable TLS certificate validation"
 msgstr "Dezactivați validarea certificatului SSL"
 
@@ -24305,10 +23984,6 @@ msgstr "Activați jurnalizarea eșecurilor de logare"
 #, fuzzy
 msgid "Enable metrics"
 msgstr "Subiect nevalabil"
-
-#, fuzzy
-msgid "Enable metrics for top-level keywords"
-msgstr "Activați indicatorii pentru cuvinte cheie de nivel înalt"
 
 msgid "Enable notification logging"
 msgstr "Activați jurnalizarea notificărilor"
@@ -24734,11 +24409,6 @@ msgstr "Aplică versiunea Python 2"
 msgid "Enforce Python 3 version"
 msgstr "Forțați versiunea Python 3"
 
-msgid ""
-"Enforce TLS 1.3 is not supported in compatibility mode. Please select a "
-"lower minimum TLS version or disable compatibility mode."
-msgstr ""
-
 msgid "Enforce TLS v1.2"
 msgstr "Aplicați TLS v1.2"
 
@@ -25050,7 +24720,7 @@ msgid "Entry"
 msgstr "Intrare"
 
 #, fuzzy
-msgid "Env Creation"
+msgid "Env creation"
 msgstr "Creație"
 
 #, fuzzy
@@ -25058,16 +24728,6 @@ msgid "Environment Sensors"
 msgstr "Variabile de mediu"
 
 msgid "Environment Variables"
-msgstr "Variabile de mediu"
-
-msgid "Environment build timeout"
-msgstr "Timeout de construire a mediului"
-
-msgid "Environment dependency handling"
-msgstr ""
-
-#, fuzzy
-msgid "Environment source"
 msgstr "Variabile de mediu"
 
 msgid "Episode 1: Installing Checkmk and monitoring your first host"
@@ -25749,10 +25409,6 @@ msgstr ""
 "Excludeți spațiul rezervat pentru utilizatorul <tt>root</tt> din calculul "
 "spațiului utilizat"
 
-#, python-format
-msgid "Exclude tests by tag (%s)"
-msgstr "Excludeți testele după etichetă (%s)"
-
 msgid "Exclude the following SIDs (if found)"
 msgstr "Excludeți următoarele SID-uri (dacă sunt găsite)"
 
@@ -25824,10 +25480,6 @@ msgid "Execute manually"
 msgstr "Executarea manuală"
 
 #, fuzzy
-msgid "Execute plan as a specific user"
-msgstr "Executarea ca utilizator specific"
-
-#, fuzzy
 msgid "Execute plug-ins in general"
 msgstr "Executarea plugin-urilor în general"
 
@@ -25847,9 +25499,6 @@ msgstr "Executați acest program acum în jobul de fundal"
 
 msgid "Execution Mode"
 msgstr "Modul de execuție"
-
-msgid "Execution configuration"
-msgstr "Configurația de execuție"
 
 msgid "Execution interval"
 msgstr "Interval de execuție"
@@ -25882,9 +25531,6 @@ msgstr "Cod de ieșire"
 
 msgid "Exit code (hex value)"
 msgstr "Cod de ieșire (valoare hexagonală)"
-
-msgid "Exit on failure (<tt>--exitonfailure</tt>)"
-msgstr "Ieșire în caz de eșec (<tt>--exitonfailure</tt>)"
 
 msgid "Expand"
 msgstr "Extindeți"
@@ -26943,9 +26589,6 @@ msgstr ""
 msgid "Fetch failed"
 msgstr "Fetch a eșuat"
 
-msgid "Fetch from RCC remote server"
-msgstr ""
-
 msgid "Fetch had bad headers"
 msgstr "Fetch a avut anteturi proaste"
 
@@ -27048,7 +26691,7 @@ msgid "Field data size"
 msgstr "Dimensiunea datelor de câmp"
 
 #, fuzzy
-msgid "Field(s) to use as a hostname key"
+msgid "Field(s) to use as a host name key"
 msgstr "Câmpul (câmpurile) care trebuie utilizat(e) ca cheie de nume de gazdă"
 
 msgid "Fieldnames to query"
@@ -27199,6 +26842,10 @@ msgid "File system mount options (Linux/Unix)"
 msgstr "Opțiuni de montare a sistemului de fișiere (Linux/UNIX)"
 
 #, fuzzy
+msgid "File system node"
+msgstr "Nod de sistem de fișiere"
+
+#, fuzzy
 msgid "File system size"
 msgstr "Dimensiunea sistemului de fișiere"
 
@@ -27271,10 +26918,6 @@ msgstr "Spațiu liber exact"
 
 msgid "Filesystem"
 msgstr "Sistem de fișiere"
-
-#, fuzzy
-msgid "Filesystem node"
-msgstr "Nod de sistem de fișiere"
 
 msgid "Filesystems"
 msgstr "Sisteme de fișiere"
@@ -27536,6 +27179,10 @@ msgstr "Prima zi a ultimei luni"
 msgid "First work day of this month"
 msgstr "Prima zi a acestei luni"
 
+#, python-format
+msgid "First: %s, Last: %s (%d occurrences)"
+msgstr ""
+
 msgid "Fit to screen"
 msgstr "Se potrivește la ecran"
 
@@ -27772,10 +27419,11 @@ msgstr ""
 msgid "For NFS enter the name of the mount point."
 msgstr "Pentru NFS, introduceți numele punctului de montare."
 
+#, fuzzy
 msgid ""
-"For a summarized throughput of all disks, specify <tt>SUMMARY</tt>,  a per-"
+"For a summarized throughput of all disks, specify <tt>SUMMARY</tt>. A per-"
 "disk IO is specified by the drive letter, a colon and a slash on Windows "
-"(e.g. <tt>C:/</tt>) or by the device name on Linux/UNIX (e.g. <tt>/dev/sda</"
+"(e.g. <tt>C:/</tt>) or by the device name on Linux/Unix (e.g. <tt>/dev/sda</"
 "tt>)."
 msgstr ""
 "Pentru un randament sumarizat al tuturor discurilor, specificați "
@@ -27783,11 +27431,12 @@ msgstr ""
 "puncte și o bară oblică pe Windows (de ex.g. <tt>C:/</tt>) sau prin numele "
 "dispozitivului pe Linux/UNIX (de exemplu, <tt>/dev/sda</tt>)."
 
+#, fuzzy
 msgid ""
-"For a summarized throughput of all disks, specify <tt>SUMMARY</tt>, for a "
-"sum of read or write throughput write <tt>read</tt> or <tt>write</tt> resp. "
+"For a summarized throughput of all disks, specify <tt>SUMMARY</tt>. For a "
+"sum of read or write throughput, write <tt>read</tt> or <tt>write</tt> resp. "
 "A per-disk IO is specified by the drive letter, a colon and a slash on "
-"Windows (e.g. <tt>C:/</tt>) or by the device name on Linux/UNIX (e.g. <tt>/"
+"Windows (e.g. <tt>C:/</tt>) or by the device name on Linux/Unix (e.g. <tt>/"
 "dev/sda</tt>)."
 msgstr ""
 "Pentru un debit sumar al tuturor discurilor, specificați <tt>SUMMARY</tt>, "
@@ -28438,12 +28087,12 @@ msgstr "De la: %s"
 msgid "From: email address"
 msgstr "De la: adresa de e-mail"
 
+#, fuzzy
+msgid "Front-end port"
+msgstr "Portul Frontend"
+
 msgid "Frontend net time"
 msgstr "Frontend net time"
-
-#, fuzzy
-msgid "Frontend port"
-msgstr "Portul Frontend"
 
 msgid "Frozen"
 msgstr "Congelat"
@@ -28665,6 +28314,9 @@ msgid ""
 "GUI extensions in <tt>'%s'</tt> are marked as 'deprecated' and will be "
 "ignored in future Checkmk versions (official deprecation timeline not "
 "decided yet)."
+msgstr ""
+
+msgid "GUID"
 msgstr ""
 
 msgid "Gamelan"
@@ -29037,9 +28689,6 @@ msgstr ""
 #, fuzzy
 msgid "Grab user from found processes"
 msgstr "Preia utilizatorul din procesele găsite"
-
-msgid "Grace period before scheduler starts"
-msgstr "Perioada de grație înainte de începerea programatorului"
 
 msgid "Gracefully finishing"
 msgstr "Finalizarea cu grație"
@@ -29519,9 +29168,6 @@ msgstr "Date HTTP POST"
 msgid "HTTP Parameters"
 msgstr "Parametrii HTTP"
 
-msgid "HTTP Proxy"
-msgstr "Proxy HTTP"
-
 msgid "HTTP SSL/TLS default port (queries)"
 msgstr ""
 
@@ -29590,9 +29236,6 @@ msgstr "Cereri DHCP primite"
 
 msgid "HTTPS"
 msgstr "HTTPS"
-
-msgid "HTTPS Proxy"
-msgstr "HTTPS Proxy"
 
 #, fuzzy
 msgid ""
@@ -33384,9 +33027,6 @@ msgstr "IP - regiune - ID instanță"
 msgid "IP - region - instance ID"
 msgstr "IP - regiune - ID instanță"
 
-msgid "IP Address"
-msgstr "Adresa IP"
-
 msgid "IP address"
 msgstr "Adresa IP"
 
@@ -33907,15 +33547,6 @@ msgstr ""
 "Dacă un utilizator nu are această permisiune, poate vedea numai evenimentele "
 "care provin de la o gazdă pentru care este persoană de contact."
 
-#, fuzzy
-msgid ""
-"If access to the internet for downloading the sources for creating RCC "
-"environments is only possible via a network proxy, you can specify this here."
-msgstr ""
-"Dacă accesul la internet pentru descărcarea surselor pentru crearea mediilor "
-"RCC este posibil numai prin intermediul unui proxy de rețea, puteți "
-"specifica acest lucru aici."
-
 msgid ""
 "If activated, any \"Failed Action\" entry will be shown in the main check "
 "and the check will go to the WARN state."
@@ -34193,11 +33824,6 @@ msgid "If state changes OR on recovery (OK/UP)"
 msgstr "Dacă se schimbă starea SAU la revenire (OK/UP)"
 
 msgid ""
-"If tests fail, entire suites can be repeated completely or only individual "
-"tests (incrementally)."
-msgstr ""
-
-msgid ""
 "If that user does not have the permission <i>See all events</i> then this "
 "permission controls whether he/she can see events that are not related to a "
 "host in the monitoring and that do not have been assigned specific contact "
@@ -34244,7 +33870,7 @@ msgstr ""
 msgid ""
 "If the configured string/regex searches fail, this will result in a CRIT "
 "state by default. Here you can choose an alternative state that will apply "
-"to all configured string/regex searches when failing their condition."
+"to all configured string/regex searches when their condition fails."
 msgstr ""
 
 #, fuzzy
@@ -34341,17 +33967,6 @@ msgstr ""
 "de n ori]. Setarea acestui indicator poate contribui la reducerea "
 "dimensiunii rezultatului agentului în cazul în care sunt generate multe "
 "linii duplicate."
-
-msgid ""
-"If there is more than one plan testing the same application, then the "
-"variant is used to differentiate them. Example: DE and EN when testing two "
-"language versions of a website. The application name, the variant and the "
-"suite name are combined to form the `Plan ID`. The `Plan ID` is used in "
-"various places such as log messages, rcc space identifies, identification of "
-"environment builds, as part of service items. The variant is available as a "
-"service label. Variants are restricted to the following characters: a-z, A-"
-"Z, 0-9, `-`, `_`, `.`"
-msgstr ""
 
 msgid ""
 "If there is only one form element on the requested page, you do not need to "
@@ -36429,10 +36044,6 @@ msgstr "Includeți spațiul rezervat"
 msgid "Include service with zero base."
 msgstr "Includeți serviciul cu bază zero."
 
-#, python-format
-msgid "Include tests by tag (%s)"
-msgstr "Includeți testele după etichetă (%s)"
-
 msgid ""
 "Include the full path of a process and its arguments in the process list. "
 "Note: this requires using WMI for retrieving process information."
@@ -36558,20 +36169,6 @@ msgstr ""
 
 msgid "Increment size"
 msgstr "Mărimea incrementului"
-
-msgid "Incremental"
-msgstr "Incremental"
-
-msgid ""
-"Incremental<br>On each iteration, Robotmk will re-execute only the failed "
-"tests. In the end, the best and last result per test will be merged into the "
-"overall state. Choose this mode if the tests within the robot suite do not "
-"depend on each other, but can be executed separately.<br><br>Complete<br>On "
-"each iteration, Robotmk will re-execute always the entire suite. In the end, "
-"the final result is taken from the last or PASSed suite execution. Choose "
-"this mode if the tests within the robot suite are related to each other and "
-"their execution order is also crucial."
-msgstr ""
 
 #, fuzzy
 msgid "Indeterminate"
@@ -37208,10 +36805,6 @@ msgid "Internal name: %s"
 msgstr ""
 "Eroare internă: %s\n"
 "%s"
-
-#, fuzzy
-msgid "Internal plan_id"
-msgstr "Interne suite_id"
 
 msgid "Internal user"
 msgstr "Utilizator intern"
@@ -38501,14 +38094,6 @@ msgstr "Afișați doar disponibilitatea (de exemplu, OK/UP)"
 msgid "KByte"
 msgstr "KByte"
 
-#, fuzzy
-msgid "KPI"
-msgstr "DPI"
-
-#, fuzzy
-msgid "KPI runtime"
-msgstr "Timpul de execuție a testului"
-
 msgid ""
 "K_g BMC key to use when authenticating with the remote host for IPMI 2.0"
 msgstr ""
@@ -39067,9 +38652,6 @@ msgstr "Cereri ACL Web"
 msgid "Last download of agent updater"
 msgstr "Ultima descărcare a agentului de actualizare"
 
-msgid "Last error log"
-msgstr "Ultimul jurnal de erori"
-
 msgid "Last exception"
 msgstr "Ultima excepție"
 
@@ -39134,9 +38716,6 @@ msgstr "Ultimele detalii cunoscute"
 #, fuzzy
 msgid "Last known plug-in output"
 msgstr "Ultima ieșire cunoscută a Plugin-ului"
-
-msgid "Last log"
-msgstr "Ultimul jurnal"
 
 #, fuzzy
 msgid "Last minute error rate"
@@ -40330,10 +39909,6 @@ msgstr "Limita de meta-date"
 msgid "Limit path levels for service names"
 msgstr "Limitarea nivelurilor de traseu pentru denumirile serviciilor"
 
-#, fuzzy
-msgid "Limit per attempt"
-msgstr "Timeout per încercare"
-
 msgid "Limit processed data"
 msgstr "Limitarea datelor prelucrate"
 
@@ -40807,10 +40382,6 @@ msgstr "Balansatoare de sarcină"
 
 msgid "Load balancers target groups"
 msgstr "Balansatoare de sarcină Grupuri țintă"
-
-#, fuzzy
-msgid "Load from ZIP file"
-msgstr "Încărcați fișierul MIB"
 
 msgid "Load in a new window / tab"
 msgstr "Încărcați într-o fereastră / filă nouă"
@@ -42411,31 +41982,7 @@ msgid "Manage users of the monitoring system."
 msgstr "Gestionarea utilizatorilor sistemului de monitorizare."
 
 #, fuzzy
-msgid "Managed Robot"
-msgstr "Obiecte gestionate"
-
-#, fuzzy
-msgid "Managed Robots"
-msgstr "Obiecte gestionate"
-
-#, fuzzy
 msgid "Managed objects"
-msgstr "Obiecte gestionate"
-
-#, fuzzy
-msgid "Managed robot deleted."
-msgstr "Obiecte gestionate"
-
-msgid ""
-"Managed robot names are restricted to the following characters: a-z, A-Z, "
-"0-9, `-`, `_`, `.`"
-msgstr ""
-
-msgid "Managed robot not found while attempting to delete it."
-msgstr ""
-
-#, fuzzy
-msgid "Managed robots"
 msgstr "Obiecte gestionate"
 
 msgid "Management board"
@@ -42454,10 +42001,6 @@ msgid "Managing licenses"
 msgstr "Gestionarea licențelor"
 
 msgid "Manual"
-msgstr "Manual"
-
-#, fuzzy
-msgid "Manual Robot"
 msgstr "Manual"
 
 msgid "Manual check"
@@ -43089,10 +42632,6 @@ msgid "Maximum %s instances of duration greater than %s"
 msgstr "Maximum %s cazuri de durată mai mare de %s"
 
 #, fuzzy
-msgid "Maximum KPI runtime"
-msgstr "Durata maximă de funcționare a testului"
-
-#, fuzzy
 msgid "Maximum Livestatus response size"
 msgstr "Dimensiunea maximă"
 
@@ -43376,9 +42915,6 @@ msgstr "Numărul maxim de încercări de livrare"
 msgid "Maximum number of emails in queue"
 msgstr "Numarul maxim de emailuri in coada"
 
-msgid "Maximum number of executions"
-msgstr "Numărul maxim de execuții"
-
 msgid "Maximum number of firewall connections"
 msgstr "Numărul maxim de conexiuni firewall"
 
@@ -43398,9 +42934,6 @@ msgstr "Numarul maxim de linii parsate per fisier de loguri"
 
 #, fuzzy
 msgid "Maximum number of queries to execute per connection."
-msgstr "Numărul maxim de re-executări"
-
-msgid "Maximum number of re-executions"
 msgstr "Numărul maxim de re-executări"
 
 msgid "Maximum number of ready control plane nodes"
@@ -43496,10 +43029,6 @@ msgstr "Durata maximă a bobinei"
 
 msgid "Maximum spool size"
 msgstr "Dimensiunea maximă a bobinei"
-
-#, fuzzy
-msgid "Maximum test runtime"
-msgstr "Durata maximă de funcționare a testului"
 
 msgid "Maximum time since last start of job execution"
 msgstr "Timpul maxim de la ultima pornire a execuției sarcinii"
@@ -46009,15 +45538,6 @@ msgstr "Numele mașinii virtuale"
 msgid "Name of the VM/HostSystem"
 msgstr "Numele sistemului VM/HostSystem"
 
-msgid ""
-"Name of the application to be tested here. The application name, the variant "
-"and the suite name are combined to form the `Plan ID`. The `Plan ID` is used "
-"in various places such as log messages, rcc space identifies, identification "
-"of environment builds, as part of service items. Moreover, the application "
-"is available as a service label. Application names are restricted to the "
-"following characters: a-z, A-Z, 0-9, `-`, `_`, `.`"
-msgstr ""
-
 msgid "Name of the band, e.g. 5 GHz"
 msgstr "Denumirea benzii, de exemplu, 5 GHz"
 
@@ -46138,31 +45658,6 @@ msgstr "Numele: %s"
 
 msgid "Names"
 msgstr "Nume"
-
-#, fuzzy
-msgid ""
-"Names for files containing <b>additional command line arguments</b> for "
-"Robot Framework. The paths are relative to the <i>base directory of Robot "
-"Framework projects</i>. Argument files allow the placing of all or some "
-"command line options and arguments into an external file from where they "
-"will be read. This is useful for more exotic RF parameters not natively "
-"supported by Robotmk or for problematic characters. The arguments given here "
-"are used along with possible other command line options. (See also <a "
-"href=\"https://robotframework.org/robotframework/latest/"
-"RobotFrameworkUserGuide.html#argument-files\" target=\"_blank\">About "
-"argument files</a>)"
-msgstr ""
-"Nume pentru fișierele care conțin <b>argumente suplimentare pentru linia de "
-"comandă</b> pentru Robot Framework. Căile de acces sunt relative la "
-"directorul de bază <i>robot suites</i>. Fișierele de argumente permit "
-"plasarea tuturor sau a unor opțiuni și argumente din linia de comandă într-"
-"un fișier extern din care vor fi citite. Acest lucru este util pentru "
-"parametrii RF mai exotici care nu sunt suportați nativ de Robotmk sau pentru "
-"caracterele problematice. Argumentele prezentate aici sunt utilizate "
-"împreună cu alte opțiuni posibile ale liniei de comandă. (A se vedea, de "
-"asemenea, <a href=\"https://robotframework.org/robotframework/latest/"
-"RobotFrameworkUserGuide.html#argument-files\">Despre fișierele de argumente</"
-"a>)"
 
 #, fuzzy
 msgid ""
@@ -46639,10 +46134,6 @@ msgstr[0] "Noua etichetă de gazdă: "
 msgstr[1] ""
 msgstr[2] "Noi etichete pentru gazde: "
 
-#, fuzzy
-msgid "New managed robot"
-msgstr "Obiecte gestionate"
-
 msgid "New name"
 msgstr "Nume nou"
 
@@ -46807,7 +46298,7 @@ msgid "No PNP templates using the deprecated API"
 msgstr "Nu verificați plugin-urile care utilizează API-ul depreciat"
 
 #, fuzzy
-msgid "No Prometheus scraper configuration yet"
+msgid "No Prometheus configuration yet"
 msgstr "Configurația stilului selectat"
 
 #, fuzzy
@@ -47076,14 +46567,6 @@ msgstr "Nu s-a efectuat încă nicio verificare a licenței"
 msgid "No logging"
 msgstr "Fără logare"
 
-#, fuzzy
-msgid ""
-"No logs are available. If available, more information will be shown in the "
-"service name."
-msgstr ""
-"Nu sunt disponibile jurnale. Dacă sunt disponibile, mai multe informații vor "
-"fi afișate în descrierea serviciului."
-
 msgid "No logs found for this host."
 msgstr "Nu s-au găsit jurnale pentru această gazdă."
 
@@ -47157,9 +46640,6 @@ msgstr "Nu există modificări în așteptare."
 
 msgid "No proxy"
 msgstr "Fără proxy"
-
-msgid "No re-executions"
-msgstr "Fără re-executări"
 
 #, fuzzy
 msgid "No relay"
@@ -49714,22 +49194,6 @@ msgstr "Se execută numai manual"
 msgid "Only execute plug-ins with the following extensions:"
 msgstr "Executați numai plugin-uri cu următoarele extensii:"
 
-msgid ""
-"Only execute selected sub-suites. When this option is used with <tt>--test</"
-"tt>, <tt>--include</tt> or <tt>--exclude</tt>, only tests in matching suites "
-"and also those matching other filtering criteria are selected. Name can be a "
-"simple pattern in a similar way to <tt>--test</tt> and it can contain parent "
-"suite names separated by a dot. For example, <tt>X.Y</tt> selects a suite "
-"<tt>Y</tt> only if its parent is <tt>X</tt>."
-msgstr ""
-"Executați numai subsolurile selectate. Atunci când această opțiune este "
-"utilizată cu <tt>--test</tt>, <tt>--include</tt> sau <tt>--exclude</tt>, "
-"sunt selectate numai testele din suitele corespunzătoare și, de asemenea, "
-"cele care corespund altor criterii de filtrare. Name poate fi un model "
-"simplu în mod similar cu <tt>--test</tt> și poate conține nume de suite "
-"părinte separate prin punct. De exemplu, <tt>X.Y</tt> selectează o suită "
-"<tt>Y</tt> numai dacă părintele acesteia este <tt>X</tt>."
-
 msgid "Only fetch specific OIDs"
 msgstr "Preluarea numai a unor OID-uri specifice"
 
@@ -51185,16 +50649,6 @@ msgstr "ORACLE %s wait class"
 msgid "Order"
 msgstr "Comandă"
 
-msgid "Organisation"
-msgstr "Organizație"
-
-msgid "Organisation ID"
-msgstr "ID-ul organizației"
-
-#, fuzzy
-msgid "Organisation name"
-msgstr "Numele organizației"
-
 #, fuzzy
 msgid "Organisations"
 msgstr "Organizație"
@@ -51204,6 +50658,14 @@ msgstr "Organizația"
 
 msgid "Organization (O)"
 msgstr "Organizație (O)"
+
+#, fuzzy
+msgid "Organization ID"
+msgstr "ID-ul organizației"
+
+#, fuzzy
+msgid "Organization name"
+msgstr "Numele organizației"
 
 msgid "Organizational unit (OU)"
 msgstr "Unitate organizațională (OU)"
@@ -51271,9 +50733,6 @@ msgstr ""
 
 msgid "Other latency"
 msgstr "Alte latențe"
-
-msgid "Other logs for this service"
-msgstr "Alte jurnale pentru acest serviciu"
 
 msgid "Other operating systems"
 msgstr "Alte sisteme de operare"
@@ -51638,10 +51097,6 @@ msgid "Override check state based on last build result"
 msgstr ""
 "Suprascrieți starea de verificare pe baza ultimului rezultat al construcției"
 
-#, fuzzy
-msgid "Override managed plan settings"
-msgstr "Unitatea de suprascriere a senzorului"
-
 msgid "Override unit of sensor"
 msgstr "Unitatea de suprascriere a senzorului"
 
@@ -51715,11 +51170,6 @@ msgstr "PDisk EID:Slot-Device"
 
 msgid "PEM File"
 msgstr "Fișier PEM"
-
-msgid ""
-"PEM-encoded root certificate used for validating server certificates when "
-"downloading or pulling dependencies."
-msgstr ""
 
 msgid "PEND"
 msgstr "PEND"
@@ -52096,10 +51546,6 @@ msgstr "Fișiere împachetate"
 msgid "Packages"
 msgstr "Pachete"
 
-#, fuzzy
-msgid "Packed Conda environment"
-msgstr "Utilizarea din mediul înconjurător"
-
 msgid "Packet loss"
 msgstr "Pierderea de pachete"
 
@@ -52277,9 +51723,6 @@ msgstr "Sarcina conexiunilor paralele"
 
 msgid "Parallel pings to send"
 msgstr "Ping-uri paralele de trimis"
-
-msgid "Parallel running sequences of plans"
-msgstr ""
 
 msgid "Parallelize core config creation"
 msgstr "Crearea în paralel a configurației de bază"
@@ -52587,10 +52030,6 @@ msgstr "Calea către socket-ul unix"
 msgid "Path to a CA certificate"
 msgstr "Cale de acces la un certificat CA"
 
-#, fuzzy
-msgid "Path to a custom CA certificate file to use for TLS connections."
-msgstr "Setări de timp pentru certificatul routerului SAP"
-
 msgid "Path to categories"
 msgstr "Calea către categorii"
 
@@ -52607,11 +52046,6 @@ msgstr "Calea către sapgenpse"
 
 msgid "Path to temporary directory (will be created)"
 msgstr "Cale de acces la directorul temporar (va fi creat)"
-
-msgid ""
-"Path to the Robot Framework suite folder or directly to a specific `.robot` "
-"file, relative to the base directory of Robot Framework projects."
-msgstr ""
 
 msgid ""
 "Path to the user certificate. If the path is not exist or empty, the user "
@@ -52640,10 +52074,6 @@ msgstr "Analizator de modele"
 msgid "Pattern contains invalid characters: %s"
 msgstr "Numele gazdei conține caractere ilegale: %s."
 
-#, fuzzy
-msgid "Patterns"
-msgstr "Model"
-
 msgid "Patterns for each node"
 msgstr "Modele pentru fiecare nod"
 
@@ -52652,12 +52082,6 @@ msgid "Patterns for log files to monitor (allowing <tt>*</tt> and <tt>?</tt>)"
 msgstr ""
 "Modele pentru fișierele de jurnal de monitorizat (permițând <tt>*</tt> și "
 "<tt>?</tt>)"
-
-msgid ""
-"Patterns to identify Robot Framework keywords as Robotmk KPIs. Note that if "
-"a pattern matches multiple keywords from the same test with the same name, "
-"the service will report UNKNOWN."
-msgstr ""
 
 msgid "Paused"
 msgstr "Pauză"
@@ -53452,26 +52876,8 @@ msgstr "Comunicarea în text simplu"
 msgid "Plain text communication is enabled for %s"
 msgstr "Comunicarea în text simplu este activată pentru %s."
 
-msgid "Plan"
-msgstr ""
-
 msgid "Plan ID"
 msgstr ""
-
-#, fuzzy
-msgid ""
-"Plan IDs (combinations of application names, suite names and variants) must "
-"be unique."
-msgstr ""
-"Combinațiile de nume și etichete ale aplicației suite trebuie să fie unice."
-
-#, fuzzy
-msgid "Plan configuration"
-msgstr "configurare"
-
-#, fuzzy
-msgid "Plan settings"
-msgstr "Setări globale"
 
 msgid "Plans"
 msgstr ""
@@ -53905,30 +53311,6 @@ msgstr "Vă rugăm să furnizați un fișier '.xml'."
 msgid "Please provide a host name to test with."
 msgstr "Vă rugăm să furnizați un nume de gazdă cu care să testați."
 
-#, fuzzy
-msgid "Please provide a path that is absolute on either Linux or Windows."
-msgstr "Vă rugăm să furnizați o cale relativă Windows"
-
-#, fuzzy
-msgid "Please provide a path that is relative on both Linux and Windows."
-msgstr "Vă rugăm să furnizați o cale relativă Windows"
-
-msgid ""
-"Please provide a path that is resolved in the same way on Linux and Windows. "
-"In particular, avoid backslashes. You can use slashes on both platforms."
-msgstr ""
-
-#, fuzzy
-msgid "Please provide a path with at least one segment"
-msgstr "Vă rugăm să selectați cel puțin un element"
-
-msgid "Please provide a relative Windows path"
-msgstr "Vă rugăm să furnizați o cale relativă Windows"
-
-#, fuzzy
-msgid "Please provide a relative path"
-msgstr "Vă rugăm să furnizați o cale relativă Windows"
-
 msgid "Please provide a service."
 msgstr "Vă rugăm să furnizați un serviciu."
 
@@ -53937,9 +53319,6 @@ msgstr "Vă rugăm să furnizați o gazdă și un port valid"
 
 msgid "Please provide a valid name"
 msgstr "Vă rugăm să furnizați un nume valid"
-
-msgid "Please provide an absolute Windows path"
-msgstr "Vă rugăm să furnizați o cale absolută pentru Windows"
 
 #, fuzzy
 msgid "Please provide an absolute path"
@@ -54581,10 +53960,6 @@ msgstr "Putere"
 msgid "Power Supplies"
 msgstr "Surse de alimentare"
 
-#, fuzzy
-msgid "Power Supply Name"
-msgstr "Denumirea sursei de alimentare"
-
 msgid "Power consumption draw"
 msgstr "Consumul de energie electrică"
 
@@ -55171,10 +54546,6 @@ msgid "Prometheus custom services"
 msgstr "Servicii personalizate Prometheus"
 
 #, fuzzy
-msgid "Prometheus quick setup"
-msgstr "Alertmanager"
-
-#, fuzzy
 msgid "Prometheus scraper"
 msgstr "Alertmanager"
 
@@ -55229,7 +54600,7 @@ msgstr "Furnizați comanda pentru executarea scriptului python"
 
 msgid ""
 "Provide fixed string or regular expression conditions for the HTTP reponse. "
-"If the response fails the condition (E.g., expected string not found in "
+"If the response fails the condition (e.g., expected string not found in "
 "body), this will result in a CRITICAL state."
 msgstr ""
 
@@ -55514,24 +54885,6 @@ msgid "Python agent plug-in execution (Linux, Unix)"
 msgstr "Executarea plugin-ului agentului Python (UNIX)"
 
 #, fuzzy
-msgid ""
-"Python or YAML file to read variables from. (<a href=\"https://"
-"robotframework.org/robotframework/latest/"
-"RobotFrameworkUserGuide.html#variable-files\" target=\"_blank\">About "
-"variable files</a>). Possible arguments to the variable file can be given "
-"after the file path using a colon or a semicolon as a separator. Examples:"
-"<br><tt>path/vars.yaml</tt><br><tt>set_environment.py:testing</tt>"
-msgstr ""
-"Fișier Python sau YAML din care se citesc variabilele. (<a href=\"https://"
-"robotframework.org/robotframework/latest/"
-"RobotFrameworkUserGuide.html#variable-files\">Despre fișierele de variabile</"
-"a>) Argumentele posibile pentru fișierul de variabile pot fi date după calea "
-"fișierului, folosind două puncte sau punct și virgulă ca separator. "
-"Exemple:\n"
-"<tt>path/vars.yaml</tt>\n"
-"<tt>set_environment.py:testing</tt>"
-
-#, fuzzy
 msgid "Python script"
 msgstr "Script Python executabil"
 
@@ -55803,29 +55156,6 @@ msgstr "RAM utilizat"
 
 msgid "RAM used (averaged)"
 msgstr "RAM utilizată (medie)"
-
-#, fuzzy
-msgid "RCC (deprecated)"
-msgstr "Depreciat"
-
-#, fuzzy
-msgid "RCC Remote server address"
-msgstr "Adresa serverului URL personalizat"
-
-#, fuzzy
-msgid "RCC configuration"
-msgstr "Configurația RRA"
-
-msgid "RCC profile configuration"
-msgstr "Configurația profilului RCC"
-
-#, fuzzy
-msgid ""
-"RCC profile configuration: RCC profiles can define settings for this "
-"specific RCC environment, for example proxy settings."
-msgstr ""
-"Configurarea profilului RCC: Profilurile RCC pot defini setările pentru "
-"acest mediu RCC specific, de exemplu, setările Proxy. <br>."
 
 msgid "REST API"
 msgstr "REST API"
@@ -56114,12 +55444,6 @@ msgstr "Biti brute (HEXSTR)"
 
 msgid "Rcvd"
 msgstr "Rcvd"
-
-msgid "Re-execution strategy"
-msgstr "Strategia de reexecuție"
-
-msgid "Re-executions"
-msgstr "Reexecutări"
 
 msgid "Read"
 msgstr "Citește"
@@ -57001,22 +56325,6 @@ msgstr "Nivelurile relative ale sesiunilor active."
 #, fuzzy, no-python-format
 msgid "Relative limit in %"
 msgstr "Umiditate relativă"
-
-#, fuzzy
-msgid "Relative manifest path"
-msgstr "Ora relativă de alertă"
-
-#, fuzzy
-msgid "Relative path to Robotmk environment manifest"
-msgstr "Cale către robot.yaml"
-
-#, fuzzy
-msgid "Relative path to robot.yaml"
-msgstr "Cale către robot.yaml"
-
-#, fuzzy
-msgid "Relative path to test suite file or folder"
-msgstr "Calea către suita de testare"
 
 #, fuzzy
 msgid "Relative time of alert"
@@ -58700,64 +58008,6 @@ msgstr "Unități Rittal CMC-III: Temperaturi"
 msgid "Robot"
 msgstr ""
 
-msgid "Robot Framework parameters"
-msgstr "Parametrii cadrului robotului"
-
-msgid "Robot Framework re-executions"
-msgstr "Reexecutarea cadrului robot"
-
-#, python-format
-msgid "Robot Framework: %s"
-msgstr "Cadrul robotului: %s"
-
-msgid "Robot Framework: Last log"
-msgstr "Cadrul robotului: Ultimul jurnal"
-
-#, fuzzy
-msgid "Robot Package"
-msgstr "Îndepărtați pachetul"
-
-msgid ""
-"Robotmk (as part of Checkmk Synthetic Monitoring) integrates the results of "
-"Robot Framework tests as Checkmk services."
-msgstr ""
-"Robotmk (ca parte a Checkmk Synthetic Monitoring) integrează rezultatele "
-"testelor Robot Framework ca servicii Checkmk."
-
-#, fuzzy
-msgid "Robotmk KPI discovery"
-msgstr "Descoperirea IO disc"
-
-#, fuzzy
-msgid "Robotmk KPI monitoring"
-msgstr "Monitorizarea fumului"
-
-#, fuzzy
-msgid ""
-"Robotmk is only supported in combination with the Checkmk Micro Core (CMC)."
-msgstr ""
-"Nivelul de jurnal pentru gestionarea notificărilor în cadrul Checkmk Micro "
-"Core"
-
-msgid "Robotmk logs"
-msgstr "Jurnalele Robotmk"
-
-#, fuzzy
-msgid "Robotmk plan"
-msgstr "Jurnalele Robotmk"
-
-#, fuzzy
-msgid "Robotmk scheduler (Linux)"
-msgstr "Robotmk Scheduler (Windows)"
-
-#, fuzzy
-msgid "Robotmk scheduler (Windows)"
-msgstr "Robotmk Scheduler (Windows)"
-
-#, fuzzy
-msgid "Robotmk test"
-msgstr "Testele Robotmk"
-
 msgid "Role"
 msgstr "Rol"
 
@@ -58777,9 +58027,6 @@ msgstr "Gestionarea sesiunii"
 #, fuzzy
 msgid "Rollovers Asserts"
 msgstr "%s Afirmă"
-
-msgid "Root CA"
-msgstr ""
 
 #, fuzzy
 msgid "Root delay"
@@ -59268,20 +58515,8 @@ msgstr "Sesiuni de alergare"
 msgid "Runtime"
 msgstr "Timp de execuție"
 
-#, fuzzy
-msgid "Runtime (peak attempt)"
-msgstr "Încercare de verificare curentă"
-
-#, fuzzy
-msgid "Runtime limit (total)"
-msgstr "Rata de succes a regulilor"
-
 msgid "Runtime run queue"
 msgstr "Coadă de execuție în timp de execuție"
-
-#, fuzzy
-msgid "Runtime-limit ratio (peak attempt)"
-msgstr "Rata de succes a regulilor"
 
 msgid "Rx"
 msgstr "Rx"
@@ -59528,7 +58763,7 @@ msgid "SIP - Sends timed out"
 msgstr "SIP - Trimiterea de mesaje cu temporizare expirată"
 
 #, fuzzy
-msgid "SIP Interfaces"
+msgid "SIP interfaces"
 msgstr "Interfața IPMI"
 
 msgid "SLA"
@@ -59680,9 +58915,6 @@ msgstr "Utilizarea SNAT niveluri superioare"
 msgid "SNMP"
 msgstr "SNMP"
 
-msgid "SNMP Information"
-msgstr "Informații SNMP"
-
 msgid "SNMP MIBs"
 msgstr "MIB-uri SNMP"
 
@@ -59715,6 +58947,10 @@ msgstr "Acreditive SNMP"
 
 msgid "SNMP credentials of monitored hosts"
 msgstr "credențiale SNMP ale gazdelor monitorizate"
+
+#, fuzzy
+msgid "SNMP information"
+msgstr "Informații SNMP"
 
 msgid "SNMP interface check for LANCOM devices"
 msgstr "Verificarea interfeței SNMP pentru dispozitivele LANCOM"
@@ -59833,10 +59069,6 @@ msgstr "SSL"
 
 msgid "SSL certificate checking"
 msgstr "Verificarea certificatelor SSL"
-
-#, fuzzy
-msgid "SSL certificate revocation checks"
-msgstr "Verificarea certificatului SSL"
 
 msgid "SSL certificate validation"
 msgstr "Validarea certificatului SSL"
@@ -60086,16 +59318,16 @@ msgid "Scheduler"
 msgstr "Programator"
 
 #, fuzzy
-msgid "Scheduler Interval"
+msgid "Scheduler interval"
 msgstr "Intervalul de cache"
-
-#, fuzzy
-msgid "Scheduler Plan Configs"
-msgstr "Programați o perioadă de pauză?"
 
 #, fuzzy
 msgid "Scheduler job name"
 msgstr "Numele lucrării Scheduler"
+
+#, fuzzy
+msgid "Scheduler plan configs"
+msgstr "Programați o perioadă de pauză?"
 
 #, python-format
 msgid "Scheduling report in background failed: %s"
@@ -60430,10 +59662,6 @@ msgstr "Cheia secretă"
 msgid "Secret access key is required but not specified."
 msgstr ""
 
-#, fuzzy
-msgid "Secret environment variables"
-msgstr "Variabile de mediu"
-
 msgid "Secret key"
 msgstr "Cheia secretă"
 
@@ -60484,13 +59712,6 @@ msgstr "Securitate"
 
 msgid "Security Level"
 msgstr "Nivelul de securitate"
-
-#, fuzzy
-msgid "Security advice"
-msgstr "Denumire de securitate"
-
-msgid "Security checks have failed for the uploaded tar.gz file"
-msgstr ""
 
 #, fuzzy, python-format
 msgid "Security message #%d"
@@ -60740,66 +59961,9 @@ msgstr "Selectați sunetul"
 msgid "Select specific object type"
 msgstr "Selectați un anumit tip de obiect"
 
-#, fuzzy, python-format
-msgid "Select suites by names (%s)"
-msgstr "Selectați suitele după nume (%s)"
-
 #, fuzzy
 msgid "Select tag to add"
 msgstr "Selectați o perioadă de timp"
-
-#, fuzzy
-msgid ""
-"Select test cases that are not to run at all with a tag. (<a href=\"https://"
-"robotframework.org/robotframework/latest/"
-"RobotFrameworkUserGuide.html#tagging-test-cases\" target=\"_blank\">About "
-"tagging test cases</a>). These tests are not run even if included with <tt>--"
-"include</tt>. Tags are matched using the same rules as with <tt>--include</"
-"tt>."
-msgstr ""
-"Selectați cazurile de testare care nu trebuie să fie rulate deloc cu o "
-"etichetă. (<a href=\"https://robotframework.org/robotframework/latest/"
-"RobotFrameworkUserGuide.html#tagging-test-cases\">Despre etichetarea "
-"cazurilor de testare</a>). Aceste teste nu sunt rulate chiar dacă sunt "
-"incluse cu <tt>--include</tt>. Etichetele se potrivesc folosind aceleași "
-"reguli ca și cu <tt>--include</tt>."
-
-#, fuzzy, python-format
-msgid "Select tests by names (%s)"
-msgstr "Selectați testele după nume (%s)"
-
-#, fuzzy
-msgid ""
-"Select tests by names or by long names also including their parent suite "
-"names, such as <tt>Parent.Test</tt>. Name is case and space insensitive and "
-"it can also be a simple pattern where <tt>*</tt> matches anything, <tt>?</"
-"tt> matches any single character, and <tt>[chars]</tt> matches one character "
-"within the brackets."
-msgstr ""
-"Selectați testele după nume sau după un nume lung care include și numele "
-"suitei părinte, cum ar fi <tt>Parent.Test</tt>. Numele este insensibil la "
-"majuscule și spații și poate fi, de asemenea, un model simplu în care <tt>*</"
-"tt> se potrivește cu orice, <tt>?</tt> se potrivește cu orice caracter și "
-"<tt>[chars]</tt> se potrivește cu un singur caracter din interiorul "
-"parantezelor."
-
-#, fuzzy
-msgid ""
-"Select tests by tags. (<a href=\"https://robotframework.org/robotframework/"
-"latest/RobotFrameworkUserGuide.html#tagging-test-cases\" "
-"target=\"_blank\">About tagging test cases</a>). Similarly as name with "
-"<tt>--test</tt>,' tag is case and space insensitive and it is possible to "
-"use patterns with <tt>*</tt>, <tt>?</tt> and <tt>[]</tt> as wildcards. Tags "
-"and patterns can also be combined with <tt>AND</tt>, <tt>OR</tt>, and "
-"<tt>NOT</tt> operators."
-msgstr ""
-"Selectați testele după etichetă. (<a href=\"https://robotframework.org/"
-"robotframework/latest/RobotFrameworkUserGuide.html#tagging-test-"
-"cases\">Despre etichetarea cazurilor de testare</a>). În mod similar cu "
-"numele cu <tt>--test</tt>,' tag-ul este insensibil la majuscule și spații și "
-"este posibil să se utilizeze modele cu <tt>*</tt>, <tt>?</tt> și <tt>[]</tt> "
-"ca wildcards. Etichetele și modelele pot fi, de asemenea, combinate cu "
-"operatorii <tt>AND</tt>, <tt>OR</tt> și <tt>NOT</tt>."
 
 msgid ""
 "Select the Kubernetes objects you would like to monitor. Pods controlled by "
@@ -61239,14 +60403,6 @@ msgstr "Separator"
 
 msgid "September"
 msgstr "Septembrie"
-
-#, fuzzy
-msgid "Sequence execution interval"
-msgstr "Intervalul de execuție a grupului"
-
-#, fuzzy
-msgid "Sequence of plans"
-msgstr "Programarea execuției"
 
 msgid "Serial"
 msgstr "Serial"
@@ -62117,16 +61273,6 @@ msgstr "Setați delimitatorul de câmp"
 msgid "Set fixed limits"
 msgstr "Stabilirea unor limite fixe"
 
-msgid ""
-"Set global variables. Only scalar variables with string values are "
-"supported, and name is given without <tt>${}</tt>. (See <tt>--variablefile</"
-"tt> for a more powerful variable setting mechanism.)"
-msgstr ""
-"Setați variabilele globale. Sunt acceptate numai variabilele scalare cu "
-"valori de tip șir de caractere, iar numele este dat fără <tt>${}</tt>. (A se "
-"vedea <tt>--variablefile</tt> pentru un mecanism mai puternic de stabilire a "
-"variabilelor)."
-
 #, fuzzy
 msgid "Set graph time"
 msgstr "Utilizați titlul graficului"
@@ -62437,17 +61583,6 @@ msgstr ""
 "Setați starea de monitorizare a sarcinilor care nu sunt activate (de "
 "exemplu, pentru că au fost dezactivate după ce au fost descoperite)."
 
-msgid ""
-"Set the name of the top level suite. By default the name is created based on "
-"the executed file or directory.<br>This sets the name of a fresh discovered "
-"Robot service; an already existing service will hide away and will be found "
-"by the discovery under a new name."
-msgstr ""
-"Setați numele suitei de nivel superior. În mod implicit, numele este creat "
-"pe baza fișierului sau directorului executat.<br>Aceasta stabilește numele "
-"unui serviciu Robot proaspăt descoperit; un serviciu deja existent se va "
-"ascunde și va fi găsit de către descoperire sub un nume nou."
-
 msgid "Set the organization of the InfluxDB server."
 msgstr "Setați organizarea serverului InfluxDB."
 
@@ -62589,32 +61724,8 @@ msgid ""
 "config directory will be used."
 msgstr ""
 
-#, fuzzy
-msgid ""
-"Sets the thresholds for the runtime of a test. Note that runtime monitoring "
-"is not a feature of Robot Framework, but of Robotmk. That means that even "
-"when a Robot suite has ended with a PASS result, the states of Robotmk test "
-"and plan services can be other than OK if runtimes were exceeded."
-msgstr ""
-"Stabilește pragul de execuție pentru acest test special. Rețineți că "
-"monitorizarea în timpul execuției nu este o caracteristică a Robot "
-"Framework, ci a Robotmk; o suită Robot poate avea o stare internă OK, dar o "
-"stare WARN în Checkmk."
-
 msgid "Sets the user of the alert. Display name of the request owner."
 msgstr ""
-
-#, fuzzy
-msgid ""
-"Sets thresholds for the runtime of a KPI. Note that runtime monitoring is "
-"not a feature of Robot Framework, but of Robotmk. This means that even if a "
-"keyword has PASSed, the corresponding KPI service can still report WARN or "
-"CRIT if the runtime thresholds are exceeded."
-msgstr ""
-"Stabilește pragul de execuție pentru acest test special. Rețineți că "
-"monitorizarea în timpul execuției nu este o caracteristică a Robot "
-"Framework, ci a Robotmk; o suită Robot poate avea o stare internă OK, dar o "
-"stare WARN în Checkmk."
 
 msgid "Setting"
 msgstr "Setarea"
@@ -63506,11 +62617,6 @@ msgstr ""
 "care a fost crucial pentru rezultatul global (cel preferat în caz de "
 "îndoială). Puteți suprascrie acest automatism prin specificarea unui nod "
 "aici."
-
-msgid ""
-"Since managed robots are used in bakery rules, you need the permission to "
-"edit these rules to access this page."
-msgstr ""
 
 msgid ""
 "Since the sensor description is a user defined text, multiple sensors may "
@@ -64785,26 +63891,6 @@ msgstr ""
 "la care se aplică nivelurile de tensiune. Lista este sortată automat la "
 "salvare."
 
-#, fuzzy
-msgid ""
-"Specify here whether the working directory of Robotmk (`/var/lib/"
-"check_mk_agent/robotmk/working/suites`) on the target host should be cleaned "
-"up either after a certain time or after a certain number of test executions."
-msgstr ""
-"Specificați aici dacă directorul de lucru al Robotmk de pe gazda țintă "
-"trebuie curățat după un anumit timp sau după un anumit număr de execuții de "
-"test."
-
-#, fuzzy
-msgid ""
-"Specify here whether the working directory of Robotmk on the target host "
-"should be cleaned up either after a certain time or after a certain number "
-"of test executions."
-msgstr ""
-"Specificați aici dacă directorul de lucru al Robotmk de pe gazda țintă "
-"trebuie curățat după un anumit timp sau după un anumit număr de execuții de "
-"test."
-
 #, fuzzy, python-format
 msgid ""
 "Specify how Checkmk will translate the exit code of a task into a monitoring "
@@ -66077,10 +65163,6 @@ msgstr "Starea %s în cazul în care este activată recuperarea"
 msgid "State of %s if recovery is set (as integer)"
 msgstr "Starea %s în cazul în care este activată recuperarea (ca număr întreg)"
 
-#, fuzzy
-msgid "State of Juniper Alarms"
-msgstr "Începutul anului viitor"
-
 msgid "State of NTP peer"
 msgstr "Starea omologului NTP"
 
@@ -66391,12 +65473,12 @@ msgid "State when replication state is unknown"
 msgstr "Stare atunci când starea de replicare este necunoscută"
 
 #, fuzzy
-msgid "State when reported device status is Present"
-msgstr "Stare când starea VPN este faza 1"
+msgid "State when reported device status is UP"
+msgstr "Stare atunci când starea de replicare este eroare"
 
 #, fuzzy
-msgid "State when reported device status is Up"
-msgstr "Stare atunci când starea de replicare este eroare"
+msgid "State when reported device status is present"
+msgstr "Stare când starea VPN este faza 1"
 
 msgid "State when security updates are pending"
 msgstr "Stare atunci când actualizările de securitate sunt în așteptare"
@@ -66434,6 +65516,10 @@ msgstr "Declarație"
 
 msgid "States"
 msgstr "State"
+
+#, fuzzy
+msgid "States of Juniper alarms"
+msgstr "Începutul anului viitor"
 
 #, fuzzy
 msgid "States of Nutanix Host"
@@ -67337,14 +66423,6 @@ msgstr "Monitorizare sintetică"
 msgid "Synthetic monitoring (licensed tests: %s)"
 msgstr "Monitorizare sintetică (teste autorizate: %s)"
 
-#, fuzzy
-msgid "Synthetic monitoring is an add-on."
-msgstr "Căutare în Monitorizare"
-
-#, fuzzy
-msgid "Synthetic monitoring tests"
-msgstr "Monitorizare sintetică"
-
 msgid "Synthetic tests"
 msgstr "Teste sintetice"
 
@@ -67412,10 +66490,6 @@ msgstr "ID-ul sistemului"
 msgid "System Info"
 msgstr "Informații despre sistem"
 
-#, fuzzy
-msgid "System Interface"
-msgstr "Informații despre sistem"
-
 msgid "System MIBs"
 msgstr "MIB-uri de sistem"
 
@@ -67434,6 +66508,10 @@ msgstr "Obiective globale ale sistemului"
 #, fuzzy
 msgid "System information for inventory via dmidecode (Windows)"
 msgstr "Informații de sistem pentru inventariere prin dmidecode (Windows)"
+
+#, fuzzy
+msgid "System interface"
+msgstr "Informații despre sistem"
 
 #, fuzzy
 msgid "System location"
@@ -67611,10 +66689,6 @@ msgstr "TLS Autentificarea fără TLS nu este posibilă"
 #, fuzzy
 msgid "TLS certificate hostname"
 msgstr "Validarea certificatului SSL"
-
-#, fuzzy
-msgid "TLS certificate revocation checks"
-msgstr "Verificarea certificatului SSL"
 
 #, fuzzy
 msgid "TLS certificate validation"
@@ -68221,9 +67295,6 @@ msgstr "Notificări de testare pe"
 msgid "Test results"
 msgstr "Ultimul rezultat"
 
-msgid "Test runtime"
-msgstr "Timpul de execuție a testului"
-
 msgid "Test the AWS connection based on your configuration settings."
 msgstr ""
 
@@ -68656,11 +67727,6 @@ msgstr ""
 "URL-ul serverului Checkmk trebuie să fie FQDN (consultați ajutorul în linie "
 "pentru detalii)."
 
-msgid ""
-"The Conda environment file specifies all dependencies that will be installed "
-"in the environment."
-msgstr ""
-
 msgid "The DNS server you want to use for the lookup"
 msgstr "Serverul DNS pe care doriți să îl utilizați pentru căutare"
 
@@ -69073,32 +68139,6 @@ msgstr ""
 #, fuzzy, python-format
 msgid "The Relay with ID '%s' does not exist."
 msgstr "Rule_id %s nu există."
-
-msgid ""
-"The Robotmk environment manifest (YML) specifies one or more commands to be "
-"executed after the environment has been created."
-msgstr ""
-
-msgid ""
-"The Robotmk scheduler sets the variable ROBOCORP_HOME explicitely when "
-"running RCC commands. There is one ROBOCORP_HOME directory per user. The "
-"scheduler creates these directories in the base directory. Before executing "
-"any tests, the scheduler will take ownership of the base directory. However, "
-"it will not clear an existing directory of its contents. If you specify a "
-"base directory, which was previously owned by a user, then that user could "
-"potentially execute arbitrary code via the scheduler. To avoid this issue, "
-"one should specify a non-existing directory or empty directory here."
-msgstr ""
-
-msgid ""
-"The Robotmk scheduler will configure micromamba to create Conda environments "
-"in this directory. Before executing any tests, the scheduler will take "
-"ownership of the base directory. However, it will not clear an existing "
-"directory of its contents. If you specify a base directory that was "
-"previously owned by a user, then that user could potentially execute "
-"arbitrary code via the scheduler. To avoid this issue, one should specify a "
-"non-existing directory or empty directory here."
-msgstr ""
 
 msgid ""
 "The SAML login button on the login page will display this name. Choose a "
@@ -69699,13 +68739,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The check will use any IP address protocol by default. Selecting a specific "
-"protocol or use the primary of a host will enforce the usage of your choice. "
-"This gives you more control if you want to ensure the availability of you "
-"web endpoint through either IPv4 or IPv6."
-msgstr ""
-
-msgid ""
 "The checker usage is below 50%, you may decrease the number of checkers to "
 "reduce the memory consumption."
 msgstr ""
@@ -70052,12 +69085,6 @@ msgid "The current monitoring state (including acknowledgments and downtimes)"
 msgstr ""
 "Starea curentă de monitorizare (inclusiv confirmările și timpii de "
 "întrerupere)"
-
-#, python-format
-msgid ""
-"The current plan configuration is incompatible with the following rules "
-"which reference this robot: %s"
-msgstr ""
 
 #, python-format
 msgid "The custom logo %s has been deleted."
@@ -70417,12 +69444,6 @@ msgstr "Fișierul nu pare a fi un fișier iCalendar valid."
 
 msgid "The file extension has to be <tt>.pdf</tt>"
 msgstr "Extensia fișierului trebuie să fie <tt>.pdf</tt>."
-
-#, python-format
-msgid ""
-"The file extension of the uploaded file is not supported: %s. Supported file "
-"extensions: %s."
-msgstr ""
 
 msgid "The file is empty"
 msgstr "Fișierul este gol"
@@ -71207,15 +70228,6 @@ msgstr "Clusterul trebuie să aibă cel puțin un nod"
 msgid "The lower bound must be greater than 0."
 msgstr "Clusterul trebuie să aibă cel puțin un nod"
 
-#, fuzzy, python-format
-msgid ""
-"The managed robot with ID %s that you attempted to clone does not exist."
-msgstr "Programul pe care încercați să îl clonați nu există."
-
-#, fuzzy, python-format
-msgid "The managed robot with ID %s that you attempted to edit does not exist."
-msgstr "Utilizatorul pe care încercați să îl editați nu există."
-
 msgid "The mandatory group name is missing"
 msgstr "Lipsește numele grupului obligatoriu"
 
@@ -71348,12 +70360,6 @@ msgstr ""
 "serviciu să intre în stare de alertă/critică. Această alarmă se aplică numai "
 "la gazda țintă, nu și la salturile intermediare."
 
-msgid ""
-"The maximum time that the Robotmk scheduler allows for a single Robot "
-"Framework execution. This time, when multiplied by the number of executions, "
-"sets the total runtime limit for the execution of a plan."
-msgstr ""
-
 msgid "The maximum value length is 256 characters."
 msgstr "Lungimea maximă a valorii este de 256 de caractere."
 
@@ -71474,26 +70480,16 @@ msgstr ""
 msgid "The monitoring state that this event will trigger."
 msgstr "Starea de monitorizare pe care o va declanșa acest eveniment."
 
-#, fuzzy, python-format
-msgid ""
-"The name '%s' is already in use. The names of managed robots must be unique."
-msgstr "Acest nume este deja utilizat. Vă rugăm să alegeți un alt nume."
-
-msgid ""
-"The name is the individual part of the used service description. Choose a "
-"human readable and unique title to be able to find your service later in "
-"Checkmk. You may use macros in this field. The most common ones are "
-"$HOSTNAME$, $HOSTALIAS$ or $HOSTADDRESS$."
-msgstr ""
-
 msgid ""
 "The name is the individual part of the used service name. Choose a human "
 "readable and unique title to be able to find your service later in Checkmk."
 msgstr ""
 
 msgid ""
-"The name of a KPI can be read off the service name. It is the part after "
-"`RMK`."
+"The name is the individual part of the used service name. Choose a human "
+"readable and unique title to be able to find your service later in Checkmk. "
+"You may use macros in this field. The most common ones are $HOSTNAME$, "
+"$HOSTALIAS$ or $HOSTADDRESS$."
 msgstr ""
 
 msgid "The name of the Datadog monitor."
@@ -72261,7 +71257,7 @@ msgstr ""
 
 msgid ""
 "The prefix is automatically attached to each service name to be able to "
-"organize them. The prefix is static and will be CERT. Alternatively, you may "
+"organize it. The prefix is static and will be CERT. Alternatively, you may "
 "choose not to use the prefix option."
 msgstr ""
 
@@ -72281,7 +71277,7 @@ msgstr ""
 
 msgid ""
 "The provided string to be looked for needs to be exactly the same as in the "
-"raw document body. This includes html markups between user-oriented strings. "
+"raw document body. This includes HTML markups between user-oriented strings. "
 "This is also true for searching in a regular expression."
 msgstr ""
 
@@ -72645,23 +71641,6 @@ msgstr ""
 "grupurilor de contacte specificate aici, chiar dacă nu au privilegii de "
 "administrator."
 
-msgid ""
-"The runtime limit (total) is the total runtime of all attempts in relation "
-"to the limit per attempt. These thresholds apply to the total runtime of all "
-"execution attempts. If there are multiple execution attempts, the thresholds "
-"apply to the total runtime."
-msgstr ""
-
-msgid ""
-"The runtime-limit ratio (peak attempt) is the longest attempt runtime in "
-"relation to the limit per attempt. These thresholds apply to the runtime of "
-"a single execution attempt. If there are multiple execution attempts, the "
-"thresholds apply to the longest runtime. Alarms for an exceeded ratio "
-"threshold mean that the maximum runtime for a single attempt was set too "
-"low, or that the test itself should be readjusted (e.g. by reducing keyword "
-"timeouts). "
-msgstr ""
-
 msgid "The schedule you are trying to clone does not exist."
 msgstr "Programul pe care încercați să îl clonați nu există."
 
@@ -72866,8 +71845,8 @@ msgid "The sidecar host"
 msgstr "Gazda sidecar"
 
 msgid ""
-"The signature algorithm for the certificate's signature. Please note that an "
-"matching is done on the OID"
+"The signature algorithm for the certificate's signature. Please note that a "
+"matching is done on the OID."
 msgstr ""
 
 msgid ""
@@ -73181,20 +72160,6 @@ msgstr ""
 "Pragurile pentru wait_duration_ms. Va suprascrie starea implicită stabilită "
 "mai sus."
 
-msgid ""
-"The time interval for the execution of a sequence of plans must be longer "
-"than the sum of all total plan runtime limits. The total runtime limit of a "
-"plan is calculated as follows: <tt>limit_per_attempt x (1 + "
-"max_number_of_reexecutions).</tt>"
-msgstr ""
-
-msgid ""
-"The time interval for the execution of a sequence of plans. This interval "
-"must be longer than the sum of all total plan runtime limits. The total "
-"runtime limit of a plan is calculated as follows: <tt>limit_per_attempt x (1 "
-"+ max_number_of_reexecutions).</tt>"
-msgstr ""
-
 msgid "The time interval statistical data is saved to disk"
 msgstr "Intervalul de timp în care datele statistice sunt salvate pe disc"
 
@@ -73322,21 +72287,6 @@ msgstr "Tipul de informații care urmează să fie stocate în acest atribut."
 #, python-format
 msgid "The type of the timestamp must be int or float, but is %s"
 msgstr "Tipul timestamp-ului trebuie să fie int sau float, dar este %s."
-
-#, python-format
-msgid "The unpacked size of the uploaded ZIP file exceeds the limit: %s > %s"
-msgstr ""
-
-#, fuzzy
-msgid "The uploaded file is not a valid ZIP file."
-msgstr "Fișierul nu pare a fi un fișier cheie valid."
-
-#, fuzzy
-msgid "The uploaded file is not a valid tar.gz file."
-msgstr "Fișierul nu pare a fi un fișier cheie valid."
-
-msgid "The uploaded file must be either a tar.gz or a zip file."
-msgstr ""
 
 #, fuzzy
 msgid "The upper bound must be greater than 0."
@@ -73618,10 +72568,6 @@ msgstr ""
 "nevoie de permisiunea <tt>wato.rulesets</tt> împreună cu această permisiune "
 "pentru a putea configura seturi de reguli în care sunt configurate linii de "
 "comandă goale."
-
-#, fuzzy, python-format
-msgid "There are issues with the following archive entries: %s"
-msgstr "Se apelează cu următorii parametri:"
 
 msgid "There are no configured rules in this aggregation pack"
 msgstr "Nu există reguli configurate în acest pachet de agregare"
@@ -73906,18 +72852,6 @@ msgstr "Aceste noduri nu se află în agregarea înghețată"
 msgid "These nodes are only in the frozen aggregation"
 msgstr "Aceste noduri se află doar în agregarea înghețată"
 
-#, fuzzy
-msgid ""
-"These options allow specifying the most common command line parameters for "
-"the Robot Framework. In order to use other parameters, you can use the "
-"option \"Arguments file\"."
-msgstr ""
-"Aceste opțiuni permit specificarea celor mai comuni parametri de linie de "
-"comandă pentru Robot Framework.Pentru a utiliza alți parametri (a se vedea "
-"<a href=\"https://robotframework.org/robotframework/latest/"
-"RobotFrameworkUserGuide.html#all-command-line-options\">Toate opțiunile de "
-"linie de comandă</a>), puteți utiliza opțiunea <i>Fișier de argumente</i>."
-
 msgid ""
 "These rule sets are configured in your site, but marked as deprecated. They "
 "still work, but need to be migrated to their successor or be removed before "
@@ -74137,7 +73071,7 @@ msgstr ""
 
 msgid ""
 "These thresholds should be set to reasonable values still allowing automatic "
-"renewals to run or manual processes to take place."
+"renewals or manual processes to run."
 msgstr ""
 
 msgid "They appear to be new to this node, but may still be already monitored."
@@ -74794,16 +73728,6 @@ msgid "This defines one value grouping pattern"
 msgstr "Aceasta definește un model de grupare a valorilor"
 
 msgid ""
-"This directory contains all Robot Framework suite directories. An absolute "
-"path is used to specify this directory, for example \"/var/robot\"."
-msgstr ""
-
-msgid ""
-"This directory contains all Robot Framework suite directories. An absolute "
-"path is used to specify this directory, for example \"C:\\robot\"."
-msgstr ""
-
-msgid ""
 "This directory will be used for temporarily storing backups before uploading "
 "and after downloading. You can for example use the <tt>/tmp</tt> directory. "
 "Please note that Checkmk will not clean up this directory."
@@ -75216,9 +74140,6 @@ msgstr ""
 "tabelului, puteți modifica setările de import de mai sus și puteți încerca "
 "din nou."
 
-msgid "This log"
-msgstr "Acest jurnal"
-
 msgid "This log file"
 msgstr "Acest fișier jurnal"
 
@@ -75521,22 +74442,6 @@ msgstr ""
 "asigurați-vă că spoolerul de notificare este configurat corect pentru "
 "conexiunile de intrare și/sau de ieșire."
 
-#, fuzzy
-msgid ""
-"This option configures the Robotmk scheduler to create a Conda environment "
-"and execute the test suite in the context of this environment. The "
-"environment is created using micromamba. This eliminates the need to install "
-"and configure Python and all of its library packages on the target hosts. "
-"Conda environments are created right after the schedulder gets started by "
-"the Checkmk agent and before it enters the scheduling phase."
-msgstr ""
-"Cu ajutorul <a href=https://github.com/robocorp/rcc>rcc binary</a>, "
-"programatorul robotmk poate genera mediile Python necesare pentru executarea "
-"suitelor Robot Framework. Acest lucru elimină necesitatea de a instala și "
-"configura Python și toate pachetele de bibliotecă ale acestuia pe gazdele "
-"țintă. Mediile RCC sunt construite numai atunci când este pornit "
-"planificatorul."
-
 msgid ""
 "This option controls whether error messages from unreachable sites are shown "
 "in the output of views. Those error messages shall alert you that not all "
@@ -75738,6 +74643,11 @@ msgstr ""
 "deviația calculată pentru a cuantifica intervalul de încredere."
 
 msgid ""
+"This option sets a maximum time the request may take. The request will be "
+"canceled after the set time has expired."
+msgstr ""
+
+msgid ""
 "This option specifies the 'RequestedAuthnContext' element included in an "
 "AuthRequest sent by a client. The requested authentication context specifies "
 "the desired level or type of authentication that the service provider "
@@ -75783,11 +74693,6 @@ msgstr ""
 "Aveți grijă: Și utilizatorii administratori vor fi blocați în acest mod. "
 "Trebuie să editați manual <tt>etc/htpasswd</tt> și să eliminați <tt>!</tt> "
 "în cazul în care sunteți blocat complet."
-
-msgid ""
-"This options sets a maximum time the request may take. The request will be "
-"canceled after the set time expired."
-msgstr ""
 
 #, python-format
 msgid "This package cannot be uploaded: %s"
@@ -75948,13 +74853,6 @@ msgstr ""
 "Această permisiune permite să se renunțe la modificările în așteptare. "
 "Atenție, acest lucru este valabil numai pentru modificările în așteptare ale "
 "utilizatorului, nu și pentru cele ale altor utilizatori (modificări străine)."
-
-#, fuzzy
-msgid ""
-"This permission allows users to edit (add, delete, modify) managed robots."
-msgstr ""
-"Această permisiune permite utilizatorilor să migreze alți utilizatori către "
-"o altă conexiune"
 
 msgid ""
 "This permission allows users to migrate other users to another connection"
@@ -78219,13 +77117,6 @@ msgstr ""
 "Firewall."
 
 msgid ""
-"This setting ensures that a hanging/failing environment creation for a "
-"single plan does not block the scheduling phase of other plans. Building a "
-"Conda environment from a manifest file for the very first time can take some "
-"minutes. Also unpacking a packed Conda environment can take some time. "
-msgstr ""
-
-msgid ""
 "This setting is only useful if you've configured service levels for hosts. "
 "If the event results from forwarded service notifications or logwatch "
 "messages the service's configured service level is used here. In such cases "
@@ -79879,10 +78770,6 @@ msgstr "Traficul aplicațiilor de top: vizualizarea ultimei ore"
 
 #, fuzzy
 msgid "Top level suite"
-msgstr "Numele suitei de nivel superior (%s)"
-
-#, python-format
-msgid "Top level suite name (%s)"
 msgstr "Numele suitei de nivel superior (%s)"
 
 msgid "Top list"
@@ -82576,10 +81463,6 @@ msgid "Total running on-demand z1d.xlarge instances"
 msgstr "Total instanțe On-Demand z1d.xlarge care rulează la cerere"
 
 #, fuzzy
-msgid "Total runtime"
-msgstr "Timpul de execuție a testului"
-
-#, fuzzy
 msgid "Total sent notifications"
 msgstr "Notificări de testare"
 
@@ -82899,11 +81782,6 @@ msgstr "Autoritățile de certificare de încredere pentru SSL"
 msgid "Try bringing up TCP connection for"
 msgstr "Încearcă să aduci o conexiune TCP pentru"
 
-#, python-format
-msgid ""
-"Try it for free with up to three tests. %s to upgrade to unlimited tests."
-msgstr ""
-
 msgid "Try out"
 msgstr "Testeaza"
 
@@ -83091,6 +81969,14 @@ msgstr "Port UDP utilizat pentru SNMP"
 
 msgid "UDP/TCP port to connect to"
 msgstr "Portul UDP/TCP la care să se conecteze"
+
+#, fuzzy
+msgid "UID"
+msgstr "UUID"
+
+#, fuzzy
+msgid "UID and serialNumber"
+msgstr "Număr de serie"
 
 msgid "UN"
 msgstr "ONU"
@@ -84160,14 +83046,6 @@ msgstr "Încărcați răspunsul"
 msgid "Upload verification response file"
 msgstr "Încărcați fișierul de răspuns la verificare"
 
-#, fuzzy
-msgid "Uploaded"
-msgstr "Încărcați"
-
-#, fuzzy
-msgid "Uploaded by"
-msgstr "Încărcați cheia"
-
 #, python-format
 msgid "Uploaded custom GUI logo: %s"
 msgstr "A fost încărcat un logo personalizat pentru GUI: %s."
@@ -85218,10 +84096,6 @@ msgstr "Utilizați date din OpenShift"
 msgid "Use default layout"
 msgstr "Utilizați aspectul implicit"
 
-#, fuzzy
-msgid "Use default managed plan settings"
-msgstr "Setați valorile implicite pentru toate secțiunile"
-
 msgid "Use default port"
 msgstr "Utilizați portul implicit"
 
@@ -85392,9 +84266,6 @@ msgstr ""
 
 msgid "Use procedure call instead of SQL statement"
 msgstr "Utilizați apelul de procedură în locul declarației SQL"
-
-msgid "Use proxy"
-msgstr "Utilizați proxy"
 
 msgid "Use proxy settings from the process environment. This is the default."
 msgstr ""
@@ -87123,15 +85994,7 @@ msgstr "Valabil până la"
 msgid "Valid until Checkmk version"
 msgstr "Valabil până la versiunea Checkmk"
 
-#, fuzzy
-msgid "Validate TLS certificates"
-msgstr "Certificat invalid"
-
 msgid "Validate server certificate during port query"
-msgstr "Validarea certificatului serverului în timpul interogării portului"
-
-#, fuzzy
-msgid "Validate with custom certificate authority (CA)"
 msgstr "Validarea certificatului serverului în timpul interogării portului"
 
 #, fuzzy
@@ -87207,24 +86070,11 @@ msgstr "Servicii dispărute - monitorizate, dar care nu mai există"
 msgid "Variable"
 msgstr "Variabilă"
 
-#, python-format
-msgid "Variable files (%s)"
-msgstr "Fișiere variabile (%s)"
-
-#, python-format
-msgid "Variables (%s)"
-msgstr "Variabile (%s)"
-
 msgid "Variables set in the site user's environment"
 msgstr "Variabilele setate în mediul utilizatorului site-ului"
 
 msgid "Variant"
 msgstr "Varianta"
-
-msgid ""
-"Variants are restricted to the following characters: a-z, A-Z, 0-9, `-`, "
-"`_`, `.`"
-msgstr ""
 
 msgid "Various"
 msgstr "Diverse"
@@ -87352,10 +86202,6 @@ msgid "Verify SSL certificate (not verifying is insecure)"
 msgstr "Ignoră erorile de certificat (nesigur)"
 
 #, fuzzy
-msgid "Verify SSL certificates for HTTPS requests."
-msgstr "Ignoră erorile de certificat (nesigur)"
-
-#, fuzzy
 msgid "Verify TLS certificate (not verifying is insecure)"
 msgstr "Ignoră erorile de certificat (nesigur)"
 
@@ -87423,14 +86269,6 @@ msgstr "Versiunea 3"
 
 msgid "Version 3 and TLS"
 msgstr "Versiunea 3 și TLS"
-
-#, fuzzy
-msgid "Version label"
-msgstr "Versiunea 1"
-
-#, fuzzy
-msgid "Version number"
-msgstr "Numărul de serie"
 
 #, fuzzy
 msgid "Version of PKI appliance"
@@ -89720,23 +88558,6 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"With the help of the <a href=\"https://github.com/robocorp/rcc\" "
-"target=\"_blank\">RCC</a> binary, the Robotmk scheduler can generate the "
-"Python environments required for the execution of Robot Framework suites. "
-"This eliminates the need to install and configure Python and all of its "
-"library packages on the target hosts. RCC environments are created right "
-"after the scheduler gets started by the Checkmk agent and before it enters "
-"the scheduling phase."
-msgstr ""
-"Cu ajutorul <a href=https://github.com/robocorp/rcc>rcc binary</a>, "
-"programatorul robotmk poate genera mediile Python necesare pentru executarea "
-"suitelor Robot Framework. Acest lucru elimină necesitatea de a instala și "
-"configura Python și toate pachetele de bibliotecă ale acestuia pe gazdele "
-"țintă. Mediile RCC sunt construite numai atunci când este pornit "
-"planificatorul."
-
-#, fuzzy
-msgid ""
 "With the master switch you can immediately turn on or off the agent updates. "
 "When they are turned off, then agents still can query their target "
 "configuration and register but cannot download packages for updating."
@@ -89910,18 +88731,18 @@ msgstr ""
 "notificare."
 
 msgid ""
-"With this option you may verify the direct issuer of the checked "
-"certificate. As the requirements of an intermediate or direct root CA are "
-"usually higher, this option provides some more fields as the option for "
-"checking the subject. All entries are case sensitive and need to be exaclty "
-"specified as provided in the certificate."
+"With this option, you may verify the direct issuer of the checked "
+"certificate. As the requirements of an intermediate or direct root "
+"certification authority are usually higher, this option provides some more "
+"fields as options for checking the subject. All entries are case-sensitive "
+"and need to be specified exactly as provided in the certificate."
 msgstr ""
 
 msgid ""
-"With this option you may verify the subject of the checked certificate. This "
-"includes a checking for the public key algorithm and the size of the public "
-"key. Please note that all entries are case sensitive and need to be exaclty "
-"specified as provided in the certificate."
+"With this option, you may verify the subject of the verified certificate. "
+"This includes checking the algorithm and the size of the public key. Please "
+"note that all entries are case-sensitive and need to be specified exactly as "
+"provided in the certificate."
 msgstr ""
 
 msgid ""
@@ -90427,10 +89248,6 @@ msgstr "Aveți deja un element cu ID-ul <b>%s</b>."
 msgid "You are analysing this notification"
 msgstr "Analizați această notificare"
 
-#, fuzzy, python-format
-msgid "You are currently monitoring %d %s on this site."
-msgstr "Diferențe față de serviciile monitorizate în prezent pe o gazdă."
-
 msgid ""
 "You are currently not using the Checkmk Micro Core, but this snapshot uses "
 "the Checkmk Micro Core. If you need to migrate your data, you could consider "
@@ -90577,9 +89394,6 @@ msgid ""
 "You are not permitted to perform this action. Only an admin is permitted to "
 "delete a bundle which was created by an admin."
 msgstr ""
-
-msgid "You are not permitted to view this page"
-msgstr "Nu aveți voie să vizualizați această pagină"
 
 msgid "You are trying to edit a rule which does not exist anymore."
 msgstr "Încercați să editați o regulă care nu mai există."
@@ -91583,14 +90397,6 @@ msgstr ""
 "Puteți utiliza <a href=\"%s\">căutare gazdă</a> pentru a obține o listă cu "
 "gazdele."
 
-#, fuzzy, python-format
-msgid ""
-"You cannot delete this managed robot because it is in use in the following "
-"rules:%s"
-msgstr ""
-"Nu puteți șterge această țintă, deoarece este utilizată de aceste lucrări de "
-"backup: %s."
-
 #, python-format
 msgid "You cannot delete this pack. It contains <b>%d</b> rules."
 msgstr "Nu puteți șterge acest pachet. Acesta conține <b>%d</b> reguli."
@@ -92011,11 +90817,11 @@ msgstr ""
 
 msgid ""
 "You may choose to enforce the usage of a specific TLS version. Either by "
-"pinning to exactly the selected version, or by also allowing higher "
-"versions. Please note Checkmk does not support SSLv3 or SSLv2 at all. TLS "
-"1.0 and 1.1 is supported by the underlying plug-in but not on this rule set "
-"as the plug-in needs to be called with an unsafe configuration of OpenSSL 3. "
-"This requires a direct call via <i>Integrate Nagios plug-ins.</i>"
+"exactly pinning to the selected version, or by also allowing higher "
+"versions. Please note that Checkmk does not support SSLv3 or SSLv2 at all. "
+"TLS 1.0 and 1.1 are supported by the underlying plug-in, but not on this "
+"rule set as the plug-in needs to be called with an unsafe configuration of "
+"OpenSSL 3. This requires a direct call via <i>Integrate Nagios plug-ins.</i>"
 msgstr ""
 
 msgid ""
@@ -92044,8 +90850,8 @@ msgstr ""
 
 msgid ""
 "You may enter one or several alternative names that are expected to be in "
-"the certificate. Please note that the check does only accept DNS names and "
-"is case sensitive. So, the alternative names need to be exactly provided as "
+"the certificate. Please note that the check only accepts DNS names and is "
+"case-sensitive. So the alternative names need to be provided exactly as "
 "defined in the certificate."
 msgstr ""
 
@@ -92297,12 +91103,6 @@ msgstr "Trebuie să furnizați un comentariu."
 #, fuzzy
 msgid "You need to supply a new secret in order to store it."
 msgstr "Trebuie să furnizați un comentariu pentru timpul de nefuncționare."
-
-msgid ""
-"You should see the standard Robot Framework HTML log below. However, this "
-"content is generated externally. It is prone to injection attacks (executed "
-"on the host where the test is executed). Proceed with caution."
-msgstr ""
 
 msgid ""
 "You will have to configure the host address of the server which hosts the "
@@ -93172,10 +91972,6 @@ msgstr "diagFault"
 msgid "directly in the folder <b>%s</b>"
 msgstr "direct în folderul <b>%s</b>."
 
-#, fuzzy
-msgid "directory"
-msgstr "Director de date"
-
 msgid "disable"
 msgstr "dezactivați"
 
@@ -93446,9 +92242,6 @@ msgstr "grup de"
 
 msgid "groups"
 msgstr "grupuri"
-
-msgid "guid"
-msgstr ""
 
 msgid "h"
 msgstr "h"
@@ -94089,10 +92882,6 @@ msgstr "nu este disponibil"
 msgid "not disabled"
 msgstr "nu este dezactivat"
 
-#, fuzzy
-msgid "not found"
-msgstr "Nu a fost găsit"
-
 msgid "not installed"
 msgstr "neinstalat"
 
@@ -94467,14 +93256,6 @@ msgstr "consideră că este vorba de timp de nefuncționare programat"
 msgid "regular expression, substring match"
 msgstr "expresie regulată, potrivire de subșiruri"
 
-#, fuzzy
-msgid "regular file"
-msgstr "Înlocuiți cu"
-
-#, fuzzy
-msgid "regular file or directory"
-msgstr "Curățarea directorului de lucru"
-
 msgid "relative URI under which Jolokia is visible"
 msgstr "URI relativ sub care este vizibil Jolokia"
 
@@ -94725,14 +93506,8 @@ msgstr "systemd"
 msgid "tasks"
 msgstr "sarcini"
 
-msgid "test"
-msgstr "test"
-
 msgid "testing"
 msgstr "testare"
-
-msgid "tests"
-msgstr "teste"
 
 msgid "th notification"
 msgstr "a notificare"
@@ -94817,14 +93592,6 @@ msgstr "doua nivele"
 
 msgid "uPnP configuration enabled"
 msgstr "Configurație uPnP activată"
-
-#, fuzzy
-msgid "uid"
-msgstr "Construiți"
-
-#, fuzzy
-msgid "uid and serialNumber"
-msgstr "Număr de serie"
 
 msgid "unknown"
 msgstr "necunoscut"
@@ -95000,10 +93767,6 @@ msgstr "cea mai rea stare"
 
 msgid "wrap"
 msgstr "înfășurați"
-
-#, python-format
-msgid "wrong type, expected %s"
-msgstr ""
 
 msgid "x86 64-bit only"
 msgstr ""
@@ -96906,8 +95669,21 @@ msgstr ""
 msgid "of"
 msgstr "off"
 
-msgid "Cannot change rule value for rules managed by custom graph editor."
-msgstr ""
+#, fuzzy
+msgid "At this point, rule values cannot be changed. "
+msgstr "Sursa de date a unei vizualizări nu poate fi modificată."
+
+#, fuzzy
+msgid "Host name is required"
+msgstr "ca macro numit"
+
+#, fuzzy
+msgid "Service name is required"
+msgstr "ca macro numit"
+
+#, fuzzy
+msgid "Metric name is required"
+msgstr "ca macro numit"
 
 #, fuzzy
 msgid "Graph lines"
@@ -96978,7 +95754,7 @@ msgstr "Eroare de configurare"
 msgid "Fatal error"
 msgstr "Eroare internă"
 
-msgid "When you save this rule a new rule will be created."
+msgid "This creates a special agent rule based on the selected custom graph. "
 msgstr ""
 
 msgid "Dismiss"
@@ -97060,6 +95836,18 @@ msgstr "Activarea modificărilor finalizată"
 msgid "Open the full activation page for more details."
 msgstr ""
 
+msgid ""
+"Successfully activated %{numberOfChanges} pending %{changeWord} on %"
+"{numberOfSuccessfullyActivatedSites} %{siteWord}"
+msgstr ""
+
+#, fuzzy
+msgid "change"
+msgid_plural "changes"
+msgstr[0] "1 schimbare"
+msgstr[1] "1 schimbare"
+msgstr[2] "1 schimbare"
+
 #, fuzzy
 msgid "Quick activation of pending changes"
 msgstr "Activarea modificărilor în așteptare"
@@ -97072,13 +95860,6 @@ msgid ""
 "Changes are saved without affecting live monitoring, allowing you to review "
 "and adjust them safely.\n"
 "              Click 'Activate pending changes' to apply them."
-msgstr ""
-
-#, fuzzy
-msgid "Successfully activated 1 change"
-msgstr "Copiat cu succes în clipboard."
-
-msgid "Successfully activated %{numberOfChangesLastActivation} changes"
 msgstr ""
 
 #, fuzzy
@@ -98855,6 +97636,1021 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, python-format
+#~ msgid " of service %s on host %s"
+#~ msgstr " de serviciu %s pe gazdă %s"
+
+#, fuzzy, python-format
+#~ msgid "%s rules"
+#~ msgstr "%s Cereri"
+
+#, fuzzy, python-format
+#~ msgid "(%s more items)"
+#~ msgstr "Intrări eliminate"
+
+#, fuzzy
+#~ msgid "(1 more item)"
+#~ msgstr "(nici o intrare)"
+
+#, fuzzy
+#~ msgid "(unknown)"
+#~ msgstr "necunoscut"
+
+#, fuzzy
+#~ msgid "(untitled rule set)"
+#~ msgstr "(Modul fără titlu)"
+
+#, fuzzy
+#~ msgid "1 rule"
+#~ msgstr "regula"
+
+#, fuzzy
+#~ msgid "A group execution interval of 0 is too low."
+#~ msgstr "Intervalul de execuție a grupului"
+
+#, fuzzy
+#~ msgid "Absolute archive path"
+#~ msgstr "Spațiu liber exact"
+
+#, fuzzy
+#~ msgid "Absolute path to catalog ZIP file"
+#~ msgstr "O cale absolută către un certificat CA"
+
+#, fuzzy
+#~ msgid "Activate exit on failure"
+#~ msgstr "Eșecuri de autentificare"
+
+#, fuzzy
+#~ msgid "Add new plan"
+#~ msgstr "Adăugați un nou model"
+
+#, fuzzy
+#~ msgid "Add new sequence"
+#~ msgstr "Adăugați un nou serviciu"
+
+#, fuzzy
+#~ msgid "Administrate robots"
+#~ msgstr "Statele administrative"
+
+#~ msgid "Agent controller"
+#~ msgstr "Controlor agent"
+
+#~ msgid "Alert manager rule state"
+#~ msgstr "Starea regulii de gestionare a alertelor"
+
+#, fuzzy
+#~ msgid ""
+#~ "Allows the assignment of the Robotmk plan/test services to another host."
+#~ msgstr "Permite atribuirea de servicii Robotmk unei alte gazde."
+
+#, fuzzy
+#~ msgid "Applied to"
+#~ msgstr "Aplicați la"
+
+#, python-format
+#~ msgid "Argument files (%s)"
+#~ msgstr "Fișiere de argumente (%s)"
+
+#~ msgid ""
+#~ "As the Checkmk agent is started together with the scheduler at boot time, "
+#~ "even before the desktop user logs on. The scheduling of such desktop "
+#~ "tests can be delayed via this option until the desktop session is "
+#~ "established."
+#~ msgstr ""
+#~ "Deoarece agentul Checkmk este pornit împreună cu planificatorul în "
+#~ "momentul pornirii, chiar înainte ca utilizatorul desktopului să se "
+#~ "conecteze. Programarea unor astfel de teste desktop poate fi amânată prin "
+#~ "intermediul acestei opțiuni până la stabilirea sesiunii desktop."
+
+#, fuzzy
+#~ msgid "Assign plan/test result to piggyback host"
+#~ msgstr "Atribuiți rezultatul la gazda piggyback"
+
+#, fuzzy
+#~ msgid "Automated environment setup"
+#~ msgstr "Configurarea automată a mediului (prin RCC)"
+
+#, fuzzy
+#~ msgid "Bakery rules"
+#~ msgstr "Reguli de descoperire"
+
+#, fuzzy
+#~ msgid "Base directory"
+#~ msgstr "Director de date"
+
+#, fuzzy
+#~ msgid "Base directory of Robot Framework projects"
+#~ msgstr "Fiecare serviciu monitorizează testele Robot Framework.\n"
+
+#~ msgid "By age of Robotmk executions"
+#~ msgstr "În funcție de vârsta execuțiilor Robotmk"
+
+#, fuzzy
+#~ msgid ""
+#~ "By default, Robot Framework will execute <i>every</i> test.<br>But "
+#~ "sometimes tests are interdependent - in the event of a failed login, for "
+#~ "example, it is impossible to successfully complete the subsequent tests."
+#~ "<br>If this option is active, Robot Framework will <b>immediately stop</"
+#~ "b> the suite execution if a test fails. <br>The results of subsequent "
+#~ "tests (which would have failed) will then not be passed to Checkmk; "
+#~ "depending on the discovery settings, their results will either be "
+#~ "<b>missing</b> (if within a suite result) or the services generated for "
+#~ "them will <b>go stale</b>.<br><br><b>Important note</b>: this is where "
+#~ "Robotmk deviates from Robot Framework behavior. The HTML log will still "
+#~ "contain the omitted tests and show them as <tt>FAIL</tt> (even though "
+#~ "they were not executed).<br>See also \"<a href=\"http://"
+#~ "robotframework.org/robotframework/latest/"
+#~ "RobotFrameworkUserGuide.html#stopping-when-first-test-case-fails\" "
+#~ "target=\"_blank\">How to stop a suite when the first test fails</a>\". "
+#~ msgstr ""
+#~ "În mod implicit, Robot Framework va executa <i>fiecare</i> test.<br>Dar "
+#~ "uneori testele sunt interdependente - în cazul unei autentificări eșuate, "
+#~ "de exemplu, este imposibil să se finalizeze cu succes testele următoare."
+#~ "<br>Dacă această opțiune este activă, Robot Framework va <b>opri imediat</"
+#~ "b> execuția suitei dacă un test eșuează. <br>Rezultatele testelor "
+#~ "ulterioare (care ar fi eșuat) nu vor fi apoi transmise către Checkmk; în "
+#~ "funcție de setările de descoperire,rezultatele lor vor fi fie <b>lipsate</"
+#~ "b> (dacă se află în cadrul unui rezultat al suitei), fie serviciile "
+#~ "generate pentru acestea vor <b>deveni vechi</b>.<br> <br> <b>Nota "
+#~ "importantă</b>: acesta este punctul în care Robotmk se abate de la "
+#~ "comportamentul Robot Framework. Jurnalul HTML va conține în continuare "
+#~ "testele omise și le va afișa ca <tt>FAIL</tt> (chiar dacă nu au fost "
+#~ "executate). <br>Vezi și \"<a href=\"http://robotframework.org/"
+#~ "robotframework/latest/RobotFrameworkUserGuide.html#stopping-when-first-"
+#~ "test-case-fails\">Cum să oprești o suită atunci când primul test eșuează</"
+#~ "a>\". "
+
+#, fuzzy
+#~ msgid ""
+#~ "By default, Robotmk executes all plans in the user context of the Checkmk "
+#~ "agent, which does not have access to the desktop of the Windows computer. "
+#~ "To run tests on Windows GUI applications, you can specify the name of a "
+#~ "user who is permanently logged on to a desktop session. The prerequisites "
+#~ "for this are security-related and must be fulfilled by you (auto-login, "
+#~ "screen saver, session lock, ...)."
+#~ msgstr ""
+#~ "În mod implicit, Robotmk execută toate suitele în contextul de utilizator "
+#~ "al agentului Checkmk, care nu are acces la desktop-ul computerului "
+#~ "Windows. Pentru a executa teste pe aplicațiile Windows GUI, puteți "
+#~ "specifica numele unui utilizator care este conectat permanent la o "
+#~ "sesiune desktop. Condițiile prealabile pentru aceasta sunt legate de "
+#~ "securitate și trebuie îndeplinite de dumneavoastră (logare automată, "
+#~ "screen saver, blocare a sesiunii, ...)"
+
+#~ msgid "By number of Robotmk executions"
+#~ msgstr "În funcție de numărul de execuții Robotmk"
+
+#~ msgid "Bypass Proxy for certain hosts"
+#~ msgstr "Bypassarea Proxy pentru anumite gazde"
+
+#, fuzzy
+#~ msgid ""
+#~ "Bypass Proxy for certain hosts: Specifies a list of destination hosts/"
+#~ "adresses which should not be accessed through the given proxy.<br>The "
+#~ "proxy setting is used for access to the internet, where Conda needs to "
+#~ "download the installation files from. (In order to access a page through "
+#~ "a proxy inside of the test suite, use the libraries capabilities)"
+#~ msgstr ""
+#~ "Omiteți Proxy pentru anumite gazde: Specifică o listă de gazde/adrese de "
+#~ "destinație care nu ar trebui să fie accesate prin intermediul proxy-ului "
+#~ "dat. <br>Setarea proxy este utilizată pentru accesul la internet, de unde "
+#~ "RCC trebuie să descarce fișierele de instalare. (Pentru a accesa o pagină "
+#~ "prin intermediul unui proxy în interiorul suitei de testare, utilizați "
+#~ "capacitățile bibliotecilor)"
+
+#, fuzzy
+#~ msgid ""
+#~ "Bypass Proxy for certain hosts: Specifies a list of destination hosts/"
+#~ "adresses which should not be accessed through the given proxy.<br>The "
+#~ "proxy setting is used for access to the internet, where RCC needs to "
+#~ "download the installation files from. (In order to access a page through "
+#~ "a proxy inside of the test suite, use the libraries capabilities)"
+#~ msgstr ""
+#~ "Omiteți Proxy pentru anumite gazde: Specifică o listă de gazde/adrese de "
+#~ "destinație care nu ar trebui să fie accesate prin intermediul proxy-ului "
+#~ "dat. <br>Setarea proxy este utilizată pentru accesul la internet, de unde "
+#~ "RCC trebuie să descarce fișierele de instalare. (Pentru a accesa o pagină "
+#~ "prin intermediul unui proxy în interiorul suitei de testare, utilizați "
+#~ "capacitățile bibliotecilor)"
+
+#, fuzzy
+#~ msgid "Changed by"
+#~ msgstr "Modificat"
+
+#~ msgid "Checkmk Agent"
+#~ msgstr "Agent Checkmk"
+
+#~ msgid "Cleanup of working directory"
+#~ msgstr "Curățarea directorului de lucru"
+
+#, fuzzy, python-format
+#~ msgid "Clone managed robot %s"
+#~ msgstr "Obiecte gestionate"
+
+#, fuzzy
+#~ msgid "Clone this managed robot"
+#~ msgstr "Obiecte gestionate"
+
+#~ msgid "Complete"
+#~ msgstr "Complet"
+
+#, fuzzy
+#~ msgid "Conda"
+#~ msgstr "Luni"
+
+#, fuzzy
+#~ msgid "Conda configuration"
+#~ msgstr "Configurația RRA"
+
+#, fuzzy
+#~ msgid "Contact us"
+#~ msgstr "Contacte"
+
+#, fuzzy
+#~ msgid "Create robot"
+#~ msgstr "Creați gazde"
+
+#, fuzzy
+#~ msgid "Custom CA certificate"
+#~ msgstr "Certificat CA"
+
+#~ msgid "Custom profile"
+#~ msgstr "Profil personalizat"
+
+#~ msgid "Default profile"
+#~ msgstr "Profil implicit"
+
+#, fuzzy
+#~ msgid "Delete managed robot"
+#~ msgstr "Obiecte gestionate"
+
+#, fuzzy
+#~ msgid "Delete this managed robot"
+#~ msgstr "Ștergeți acest grup de etichete"
+
+#, fuzzy
+#~ msgid ""
+#~ "Depending on the package dependencies listed in <tt>conda.yaml</tt> used "
+#~ "in a plan, building its Python environment for the very first time can "
+#~ "take some minutes. This setting ensures that a hanging/failing "
+#~ "environment creation for a single plan does not block the scheduling "
+#~ "phase of other plans."
+#~ msgstr ""
+#~ "În funcție de bibliotecile utilizate într-o suită, crearea mediului "
+#~ "Python pentru prima dată poate dura câteva minute. Această setare asigură "
+#~ "că o creare de mediu suspendată/nereușită pentru o singură suită nu "
+#~ "blochează faza de programare a altor suite. "
+
+#, fuzzy
+#~ msgid "Deploy Robotmk scheduler and agent plug-in"
+#~ msgstr "Implementați Robotmk Scheduler și Agent Plugin"
+
+#~ msgid "Do not deploy Robotmk"
+#~ msgstr "Nu implementați Robotmk"
+
+#, fuzzy
+#~ msgid "Do not validate TLS certificates"
+#~ msgstr "Certificat invalid"
+
+#, fuzzy
+#~ msgid "Download (internet connection)"
+#~ msgstr "Conexiuni client"
+
+#~ msgid "Each service monitors on Robot Framework tests.\n"
+#~ msgstr "Fiecare serviciu monitorizează testele Robot Framework.\n"
+
+#, fuzzy, python-format
+#~ msgid "Edit managed robot %s"
+#~ msgstr "Obiecte gestionate"
+
+#, fuzzy
+#~ msgid "Edit managed robots"
+#~ msgstr "Obiecte gestionate"
+
+#, fuzzy
+#~ msgid "Edit this managed robot"
+#~ msgstr "Statele administrative"
+
+#, fuzzy
+#~ msgid "Enable TLS certificate revocation checks"
+#~ msgstr "Verificarea certificatului SSL"
+
+#, fuzzy
+#~ msgid "Enable metrics for top-level keywords"
+#~ msgstr "Activați indicatorii pentru cuvinte cheie de nivel înalt"
+
+#~ msgid "Environment build timeout"
+#~ msgstr "Timeout de construire a mediului"
+
+#, fuzzy
+#~ msgid "Environment source"
+#~ msgstr "Variabile de mediu"
+
+#, python-format
+#~ msgid "Exclude tests by tag (%s)"
+#~ msgstr "Excludeți testele după etichetă (%s)"
+
+#, fuzzy
+#~ msgid "Execute plan as a specific user"
+#~ msgstr "Executarea ca utilizator specific"
+
+#~ msgid "Execution configuration"
+#~ msgstr "Configurația de execuție"
+
+#~ msgid "Exit on failure (<tt>--exitonfailure</tt>)"
+#~ msgstr "Ieșire în caz de eșec (<tt>--exitonfailure</tt>)"
+
+#~ msgid "Grace period before scheduler starts"
+#~ msgstr "Perioada de grație înainte de începerea programatorului"
+
+#~ msgid "HTTP Proxy"
+#~ msgstr "Proxy HTTP"
+
+#~ msgid "HTTPS Proxy"
+#~ msgstr "HTTPS Proxy"
+
+#~ msgid "IP Address"
+#~ msgstr "Adresa IP"
+
+#, fuzzy
+#~ msgid ""
+#~ "If access to the internet for downloading the sources for creating RCC "
+#~ "environments is only possible via a network proxy, you can specify this "
+#~ "here."
+#~ msgstr ""
+#~ "Dacă accesul la internet pentru descărcarea surselor pentru crearea "
+#~ "mediilor RCC este posibil numai prin intermediul unui proxy de rețea, "
+#~ "puteți specifica acest lucru aici."
+
+#, python-format
+#~ msgid "Include tests by tag (%s)"
+#~ msgstr "Includeți testele după etichetă (%s)"
+
+#~ msgid "Incremental"
+#~ msgstr "Incremental"
+
+#, fuzzy
+#~ msgid "Internal plan_id"
+#~ msgstr "Interne suite_id"
+
+#, fuzzy
+#~ msgid "KPI"
+#~ msgstr "DPI"
+
+#, fuzzy
+#~ msgid "KPI runtime"
+#~ msgstr "Timpul de execuție a testului"
+
+#~ msgid "Last error log"
+#~ msgstr "Ultimul jurnal de erori"
+
+#~ msgid "Last log"
+#~ msgstr "Ultimul jurnal"
+
+#, fuzzy
+#~ msgid "Limit per attempt"
+#~ msgstr "Timeout per încercare"
+
+#, fuzzy
+#~ msgid "Load from ZIP file"
+#~ msgstr "Încărcați fișierul MIB"
+
+#, fuzzy
+#~ msgid "Managed Robot"
+#~ msgstr "Obiecte gestionate"
+
+#, fuzzy
+#~ msgid "Managed Robots"
+#~ msgstr "Obiecte gestionate"
+
+#, fuzzy
+#~ msgid "Managed robot deleted."
+#~ msgstr "Obiecte gestionate"
+
+#, fuzzy
+#~ msgid "Managed robots"
+#~ msgstr "Obiecte gestionate"
+
+#, fuzzy
+#~ msgid "Manual Robot"
+#~ msgstr "Manual"
+
+#, fuzzy
+#~ msgid "Maximum KPI runtime"
+#~ msgstr "Durata maximă de funcționare a testului"
+
+#~ msgid "Maximum number of executions"
+#~ msgstr "Numărul maxim de execuții"
+
+#~ msgid "Maximum number of re-executions"
+#~ msgstr "Numărul maxim de re-executări"
+
+#, fuzzy
+#~ msgid "Maximum test runtime"
+#~ msgstr "Durata maximă de funcționare a testului"
+
+#, fuzzy
+#~ msgid ""
+#~ "Names for files containing <b>additional command line arguments</b> for "
+#~ "Robot Framework. The paths are relative to the <i>base directory of Robot "
+#~ "Framework projects</i>. Argument files allow the placing of all or some "
+#~ "command line options and arguments into an external file from where they "
+#~ "will be read. This is useful for more exotic RF parameters not natively "
+#~ "supported by Robotmk or for problematic characters. The arguments given "
+#~ "here are used along with possible other command line options. (See also "
+#~ "<a href=\"https://robotframework.org/robotframework/latest/"
+#~ "RobotFrameworkUserGuide.html#argument-files\" target=\"_blank\">About "
+#~ "argument files</a>)"
+#~ msgstr ""
+#~ "Nume pentru fișierele care conțin <b>argumente suplimentare pentru linia "
+#~ "de comandă</b> pentru Robot Framework. Căile de acces sunt relative la "
+#~ "directorul de bază <i>robot suites</i>. Fișierele de argumente permit "
+#~ "plasarea tuturor sau a unor opțiuni și argumente din linia de comandă "
+#~ "într-un fișier extern din care vor fi citite. Acest lucru este util "
+#~ "pentru parametrii RF mai exotici care nu sunt suportați nativ de Robotmk "
+#~ "sau pentru caracterele problematice. Argumentele prezentate aici sunt "
+#~ "utilizate împreună cu alte opțiuni posibile ale liniei de comandă. (A se "
+#~ "vedea, de asemenea, <a href=\"https://robotframework.org/robotframework/"
+#~ "latest/RobotFrameworkUserGuide.html#argument-files\">Despre fișierele de "
+#~ "argumente</a>)"
+
+#, fuzzy
+#~ msgid "New managed robot"
+#~ msgstr "Obiecte gestionate"
+
+#, fuzzy
+#~ msgid ""
+#~ "No logs are available. If available, more information will be shown in "
+#~ "the service name."
+#~ msgstr ""
+#~ "Nu sunt disponibile jurnale. Dacă sunt disponibile, mai multe informații "
+#~ "vor fi afișate în descrierea serviciului."
+
+#~ msgid "No re-executions"
+#~ msgstr "Fără re-executări"
+
+#~ msgid ""
+#~ "Only execute selected sub-suites. When this option is used with <tt>--"
+#~ "test</tt>, <tt>--include</tt> or <tt>--exclude</tt>, only tests in "
+#~ "matching suites and also those matching other filtering criteria are "
+#~ "selected. Name can be a simple pattern in a similar way to <tt>--test</"
+#~ "tt> and it can contain parent suite names separated by a dot. For "
+#~ "example, <tt>X.Y</tt> selects a suite <tt>Y</tt> only if its parent is "
+#~ "<tt>X</tt>."
+#~ msgstr ""
+#~ "Executați numai subsolurile selectate. Atunci când această opțiune este "
+#~ "utilizată cu <tt>--test</tt>, <tt>--include</tt> sau <tt>--exclude</tt>, "
+#~ "sunt selectate numai testele din suitele corespunzătoare și, de asemenea, "
+#~ "cele care corespund altor criterii de filtrare. Name poate fi un model "
+#~ "simplu în mod similar cu <tt>--test</tt> și poate conține nume de suite "
+#~ "părinte separate prin punct. De exemplu, <tt>X.Y</tt> selectează o suită "
+#~ "<tt>Y</tt> numai dacă părintele acesteia este <tt>X</tt>."
+
+#~ msgid "Organisation"
+#~ msgstr "Organizație"
+
+#~ msgid "Organisation ID"
+#~ msgstr "ID-ul organizației"
+
+#~ msgid "Other logs for this service"
+#~ msgstr "Alte jurnale pentru acest serviciu"
+
+#, fuzzy
+#~ msgid "Override managed plan settings"
+#~ msgstr "Unitatea de suprascriere a senzorului"
+
+#, fuzzy
+#~ msgid "Packed Conda environment"
+#~ msgstr "Utilizarea din mediul înconjurător"
+
+#, fuzzy
+#~ msgid "Path to a custom CA certificate file to use for TLS connections."
+#~ msgstr "Setări de timp pentru certificatul routerului SAP"
+
+#, fuzzy
+#~ msgid "Patterns"
+#~ msgstr "Model"
+
+#, fuzzy
+#~ msgid ""
+#~ "Plan IDs (combinations of application names, suite names and variants) "
+#~ "must be unique."
+#~ msgstr ""
+#~ "Combinațiile de nume și etichete ale aplicației suite trebuie să fie "
+#~ "unice."
+
+#, fuzzy
+#~ msgid "Plan configuration"
+#~ msgstr "configurare"
+
+#, fuzzy
+#~ msgid "Plan settings"
+#~ msgstr "Setări globale"
+
+#, fuzzy
+#~ msgid "Please provide a path that is absolute on either Linux or Windows."
+#~ msgstr "Vă rugăm să furnizați o cale relativă Windows"
+
+#, fuzzy
+#~ msgid "Please provide a path that is relative on both Linux and Windows."
+#~ msgstr "Vă rugăm să furnizați o cale relativă Windows"
+
+#, fuzzy
+#~ msgid "Please provide a path with at least one segment"
+#~ msgstr "Vă rugăm să selectați cel puțin un element"
+
+#~ msgid "Please provide a relative Windows path"
+#~ msgstr "Vă rugăm să furnizați o cale relativă Windows"
+
+#, fuzzy
+#~ msgid "Please provide a relative path"
+#~ msgstr "Vă rugăm să furnizați o cale relativă Windows"
+
+#~ msgid "Please provide an absolute Windows path"
+#~ msgstr "Vă rugăm să furnizați o cale absolută pentru Windows"
+
+#, fuzzy
+#~ msgid "Power Supply Name"
+#~ msgstr "Denumirea sursei de alimentare"
+
+#, fuzzy
+#~ msgid "Prometheus quick setup"
+#~ msgstr "Alertmanager"
+
+#, fuzzy
+#~ msgid ""
+#~ "Python or YAML file to read variables from. (<a href=\"https://"
+#~ "robotframework.org/robotframework/latest/"
+#~ "RobotFrameworkUserGuide.html#variable-files\" target=\"_blank\">About "
+#~ "variable files</a>). Possible arguments to the variable file can be given "
+#~ "after the file path using a colon or a semicolon as a separator. Examples:"
+#~ "<br><tt>path/vars.yaml</tt><br><tt>set_environment.py:testing</tt>"
+#~ msgstr ""
+#~ "Fișier Python sau YAML din care se citesc variabilele. (<a href=\"https://"
+#~ "robotframework.org/robotframework/latest/"
+#~ "RobotFrameworkUserGuide.html#variable-files\">Despre fișierele de "
+#~ "variabile</a>) Argumentele posibile pentru fișierul de variabile pot fi "
+#~ "date după calea fișierului, folosind două puncte sau punct și virgulă ca "
+#~ "separator. Exemple:\n"
+#~ "<tt>path/vars.yaml</tt>\n"
+#~ "<tt>set_environment.py:testing</tt>"
+
+#, fuzzy
+#~ msgid "RCC (deprecated)"
+#~ msgstr "Depreciat"
+
+#, fuzzy
+#~ msgid "RCC Remote server address"
+#~ msgstr "Adresa serverului URL personalizat"
+
+#, fuzzy
+#~ msgid "RCC configuration"
+#~ msgstr "Configurația RRA"
+
+#~ msgid "RCC profile configuration"
+#~ msgstr "Configurația profilului RCC"
+
+#, fuzzy
+#~ msgid ""
+#~ "RCC profile configuration: RCC profiles can define settings for this "
+#~ "specific RCC environment, for example proxy settings."
+#~ msgstr ""
+#~ "Configurarea profilului RCC: Profilurile RCC pot defini setările pentru "
+#~ "acest mediu RCC specific, de exemplu, setările Proxy. <br>."
+
+#~ msgid "Re-execution strategy"
+#~ msgstr "Strategia de reexecuție"
+
+#~ msgid "Re-executions"
+#~ msgstr "Reexecutări"
+
+#, fuzzy
+#~ msgid "Relative manifest path"
+#~ msgstr "Ora relativă de alertă"
+
+#, fuzzy
+#~ msgid "Relative path to Robotmk environment manifest"
+#~ msgstr "Cale către robot.yaml"
+
+#, fuzzy
+#~ msgid "Relative path to robot.yaml"
+#~ msgstr "Cale către robot.yaml"
+
+#, fuzzy
+#~ msgid "Relative path to test suite file or folder"
+#~ msgstr "Calea către suita de testare"
+
+#~ msgid "Robot Framework parameters"
+#~ msgstr "Parametrii cadrului robotului"
+
+#~ msgid "Robot Framework re-executions"
+#~ msgstr "Reexecutarea cadrului robot"
+
+#, python-format
+#~ msgid "Robot Framework: %s"
+#~ msgstr "Cadrul robotului: %s"
+
+#~ msgid "Robot Framework: Last log"
+#~ msgstr "Cadrul robotului: Ultimul jurnal"
+
+#, fuzzy
+#~ msgid "Robot Package"
+#~ msgstr "Îndepărtați pachetul"
+
+#~ msgid ""
+#~ "Robotmk (as part of Checkmk Synthetic Monitoring) integrates the results "
+#~ "of Robot Framework tests as Checkmk services."
+#~ msgstr ""
+#~ "Robotmk (ca parte a Checkmk Synthetic Monitoring) integrează rezultatele "
+#~ "testelor Robot Framework ca servicii Checkmk."
+
+#, fuzzy
+#~ msgid "Robotmk KPI discovery"
+#~ msgstr "Descoperirea IO disc"
+
+#, fuzzy
+#~ msgid "Robotmk KPI monitoring"
+#~ msgstr "Monitorizarea fumului"
+
+#, fuzzy
+#~ msgid ""
+#~ "Robotmk is only supported in combination with the Checkmk Micro Core "
+#~ "(CMC)."
+#~ msgstr ""
+#~ "Nivelul de jurnal pentru gestionarea notificărilor în cadrul Checkmk "
+#~ "Micro Core"
+
+#~ msgid "Robotmk logs"
+#~ msgstr "Jurnalele Robotmk"
+
+#, fuzzy
+#~ msgid "Robotmk plan"
+#~ msgstr "Jurnalele Robotmk"
+
+#, fuzzy
+#~ msgid "Robotmk scheduler (Linux)"
+#~ msgstr "Robotmk Scheduler (Windows)"
+
+#, fuzzy
+#~ msgid "Robotmk scheduler (Windows)"
+#~ msgstr "Robotmk Scheduler (Windows)"
+
+#, fuzzy
+#~ msgid "Robotmk test"
+#~ msgstr "Testele Robotmk"
+
+#, fuzzy
+#~ msgid "Runtime (peak attempt)"
+#~ msgstr "Încercare de verificare curentă"
+
+#, fuzzy
+#~ msgid "Runtime limit (total)"
+#~ msgstr "Rata de succes a regulilor"
+
+#, fuzzy
+#~ msgid "Runtime-limit ratio (peak attempt)"
+#~ msgstr "Rata de succes a regulilor"
+
+#, fuzzy
+#~ msgid "SSL certificate revocation checks"
+#~ msgstr "Verificarea certificatului SSL"
+
+#, fuzzy
+#~ msgid "Secret environment variables"
+#~ msgstr "Variabile de mediu"
+
+#, fuzzy
+#~ msgid "Security advice"
+#~ msgstr "Denumire de securitate"
+
+#, fuzzy, python-format
+#~ msgid "Select suites by names (%s)"
+#~ msgstr "Selectați suitele după nume (%s)"
+
+#, fuzzy
+#~ msgid ""
+#~ "Select test cases that are not to run at all with a tag. (<a "
+#~ "href=\"https://robotframework.org/robotframework/latest/"
+#~ "RobotFrameworkUserGuide.html#tagging-test-cases\" target=\"_blank\">About "
+#~ "tagging test cases</a>). These tests are not run even if included with "
+#~ "<tt>--include</tt>. Tags are matched using the same rules as with <tt>--"
+#~ "include</tt>."
+#~ msgstr ""
+#~ "Selectați cazurile de testare care nu trebuie să fie rulate deloc cu o "
+#~ "etichetă. (<a href=\"https://robotframework.org/robotframework/latest/"
+#~ "RobotFrameworkUserGuide.html#tagging-test-cases\">Despre etichetarea "
+#~ "cazurilor de testare</a>). Aceste teste nu sunt rulate chiar dacă sunt "
+#~ "incluse cu <tt>--include</tt>. Etichetele se potrivesc folosind aceleași "
+#~ "reguli ca și cu <tt>--include</tt>."
+
+#, fuzzy, python-format
+#~ msgid "Select tests by names (%s)"
+#~ msgstr "Selectați testele după nume (%s)"
+
+#, fuzzy
+#~ msgid ""
+#~ "Select tests by names or by long names also including their parent suite "
+#~ "names, such as <tt>Parent.Test</tt>. Name is case and space insensitive "
+#~ "and it can also be a simple pattern where <tt>*</tt> matches anything, "
+#~ "<tt>?</tt> matches any single character, and <tt>[chars]</tt> matches one "
+#~ "character within the brackets."
+#~ msgstr ""
+#~ "Selectați testele după nume sau după un nume lung care include și numele "
+#~ "suitei părinte, cum ar fi <tt>Parent.Test</tt>. Numele este insensibil la "
+#~ "majuscule și spații și poate fi, de asemenea, un model simplu în care "
+#~ "<tt>*</tt> se potrivește cu orice, <tt>?</tt> se potrivește cu orice "
+#~ "caracter și <tt>[chars]</tt> se potrivește cu un singur caracter din "
+#~ "interiorul parantezelor."
+
+#, fuzzy
+#~ msgid ""
+#~ "Select tests by tags. (<a href=\"https://robotframework.org/"
+#~ "robotframework/latest/RobotFrameworkUserGuide.html#tagging-test-cases\" "
+#~ "target=\"_blank\">About tagging test cases</a>). Similarly as name with "
+#~ "<tt>--test</tt>,' tag is case and space insensitive and it is possible to "
+#~ "use patterns with <tt>*</tt>, <tt>?</tt> and <tt>[]</tt> as wildcards. "
+#~ "Tags and patterns can also be combined with <tt>AND</tt>, <tt>OR</tt>, "
+#~ "and <tt>NOT</tt> operators."
+#~ msgstr ""
+#~ "Selectați testele după etichetă. (<a href=\"https://robotframework.org/"
+#~ "robotframework/latest/RobotFrameworkUserGuide.html#tagging-test-"
+#~ "cases\">Despre etichetarea cazurilor de testare</a>). În mod similar cu "
+#~ "numele cu <tt>--test</tt>,' tag-ul este insensibil la majuscule și spații "
+#~ "și este posibil să se utilizeze modele cu <tt>*</tt>, <tt>?</tt> și "
+#~ "<tt>[]</tt> ca wildcards. Etichetele și modelele pot fi, de asemenea, "
+#~ "combinate cu operatorii <tt>AND</tt>, <tt>OR</tt> și <tt>NOT</tt>."
+
+#, fuzzy
+#~ msgid "Sequence execution interval"
+#~ msgstr "Intervalul de execuție a grupului"
+
+#, fuzzy
+#~ msgid "Sequence of plans"
+#~ msgstr "Programarea execuției"
+
+#~ msgid ""
+#~ "Set global variables. Only scalar variables with string values are "
+#~ "supported, and name is given without <tt>${}</tt>. (See <tt>--"
+#~ "variablefile</tt> for a more powerful variable setting mechanism.)"
+#~ msgstr ""
+#~ "Setați variabilele globale. Sunt acceptate numai variabilele scalare cu "
+#~ "valori de tip șir de caractere, iar numele este dat fără <tt>${}</tt>. (A "
+#~ "se vedea <tt>--variablefile</tt> pentru un mecanism mai puternic de "
+#~ "stabilire a variabilelor)."
+
+#~ msgid ""
+#~ "Set the name of the top level suite. By default the name is created based "
+#~ "on the executed file or directory.<br>This sets the name of a fresh "
+#~ "discovered Robot service; an already existing service will hide away and "
+#~ "will be found by the discovery under a new name."
+#~ msgstr ""
+#~ "Setați numele suitei de nivel superior. În mod implicit, numele este "
+#~ "creat pe baza fișierului sau directorului executat.<br>Aceasta stabilește "
+#~ "numele unui serviciu Robot proaspăt descoperit; un serviciu deja existent "
+#~ "se va ascunde și va fi găsit de către descoperire sub un nume nou."
+
+#, fuzzy
+#~ msgid ""
+#~ "Sets the thresholds for the runtime of a test. Note that runtime "
+#~ "monitoring is not a feature of Robot Framework, but of Robotmk. That "
+#~ "means that even when a Robot suite has ended with a PASS result, the "
+#~ "states of Robotmk test and plan services can be other than OK if runtimes "
+#~ "were exceeded."
+#~ msgstr ""
+#~ "Stabilește pragul de execuție pentru acest test special. Rețineți că "
+#~ "monitorizarea în timpul execuției nu este o caracteristică a Robot "
+#~ "Framework, ci a Robotmk; o suită Robot poate avea o stare internă OK, dar "
+#~ "o stare WARN în Checkmk."
+
+#, fuzzy
+#~ msgid ""
+#~ "Sets thresholds for the runtime of a KPI. Note that runtime monitoring is "
+#~ "not a feature of Robot Framework, but of Robotmk. This means that even if "
+#~ "a keyword has PASSed, the corresponding KPI service can still report WARN "
+#~ "or CRIT if the runtime thresholds are exceeded."
+#~ msgstr ""
+#~ "Stabilește pragul de execuție pentru acest test special. Rețineți că "
+#~ "monitorizarea în timpul execuției nu este o caracteristică a Robot "
+#~ "Framework, ci a Robotmk; o suită Robot poate avea o stare internă OK, dar "
+#~ "o stare WARN în Checkmk."
+
+#, fuzzy
+#~ msgid ""
+#~ "Specify here whether the working directory of Robotmk (`/var/lib/"
+#~ "check_mk_agent/robotmk/working/suites`) on the target host should be "
+#~ "cleaned up either after a certain time or after a certain number of test "
+#~ "executions."
+#~ msgstr ""
+#~ "Specificați aici dacă directorul de lucru al Robotmk de pe gazda țintă "
+#~ "trebuie curățat după un anumit timp sau după un anumit număr de execuții "
+#~ "de test."
+
+#, fuzzy
+#~ msgid ""
+#~ "Specify here whether the working directory of Robotmk on the target host "
+#~ "should be cleaned up either after a certain time or after a certain "
+#~ "number of test executions."
+#~ msgstr ""
+#~ "Specificați aici dacă directorul de lucru al Robotmk de pe gazda țintă "
+#~ "trebuie curățat după un anumit timp sau după un anumit număr de execuții "
+#~ "de test."
+
+#, fuzzy
+#~ msgid "Synthetic monitoring is an add-on."
+#~ msgstr "Căutare în Monitorizare"
+
+#, fuzzy
+#~ msgid "Synthetic monitoring tests"
+#~ msgstr "Monitorizare sintetică"
+
+#, fuzzy
+#~ msgid "TLS certificate revocation checks"
+#~ msgstr "Verificarea certificatului SSL"
+
+#~ msgid "Test runtime"
+#~ msgstr "Timpul de execuție a testului"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "The managed robot with ID %s that you attempted to clone does not exist."
+#~ msgstr "Programul pe care încercați să îl clonați nu există."
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "The managed robot with ID %s that you attempted to edit does not exist."
+#~ msgstr "Utilizatorul pe care încercați să îl editați nu există."
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "The name '%s' is already in use. The names of managed robots must be "
+#~ "unique."
+#~ msgstr "Acest nume este deja utilizat. Vă rugăm să alegeți un alt nume."
+
+#, fuzzy
+#~ msgid "The uploaded file is not a valid ZIP file."
+#~ msgstr "Fișierul nu pare a fi un fișier cheie valid."
+
+#, fuzzy
+#~ msgid "The uploaded file is not a valid tar.gz file."
+#~ msgstr "Fișierul nu pare a fi un fișier cheie valid."
+
+#, fuzzy, python-format
+#~ msgid "There are issues with the following archive entries: %s"
+#~ msgstr "Se apelează cu următorii parametri:"
+
+#, fuzzy
+#~ msgid ""
+#~ "These options allow specifying the most common command line parameters "
+#~ "for the Robot Framework. In order to use other parameters, you can use "
+#~ "the option \"Arguments file\"."
+#~ msgstr ""
+#~ "Aceste opțiuni permit specificarea celor mai comuni parametri de linie de "
+#~ "comandă pentru Robot Framework.Pentru a utiliza alți parametri (a se "
+#~ "vedea <a href=\"https://robotframework.org/robotframework/latest/"
+#~ "RobotFrameworkUserGuide.html#all-command-line-options\">Toate opțiunile "
+#~ "de linie de comandă</a>), puteți utiliza opțiunea <i>Fișier de argumente</"
+#~ "i>."
+
+#~ msgid "This log"
+#~ msgstr "Acest jurnal"
+
+#, fuzzy
+#~ msgid ""
+#~ "This option configures the Robotmk scheduler to create a Conda "
+#~ "environment and execute the test suite in the context of this "
+#~ "environment. The environment is created using micromamba. This eliminates "
+#~ "the need to install and configure Python and all of its library packages "
+#~ "on the target hosts. Conda environments are created right after the "
+#~ "schedulder gets started by the Checkmk agent and before it enters the "
+#~ "scheduling phase."
+#~ msgstr ""
+#~ "Cu ajutorul <a href=https://github.com/robocorp/rcc>rcc binary</a>, "
+#~ "programatorul robotmk poate genera mediile Python necesare pentru "
+#~ "executarea suitelor Robot Framework. Acest lucru elimină necesitatea de a "
+#~ "instala și configura Python și toate pachetele de bibliotecă ale acestuia "
+#~ "pe gazdele țintă. Mediile RCC sunt construite numai atunci când este "
+#~ "pornit planificatorul."
+
+#, fuzzy
+#~ msgid ""
+#~ "This permission allows users to edit (add, delete, modify) managed robots."
+#~ msgstr ""
+#~ "Această permisiune permite utilizatorilor să migreze alți utilizatori "
+#~ "către o altă conexiune"
+
+#, python-format
+#~ msgid "Top level suite name (%s)"
+#~ msgstr "Numele suitei de nivel superior (%s)"
+
+#, fuzzy
+#~ msgid "Total runtime"
+#~ msgstr "Timpul de execuție a testului"
+
+#, fuzzy
+#~ msgid "Uploaded"
+#~ msgstr "Încărcați"
+
+#, fuzzy
+#~ msgid "Uploaded by"
+#~ msgstr "Încărcați cheia"
+
+#, fuzzy
+#~ msgid "Use default managed plan settings"
+#~ msgstr "Setați valorile implicite pentru toate secțiunile"
+
+#~ msgid "Use proxy"
+#~ msgstr "Utilizați proxy"
+
+#, fuzzy
+#~ msgid "Validate TLS certificates"
+#~ msgstr "Certificat invalid"
+
+#, fuzzy
+#~ msgid "Validate with custom certificate authority (CA)"
+#~ msgstr "Validarea certificatului serverului în timpul interogării portului"
+
+#, python-format
+#~ msgid "Variable files (%s)"
+#~ msgstr "Fișiere variabile (%s)"
+
+#, python-format
+#~ msgid "Variables (%s)"
+#~ msgstr "Variabile (%s)"
+
+#, fuzzy
+#~ msgid "Verify SSL certificates for HTTPS requests."
+#~ msgstr "Ignoră erorile de certificat (nesigur)"
+
+#, fuzzy
+#~ msgid "Version label"
+#~ msgstr "Versiunea 1"
+
+#, fuzzy
+#~ msgid "Version number"
+#~ msgstr "Numărul de serie"
+
+#, fuzzy
+#~ msgid ""
+#~ "With the help of the <a href=\"https://github.com/robocorp/rcc\" "
+#~ "target=\"_blank\">RCC</a> binary, the Robotmk scheduler can generate the "
+#~ "Python environments required for the execution of Robot Framework suites. "
+#~ "This eliminates the need to install and configure Python and all of its "
+#~ "library packages on the target hosts. RCC environments are created right "
+#~ "after the scheduler gets started by the Checkmk agent and before it "
+#~ "enters the scheduling phase."
+#~ msgstr ""
+#~ "Cu ajutorul <a href=https://github.com/robocorp/rcc>rcc binary</a>, "
+#~ "programatorul robotmk poate genera mediile Python necesare pentru "
+#~ "executarea suitelor Robot Framework. Acest lucru elimină necesitatea de a "
+#~ "instala și configura Python și toate pachetele de bibliotecă ale acestuia "
+#~ "pe gazdele țintă. Mediile RCC sunt construite numai atunci când este "
+#~ "pornit planificatorul."
+
+#, fuzzy, python-format
+#~ msgid "You are currently monitoring %d %s on this site."
+#~ msgstr "Diferențe față de serviciile monitorizate în prezent pe o gazdă."
+
+#~ msgid "You are not permitted to view this page"
+#~ msgstr "Nu aveți voie să vizualizați această pagină"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "You cannot delete this managed robot because it is in use in the "
+#~ "following rules:%s"
+#~ msgstr ""
+#~ "Nu puteți șterge această țintă, deoarece este utilizată de aceste lucrări "
+#~ "de backup: %s."
+
+#, fuzzy
+#~ msgid "directory"
+#~ msgstr "Director de date"
+
+#, fuzzy
+#~ msgid "not found"
+#~ msgstr "Nu a fost găsit"
+
+#, fuzzy
+#~ msgid "regular file"
+#~ msgstr "Înlocuiți cu"
+
+#, fuzzy
+#~ msgid "regular file or directory"
+#~ msgstr "Curățarea directorului de lucru"
+
+#~ msgid "test"
+#~ msgstr "test"
+
+#~ msgid "tests"
+#~ msgstr "teste"
+
+#, fuzzy
+#~ msgid "uid"
+#~ msgstr "Construiți"
+
+#, fuzzy
+#~ msgid "Successfully activated 1 change"
+#~ msgstr "Copiat cu succes în clipboard."
 
 #, fuzzy
 #~ msgid "Acknowledgement author"
