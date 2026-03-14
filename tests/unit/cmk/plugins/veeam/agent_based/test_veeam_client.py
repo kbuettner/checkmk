@@ -11,7 +11,7 @@ import pytest
 import time_machine
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.veeam_client import (
+from cmk.plugins.veeam.agent_based.veeam_client import (
     check_veeam_client,
     discover_veeam_client,
     parse_veeam_client,
