@@ -4,20 +4,25 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 
-from collections.abc import Mapping
-from typing import Any
+from collections.abc import Mapping, Sequence
 
-from cmk.agent_based.legacy.v0_unstable import (
-    LegacyCheckDefinition,
-    LegacyCheckResult,
-    LegacyDiscoveryResult,
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    contains,
+    DiscoveryResult,
+    Result,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
 )
-from cmk.agent_based.v2 import contains, SNMPTree, StringTable
 
-check_info = {}
+Section = Mapping[str, Mapping[str, str]]
 
 
-def parse_tcw241_digital(string_table: StringTable) -> Mapping[str, Mapping[str, str]]:
+def parse_tcw241_digital(string_table: Sequence[StringTable]) -> Section:
     """
     parse string_table data and create list of namedtuples for 4 digital sensors.
 
@@ -50,35 +55,30 @@ def parse_tcw241_digital(string_table: StringTable) -> Mapping[str, Mapping[str,
     return info_dict
 
 
-def check_tcw241_digital(
-    item: str, params: Mapping[str, Any], parsed: Mapping[str, Mapping[str, str]]
-) -> LegacyCheckResult:
+def check_tcw241_digital(item: str, section: Section) -> CheckResult:
     """
     Check sensor if it is open or closed
 
     :param item: sensor number
-    :param params: <not used>
-    :param info_dict: dictionary with digital sensor description and state (open/close)
+    :param section: dictionary with digital sensor description and state (open/close)
     :return: status
     """
-    if not (info_dict := parsed.get(item)):
+    if not (info_dict := section.get(item)):
         return
-    yield (
-        0 if info_dict.get("state") == "open" else 2,
-        "[{}] is {}".format(
+    yield Result(
+        state=State.OK if info_dict.get("state") == "open" else State.CRIT,
+        summary="[{}] is {}".format(
             info_dict.get("description"),
             info_dict.get("state"),
         ),
     )
 
 
-def discover_teracom_tcw241_digital(
-    section: Mapping[str, Mapping[str, str]],
-) -> LegacyDiscoveryResult:
-    yield from ((item, {}) for item in section)
+def discover_teracom_tcw241_digital(section: Section) -> DiscoveryResult:
+    yield from (Service(item=item) for item in section)
 
 
-check_info["teracom_tcw241_digital"] = LegacyCheckDefinition(
+snmp_section_teracom_tcw241_digital = SNMPSection(
     name="teracom_tcw241_digital",
     detect=contains(".1.3.6.1.2.1.1.1.0", "Teracom"),
     fetch=[
@@ -92,6 +92,10 @@ check_info["teracom_tcw241_digital"] = LegacyCheckDefinition(
         ),
     ],
     parse_function=parse_tcw241_digital,
+)
+
+check_plugin_teracom_tcw241_digital = CheckPlugin(
+    name="teracom_tcw241_digital",
     service_name="Digital Sensor %s",
     discovery_function=discover_teracom_tcw241_digital,
     check_function=check_tcw241_digital,
