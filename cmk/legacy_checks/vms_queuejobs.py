@@ -9,26 +9,27 @@
 # 20201AF1 DRS_WATCHDOG_22 LEF 0 00:01:39.97 284611 2030
 
 
-from collections.abc import Mapping
-from typing import Any
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
 
-check_info = {}
-
-
-def discover_vms_queuejobs(info: StringTable) -> list[tuple[None, dict[str, object]]]:
-    return [(None, {})]
+def discover_vms_queuejobs(section: StringTable) -> DiscoveryResult:
+    yield Service()
 
 
-def check_vms_queuejobs(
-    _no_item: None, params: Mapping[str, Any], info: StringTable
-) -> tuple[int, str]:
+def check_vms_queuejobs(section: StringTable) -> CheckResult:
     names = []
     max_cpu_secs = 0.0
     max_cpu_job = None
-    for _id, name, _state, cpu_days, cpu_time, _ios, _pgfaults in info:
+    for _id, name, _state, cpu_days, cpu_time, _ios, _pgfaults in section:
         names.append(name)
         hours, minutes, seconds = map(float, cpu_time.split(":"))
         cpu_secs = int(cpu_days) * 86400 + hours * 3600 + minutes * 60 + seconds
@@ -36,30 +37,30 @@ def check_vms_queuejobs(
             max_cpu_secs = cpu_secs
             max_cpu_job = name
 
-    infotext = "%d jobs" % len(info)
+    infotext = f"{len(section)} jobs"
     if max_cpu_job:
         minutes, seconds = divmod(max_cpu_secs, 60)
         hours, minutes = divmod(minutes, 60)
         days, hours = divmod(hours, 24)
-        infotext += ", most CPU used by %s (%d days, %02d:%02d:%02d.%02d)" % (
-            max_cpu_job,
-            days,
-            hours,
-            minutes,
-            int(seconds),
-            int(seconds * 100),
+        infotext += (
+            f", most CPU used by {max_cpu_job}"
+            f" ({int(days)} days, {int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}.{int(seconds * 100):02d})"
         )
 
-    return 0, infotext
+    yield Result(state=State.OK, summary=infotext)
 
 
 def parse_vms_queuejobs(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["vms_queuejobs"] = LegacyCheckDefinition(
+agent_section_vms_queuejobs = AgentSection(
     name="vms_queuejobs",
     parse_function=parse_vms_queuejobs,
+)
+
+check_plugin_vms_queuejobs = CheckPlugin(
+    name="vms_queuejobs",
     service_name="Queue Jobs",
     discovery_function=discover_vms_queuejobs,
     check_function=check_vms_queuejobs,
