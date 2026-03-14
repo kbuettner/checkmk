@@ -7,25 +7,35 @@
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import (
+from cmk.agent_based.v2 import (
+    any_of,
     check_levels,
-    LegacyCheckDefinition,
-    LegacyCheckResult,
-    LegacyDiscoveryResult,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    equals,
+    get_value_store,
+    Metric,
+    render,
+    Result,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
 )
-from cmk.agent_based.v2 import any_of, equals, render, SNMPTree, StringTable
-from cmk.legacy_includes.temperature import check_temperature, TempParamType
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
 
-check_info = {}
+Section = Sequence[StringTable]
 
 
 def parse_wagner_titanus_topsense(
     string_table: Sequence[StringTable],
-) -> Sequence[StringTable] | None:
+) -> Section | None:
     return string_table if string_table[0] else None
 
 
-check_info["wagner_titanus_topsense"] = LegacyCheckDefinition(
+snmp_section_wagner_titanus_topsense = SNMPSection(
     name="wagner_titanus_topsense",
     parse_function=parse_wagner_titanus_topsense,
     detect=any_of(
@@ -76,40 +86,30 @@ check_info["wagner_titanus_topsense"] = LegacyCheckDefinition(
 )
 
 
-def parse_wagner_titanus_topsens(info: Sequence[StringTable]) -> list[StringTable]:
+def _get_model_data(section: Section) -> list[StringTable]:
     # not much of a parse function. simply retrieves the info blocks that apply for the
     # respective topsens model and returns only those
-    res = [info[0], info[1] or info[3], info[2] or info[4]]
-    return res
+    return [section[0], section[1] or section[3], section[2] or section[4]]
 
 
-#   .--titanus info--------------------------------------------------------.
-#   |         _   _ _                          _        __                 |
-#   |        | |_(_) |_ __ _ _ __  _   _ ___  (_)_ __  / _| ___            |
-#   |        | __| | __/ _` | '_ \| | | / __| | | '_ \| |_ / _ \           |
-#   |        | |_| | || (_| | | | | |_| \__ \ | | | | |  _| (_) |          |
-#   |         \__|_|\__\__,_|_| |_|\__,_|___/ |_|_| |_|_|  \___/           |
-#   |                                                                      |
-#   '----------------------------------------------------------------------'
+#   .--titanus info--------------------------------------------------------
 
 
-def discover_wagner_titanus_topsense_info(info: Sequence[StringTable]) -> LegacyDiscoveryResult:
-    yield None, {}
+def discover_wagner_titanus_topsense_info(section: Section) -> DiscoveryResult:
+    yield Service()
 
 
-def check_wagner_titanus_topsense_info(
-    item: str | None, _no_params: Mapping[str, Any], info: Sequence[StringTable]
-) -> tuple[int, str]:
-    parsed = parse_wagner_titanus_topsens(info)
-    message = "System: " + parsed[0][0][0]
-    message += ", Uptime: " + render.timespan(int(parsed[0][0][1]) // 100)
-    message += ", System Name: " + parsed[0][0][3]
-    message += ", System Contact: " + parsed[0][0][2]
-    message += ", System Location: " + parsed[0][0][4]
-    message += ", Company: " + parsed[1][0][0]
-    message += ", Model: " + parsed[1][0][1]
-    message += ", Revision: " + parsed[1][0][2]
-    if len(info) > 8:
+def check_wagner_titanus_topsense_info(section: Section) -> CheckResult:
+    parsed = _get_model_data(section)
+    message = f"System: {parsed[0][0][0]}"
+    message += f", Uptime: {render.timespan(int(parsed[0][0][1]) // 100)}"
+    message += f", System Name: {parsed[0][0][3]}"
+    message += f", System Contact: {parsed[0][0][2]}"
+    message += f", System Location: {parsed[0][0][4]}"
+    message += f", Company: {parsed[1][0][0]}"
+    message += f", Model: {parsed[1][0][1]}"
+    message += f", Revision: {parsed[1][0][2]}"
+    if len(section) > 8:
         ts_lsn_bus = parsed[2][0][8]
         if ts_lsn_bus == "0":
             ts_lsn_bus = "offline"
@@ -118,11 +118,11 @@ def check_wagner_titanus_topsense_info(
         else:
             ts_lsn_bus = "unknown"
 
-        message += ", LSNi bus: " + ts_lsn_bus
-    return 0, message
+        message += f", LSNi bus: {ts_lsn_bus}"
+    yield Result(state=State.OK, summary=message)
 
 
-check_info["wagner_titanus_topsense.info"] = LegacyCheckDefinition(
+check_plugin_wagner_titanus_topsense_info = CheckPlugin(
     name="wagner_titanus_topsense_info",
     service_name="Topsense Info",
     sections=["wagner_titanus_topsense"],
@@ -131,38 +131,23 @@ check_info["wagner_titanus_topsense.info"] = LegacyCheckDefinition(
 )
 
 # .
-#   .--overall status------------------------------------------------------.
-#   |                               _ _       _        _                   |
-#   |       _____   _____ _ __ __ _| | |  ___| |_ __ _| |_ _   _ ___       |
-#   |      / _ \ \ / / _ \ '__/ _` | | | / __| __/ _` | __| | | / __|      |
-#   |     | (_) \ V /  __/ | | (_| | | | \__ \ || (_| | |_| |_| \__ \      |
-#   |      \___/ \_/ \___|_|  \__,_|_|_| |___/\__\__,_|\__|\__,_|___/      |
-#   |                                                                      |
-#   '----------------------------------------------------------------------'
+#   .--overall status------------------------------------------------------
 
 
-def discover_wagner_titanus_topsense_overall_status(
-    info: Sequence[StringTable],
-) -> LegacyDiscoveryResult:
-    yield None, {}
+def discover_wagner_titanus_topsense_overall_status(section: Section) -> DiscoveryResult:
+    yield Service()
 
 
-def check_wagner_titanus_topsense_overall_status(
-    item: str | None, _no_params: Mapping[str, Any], info: Sequence[StringTable]
-) -> tuple[int, str]:
-    parsed = parse_wagner_titanus_topsens(info)
+def check_wagner_titanus_topsense_overall_status(section: Section) -> CheckResult:
+    parsed = _get_model_data(section)
     psw_failure = parsed[1][0][9]
-    status = 3
     if psw_failure == "0":
-        message = "Overall Status reports OK"
-        status = 0
+        yield Result(state=State.OK, summary="Overall Status reports OK")
     else:
-        message = "Overall Status reports a problem"
-        status = 2
-    return status, message
+        yield Result(state=State.CRIT, summary="Overall Status reports a problem")
 
 
-check_info["wagner_titanus_topsense.overall_status"] = LegacyCheckDefinition(
+check_plugin_wagner_titanus_topsense_overall_status = CheckPlugin(
     name="wagner_titanus_topsense_overall_status",
     service_name="Overall Status",
     sections=["wagner_titanus_topsense"],
@@ -171,25 +156,16 @@ check_info["wagner_titanus_topsense.overall_status"] = LegacyCheckDefinition(
 )
 
 # .
-#   .--alarm---------------------------------------------------------------.
-#   |                          _                                           |
-#   |                     __ _| | __ _ _ __ _ __ ___                       |
-#   |                    / _` | |/ _` | '__| '_ ` _ \                      |
-#   |                   | (_| | | (_| | |  | | | | | |                     |
-#   |                    \__,_|_|\__,_|_|  |_| |_| |_|                     |
-#   |                                                                      |
-#   '----------------------------------------------------------------------'
+#   .--alarm---------------------------------------------------------------
 
 
-def discover_wagner_titanus_topsense_alarm(info: Sequence[StringTable]) -> LegacyDiscoveryResult:
-    yield "1", {}
-    yield "2", {}
+def discover_wagner_titanus_topsense_alarm(section: Section) -> DiscoveryResult:
+    yield Service(item="1")
+    yield Service(item="2")
 
 
-def check_wagner_titanus_topsense_alarm(
-    item: str, _no_params: Mapping[str, Any], info: Sequence[StringTable]
-) -> tuple[int, str]:
-    parsed = parse_wagner_titanus_topsens(info)
+def check_wagner_titanus_topsense_alarm(item: str, section: Section) -> CheckResult:
+    parsed = _get_model_data(section)
     if item == "1":
         main_alarm = parsed[1][0][3]
         pre_alarm = parsed[1][0][4]
@@ -199,24 +175,25 @@ def check_wagner_titanus_topsense_alarm(
         pre_alarm = parsed[1][0][7]
         info_alarm = parsed[1][0][8]
     else:
-        return 3, "Alarm Detector %s not found in SNMP" % item
+        yield Result(state=State.UNKNOWN, summary=f"Alarm Detector {item} not found in SNMP")
+        return
 
-    status = 0
+    state = State.OK
     message = "No Alarm"
     if info_alarm != "0":
         message = "Info Alarm"
-        status = 1
+        state = State.WARN
     if pre_alarm != "0":
         message = "Pre Alarm"
-        status = 1
+        state = State.WARN
     if main_alarm != "0":
         message = "Main Alarm: Fire"
-        status = 2
+        state = State.CRIT
 
-    return status, message
+    yield Result(state=state, summary=message)
 
 
-check_info["wagner_titanus_topsense.alarm"] = LegacyCheckDefinition(
+check_plugin_wagner_titanus_topsense_alarm = CheckPlugin(
     name="wagner_titanus_topsense_alarm",
     service_name="Alarm Detector %s",
     sections=["wagner_titanus_topsense"],
@@ -225,44 +202,36 @@ check_info["wagner_titanus_topsense.alarm"] = LegacyCheckDefinition(
 )
 
 # .
-#   .--smoke percent-------------------------------------------------------.
-#   |                      _                                        _      |
-#   |  ___ _ __ ___   ___ | | _____   _ __   ___ _ __ ___ ___ _ __ | |_    |
-#   | / __| '_ ` _ \ / _ \| |/ / _ \ | '_ \ / _ \ '__/ __/ _ \ '_ \| __|   |
-#   | \__ \ | | | | | (_) |   <  __/ | |_) |  __/ | | (_|  __/ | | | |_    |
-#   | |___/_| |_| |_|\___/|_|\_\___| | .__/ \___|_|  \___\___|_| |_|\__|   |
-#   |                                |_|                                   |
-#   '----------------------------------------------------------------------'
+#   .--smoke percent-------------------------------------------------------
 
 
-def discover_wagner_titanus_topsense_smoke(info: Sequence[StringTable]) -> LegacyDiscoveryResult:
-    yield "1", {}
-    yield "2", {}
+def discover_wagner_titanus_topsense_smoke(section: Section) -> DiscoveryResult:
+    yield Service(item="1")
+    yield Service(item="2")
 
 
-def check_wagner_titanus_topsense_smoke(
-    item: str, _no_params: Mapping[str, Any], info: Sequence[StringTable]
-) -> tuple[int, str, list[tuple[str, float]]]:
-    parsed = parse_wagner_titanus_topsens(info)
+def check_wagner_titanus_topsense_smoke(item: str, section: Section) -> CheckResult:
+    parsed = _get_model_data(section)
     if item == "1":
         smoke_perc = float(parsed[2][0][0])
     elif item == "2":
         smoke_perc = float(parsed[2][0][1])
     else:
-        return 3, "Smoke Detector %s not found in SNMP" % item, []
+        yield Result(state=State.UNKNOWN, summary=f"Smoke Detector {item} not found in SNMP")
+        return
 
-    perfdata = [("smoke_perc", smoke_perc)]
     if smoke_perc > 5:
-        status = 2
+        state = State.CRIT
     elif smoke_perc > 3:
-        status = 1
+        state = State.WARN
     else:
-        status = 0
+        state = State.OK
 
-    return status, "%0.6f%% smoke detected" % smoke_perc, perfdata
+    yield Result(state=state, summary=f"{smoke_perc:0.6f}% smoke detected")
+    yield Metric("smoke_perc", smoke_perc)
 
 
-check_info["wagner_titanus_topsense.smoke"] = LegacyCheckDefinition(
+check_plugin_wagner_titanus_topsense_smoke = CheckPlugin(
     name="wagner_titanus_topsense_smoke",
     service_name="Smoke Detector %s",
     sections=["wagner_titanus_topsense"],
@@ -271,40 +240,32 @@ check_info["wagner_titanus_topsense.smoke"] = LegacyCheckDefinition(
 )
 
 # .
-#   .--chamber deviation---------------------------------------------------.
-#   |         _                     _                     _                |
-#   |     ___| |__   __ _ _ __ ___ | |__   ___ _ __    __| | _____   __    |
-#   |    / __| '_ \ / _` | '_ ` _ \| '_ \ / _ \ '__|  / _` |/ _ \ \ / /    |
-#   |   | (__| | | | (_| | | | | | | |_) |  __/ |    | (_| |  __/\ V /     |
-#   |    \___|_| |_|\__,_|_| |_| |_|_.__/ \___|_|     \__,_|\___| \_/      |
-#   |                                                                      |
-#   '----------------------------------------------------------------------'
+#   .--chamber deviation---------------------------------------------------
 
 
-def discover_wagner_titanus_topsense_chamber_deviation(
-    info: Sequence[StringTable],
-) -> LegacyDiscoveryResult:
-    yield "1", {}
-    yield "2", {}
+def discover_wagner_titanus_topsense_chamber_deviation(section: Section) -> DiscoveryResult:
+    yield Service(item="1")
+    yield Service(item="2")
 
 
-def check_wagner_titanus_topsense_chamber_deviation(
-    item: str, _no_params: Mapping[str, Any], info: Sequence[StringTable]
-) -> tuple[int, str, list[tuple[str, float]]]:
-    parsed = parse_wagner_titanus_topsens(info)
+def check_wagner_titanus_topsense_chamber_deviation(item: str, section: Section) -> CheckResult:
+    parsed = _get_model_data(section)
     if item == "1":
         chamber_deviation = float(parsed[2][0][2])
     elif item == "2":
         chamber_deviation = float(parsed[2][0][3])
     else:
-        return 3, "Chamber Deviation Detector %s not found in SNMP" % item, []
+        yield Result(
+            state=State.UNKNOWN,
+            summary=f"Chamber Deviation Detector {item} not found in SNMP",
+        )
+        return
 
-    perfdata = [("chamber_deviation", chamber_deviation)]
+    yield Result(state=State.OK, summary=f"{chamber_deviation:0.6f}% Chamber Deviation")
+    yield Metric("chamber_deviation", chamber_deviation)
 
-    return 0, "%0.6f%% Chamber Deviation" % chamber_deviation, perfdata
 
-
-check_info["wagner_titanus_topsense.chamber_deviation"] = LegacyCheckDefinition(
+check_plugin_wagner_titanus_topsense_chamber_deviation = CheckPlugin(
     name="wagner_titanus_topsense_chamber_deviation",
     service_name="Chamber Deviation Detector %s",
     sections=["wagner_titanus_topsense"],
@@ -313,27 +274,18 @@ check_info["wagner_titanus_topsense.chamber_deviation"] = LegacyCheckDefinition(
 )
 
 # .
-#   .--air flow deviation--------------------------------------------------.
-#   |              _         __ _                     _                    |
-#   |         __ _(_)_ __   / _| | _____      __   __| | _____   __        |
-#   |        / _` | | '__| | |_| |/ _ \ \ /\ / /  / _` |/ _ \ \ / /        |
-#   |       | (_| | | |    |  _| | (_) \ V  V /  | (_| |  __/\ V /         |
-#   |        \__,_|_|_|    |_| |_|\___/ \_/\_/    \__,_|\___| \_/          |
-#   |                                                                      |
-#   '----------------------------------------------------------------------'
+#   .--air flow deviation--------------------------------------------------
 
 
-def discover_wagner_titanus_topsense_airflow_deviation(
-    info: Sequence[StringTable],
-) -> LegacyDiscoveryResult:
-    yield "1", {}
-    yield "2", {}
+def discover_wagner_titanus_topsense_airflow_deviation(section: Section) -> DiscoveryResult:
+    yield Service(item="1")
+    yield Service(item="2")
 
 
 def check_wagner_titanus_topsense_airflow_deviation(
-    item: str, params: Mapping[str, Any], info: Sequence[StringTable]
-) -> LegacyCheckResult:
-    parsed = parse_wagner_titanus_topsens(info)
+    item: str, params: Mapping[str, Any], section: Section
+) -> CheckResult:
+    parsed = _get_model_data(section)
     if item == "1":
         airflow_deviation = float(parsed[2][0][4])
     elif item == "2":
@@ -341,16 +293,17 @@ def check_wagner_titanus_topsense_airflow_deviation(
     else:
         return
 
-    yield check_levels(
+    yield from check_levels(
         airflow_deviation,
-        "airflow_deviation",
-        params["levels_upper"] + params["levels_lower"],
-        human_readable_func=lambda v: "%0.6f%%",
-        infoname="Airflow deviation",
+        metric_name="airflow_deviation",
+        levels_upper=params["levels_upper"],
+        levels_lower=params["levels_lower"],
+        render_func=lambda v: f"{v:0.6f}%",
+        label="Airflow deviation",
     )
 
 
-check_info["wagner_titanus_topsense.airflow_deviation"] = LegacyCheckDefinition(
+check_plugin_wagner_titanus_topsense_airflow_deviation = CheckPlugin(
     name="wagner_titanus_topsense_airflow_deviation",
     service_name="Airflow Deviation Detector %s",
     sections=["wagner_titanus_topsense"],
@@ -364,42 +317,37 @@ check_info["wagner_titanus_topsense.airflow_deviation"] = LegacyCheckDefinition(
 )
 
 # .
-#   .--air temp------------------------------------------------------------.
-#   |                     _        _                                       |
-#   |                __ _(_)_ __  | |_ ___ _ __ ___  _ __                  |
-#   |               / _` | | '__| | __/ _ \ '_ ` _ \| '_ \                 |
-#   |              | (_| | | |    | ||  __/ | | | | | |_) |                |
-#   |               \__,_|_|_|     \__\___|_| |_| |_| .__/                 |
-#   |                                               |_|                    |
-#   '----------------------------------------------------------------------'
+#   .--air temp------------------------------------------------------------
 
 
-def discover_wagner_titanus_topsense_temp(info: Sequence[StringTable]) -> LegacyDiscoveryResult:
-    yield "Ambient 1", {}
-    yield "Ambient 2", {}
+def discover_wagner_titanus_topsense_temp(section: Section) -> DiscoveryResult:
+    yield Service(item="Ambient 1")
+    yield Service(item="Ambient 2")
 
 
 def check_wagner_titanus_topsense_temp(
-    item: str, params: TempParamType, info: Sequence[StringTable]
-) -> (
-    tuple[int, str, list[tuple[str, float, float | None, float | None, float | None, float | None]]]
-    | None
-):
-    parsed = parse_wagner_titanus_topsens(info)
+    item: str, params: TempParamType, section: Section
+) -> CheckResult:
+    parsed = _get_model_data(section)
     if not item.startswith("Ambient"):
-        item = "Ambient %s" % item
+        item = f"Ambient {item}"
 
     if item == "Ambient 1":
         temp = float(parsed[2][0][6])
     elif item == "Ambient 2":
         temp = float(parsed[2][0][7])
     else:
-        return None
+        return
 
-    return check_temperature(temp, params, "wagner_titanus_topsense_%s" % item)
+    yield from check_temperature(
+        reading=temp,
+        params=params,
+        unique_name=f"wagner_titanus_topsense_{item}",
+        value_store=get_value_store(),
+    )
 
 
-check_info["wagner_titanus_topsense.temp"] = LegacyCheckDefinition(
+check_plugin_wagner_titanus_topsense_temp = CheckPlugin(
     name="wagner_titanus_topsense_temp",
     service_name="Temperature %s",
     sections=["wagner_titanus_topsense"],
