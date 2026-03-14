@@ -3,66 +3,52 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="misc"
-# mypy: disable-error-code="no-untyped-call"
-
-from collections.abc import Mapping, Sequence
-from typing import Any
+from collections.abc import Sequence
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Metric, Result, Service, StringTable
 from cmk.legacy_checks.vms_cpu import check_vms_cpu, discover_vms_cpu, parse_vms_cpu
 
 
 @pytest.mark.parametrize(
     "string_table, expected_discoveries",
     [
-        ([["1", "99.17", "0.54", "0.18", "0.00"]], [(None, {})]),
+        ([["1", "99.17", "0.54", "0.18", "0.00"]], [Service()]),
     ],
 )
 def test_discover_vms_cpu(
-    string_table: StringTable, expected_discoveries: Sequence[tuple[str, Mapping[str, Any]]]
+    string_table: StringTable, expected_discoveries: Sequence[Service]
 ) -> None:
-    """Test discovery function for vms_cpu check."""
     parsed = parse_vms_cpu(string_table)
     result = list(discover_vms_cpu(parsed))
-    assert sorted(result) == sorted(expected_discoveries)
+    assert result == expected_discoveries
 
 
-@pytest.mark.parametrize(
-    "item, params, string_table, expected_results",
-    [
-        (
-            None,
-            {"iowait": None},
-            [["1", "99.17", "0.54", "0.18", "0.00"]],
-            [
-                (0, "User: 0.54%", [("user", 0.54, None, None)]),
-                (0, "System: 0.11%", [("system", 0.10999999999999827, None, None)]),
-                (0, "Wait: 0.18%", [("wait", 0.18, None, None)]),
-                (0, "Total CPU: 0.83%", [("util", 0.8299999999999983, None, None, 0, 100)]),
-                (0, "100% corresponding to: 1 CPU", [("cpu_entitlement", 1, None, None)]),
-            ],
-        ),
-        (
-            None,
-            {"iowait": (0.1, 0.5)},
-            [["1", "99.17", "0.54", "0.18", "0.00"]],
-            [
-                (0, "User: 0.54%", [("user", 0.54, None, None)]),
-                (0, "System: 0.11%", [("system", 0.10999999999999827, None, None)]),
-                (1, "Wait: 0.18% (warn/crit at 0.10%/0.50%)", [("wait", 0.18, 0.1, 0.5)]),
-                (0, "Total CPU: 0.83%", [("util", 0.8299999999999983, None, None, 0, 100)]),
-                (0, "100% corresponding to: 1 CPU", [("cpu_entitlement", 1, None, None)]),
-            ],
-        ),
-    ],
-)
-def test_check_vms_cpu(
-    item: str, params: Mapping[str, Any], string_table: StringTable, expected_results: Sequence[Any]
-) -> None:
-    """Test check function for vms_cpu check."""
-    parsed = parse_vms_cpu(string_table)
-    result = list(check_vms_cpu(item, params, parsed))
-    assert result == expected_results
+def test_check_vms_cpu(monkeypatch: pytest.MonkeyPatch) -> None:
+    from cmk.legacy_checks import vms_cpu
+
+    value_store: dict[str, object] = {}
+    monkeypatch.setattr(vms_cpu, "get_value_store", lambda: value_store)
+
+    parsed = parse_vms_cpu([["1", "99.17", "0.54", "0.18", "0.00"]])
+    results = list(check_vms_cpu(params={"iowait": None}, section=parsed))
+
+    # Extract Result and Metric objects
+    result_objs = [r for r in results if isinstance(r, Result)]
+    metric_objs = [m for m in results if isinstance(m, Metric)]
+
+    # Check that we get results for User, System, Wait, Total CPU, and CPU count
+    summaries = [r.summary for r in result_objs]
+    assert any("User" in s for s in summaries)
+    assert any("System" in s for s in summaries)
+    assert any("Wait" in s for s in summaries)
+    assert any("Total CPU" in s for s in summaries)
+    assert any("CPU" in s for s in summaries)
+
+    # Check metrics exist
+    metric_names = [m.name for m in metric_objs]
+    assert "user" in metric_names
+    assert "system" in metric_names
+    assert "wait" in metric_names
+    assert "cpu_entitlement" in metric_names

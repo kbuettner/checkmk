@@ -3,23 +3,33 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-call"
-# mypy: disable-error-code="no-untyped-def"
 
+import time
+from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import render
-from cmk.legacy_includes.cpu_util import check_cpu_util
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    AgentSection,
+    check_levels,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    render,
+    Service,
+    StringTable,
+)
+from cmk.plugins.lib.cpu_util import check_cpu_util
 
 # Example output from agent:
 # <<<vms_cpu>>>
 # 1 99.17 0.54 0.18 0.00
 
+Section = dict[str, int | float]
 
-def parse_vms_cpu(string_table):
-    parsed: dict[str, int | float] = {}
+
+def parse_vms_cpu(string_table: StringTable) -> Section:
+    parsed: Section = {}
     try:
         parsed["num_cpus"] = int(string_table[0][0])
         for i, key in enumerate(("idle", "user", "wait_interrupt", "wait_npsync"), 1):
@@ -30,47 +40,59 @@ def parse_vms_cpu(string_table):
     return parsed
 
 
-def discover_vms_cpu(info):
-    if info:
-        yield None, {}
+def discover_vms_cpu(section: Section) -> DiscoveryResult:
+    if section:
+        yield Service()
 
 
-def check_vms_cpu(_no_item, params, parsed):
-    user = parsed["user"]
-    wait = parsed["wait_interrupt"] + parsed["wait_npsync"]
-    util = 100.0 - parsed["idle"]
+def check_vms_cpu(params: Mapping[str, Any], section: Section) -> CheckResult:
+    user = section["user"]
+    wait = section["wait_interrupt"] + section["wait_npsync"]
+    util = 100.0 - section["idle"]
     system = util - user - wait
 
-    yield check_levels(user, "user", None, human_readable_func=render.percent, infoname="User")
-    yield check_levels(
-        system, "system", None, human_readable_func=render.percent, infoname="System"
+    yield from check_levels(user, metric_name="user", render_func=render.percent, label="User")
+    yield from check_levels(
+        system, metric_name="system", render_func=render.percent, label="System"
     )
-    yield check_levels(
+    raw_iowait: tuple[float, float] | None = params.get("iowait")
+
+    yield from check_levels(
         wait,
-        "wait",
-        params.get("iowait"),
-        human_readable_func=render.percent,
-        infoname="Wait",
+        metric_name="wait",
+        levels_upper=("fixed", raw_iowait) if raw_iowait is not None else None,
+        render_func=render.percent,
+        label="Wait",
     )
 
-    yield from check_cpu_util(util, params)
+    yield from check_cpu_util(
+        util=util,
+        params=params,
+        value_store=get_value_store(),
+        this_time=time.time(),
+        perf_max=100,
+    )
 
-    num_cpus = parsed["num_cpus"]
+    num_cpus = section["num_cpus"]
     unit = "CPU" if num_cpus == 1 else "CPUs"
-    yield check_levels(
+    yield from check_levels(
         num_cpus,
-        "cpu_entitlement",
-        None,
-        human_readable_func=lambda x, u=unit: f"{int(x)} {u}",
-        infoname="100% corresponding to",
+        metric_name="cpu_entitlement",
+        render_func=lambda x: f"{int(x)} {unit}",
+        label="100% corresponding to",
     )
 
 
-check_info["vms_cpu"] = LegacyCheckDefinition(
+agent_section_vms_cpu = AgentSection(
     name="vms_cpu",
     parse_function=parse_vms_cpu,
+)
+
+check_plugin_vms_cpu = CheckPlugin(
+    name="vms_cpu",
     service_name="CPU utilization",
     discovery_function=discover_vms_cpu,
     check_function=check_vms_cpu,
     check_ruleset_name="cpu_iowait",
+    check_default_parameters={},
 )
