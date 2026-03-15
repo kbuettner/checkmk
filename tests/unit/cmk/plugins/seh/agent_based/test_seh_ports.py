@@ -11,7 +11,11 @@ from typing import Any
 import pytest
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.seh_ports import check_seh_ports, discover_seh_ports, parse_seh_ports
+from cmk.plugins.seh.agent_based.seh_ports import (
+    check_seh_ports,
+    discover_seh_ports,
+    parse_seh_ports,
+)
 
 
 @pytest.mark.parametrize(
