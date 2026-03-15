@@ -3,18 +3,25 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-call"
-# mypy: disable-error-code="no-untyped-def"
+from collections.abc import Mapping, Sequence
+from typing import Any
 
-
-# mypy: disable-error-code="var-annotated"
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import OIDEnd, SNMPTree, startswith
-from cmk.legacy_includes.humidity import check_humidity
-from cmk.legacy_includes.temperature import check_temperature
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    OIDEnd,
+    Result,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
+from cmk.plugins.lib.humidity import check_humidity
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
 
 #
 # SNMP Infos
@@ -67,6 +74,8 @@ check_info = {}
 # }
 # also only one sensor group is supported with this plugin!
 
+Section = dict[str, dict[str, Any]]
+
 
 def savefloat(f: str) -> float:
     """Tries to cast a string to an float and return it. In case this fails,
@@ -94,21 +103,21 @@ def saveint(i: str) -> int:
         return 0
 
 
-def parse_security_master(string_table):
+def parse_security_master(string_table: Sequence[StringTable]) -> dict[str, Section]:
     supported_sensors = {
         50: "temp",
         60: "humidity",
         72: "smoke",
     }
 
-    parsed = {"temp": {}, "humidity": {}, "smoke": {}}
+    parsed: dict[str, Section] = {"temp": {}, "humidity": {}, "smoke": {}}
 
     for oid, sensor in string_table[0]:
         if ".5.0" not in str(oid):
             continue
 
         sensor_num = saveint(oid.split(".")[0])
-        service_name = "%d %s" % (sensor_num, sensor)
+        service_name = f"{sensor_num} {sensor}"
         num = oid.split(".")[0]
         value, sensor_id, warn_low, warn_high, crit_low, crit_high, alarm = (None,) * 7
 
@@ -147,35 +156,7 @@ def parse_security_master(string_table):
     return parsed
 
 
-def inventory_security_master_sensors(parsed, sensor_type):
-    for sensor in parsed[sensor_type]:
-        yield sensor, {}
-
-
-def check_security_master(item, _no_params, parsed):
-    sensor = parsed["smoke"].get(item)
-    if not sensor:
-        return 3, "Sensor no found in SNMP output"
-
-    if sensor["alarm"] == 99:
-        return 3, "Smoke Sensor is not ready or bus element removed"
-
-    value = sensor["value"]
-    if value == 0:
-        status, msg = 0, "No Smoke"
-    elif value == 1:
-        status, msg = 2, "Smoke detected"
-    else:
-        status, msg = 3, "No Value for Sensor"
-
-    return status, msg
-
-
-def discover_security_master(parsed):
-    return inventory_security_master_sensors(parsed, "smoke")
-
-
-check_info["security_master"] = LegacyCheckDefinition(
+snmp_section_security_master = SNMPSection(
     name="security_master",
     detect=startswith(".1.3.6.1.2.1.1.2.0", "1.3.6.1.4.1.35491"),
     fetch=[
@@ -185,83 +166,114 @@ check_info["security_master"] = LegacyCheckDefinition(
         )
     ],
     parse_function=parse_security_master,
+)
+
+
+def inventory_security_master_sensors(
+    parsed: dict[str, Section], sensor_type: str
+) -> DiscoveryResult:
+    for sensor in parsed[sensor_type]:
+        yield Service(item=sensor)
+
+
+def discover_security_master(section: dict[str, Section]) -> DiscoveryResult:
+    yield from inventory_security_master_sensors(section, "smoke")
+
+
+def check_security_master(item: str, section: dict[str, Section]) -> CheckResult:
+    sensor = section["smoke"].get(item)
+    if not sensor:
+        yield Result(state=State.UNKNOWN, summary="Sensor no found in SNMP output")
+        return
+
+    if sensor["alarm"] == 99:
+        yield Result(
+            state=State.UNKNOWN, summary="Smoke Sensor is not ready or bus element removed"
+        )
+        return
+
+    value = sensor["value"]
+    if value == 0:
+        yield Result(state=State.OK, summary="No Smoke")
+    elif value == 1:
+        yield Result(state=State.CRIT, summary="Smoke detected")
+    else:
+        yield Result(state=State.UNKNOWN, summary="No Value for Sensor")
+
+
+check_plugin_security_master = CheckPlugin(
+    name="security_master",
     service_name="Sensor %s",
     discovery_function=discover_security_master,
     check_function=check_security_master,
 )
 
-#   .--humidity------------------------------------------------------------.
-#   |              _                     _     _ _ _                       |
-#   |             | |__  _   _ _ __ ___ (_) __| (_) |_ _   _               |
-#   |             | '_ \| | | | '_ ` _ \| |/ _` | | __| | | |              |
-#   |             | | | | |_| | | | | | | | (_| | | |_| |_| |              |
-#   |             |_| |_|\__,_|_| |_| |_|_|\__,_|_|\__|\__, |              |
-#   |                                                  |___/               |
-#   '----------------------------------------------------------------------'
+
+def discover_security_master_humidity(section: dict[str, Section]) -> DiscoveryResult:
+    yield from inventory_security_master_sensors(section, "humidity")
 
 
-def check_security_master_humidity(item, params, parsed):
-    sensor = parsed["humidity"].get(item)
+def check_security_master_humidity(
+    item: str, params: Mapping[str, Any], section: dict[str, Section]
+) -> CheckResult:
+    sensor = section["humidity"].get(item)
     if not sensor:
-        return 3, "Sensor not found in SNMP output"
+        yield Result(state=State.UNKNOWN, summary="Sensor not found in SNMP output")
+        return
+
+    # params is an immutable Mapping in v2, copy to a mutable dict before mutating
+    mutable_params: dict[str, Any] = dict(params)
 
     if sensor["alarm"] is not None and sensor["alarm"] > -1:
-        if not params.get("levels"):
-            params["levels"] = sensor.get("levels")
+        if not mutable_params.get("levels"):
+            mutable_params["levels"] = sensor.get("levels")
 
-        if not params.get("levels_lower"):
-            params["levels_lower"] = sensor.get("levels_low")
+        if not mutable_params.get("levels_lower"):
+            mutable_params["levels_lower"] = sensor.get("levels_low")
 
-    return check_humidity(sensor["value"], params)
-
-
-def discover_security_master_humidity(parsed):
-    return inventory_security_master_sensors(parsed, "humidity")
+    yield from check_humidity(sensor["value"], mutable_params)
 
 
-check_info["security_master.humidity"] = LegacyCheckDefinition(
+check_plugin_security_master_humidity = CheckPlugin(
     name="security_master_humidity",
     service_name="Sensor %s",
     sections=["security_master"],
     discovery_function=discover_security_master_humidity,
     check_function=check_security_master_humidity,
     check_ruleset_name="humidity",
+    check_default_parameters={},
 )
 
-#   .--temp----------------------------------------------------------------.
-#   |                       _                                              |
-#   |                      | |_ ___ _ __ ___  _ __                         |
-#   |                      | __/ _ \ '_ ` _ \| '_ \                        |
-#   |                      | ||  __/ | | | | | |_) |                       |
-#   |                       \__\___|_| |_| |_| .__/                        |
-#   |                                        |_|                           |
-#   '----------------------------------------------------------------------'
+
+def discover_security_master_temp(section: dict[str, Section]) -> DiscoveryResult:
+    yield from inventory_security_master_sensors(section, "temp")
 
 
-def check_security_master_temperature(item, params, parsed):
-    sensor = parsed["temp"].get(item)
+def check_security_master_temperature(
+    item: str, params: TempParamType, section: dict[str, Section]
+) -> CheckResult:
+    sensor = section["temp"].get(item)
     if not sensor:
-        return 3, "Sensor not found in SNMP output"
+        yield Result(state=State.UNKNOWN, summary="Sensor not found in SNMP output")
+        return
 
     sensor_value = sensor["value"]
     if sensor_value is None:
-        return 3, "Sensor value is not in SNMP-WALK"
+        yield Result(state=State.UNKNOWN, summary="Sensor value is not in SNMP-WALK")
+        return
 
-    return check_temperature(
+    yield from check_temperature(
         reading=sensor_value,
-        unique_name=item,
         params=params,
+        unique_name=item,
+        value_store=get_value_store(),
         dev_unit="c",
         dev_levels=sensor["levels"],
         dev_levels_lower=sensor["levels_low"],
     )
 
 
-def discover_security_master_temp(parsed):
-    return inventory_security_master_sensors(parsed, "temp")
-
-
-check_info["security_master.temp"] = LegacyCheckDefinition(
+check_plugin_security_master_temp = CheckPlugin(
     name="security_master_temp",
     service_name="Sensor %s",
     sections=["security_master"],
