@@ -2893,10 +2893,6 @@ msgstr ""
 "utiliza chei API de integrare globală sau de echipă."
 
 #, fuzzy
-msgid "API or personal access token"
-msgstr "Token de acces la API"
-
-#, fuzzy
 msgid "API response codes"
 msgstr "Timpii de răspuns la hopuri"
 
@@ -2908,10 +2904,6 @@ msgid "API status"
 msgstr "Starea gazdei"
 
 msgid "API token"
-msgstr "Token API"
-
-#, fuzzy
-msgid "API/PAT token"
 msgstr "Token API"
 
 msgid "APPEND"
@@ -3750,9 +3742,6 @@ msgstr ""
 
 msgid "Activate pending changes"
 msgstr "Activarea modificărilor în așteptare"
-
-msgid "Activate resolution with following resolution transition ID"
-msgstr "Activați rezoluția cu următorul ID de tranziție a rezoluției"
 
 msgid ""
 "Activate the changes by clicking the \"Activate on selected sites\" button."
@@ -7605,11 +7594,6 @@ msgstr "Atribuiți definiția SLA la serviciu"
 msgid "Assign SLA to service"
 msgstr "Atribuiți SLA serviciului"
 
-msgid ""
-"Assign created issues to defined user. This is the username of the user (not "
-"email)."
-msgstr ""
-
 msgid "Assign service to following host"
 msgstr "Atribuiți serviciul la următoarea gazdă"
 
@@ -7652,9 +7636,6 @@ msgstr "Atribuirea prin expresii regulate"
 #, fuzzy
 msgid "Assigned to host"
 msgstr "Atribuiți grupului"
-
-msgid "Assignee"
-msgstr ""
 
 #, fuzzy
 msgid "Assignment mode"
@@ -7825,17 +7806,6 @@ msgstr ""
 "poziție <tt>\\1</tt>, <tt>\\2</tt>, etc. pentru a insera primul, al doilea "
 "etc. grup care se potrivește."
 
-#, fuzzy
-msgid "Attach graphs"
-msgstr "toate graficele"
-
-#, fuzzy
-msgid ""
-"Attach graphs and limit the number of graphs that are attached to an issue."
-msgstr ""
-"Stabilește o limită pentru numărul de grafice care sunt afișate într-o "
-"notificare."
-
 msgid ""
 "Attach information about a contact person. If you have bracketed groups in "
 "the text to match, then you can use the placeholders <tt>\\1</tt>, <tt>\\2</"
@@ -7845,10 +7815,6 @@ msgstr ""
 "paranteze în textul care trebuie să se potrivească, atunci puteți utiliza "
 "caracterele de poziție <tt>\\1</tt>, <tt>\\2</tt>, etc. pentru a insera "
 "primul, al doilea etc. grup care se potrivește."
-
-#, fuzzy
-msgid "Attach up to"
-msgstr "Să se prezinte la"
 
 msgid "Attempt to interpret OEM data"
 msgstr "Încercarea de a interpreta datele OEM"
@@ -7948,13 +7914,6 @@ msgstr "Expirarea autentificării"
 #, fuzzy
 msgid "Authentication context class reference"
 msgstr "Sursa de autentificare"
-
-msgid ""
-"Authentication details for communicating with ServiceNow. If you want to "
-"create incidents, at least the role 'itil' is required. If you want to "
-"create cases, at least 'csm_ws_integration' and 'sn_customerservice_agent' "
-"are required."
-msgstr ""
 
 msgid "Authentication error"
 msgstr "Eroare de autentificare"
@@ -9137,9 +9096,6 @@ msgstr "Rata medie a cererilor blocate"
 
 msgid "Avg. request rate"
 msgstr "Rata medie de solicitare"
-
-msgid "Awaiting info"
-msgstr "În așteptare de informații"
 
 msgid "Azure"
 msgstr "Azure"
@@ -12001,25 +11957,6 @@ msgstr "Se apelează cu următorii parametri:"
 msgid "Call with the following parameters:"
 msgstr "Se apelează cu următorii parametri:"
 
-msgid "Caller ID"
-msgstr "Identificarea apelantului"
-
-msgid ""
-"Caller is the user on behalf of whom the incident is being reported within "
-"ServiceNow. Please enter the name of the caller here. It is recommended to "
-"use the same user as used for login. Otherwise, your ACL rules in ServiceNow "
-"must be adjusted, so that the user who is used for login can create/edit/"
-"resolve incidents on behalf of the caller. Please have a look at ServiceNow "
-"documentation for details."
-msgstr ""
-"Apelantul este utilizatorul în numele căruia se raportează incidentul în "
-"ServiceNow. Vă rugăm să introduceți aici numele apelantului. Se recomandă "
-"utilizarea aceluiași utilizator ca cel utilizat pentru conectare. În caz "
-"contrar, regulile ACL din ServiceNow trebuie ajustate, astfel încât "
-"utilizatorul care este utilizat pentru conectare să poată crea/edita/rezolva "
-"incidente în numele apelantului. Vă rugăm să consultați documentația "
-"ServiceNow pentru detalii."
-
 msgid "Calling final hooks"
 msgstr "Apelarea cârligelor finale"
 
@@ -12061,9 +11998,6 @@ msgstr "Anulează notificările pentru acest tip de plugin"
 
 msgid "Cancel previous notifications"
 msgstr "Anulează notificările anterioare"
-
-msgid "Canceled"
-msgstr "Anulat"
 
 #, python-format
 msgid ""
@@ -12436,9 +12370,6 @@ msgstr "Rata de reducere a datelor"
 
 msgid "Casa module: CPU temperature"
 msgstr "Modulul Casa: Temperatura CPU"
-
-msgid "Case"
-msgstr "Cazul"
 
 msgid "Case insensitive"
 msgstr "Insensibil la majuscule și minuscule"
@@ -14609,9 +14540,6 @@ msgstr ""
 msgid "Close timewarp"
 msgstr "Închideți timewarp"
 
-msgid "Closed"
-msgstr "Închis"
-
 msgid "Closing connection"
 msgstr "Închiderea conexiunii"
 
@@ -15579,10 +15507,6 @@ msgstr ""
 "Checkmk va interoga acest domeniu pentru cel mai apropiat controler de "
 "domeniu cu care să comunice."
 
-#, fuzzy
-msgid "Configure the Jira URL here."
-msgstr "Configurați URL-ul JIRA aici."
-
 msgid "Configure the agent updater whether to connect via proxy server."
 msgstr ""
 "Configurați actualizatorul agentului dacă se conectează sau nu prin "
@@ -15607,14 +15531,6 @@ msgstr ""
 
 msgid "Configure the automatic removal of monitored hosts."
 msgstr "Configurați eliminarea automată a gazdelor monitorizate."
-
-#, fuzzy
-msgid ""
-"Configure the base URL for the monitoring web GUI here. Include the site "
-"name. Used for linking to Checkmk out of Jira."
-msgstr ""
-"Configurați aici URL-ul de bază pentru Monitorizare Web-GUI. Includeți "
-"numele site-ului. Utilizat pentru linkul către check_mk din jira."
 
 #, fuzzy, python-format
 msgid ""
@@ -15795,10 +15711,6 @@ msgstr ""
 "pe site-ul Pushover."
 
 #, fuzzy
-msgid "Configure the username here."
-msgstr "Configurați aici numele de utilizator."
-
-#, fuzzy
 msgid ""
 "Configure this to have the notification plug-in connect directly to the SMTP "
 "server. This has the advantage of providing better error messages in case of "
@@ -15826,11 +15738,6 @@ msgid ""
 "Configure warning and critical upper thresholds for Corosync link latency: "
 "both instantaneous maximum values and the averaged latency."
 msgstr ""
-
-#, fuzzy
-msgid "Configure your ServiceNow URL here (e.g. https://myservicenow.com)."
-msgstr ""
-"Configurați aici URL-ul ServiceNow (de exemplu, https://myservicenow.com)."
 
 #, python-format
 msgid "Configure your preferred way of license usage submission in %s"
@@ -18023,10 +17930,6 @@ msgstr ""
 
 msgid "Custom event limit"
 msgstr "Limita evenimentului personalizat"
-
-#, fuzzy
-msgid "Custom fields"
-msgstr "Personalizat"
 
 msgid "Custom footer links"
 msgstr "Legături personalizate în subsol"
@@ -20562,14 +20465,8 @@ msgstr ""
 msgid "Description for host alerts"
 msgstr "Descriere pentru alertele gazdă"
 
-msgid "Description for host incidents"
-msgstr "Descriere pentru incidentele cu gazde"
-
 msgid "Description for service alerts"
 msgstr "Descriere pentru alertele de serviciu"
-
-msgid "Description for service incidents"
-msgstr "Descriere pentru incidentele de serviciu"
 
 msgid "Description or comment"
 msgstr "Descriere sau comentariu"
@@ -22491,9 +22388,6 @@ msgstr "Nu schimbați etichetele pentru serviciile de potrivire"
 msgid "Don't change parameters for matching services"
 msgstr "Nu modificați parametrii pentru serviciile de potrivire"
 
-msgid "Don't change state"
-msgstr "Nu schimbați starea"
-
 #, fuzzy
 msgid "Don't compute a rate"
 msgstr "Rata mesajelor livrate"
@@ -22953,16 +22847,6 @@ msgstr "E.Tip"
 msgid "E.g. 'project = my_project and result = \"waiting for something\"'"
 msgstr ""
 "De exemplu 'project = my_project și result = \"waiting for something\"'"
-
-msgid ""
-"E.g., if you register the agent controller at multiple sites, only the first "
-"site will be used for agent updates."
-msgstr ""
-
-msgid ""
-"E.g., if you register the agent controller at multiple sites, only the last "
-"site will be used for agent updates."
-msgstr ""
 
 msgid "EC2 instances may take a few minutes to show up."
 msgstr ""
@@ -24533,12 +24417,6 @@ msgstr "Introduceți parola de utilizator"
 msgid "Enter source name"
 msgstr "Introduceți numele de utilizator"
 
-#, python-format
-msgid ""
-"Enter the %s to connect Checkmk to self-hosted Jira or enter the %s to "
-"connect to Jira Cloud."
-msgstr ""
-
 msgid ""
 "Enter the Fully Qualified Domain Name (FQDN) where your Checkmk server is "
 "running including the protocol. Stop after the top level domain (TLD), so "
@@ -24637,10 +24515,6 @@ msgid ""
 msgstr ""
 "Introduceți doar numele simplu al acțiunii, de exemplu <tt>iso</tt>, <b>nu</"
 "b> UNC-ul complet, cum ar fi <tt>\\\\servername\\iso</tt>."
-
-msgid ""
-"Enter the technical name of the field as defined in the ServiceNow database."
-msgstr ""
 
 #, fuzzy
 msgid ""
@@ -29703,9 +29577,6 @@ msgstr ""
 msgid "Here you can configure the credentials to be used."
 msgstr "Aici puteți configura setările de temporizare în secunde."
 
-msgid "Here you can configure timeout settings in seconds."
-msgstr "Aici puteți configura setările de temporizare în secunde."
-
 msgid "Here you can configure timeout settings."
 msgstr "Aici puteți configura setările de temporizare."
 
@@ -29838,21 +29709,6 @@ msgstr ""
 "procesele individuale. Din motive de performanță, media memoriei virtuale nu "
 "se va aplica nivelurilor proceselor individuale."
 
-#, python-format
-msgid ""
-"Here you can define the state of the %s in case of a recovery of the "
-"affected host or service problem."
-msgstr ""
-"Aici puteți defini starea %s în cazul unei recuperări a gazdei afectate sau "
-"a unei probleme de serviciu."
-
-msgid ""
-"Here you can define the state of the incident in case of a downtime of the "
-"affected host or service."
-msgstr ""
-"Aici puteți defini starea incidentului în cazul în care gazda sau serviciul "
-"afectat nu funcționează."
-
 #, fuzzy
 msgid ""
 "Here you can define tree configurations for the snap-in <i>Virtual Host-"
@@ -29901,9 +29757,6 @@ msgstr ""
 msgid "Here you can define which protocol to use, default is https."
 msgstr ""
 "Aici puteți defini ce protocol să utilizați, protocolul implicit este https."
-
-msgid "Here you can define with which priority the case should be created."
-msgstr "Aici puteți defini cu ce prioritate trebuie creat cazul."
 
 msgid ""
 "Here you can define, how many search results should be processed. The max. "
@@ -30416,30 +30269,6 @@ msgstr ""
 "regulile din subfoldere suprascriind regulile din directorul principal. În "
 "cadrul unui director, ordinea regulilor contează, adică regulile aflate mai "
 "jos în listă sunt suprascrise de regulile aflate mai sus."
-
-#, fuzzy
-msgid ""
-"Here, you can define the state of the incident in case of an acknowledgment "
-"of the affected host or service problem."
-msgstr ""
-"Aici puteți defini starea incidentului în cazul unei confirmări a gazdei "
-"afectate sau a unei probleme de serviciu."
-
-#, fuzzy
-msgid ""
-"Here, you can define the state of the incident in case of an acknowledgment "
-"of the host or service problem."
-msgstr ""
-"Aici puteți defini starea incidentului în cazul unei confirmări a problemei "
-"gazdei sau a serviciului."
-
-#, fuzzy
-msgid ""
-"Here, you can define the state of the incident in case of an ending "
-"acknowledgment of the host or service problem."
-msgstr ""
-"Aici puteți defini starea incidentului în cazul unei confirmări finale a "
-"gazdei sau a unei probleme de serviciu."
 
 #, fuzzy
 msgid ""
@@ -31921,9 +31750,6 @@ msgstr "Atributul personalizat al gazdei (regex)"
 
 msgid "Host custom attributes"
 msgstr "Atributele personalizate ale gazdei"
-
-msgid "Host custom field ID"
-msgstr "ID-ul câmpului personalizat al gazdei"
 
 msgid "Host customer"
 msgstr "Client gazdă"
@@ -35320,9 +35146,6 @@ msgstr "Imagini"
 msgid "Immediately scheduled checks"
 msgstr "Controale programate imediat"
 
-msgid "Impact"
-msgstr "Impact"
-
 msgid "Import"
 msgstr "Import"
 
@@ -35790,10 +35613,6 @@ msgstr ""
 "și nu sunt considerați siguri pentru secrete. Consultați Werk #16223 pentru "
 "mai multe informații."
 
-#, fuzzy
-msgid "In progress"
-msgstr "În curs de desfășurare"
-
 msgid "In relation to normal check interval"
 msgstr "În raport cu intervalul normal de verificare"
 
@@ -35976,9 +35795,6 @@ msgstr "5 Volt Niveluri inferioare de ieșire de 5 volți"
 #, fuzzy
 msgid "Inbound throughput upper levels (/sec)"
 msgstr "Niveluri superioare de ieșire de 5 volți"
-
-msgid "Incident"
-msgstr "Incident"
 
 msgid "Include Pattern"
 msgstr "Includeți modelul"
@@ -37004,13 +36820,6 @@ msgid "Invalid credentials"
 msgstr "Acreditări invalide"
 
 #, fuzzy
-msgid ""
-"Invalid custom field. Only the characters a-z, A-Z, 0-9, _ and - are allowed."
-msgstr ""
-"ID-ul etichetei nu este valid. Sunt permise numai caracterele a-z, A-Z, 0-9, "
-"_ și -."
-
-#, fuzzy
 msgid "Invalid data"
 msgstr "Identificator invalid"
 
@@ -37551,9 +37360,6 @@ msgstr "Se utilizează pentru a specifica domeniul la care se referă alerta."
 msgid "Is-Home state (Netapp only)"
 msgstr "Starea Is-Home (numai Netapp)"
 
-msgid "Issue type ID"
-msgstr "Tipul de problemă ID"
-
 msgid "Issued by"
 msgstr "Emis de"
 
@@ -37943,19 +37749,11 @@ msgstr "Coada Jenkins"
 msgid "Jenkins system metrics"
 msgstr "Parametrii sistemului Oracle"
 
-#, fuzzy
-msgid "Jira URL"
-msgstr "JIRA URL"
-
 msgid "Jira custom service"
 msgstr "Serviciul personalizat Jira"
 
 msgid "Jira instance to query"
 msgstr "Instanța Jira de interogat"
-
-#, fuzzy
-msgid "Jira parameters"
-msgstr "Parametrii opționali"
 
 msgid "Jira statistics"
 msgstr "Statistici Jira"
@@ -41991,9 +41789,6 @@ msgstr "Consiliul de administrație"
 msgid "Management board config"
 msgstr "Configurația consiliului de administrație"
 
-msgid "Management type"
-msgstr "Tipul de management"
-
 msgid "Managers"
 msgstr "Manageri"
 
@@ -42030,15 +41825,6 @@ msgid ""
 msgstr ""
 "Permiteți manual nucleului să trimită o notificare către o gazdă sau un "
 "serviciu pentru a testa dacă notificările sunt configurate corect."
-
-msgid ""
-"Manually register the agent updater.<br>Either on agent controller "
-"registration with explicit flag: <tt>cmk-agent-ctl register [args] --"
-"automatic-updates</tt><br>Or separately: <tt>cmk-update-agent register</"
-"tt>(Linux)/<tt>check_mk_agent.exe updater register</tt>(Windows).<br>Since "
-"the registration is handled manually by the user, any existing agent updater "
-"registration will be overwritten."
-msgstr ""
 
 #, python-format
 msgid "Manually set to %s by %s"
@@ -44145,9 +43931,6 @@ msgstr "Tipul de modem"
 msgid "Modems"
 msgstr "Modemuri"
 
-msgid "Moderate"
-msgstr "Moderat"
-
 msgid "Modifications"
 msgstr "Modificări"
 
@@ -44510,9 +44293,6 @@ msgstr "Monitorizarea Linux"
 
 msgid "Monitoring Microsoft Azure"
 msgstr "Monitorizarea Microsoft Azure"
-
-msgid "Monitoring URL"
-msgstr "URL de monitorizare"
 
 msgid "Monitoring VMWare ESXi"
 msgstr "Monitorizarea VMWare ESXi"
@@ -48629,14 +48409,6 @@ msgstr "OAUTH 2.0"
 msgid "OAUth authentication"
 msgstr "Autentificare OAUth"
 
-#, fuzzy
-msgid "OAuth token"
-msgstr "Token API"
-
-#, fuzzy
-msgid "OAuth token authentication"
-msgstr "Autentificare cu jeton"
-
 msgid "OAuth2 (ClientID/TenantID)"
 msgstr "OAuth2 (ClientID/TenantID)"
 
@@ -48919,9 +48691,6 @@ msgstr "Pe %s (ora serverului)."
 #, fuzzy
 msgid "On Checkmk agent uninstallation"
 msgstr "Checkmk Audit de instalare a agentului Checkmk"
-
-msgid "On Hold"
-msgstr "În așteptare"
 
 #, fuzzy
 msgid "On all services"
@@ -53242,15 +53011,6 @@ msgstr ""
 "regulilor de inventariere."
 
 msgid ""
-"Please note that the mapping to the numeric ServiceNow state may be changed "
-"at your system and can differ from our definitions. In this case use the "
-"option below."
-msgstr ""
-"Vă rugăm să rețineți că maparea cu starea numerică ServiceNow poate fi "
-"modificată în sistemul dumneavoastră și poate fi diferită de definițiile "
-"noastre. În acest caz, utilizați opțiunea de mai jos."
-
-msgid ""
 "Please note that you have to set <tt>RequestHeader set X-Forwarded-Proto "
 "\"https\"</tt> in your system Apache configuration to tell the Checkmk GUI "
 "about the SSL setup."
@@ -53617,16 +53377,6 @@ msgid ""
 msgstr ""
 "Vă rugăm să folosiți doar a-z, A-Z, 0-9, spațiu, subliniere, punct, cratimă "
 "și bară oblică pentru descrierea serviciului dvs."
-
-msgid ""
-"Please use this option if you have multiple sites in a distributed setup "
-"which send their notifications to the same ServiceNow instance. The site ID "
-"will be used as prefix for the problem ID on incident creation."
-msgstr ""
-"Vă rugăm să utilizați această opțiune dacă aveți mai multe site-uri într-o "
-"configurație distribuită care își trimit notificările către aceeași instanță "
-"ServiceNow. ID-ul site-ului va fi utilizat ca prefix pentru ID-ul problemei "
-"la crearea incidentului."
 
 #, fuzzy
 msgid "Please wait..."
@@ -54283,9 +54033,6 @@ msgstr "Prio"
 
 msgid "Priority"
 msgstr "Prioritate"
-
-msgid "Priority ID"
-msgstr "ID de prioritate"
 
 msgid "Privacy pass phrase"
 msgstr "Fraza de confidențialitate"
@@ -57494,15 +57241,6 @@ msgstr ""
 msgid "Residual current phase name"
 msgstr "numele gazdei curente"
 
-msgid "Resolution notes for host cases"
-msgstr "Note de rezoluție pentru cazurile gazdă"
-
-msgid "Resolution notes for service cases"
-msgstr "Note de rezoluție pentru cazurile de servicii"
-
-msgid "Resolved"
-msgstr "Rezolvat"
-
 #, fuzzy
 msgid "Resource"
 msgstr "Surse"
@@ -59736,17 +59474,6 @@ msgstr ""
 "e_status_queue.html) pentru explicații detaliate ale acestor parametri."
 
 msgid ""
-"See <a href=\"https://docs.servicenow.com/bundle/helsinki-it-service-"
-"management/page/product/incident-management/reference/"
-"r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</a> "
-"for more information."
-msgstr ""
-"Consultați <a href=\"https://docs.servicenow.com/bundle/helsinki-it-service-"
-"management/page/product/incident-management/reference/"
-"r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</a> "
-"pentru mai multe informații."
-
-msgid ""
 "See <a href=\"https://pushover.net/api#sounds\" target=\"_blank\">Pushover "
 "sounds</a> for more information and trying out available sounds."
 msgstr ""
@@ -60617,9 +60344,6 @@ msgstr "Atributul personalizat al serviciului (regex)"
 msgid "Service custom attributes"
 msgstr "Atribute personalizate ale serviciului"
 
-msgid "Service custom field ID"
-msgstr "ID-ul câmpului personalizat al serviciului"
-
 msgid "Service description"
 msgstr "Descrierea serviciului"
 
@@ -61045,13 +60769,6 @@ msgstr "Nivelul serviciului"
 msgid "Service: "
 msgstr "Serviciu: "
 
-msgid "ServiceNow URL"
-msgstr "URL-ul ServiceNow"
-
-#, fuzzy
-msgid "ServiceNow parameters"
-msgstr "Exemplu pentru parametri"
-
 msgid "Services"
 msgstr "Servicii"
 
@@ -61180,14 +60897,6 @@ msgstr "Setați adresa IPv4"
 
 msgid "Set Setup to read only mode for other users"
 msgstr "Setați Setup în modul de citire numai pentru alți utilizatori"
-
-#, fuzzy, python-format
-msgid ""
-"Set a custom label for new issues. If not set, 'monitoring' will be used."
-"<br><br>%s"
-msgstr ""
-"Aici puteți seta o etichetă personalizată pentru noile probleme. Dacă nu "
-"este setată, se va folosi 'monitorizare'."
 
 msgid "Set absolute levels"
 msgstr "Setați nivelurile absolute"
@@ -61359,14 +61068,6 @@ msgstr "Setați vârsta maximă"
 
 msgid "Set monitoring states for no-smoke and smoke cases"
 msgstr "Setați stările de monitorizare pentru cazurile fără fum și cu fum"
-
-#, fuzzy
-msgid "Set optional timeout for connections to Jira"
-msgstr "Setați un timeout opțional pentru conexiunile la JIRA"
-
-msgid "Set optional timeout for connections to ServiceNow"
-msgstr ""
-"Setați un termen de așteptare opțional pentru conexiunile la ServiceNow"
 
 msgid "Set optional timeout for connections to the modem."
 msgstr "Setați un termen de așteptare opțional pentru conexiunile la modem."
@@ -61760,10 +61461,6 @@ msgstr "Setari"
 msgid "Settings concerning the connection to the Checkmk and SNMP agents"
 msgstr "Setări privind conexiunea cu agenții Checkmk și SNMP"
 
-#, python-format
-msgid "Settings for %s state in case of recovery"
-msgstr "Setări pentru starea %s în caz de recuperare"
-
 msgid "Settings for Parent Scan"
 msgstr "Setări pentru scanarea părinților"
 
@@ -61772,13 +61469,6 @@ msgstr "Setări pentru certificatele eliberate agenților înregistrați."
 
 msgid "Settings for host checks via Smart PING"
 msgstr "Setări pentru verificarea gazdelor prin Smart PING"
-
-#, fuzzy
-msgid "Settings for incident state in case of acknowledgment"
-msgstr "Setări pentru starea incidentului în caz de confirmare de primire"
-
-msgid "Settings for incident state in case of downtime"
-msgstr "Setări pentru starea de incident în caz de întrerupere a activității"
 
 msgid ""
 "Settings levels on the used bandwidth is optional. If you do set levels you "
@@ -61935,14 +61625,6 @@ msgstr ""
 #, fuzzy
 msgid "Short ID"
 msgstr "Port"
-
-#, python-format
-msgid "Short description for host %s"
-msgstr "Scurtă descriere pentru gazdă %s"
-
-#, python-format
-msgid "Short description for service %s"
-msgstr "Scurtă descriere pentru serviciu %s"
 
 #, fuzzy
 msgid "Short time intervals"
@@ -62768,9 +62450,6 @@ msgstr "Conexiune la site"
 
 msgid "Site connectivity"
 msgstr "Conectivitatea site-ului"
-
-msgid "Site custom field ID"
-msgstr "ID-ul câmpului personalizat al site-ului"
 
 msgid "Site dashboard $SITE$"
 msgstr "Tabloul de bord al site-ului $SITE$"
@@ -65155,14 +64834,6 @@ msgstr ""
 msgid "State machine in invalid state"
 msgstr "Mașină de stat în stare invalidă"
 
-#, python-format
-msgid "State of %s if recovery is set"
-msgstr "Starea %s în cazul în care este activată recuperarea"
-
-#, python-format
-msgid "State of %s if recovery is set (as integer)"
-msgstr "Starea %s în cazul în care este activată recuperarea (ca număr întreg)"
-
 msgid "State of NTP peer"
 msgstr "Starea omologului NTP"
 
@@ -65176,55 +64847,11 @@ msgstr "Starea unei gazde"
 msgid "State of a service"
 msgstr "Starea unui serviciu"
 
-msgid "State of case if recovery is set (predefined)"
-msgstr ""
-"Starea cazului în cazul în care este stabilită recuperarea (predefinită)"
-
 msgid "State of event changed by user"
 msgstr "Starea evenimentului schimbată de utilizator"
 
 msgid "State of host"
 msgstr "Statul de gazdă"
-
-#, fuzzy
-msgid "State of incident if acknowledgment is set"
-msgstr "Starea incidentului în cazul în care este setată confirmarea"
-
-#, fuzzy
-msgid "State of incident if acknowledgment is set (as integer)"
-msgstr ""
-"Starea incidentului în cazul în care este activată confirmarea (ca număr "
-"întreg)"
-
-#, fuzzy
-msgid "State of incident if acknowledgment is set (predefined)"
-msgstr ""
-"Starea incidentului în cazul în care este setată confirmarea (predefinită)"
-
-msgid "State of incident if downtime expires"
-msgstr "Starea incidentului în cazul în care expiră timpul de nefuncționare"
-
-msgid "State of incident if downtime expires (as integer)"
-msgstr ""
-"Starea incidentului în cazul în care expiră timpul de nefuncționare (ca "
-"număr întreg)"
-
-msgid "State of incident if downtime expires (predefined)"
-msgstr ""
-"Starea incidentului în cazul în care expiră timpul de oprire (predefinit)"
-
-msgid "State of incident if downtime is set"
-msgstr "Starea incidentului în cazul în care este setat timpul de oprire"
-
-msgid "State of incident if downtime is set (as integer)"
-msgstr ""
-"Starea incidentului în cazul în care este setat timpul de nefuncționare (ca "
-"număr întreg)"
-
-msgid "State of incident if downtime is set (predefined)"
-msgstr ""
-"Starea incidentului în cazul în care se stabilește o perioadă de întrerupere "
-"(predefinită)"
 
 msgid "State of remaining services"
 msgstr "Starea serviciilor rămase"
@@ -67349,40 +66976,6 @@ msgstr ""
 
 msgid "Text output"
 msgstr "Ieșire text"
-
-msgid ""
-"Text that should be set in field <tt>Description</tt> for host notifications."
-msgstr ""
-"Text care trebuie setat în câmpul <tt>Descriere</tt> pentru notificările "
-"gazdei."
-
-msgid ""
-"Text that should be set in field <tt>Description</tt> for service "
-"notifications."
-msgstr ""
-"Text care trebuie setat în câmpul <tt>Descriere</tt> pentru notificările de "
-"servicii."
-
-msgid ""
-"Text that should be set in field <tt>Resolution notes</tt> on recovery "
-"service notifications."
-msgstr ""
-"Text care trebuie setat în câmpul <tt>Note de rezolvare</tt> pe notificările "
-"serviciului de recuperare."
-
-msgid ""
-"Text that should be set in field <tt>Short description</tt> for host "
-"notifications."
-msgstr ""
-"Text care trebuie setat în câmpul <tt>Descriere scurtă</tt> pentru "
-"notificările gazdei."
-
-msgid ""
-"Text that should be set in field <tt>Short description</tt> for service "
-"notifications."
-msgstr ""
-"Text care trebuie setat în câmpul <tt>Descriere scurtă</tt> pentru "
-"notificările de servicii."
 
 msgid "Text to cancel event(s)"
 msgstr "Text pentru anularea evenimentului (evenimentelor)"
@@ -70799,63 +70392,6 @@ msgstr ""
 #, fuzzy
 msgid "The number of the power phase."
 msgstr "Numărul fazei de putere."
-
-#, fuzzy
-msgid ""
-"The numerical ID of the Jira custom field for sites. Please use this option "
-"if you have multiple sites in a distributed setup which send their "
-"notifications to the same Jira instance."
-msgstr ""
-"ID-ul numeric al câmpului personalizat JIRA pentru site-uri. Vă rugăm să "
-"utilizați această opțiune dacă aveți mai multe site-uri într-o configurație "
-"distribuită care își trimit notificările către aceeași instanță JIRA."
-
-#, fuzzy
-msgid "The numerical Jira custom field ID for host problems."
-msgstr "ID-ul numeric al câmpului personalizat JIRA pentru problemele gazdei."
-
-#, fuzzy
-msgid "The numerical Jira custom field ID for service problems."
-msgstr ""
-"ID-ul numeric al câmpului personalizat JIRA pentru problemele de service."
-
-#, fuzzy
-msgid ""
-"The numerical Jira issue type ID. If not set, it will be retrieved from a "
-"custom user attribute named <tt>jiraissuetype</tt>. If that is not set, the "
-"notification will fail."
-msgstr ""
-"ID-ul numeric al tipului de problemă JIRA. Dacă nu este setat, acesta va fi "
-"preluat dintr-un atribut de utilizator personalizat numit <tt>jiraissuetype</"
-"tt>. Dacă acesta nu este setat, notificarea va eșua."
-
-#, fuzzy
-msgid ""
-"The numerical Jira priority ID. If not set, it will be retrieved from a "
-"custom user attribute named <tt>jirapriority</tt>. If that is not set, the "
-"standard priority will be used."
-msgstr ""
-"ID-ul numeric al priorității JIRA. Dacă nu este setat, acesta va fi preluat "
-"dintr-un atribut de utilizator personalizat numit <tt>jirapriority</tt>. "
-"Dacă acesta nu este setat, se va utiliza prioritatea standard."
-
-#, fuzzy
-msgid ""
-"The numerical Jira project ID. If not set, it will be retrieved from a "
-"custom user attribute named <tt>jiraproject</tt>. If that is not set, the "
-"notification will fail."
-msgstr ""
-"ID-ul numeric al proiectului JIRA. Dacă nu este setat, acesta va fi preluat "
-"dintr-un atribut de utilizator personalizat numit <tt>jiraproject</tt>. Dacă "
-"acesta nu este setat, notificarea va eșua."
-
-#, fuzzy
-msgid ""
-"The numerical Jira resolution transition ID. 11 - 'To Do', 21 - 'In "
-"progress', 31 - 'Done'"
-msgstr ""
-"ID-ul numeric al tranziției rezoluției JIRA. 11 - 'To Do', 21 - 'In "
-"Progress', 31 - 'Done'"
 
 #, fuzzy
 msgid "The official Checkmk User Guide"
@@ -78656,19 +78192,32 @@ msgstr ""
 
 msgid ""
 "To start updating the agent package, the agent updater must register at a "
-"monitoring site.<br>(_New with Checkmk 2.5_) By default, the agent updater "
-"will be registered by the agent controller, after its own successful "
-"registration, at the same site and with the same hostname.<br>Here you can "
-"configure the overwriting behavior of subsequent agent controller "
+"monitoring site.<br><br><i>New with Checkmk 2.5</i>: By default, the agent "
+"updater will be registered by the agent controller, after its own successful "
+"registration, at the same site and with the same hostname.<br><br>Here you "
+"can configure the overwriting behavior of subsequent agent controller "
 "registrations, or opt to skip the agent controller triggered agent updater "
 "registration entirely.<br>Consider the differences between agent controller "
 "and agent updater registrations: The agent controller can register at "
 "multiple sites, or overwrite existing registrations when registering for the "
 "same site again. The agent updater can only hold one registration at a time. "
 "Every new registration will overwrite the previous one, regardless of the "
-"connection details.<br>Note: Since the agent controller is available for "
-"Linux and Windows only, this setting is not relevant for Solaris, where the "
-"agent updater will always need to be registered manually."
+"connection details.<br><br>Available Choices:<ul><li><b>On first agent "
+"controller registration</b>: An existing Agent Updater registration will be "
+"kept. If you register the agent controller at multiple sites, only the first "
+"site will be used for agent updates.</li><li><b>On every agent controller "
+"registration</b>: The Agent Updater registration will be overwritten on "
+"every agent controller registration. If you register the agent controller at "
+"multiple sites, only the last site will be used for agent updates.</"
+"li><li><b>Manual</b>: Manually register the agent updater.<br>Either on "
+"agent controller registration with explicit flag: <tt>cmk-agent-ctl register "
+"[args] --automatic-updates</tt><br>Or separately: <tt>cmk-update-agent "
+"register</tt> (Linux)/<tt>check_mk_agent.exe updater register</tt> (Windows)."
+"<br>Since the registration is handled manually by the user, any existing "
+"agent updater registration will be overwritten.</li></ul><i>Note</i>: Since "
+"the agent controller is available for Linux and Windows only, this setting "
+"is not relevant for Solaris, where the agent updater will always need to be "
+"registered manually."
 msgstr ""
 
 msgid "To unlock higher limits, purchase a license "
@@ -83831,9 +83380,6 @@ msgstr ""
 msgid "Upturn supply levels"
 msgstr "Îmbunătățirea nivelului de toner"
 
-msgid "Urgency"
-msgstr "Urgență"
-
 msgid "Usability"
 msgstr "Utilizare"
 
@@ -84286,12 +83832,6 @@ msgstr "Folosiți un titlu scurt în antetul rapoartelor"
 
 msgid "Use single quotes, escape contained quotes with backslash"
 msgstr "Utilizați ghilimele simple, scăpați ghilimelele conținute cu backslash"
-
-msgid "Use site ID"
-msgstr "Utilizați ID-ul site-ului"
-
-msgid "Use site ID prefix"
-msgstr "Utilizați prefixul ID al site-ului"
 
 msgid "Use system wide CAs"
 msgstr "Utilizați CA-uri la nivel de sistem"
@@ -88539,13 +88079,6 @@ msgid ""
 "users with high privileges."
 msgstr ""
 
-msgid ""
-"With ServiceNow you can create different types of management issues, "
-"currently supported are indicents and cases."
-msgstr ""
-"Cu ServiceNow puteți crea diferite tipuri de probleme de management, în "
-"prezent sunt acceptate indicii și cazuri."
-
 #, python-format
 msgid ""
 "With authentication type set to 'OAuth2' the option '%s' must be specified."
@@ -91763,12 +91296,6 @@ msgstr "cAdvisor"
 msgid "cartridge specification"
 msgstr "specificația cartușului"
 
-msgid "case"
-msgstr "cazul"
-
-msgid "cases"
-msgstr "cazuri"
-
 #, fuzzy
 msgid "central / standalone"
 msgstr "master / independent"
@@ -92525,12 +92052,6 @@ msgstr "inactiv"
 
 msgid "inactive hosts"
 msgstr "gazde inactive"
-
-msgid "incident"
-msgstr "incident"
-
-msgid "incidents"
-msgstr "incidente"
 
 msgid "incidents left"
 msgstr "incidente lăsate"
@@ -97636,6 +97157,462 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, fuzzy
+#~ msgid "API or personal access token"
+#~ msgstr "Token de acces la API"
+
+#, fuzzy
+#~ msgid "API/PAT token"
+#~ msgstr "Token API"
+
+#~ msgid "Activate resolution with following resolution transition ID"
+#~ msgstr "Activați rezoluția cu următorul ID de tranziție a rezoluției"
+
+#, fuzzy
+#~ msgid "Attach graphs"
+#~ msgstr "toate graficele"
+
+#, fuzzy
+#~ msgid ""
+#~ "Attach graphs and limit the number of graphs that are attached to an "
+#~ "issue."
+#~ msgstr ""
+#~ "Stabilește o limită pentru numărul de grafice care sunt afișate într-o "
+#~ "notificare."
+
+#, fuzzy
+#~ msgid "Attach up to"
+#~ msgstr "Să se prezinte la"
+
+#~ msgid "Awaiting info"
+#~ msgstr "În așteptare de informații"
+
+#~ msgid "Caller ID"
+#~ msgstr "Identificarea apelantului"
+
+#~ msgid ""
+#~ "Caller is the user on behalf of whom the incident is being reported "
+#~ "within ServiceNow. Please enter the name of the caller here. It is "
+#~ "recommended to use the same user as used for login. Otherwise, your ACL "
+#~ "rules in ServiceNow must be adjusted, so that the user who is used for "
+#~ "login can create/edit/resolve incidents on behalf of the caller. Please "
+#~ "have a look at ServiceNow documentation for details."
+#~ msgstr ""
+#~ "Apelantul este utilizatorul în numele căruia se raportează incidentul în "
+#~ "ServiceNow. Vă rugăm să introduceți aici numele apelantului. Se recomandă "
+#~ "utilizarea aceluiași utilizator ca cel utilizat pentru conectare. În caz "
+#~ "contrar, regulile ACL din ServiceNow trebuie ajustate, astfel încât "
+#~ "utilizatorul care este utilizat pentru conectare să poată crea/edita/"
+#~ "rezolva incidente în numele apelantului. Vă rugăm să consultați "
+#~ "documentația ServiceNow pentru detalii."
+
+#~ msgid "Canceled"
+#~ msgstr "Anulat"
+
+#~ msgid "Case"
+#~ msgstr "Cazul"
+
+#~ msgid "Closed"
+#~ msgstr "Închis"
+
+#, fuzzy
+#~ msgid "Configure the Jira URL here."
+#~ msgstr "Configurați URL-ul JIRA aici."
+
+#, fuzzy
+#~ msgid ""
+#~ "Configure the base URL for the monitoring web GUI here. Include the site "
+#~ "name. Used for linking to Checkmk out of Jira."
+#~ msgstr ""
+#~ "Configurați aici URL-ul de bază pentru Monitorizare Web-GUI. Includeți "
+#~ "numele site-ului. Utilizat pentru linkul către check_mk din jira."
+
+#, fuzzy
+#~ msgid "Configure the username here."
+#~ msgstr "Configurați aici numele de utilizator."
+
+#, fuzzy
+#~ msgid "Configure your ServiceNow URL here (e.g. https://myservicenow.com)."
+#~ msgstr ""
+#~ "Configurați aici URL-ul ServiceNow (de exemplu, https://myservicenow.com)."
+
+#, fuzzy
+#~ msgid "Custom fields"
+#~ msgstr "Personalizat"
+
+#~ msgid "Description for host incidents"
+#~ msgstr "Descriere pentru incidentele cu gazde"
+
+#~ msgid "Description for service incidents"
+#~ msgstr "Descriere pentru incidentele de serviciu"
+
+#~ msgid "Don't change state"
+#~ msgstr "Nu schimbați starea"
+
+#~ msgid "Here you can configure timeout settings in seconds."
+#~ msgstr "Aici puteți configura setările de temporizare în secunde."
+
+#, python-format
+#~ msgid ""
+#~ "Here you can define the state of the %s in case of a recovery of the "
+#~ "affected host or service problem."
+#~ msgstr ""
+#~ "Aici puteți defini starea %s în cazul unei recuperări a gazdei afectate "
+#~ "sau a unei probleme de serviciu."
+
+#~ msgid ""
+#~ "Here you can define the state of the incident in case of a downtime of "
+#~ "the affected host or service."
+#~ msgstr ""
+#~ "Aici puteți defini starea incidentului în cazul în care gazda sau "
+#~ "serviciul afectat nu funcționează."
+
+#~ msgid "Here you can define with which priority the case should be created."
+#~ msgstr "Aici puteți defini cu ce prioritate trebuie creat cazul."
+
+#, fuzzy
+#~ msgid ""
+#~ "Here, you can define the state of the incident in case of an "
+#~ "acknowledgment of the affected host or service problem."
+#~ msgstr ""
+#~ "Aici puteți defini starea incidentului în cazul unei confirmări a gazdei "
+#~ "afectate sau a unei probleme de serviciu."
+
+#, fuzzy
+#~ msgid ""
+#~ "Here, you can define the state of the incident in case of an "
+#~ "acknowledgment of the host or service problem."
+#~ msgstr ""
+#~ "Aici puteți defini starea incidentului în cazul unei confirmări a "
+#~ "problemei gazdei sau a serviciului."
+
+#, fuzzy
+#~ msgid ""
+#~ "Here, you can define the state of the incident in case of an ending "
+#~ "acknowledgment of the host or service problem."
+#~ msgstr ""
+#~ "Aici puteți defini starea incidentului în cazul unei confirmări finale a "
+#~ "gazdei sau a unei probleme de serviciu."
+
+#~ msgid "Host custom field ID"
+#~ msgstr "ID-ul câmpului personalizat al gazdei"
+
+#~ msgid "Impact"
+#~ msgstr "Impact"
+
+#, fuzzy
+#~ msgid "In progress"
+#~ msgstr "În curs de desfășurare"
+
+#~ msgid "Incident"
+#~ msgstr "Incident"
+
+#, fuzzy
+#~ msgid ""
+#~ "Invalid custom field. Only the characters a-z, A-Z, 0-9, _ and - are "
+#~ "allowed."
+#~ msgstr ""
+#~ "ID-ul etichetei nu este valid. Sunt permise numai caracterele a-z, A-Z, "
+#~ "0-9, _ și -."
+
+#~ msgid "Issue type ID"
+#~ msgstr "Tipul de problemă ID"
+
+#, fuzzy
+#~ msgid "Jira URL"
+#~ msgstr "JIRA URL"
+
+#, fuzzy
+#~ msgid "Jira parameters"
+#~ msgstr "Parametrii opționali"
+
+#~ msgid "Management type"
+#~ msgstr "Tipul de management"
+
+#~ msgid "Moderate"
+#~ msgstr "Moderat"
+
+#~ msgid "Monitoring URL"
+#~ msgstr "URL de monitorizare"
+
+#, fuzzy
+#~ msgid "OAuth token"
+#~ msgstr "Token API"
+
+#, fuzzy
+#~ msgid "OAuth token authentication"
+#~ msgstr "Autentificare cu jeton"
+
+#~ msgid "On Hold"
+#~ msgstr "În așteptare"
+
+#~ msgid ""
+#~ "Please note that the mapping to the numeric ServiceNow state may be "
+#~ "changed at your system and can differ from our definitions. In this case "
+#~ "use the option below."
+#~ msgstr ""
+#~ "Vă rugăm să rețineți că maparea cu starea numerică ServiceNow poate fi "
+#~ "modificată în sistemul dumneavoastră și poate fi diferită de definițiile "
+#~ "noastre. În acest caz, utilizați opțiunea de mai jos."
+
+#~ msgid ""
+#~ "Please use this option if you have multiple sites in a distributed setup "
+#~ "which send their notifications to the same ServiceNow instance. The site "
+#~ "ID will be used as prefix for the problem ID on incident creation."
+#~ msgstr ""
+#~ "Vă rugăm să utilizați această opțiune dacă aveți mai multe site-uri într-"
+#~ "o configurație distribuită care își trimit notificările către aceeași "
+#~ "instanță ServiceNow. ID-ul site-ului va fi utilizat ca prefix pentru ID-"
+#~ "ul problemei la crearea incidentului."
+
+#~ msgid "Priority ID"
+#~ msgstr "ID de prioritate"
+
+#~ msgid "Resolution notes for host cases"
+#~ msgstr "Note de rezoluție pentru cazurile gazdă"
+
+#~ msgid "Resolution notes for service cases"
+#~ msgstr "Note de rezoluție pentru cazurile de servicii"
+
+#~ msgid "Resolved"
+#~ msgstr "Rezolvat"
+
+#~ msgid ""
+#~ "See <a href=\"https://docs.servicenow.com/bundle/helsinki-it-service-"
+#~ "management/page/product/incident-management/reference/"
+#~ "r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</"
+#~ "a> for more information."
+#~ msgstr ""
+#~ "Consultați <a href=\"https://docs.servicenow.com/bundle/helsinki-it-"
+#~ "service-management/page/product/incident-management/reference/"
+#~ "r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</"
+#~ "a> pentru mai multe informații."
+
+#~ msgid "Service custom field ID"
+#~ msgstr "ID-ul câmpului personalizat al serviciului"
+
+#~ msgid "ServiceNow URL"
+#~ msgstr "URL-ul ServiceNow"
+
+#, fuzzy
+#~ msgid "ServiceNow parameters"
+#~ msgstr "Exemplu pentru parametri"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "Set a custom label for new issues. If not set, 'monitoring' will be used."
+#~ "<br><br>%s"
+#~ msgstr ""
+#~ "Aici puteți seta o etichetă personalizată pentru noile probleme. Dacă nu "
+#~ "este setată, se va folosi 'monitorizare'."
+
+#, fuzzy
+#~ msgid "Set optional timeout for connections to Jira"
+#~ msgstr "Setați un timeout opțional pentru conexiunile la JIRA"
+
+#~ msgid "Set optional timeout for connections to ServiceNow"
+#~ msgstr ""
+#~ "Setați un termen de așteptare opțional pentru conexiunile la ServiceNow"
+
+#, python-format
+#~ msgid "Settings for %s state in case of recovery"
+#~ msgstr "Setări pentru starea %s în caz de recuperare"
+
+#, fuzzy
+#~ msgid "Settings for incident state in case of acknowledgment"
+#~ msgstr "Setări pentru starea incidentului în caz de confirmare de primire"
+
+#~ msgid "Settings for incident state in case of downtime"
+#~ msgstr ""
+#~ "Setări pentru starea de incident în caz de întrerupere a activității"
+
+#, python-format
+#~ msgid "Short description for host %s"
+#~ msgstr "Scurtă descriere pentru gazdă %s"
+
+#, python-format
+#~ msgid "Short description for service %s"
+#~ msgstr "Scurtă descriere pentru serviciu %s"
+
+#~ msgid "Site custom field ID"
+#~ msgstr "ID-ul câmpului personalizat al site-ului"
+
+#, python-format
+#~ msgid "State of %s if recovery is set"
+#~ msgstr "Starea %s în cazul în care este activată recuperarea"
+
+#, python-format
+#~ msgid "State of %s if recovery is set (as integer)"
+#~ msgstr ""
+#~ "Starea %s în cazul în care este activată recuperarea (ca număr întreg)"
+
+#~ msgid "State of case if recovery is set (predefined)"
+#~ msgstr ""
+#~ "Starea cazului în cazul în care este stabilită recuperarea (predefinită)"
+
+#, fuzzy
+#~ msgid "State of incident if acknowledgment is set"
+#~ msgstr "Starea incidentului în cazul în care este setată confirmarea"
+
+#, fuzzy
+#~ msgid "State of incident if acknowledgment is set (as integer)"
+#~ msgstr ""
+#~ "Starea incidentului în cazul în care este activată confirmarea (ca număr "
+#~ "întreg)"
+
+#, fuzzy
+#~ msgid "State of incident if acknowledgment is set (predefined)"
+#~ msgstr ""
+#~ "Starea incidentului în cazul în care este setată confirmarea (predefinită)"
+
+#~ msgid "State of incident if downtime expires"
+#~ msgstr "Starea incidentului în cazul în care expiră timpul de nefuncționare"
+
+#~ msgid "State of incident if downtime expires (as integer)"
+#~ msgstr ""
+#~ "Starea incidentului în cazul în care expiră timpul de nefuncționare (ca "
+#~ "număr întreg)"
+
+#~ msgid "State of incident if downtime expires (predefined)"
+#~ msgstr ""
+#~ "Starea incidentului în cazul în care expiră timpul de oprire (predefinit)"
+
+#~ msgid "State of incident if downtime is set"
+#~ msgstr "Starea incidentului în cazul în care este setat timpul de oprire"
+
+#~ msgid "State of incident if downtime is set (as integer)"
+#~ msgstr ""
+#~ "Starea incidentului în cazul în care este setat timpul de nefuncționare "
+#~ "(ca număr întreg)"
+
+#~ msgid "State of incident if downtime is set (predefined)"
+#~ msgstr ""
+#~ "Starea incidentului în cazul în care se stabilește o perioadă de "
+#~ "întrerupere (predefinită)"
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Description</tt> for host "
+#~ "notifications."
+#~ msgstr ""
+#~ "Text care trebuie setat în câmpul <tt>Descriere</tt> pentru notificările "
+#~ "gazdei."
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Description</tt> for service "
+#~ "notifications."
+#~ msgstr ""
+#~ "Text care trebuie setat în câmpul <tt>Descriere</tt> pentru notificările "
+#~ "de servicii."
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Resolution notes</tt> on recovery "
+#~ "service notifications."
+#~ msgstr ""
+#~ "Text care trebuie setat în câmpul <tt>Note de rezolvare</tt> pe "
+#~ "notificările serviciului de recuperare."
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Short description</tt> for host "
+#~ "notifications."
+#~ msgstr ""
+#~ "Text care trebuie setat în câmpul <tt>Descriere scurtă</tt> pentru "
+#~ "notificările gazdei."
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Short description</tt> for service "
+#~ "notifications."
+#~ msgstr ""
+#~ "Text care trebuie setat în câmpul <tt>Descriere scurtă</tt> pentru "
+#~ "notificările de servicii."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical ID of the Jira custom field for sites. Please use this "
+#~ "option if you have multiple sites in a distributed setup which send their "
+#~ "notifications to the same Jira instance."
+#~ msgstr ""
+#~ "ID-ul numeric al câmpului personalizat JIRA pentru site-uri. Vă rugăm să "
+#~ "utilizați această opțiune dacă aveți mai multe site-uri într-o "
+#~ "configurație distribuită care își trimit notificările către aceeași "
+#~ "instanță JIRA."
+
+#, fuzzy
+#~ msgid "The numerical Jira custom field ID for host problems."
+#~ msgstr ""
+#~ "ID-ul numeric al câmpului personalizat JIRA pentru problemele gazdei."
+
+#, fuzzy
+#~ msgid "The numerical Jira custom field ID for service problems."
+#~ msgstr ""
+#~ "ID-ul numeric al câmpului personalizat JIRA pentru problemele de service."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical Jira issue type ID. If not set, it will be retrieved from a "
+#~ "custom user attribute named <tt>jiraissuetype</tt>. If that is not set, "
+#~ "the notification will fail."
+#~ msgstr ""
+#~ "ID-ul numeric al tipului de problemă JIRA. Dacă nu este setat, acesta va "
+#~ "fi preluat dintr-un atribut de utilizator personalizat numit "
+#~ "<tt>jiraissuetype</tt>. Dacă acesta nu este setat, notificarea va eșua."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical Jira priority ID. If not set, it will be retrieved from a "
+#~ "custom user attribute named <tt>jirapriority</tt>. If that is not set, "
+#~ "the standard priority will be used."
+#~ msgstr ""
+#~ "ID-ul numeric al priorității JIRA. Dacă nu este setat, acesta va fi "
+#~ "preluat dintr-un atribut de utilizator personalizat numit "
+#~ "<tt>jirapriority</tt>. Dacă acesta nu este setat, se va utiliza "
+#~ "prioritatea standard."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical Jira project ID. If not set, it will be retrieved from a "
+#~ "custom user attribute named <tt>jiraproject</tt>. If that is not set, the "
+#~ "notification will fail."
+#~ msgstr ""
+#~ "ID-ul numeric al proiectului JIRA. Dacă nu este setat, acesta va fi "
+#~ "preluat dintr-un atribut de utilizator personalizat numit "
+#~ "<tt>jiraproject</tt>. Dacă acesta nu este setat, notificarea va eșua."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical Jira resolution transition ID. 11 - 'To Do', 21 - 'In "
+#~ "progress', 31 - 'Done'"
+#~ msgstr ""
+#~ "ID-ul numeric al tranziției rezoluției JIRA. 11 - 'To Do', 21 - 'In "
+#~ "Progress', 31 - 'Done'"
+
+#~ msgid "Urgency"
+#~ msgstr "Urgență"
+
+#~ msgid "Use site ID"
+#~ msgstr "Utilizați ID-ul site-ului"
+
+#~ msgid "Use site ID prefix"
+#~ msgstr "Utilizați prefixul ID al site-ului"
+
+#~ msgid ""
+#~ "With ServiceNow you can create different types of management issues, "
+#~ "currently supported are indicents and cases."
+#~ msgstr ""
+#~ "Cu ServiceNow puteți crea diferite tipuri de probleme de management, în "
+#~ "prezent sunt acceptate indicii și cazuri."
+
+#~ msgid "case"
+#~ msgstr "cazul"
+
+#~ msgid "cases"
+#~ msgstr "cazuri"
+
+#~ msgid "incident"
+#~ msgstr "incident"
+
+#~ msgid "incidents"
+#~ msgstr "incidente"
 
 #, python-format
 #~ msgid " of service %s on host %s"

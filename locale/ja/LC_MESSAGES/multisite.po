@@ -2786,9 +2786,6 @@ msgstr ""
 "使用するAPIキー。opsgenieサブスクリプションに応じて、グローバルまたはチーム統"
 "合APIキーを使用できます。"
 
-msgid "API or personal access token"
-msgstr "APIまたは個人アクセストークン"
-
 msgid "API response codes"
 msgstr "API応答コード"
 
@@ -2800,9 +2797,6 @@ msgstr "API ステータス"
 
 msgid "API token"
 msgstr "APIトークン"
-
-msgid "API/PAT token"
-msgstr "API/PATトークン"
 
 msgid "APPEND"
 msgstr "追加する"
@@ -3597,9 +3591,6 @@ msgstr ""
 
 msgid "Activate pending changes"
 msgstr "保留中の変更をアクティブ化する"
-
-msgid "Activate resolution with following resolution transition ID"
-msgstr "次の解像度遷移IDで解像度をアクティブ化する"
 
 msgid ""
 "Activate the changes by clicking the \"Activate on selected sites\" button."
@@ -7188,14 +7179,6 @@ msgstr "SLA定義をサービスに割り当てます"
 msgid "Assign SLA to service"
 msgstr "SLAをサービスに割り当てる"
 
-#, fuzzy
-msgid ""
-"Assign created issues to defined user. This is the username of the user (not "
-"email)."
-msgstr ""
-"作成されたissueを定義されたユーザに割り当てます。これはユーザーのユーザ名です"
-"（電子メールではありません）。"
-
 msgid "Assign service to following host"
 msgstr "次のホストにサービスを割り当てます"
 
@@ -7243,9 +7226,6 @@ msgstr "正規表現で割り当てる"
 
 msgid "Assigned to host"
 msgstr "ホストに割り当てる"
-
-msgid "Assignee"
-msgstr "受任者"
 
 msgid "Assignment mode"
 msgstr "割り当てモード"
@@ -7404,13 +7384,6 @@ msgstr ""
 "プがある場合は、プレースホルダー<tt>\\1</tt>、 <tt>\\2</tt>などを使用して、最"
 "初、2番目などの一致するグループを挿入できます。"
 
-msgid "Attach graphs"
-msgstr "グラフの添付"
-
-msgid ""
-"Attach graphs and limit the number of graphs that are attached to an issue."
-msgstr "グラフを添付し、issueに添付するグラフの数を制限できます。"
-
 msgid ""
 "Attach information about a contact person. If you have bracketed groups in "
 "the text to match, then you can use the placeholders <tt>\\1</tt>, <tt>\\2</"
@@ -7419,9 +7392,6 @@ msgstr ""
 "連絡先の情報を添付してください。一致するテキストに括弧で囲まれたグループがあ"
 "る場合は、プレースホルダー<tt>\\1</tt>、 <tt>\\2</tt>などを使用して、最初、2"
 "番目などの一致するグループを挿入できます。"
-
-msgid "Attach up to"
-msgstr "添付最大"
 
 msgid "Attempt to interpret OEM data"
 msgstr "OEMデータの解釈の試行"
@@ -7514,16 +7484,6 @@ msgstr "認証の有効期限"
 
 msgid "Authentication context class reference"
 msgstr "認証コンテキストクラスリファレンス"
-
-msgid ""
-"Authentication details for communicating with ServiceNow. If you want to "
-"create incidents, at least the role 'itil' is required. If you want to "
-"create cases, at least 'csm_ws_integration' and 'sn_customerservice_agent' "
-"are required."
-msgstr ""
-"ServiceNowと通信するための認証の詳細。インシデントを作成する際は少なくとも"
-"ロール'itil'が必要です。ケースを作成する場合はすくなくとも"
-"\"csm_ws_integration\" と \"sn_customerservice_agent が必要です。"
 
 msgid "Authentication error"
 msgstr "認証エラー"
@@ -8540,9 +8500,6 @@ msgstr "平均 ブロックされたリクエストの割合"
 
 msgid "Avg. request rate"
 msgstr "平均。リクエストレート"
-
-msgid "Awaiting info"
-msgstr "情報待ち"
 
 msgid "Azure"
 msgstr "Azure"
@@ -11157,23 +11114,6 @@ msgstr "次のパラメータを使用して呼び出す"
 msgid "Call with the following parameters:"
 msgstr "次のパラメータを使用して呼び出します。"
 
-msgid "Caller ID"
-msgstr "発信者ID"
-
-msgid ""
-"Caller is the user on behalf of whom the incident is being reported within "
-"ServiceNow. Please enter the name of the caller here. It is recommended to "
-"use the same user as used for login. Otherwise, your ACL rules in ServiceNow "
-"must be adjusted, so that the user who is used for login can create/edit/"
-"resolve incidents on behalf of the caller. Please have a look at ServiceNow "
-"documentation for details."
-msgstr ""
-"発信者は、ServiceNow内でインシデントが報告されているユーザーです。ここに発信"
-"者の名前を入力してください。ログインに使用したのと同じユーザーを使用すること"
-"をお勧めします。それ以外の場合は、ログインに使用されるユーザーが呼び出し元に"
-"代わってインシデントを作成/編集/解決できるように、ServiceNowのACLルールを調整"
-"する必要があります。詳細については、ServiceNowのドキュメントをご覧ください。"
-
 msgid "Calling final hooks"
 msgstr "最終フックの呼び出し"
 
@@ -11214,9 +11154,6 @@ msgstr "このプラグインタイプの通知をキャンセルする"
 
 msgid "Cancel previous notifications"
 msgstr "以前の通知をキャンセルする"
-
-msgid "Canceled"
-msgstr "キャンセル"
 
 #, python-format
 msgid ""
@@ -11581,9 +11518,6 @@ msgstr "カーディナリティ削減集約法"
 
 msgid "Casa module: CPU temperature"
 msgstr "Casaモジュール: CPU温度"
-
-msgid "Case"
-msgstr "ケース"
 
 msgid "Case insensitive"
 msgstr "大文字小文字を区別しません"
@@ -13602,9 +13536,6 @@ msgstr ""
 msgid "Close timewarp"
 msgstr "タイムワープを閉じる"
 
-msgid "Closed"
-msgstr "クローズド"
-
 msgid "Closing connection"
 msgstr "接続を閉じる"
 
@@ -14513,9 +14444,6 @@ msgstr ""
 "ここでActive DirectoryドメインのDNSドメイン名を構成すると、Checkmkはこのドメ"
 "インに、通信するのに最も近いドメインコントローラーを照会します。"
 
-msgid "Configure the Jira URL here."
-msgstr "ここでJIRA URLを構成します。"
-
 msgid "Configure the agent updater whether to connect via proxy server."
 msgstr ""
 "プロキシサーバー経由で接続するかどうかをエージェントアップデーターに設定しま"
@@ -14539,13 +14467,6 @@ msgstr ""
 
 msgid "Configure the automatic removal of monitored hosts."
 msgstr "監視対象ホストの自動削除を設定します。"
-
-msgid ""
-"Configure the base URL for the monitoring web GUI here. Include the site "
-"name. Used for linking to Checkmk out of Jira."
-msgstr ""
-"監視 Web-GUI のベース URL をここで設定します。サイト名を含めてください。Jira"
-"からCheckmkへのリンクに使用します。"
 
 #, fuzzy, python-format
 msgid ""
@@ -14713,10 +14634,6 @@ msgstr ""
 "す。"
 
 #, fuzzy
-msgid "Configure the username here."
-msgstr "ここでユーザー名を構成します。"
-
-#, fuzzy
 msgid ""
 "Configure this to have the notification plug-in connect directly to the SMTP "
 "server. This has the advantage of providing better error messages in case of "
@@ -14743,9 +14660,6 @@ msgid ""
 msgstr ""
 "Corosyncリンク遅延の警告及び重大な上限しきい値を設定します：瞬間的な最大値と"
 "平均遅延の両方に対して設定します。"
-
-msgid "Configure your ServiceNow URL here (e.g. https://myservicenow.com)."
-msgstr "ここでServiceNow URLを構成します(例 https://myservicenow.com)。"
 
 #, python-format
 msgid "Configure your preferred way of license usage submission in %s"
@@ -16798,9 +16712,6 @@ msgstr ""
 
 msgid "Custom event limit"
 msgstr "カスタムイベント制限"
-
-msgid "Custom fields"
-msgstr "カスタマイズフィールド"
 
 msgid "Custom footer links"
 msgstr "カスタムフッターリンク"
@@ -19146,14 +19057,8 @@ msgstr ""
 msgid "Description for host alerts"
 msgstr "ホストアラートの説明"
 
-msgid "Description for host incidents"
-msgstr "ホストインシデントの説明"
-
 msgid "Description for service alerts"
 msgstr "サービスアラートの説明"
-
-msgid "Description for service incidents"
-msgstr "サービスインシデントの説明"
 
 msgid "Description or comment"
 msgstr "説明またはコメント"
@@ -20884,9 +20789,6 @@ msgstr "一致するサービスのラベルを変更しない"
 msgid "Don't change parameters for matching services"
 msgstr "一致するサービスのパラメーターを変更しない"
 
-msgid "Don't change state"
-msgstr "状態を変更しないでください"
-
 msgid "Don't compute a rate"
 msgstr "レートを計算しないでください"
 
@@ -21330,20 +21232,6 @@ msgstr "E.Type"
 
 msgid "E.g. 'project = my_project and result = \"waiting for something\"'"
 msgstr "例 'project = my_project and result = \"何かを待っています\"'"
-
-msgid ""
-"E.g., if you register the agent controller at multiple sites, only the first "
-"site will be used for agent updates."
-msgstr ""
-"例えば、エージェントコントローラーを複数のサイトに登録した場合、エージェント"
-"の更新には最初のサイトのみが使用されます。"
-
-msgid ""
-"E.g., if you register the agent controller at multiple sites, only the last "
-"site will be used for agent updates."
-msgstr ""
-"例：エージェントコントローラーを複数のサイトに登録した場合、エージェントの更"
-"新には最後のサイトのみが使用されます。"
 
 msgid "EC2 instances may take a few minutes to show up."
 msgstr "EC2インスタンスが表示されるまで数分かかる場合があります。"
@@ -22859,14 +22747,6 @@ msgstr "ユーザーワンタイムパスワードを入力"
 msgid "Enter source name"
 msgstr "ソース名を入力してください"
 
-#, python-format
-msgid ""
-"Enter the %s to connect Checkmk to self-hosted Jira or enter the %s to "
-"connect to Jira Cloud."
-msgstr ""
-"Enter %s を入力して Checkmk をセルフホスト Jira に接続するか、%s を入力して "
-"Jira Cloud に接続します。"
-
 msgid ""
 "Enter the Fully Qualified Domain Name (FQDN) where your Checkmk server is "
 "running including the protocol. Stop after the top level domain (TLD), so "
@@ -22957,10 +22837,6 @@ msgid ""
 msgstr ""
 "共有のプレーン名のみを入力します。<tt>\\\\servername\\iso</tt>のような完全な"
 "UNC<b>ではなく</b> <tt>iso</tt>のみ"
-
-msgid ""
-"Enter the technical name of the field as defined in the ServiceNow database."
-msgstr "ServiceNowデータベースで定義されているフィールドの技術名を入力します。"
 
 msgid ""
 "Enter the uniserve service name here (has nothing to do with service name)."
@@ -27805,9 +27681,6 @@ msgstr ""
 msgid "Here you can configure the credentials to be used."
 msgstr "ここで、使用する認証情報を設定できます。"
 
-msgid "Here you can configure timeout settings in seconds."
-msgstr "ここでは、タイムアウト設定を秒単位で構成できます。"
-
 msgid "Here you can configure timeout settings."
 msgstr "ここで、タイムアウト設定を構成できます。"
 
@@ -27931,21 +27804,6 @@ msgstr ""
 "フォーマンス上の理由から、単一プロセスのレベルには仮想メモリの平均化は適用さ"
 "れません。"
 
-#, python-format
-msgid ""
-"Here you can define the state of the %s in case of a recovery of the "
-"affected host or service problem."
-msgstr ""
-"ここでは、影響を受けたホストまたはサービスの問題が回復した場合の%sの状態を定"
-"義できます。"
-
-msgid ""
-"Here you can define the state of the incident in case of a downtime of the "
-"affected host or service."
-msgstr ""
-"ここでは、影響を受けるホストまたはサービスがダウンした場合のインシデントの状"
-"態を定義することができます。"
-
 msgid ""
 "Here you can define tree configurations for the snap-in <i>Virtual Host-"
 "Trees</i>. These trees organize your hosts based on their values in certain "
@@ -27989,10 +27847,6 @@ msgstr ""
 
 msgid "Here you can define which protocol to use, default is https."
 msgstr "ここで、使用するプロトコルを定義できます。デフォルトはhttpsです。"
-
-msgid "Here you can define with which priority the case should be created."
-msgstr ""
-"ここで、どのような優先順位でケースを作成するかを定義することができます。"
 
 msgid ""
 "Here you can define, how many search results should be processed. The max. "
@@ -28467,30 +28321,6 @@ msgstr ""
 "のルールがマージされ、サブフォルダーのルールがメインディレクトリのルールを上"
 "書きします。ディレクトリ内では、ルールの順序が重要です。つまり、リストのさら"
 "に下のルールは、さらに上のルールによって上書きされます。"
-
-#, fuzzy
-msgid ""
-"Here, you can define the state of the incident in case of an acknowledgment "
-"of the affected host or service problem."
-msgstr ""
-"ここでは、影響を受けるホストまたはサービスの問題が承認された場合のインシデン"
-"トの状態を定義できます。"
-
-#, fuzzy
-msgid ""
-"Here, you can define the state of the incident in case of an acknowledgment "
-"of the host or service problem."
-msgstr ""
-"ここでは、ホストまたはサービスの問題が承認された場合のインシデントの状態を定"
-"義できます。"
-
-#, fuzzy
-msgid ""
-"Here, you can define the state of the incident in case of an ending "
-"acknowledgment of the host or service problem."
-msgstr ""
-"ここでは、ホストまたはサービスの問題の承認が終了した場合のインシデントの状態"
-"を定義できます。"
 
 #, fuzzy
 msgid ""
@@ -29692,9 +29522,6 @@ msgstr "ホストカスタム属性(正規表現)"
 
 msgid "Host custom attributes"
 msgstr "ホストのカスタム属性"
-
-msgid "Host custom field ID"
-msgstr "ホストカスタムフィールドID"
 
 msgid "Host customer"
 msgstr "ホスト顧客"
@@ -32922,9 +32749,6 @@ msgstr "イメージ"
 msgid "Immediately scheduled checks"
 msgstr "すぐにスケジュールされたチェック"
 
-msgid "Impact"
-msgstr "影響"
-
 msgid "Import"
 msgstr "インポート"
 
@@ -33363,10 +33187,6 @@ msgstr ""
 "密のために安全であるとはみなされません。詳しくはWerk #16223を参照してくださ"
 "い。"
 
-#, fuzzy
-msgid "In progress"
-msgstr "進行中"
-
 msgid "In relation to normal check interval"
 msgstr "通常のチェック間隔に関連して"
 
@@ -33546,9 +33366,6 @@ msgstr "5ボルト出力の下位レベル"
 #, fuzzy
 msgid "Inbound throughput upper levels (/sec)"
 msgstr "5ボルト出力の上位レベル"
-
-msgid "Incident"
-msgstr "インシデント"
 
 msgid "Include Pattern"
 msgstr "パターンを含める"
@@ -34533,12 +34350,6 @@ msgstr "無効な構成ハッシュ"
 msgid "Invalid credentials"
 msgstr "無効な資格情報"
 
-msgid ""
-"Invalid custom field. Only the characters a-z, A-Z, 0-9, _ and - are allowed."
-msgstr ""
-"無効なカスタムフィールドです。文字a-z, A-Z, 0-9, _ および - のみが許可されま"
-"す。"
-
 msgid "Invalid data"
 msgstr "無効なデータ"
 
@@ -35052,9 +34863,6 @@ msgstr "アラートが関連するドメインを指定するために使用さ
 msgid "Is-Home state (Netapp only)"
 msgstr "Is-Home状態(Netappのみ)"
 
-msgid "Issue type ID"
-msgstr "発行タイプID"
-
 msgid "Issued by"
 msgstr "が発行"
 
@@ -35404,17 +35212,11 @@ msgstr "Jenkinsキュー"
 msgid "Jenkins system metrics"
 msgstr "Jenkins システムメトリクス"
 
-msgid "Jira URL"
-msgstr "Jira URL"
-
 msgid "Jira custom service"
 msgstr "Jiraカスタムサービス"
 
 msgid "Jira instance to query"
 msgstr "クエリするJiraインスタンス"
-
-msgid "Jira parameters"
-msgstr "Jiraパラメータ"
 
 msgid "Jira statistics"
 msgstr "Jira統計"
@@ -39301,9 +39103,6 @@ msgstr "管理ボード"
 msgid "Management board config"
 msgstr "管理ボードの構成"
 
-msgid "Management type"
-msgstr "マネジメントタイプ"
-
 msgid "Managers"
 msgstr "マネージャー"
 
@@ -39338,20 +39137,6 @@ msgid ""
 msgstr ""
 "通知が正しくセットアップされているかどうかをテストするために、コアが手動でホ"
 "ストやサービスに通知を送信します"
-
-#, fuzzy
-msgid ""
-"Manually register the agent updater.<br>Either on agent controller "
-"registration with explicit flag: <tt>cmk-agent-ctl register [args] --"
-"automatic-updates</tt><br>Or separately: <tt>cmk-update-agent register</"
-"tt>(Linux)/<tt>check_mk_agent.exe updater register</tt>(Windows).<br>Since "
-"the registration is handled manually by the user, any existing agent updater "
-"registration will be overwritten."
-msgstr ""
-"エージェント更新プログラムは、<tt>cmk-agent-ctl register [args] --automatic-"
-"updates</tt> によるエージェントコントローラー登録時、または <tt>cmk-update-"
-"agent register</tt> で手動登録してください。登録はユーザーが手動で行うため、"
-"既存のエージェント更新プログラム登録は上書きされます。"
 
 #, python-format
 msgid "Manually set to %s by %s"
@@ -41391,9 +41176,6 @@ msgstr "モデム タイプ"
 msgid "Modems"
 msgstr "モデム"
 
-msgid "Moderate"
-msgstr "モード"
-
 msgid "Modifications"
 msgstr "変更"
 
@@ -41737,9 +41519,6 @@ msgstr "Linux監視"
 
 msgid "Monitoring Microsoft Azure"
 msgstr "Microsoft Azure監視"
-
-msgid "Monitoring URL"
-msgstr "監視URL"
 
 msgid "Monitoring VMWare ESXi"
 msgstr "VMWare ESXi監視"
@@ -45603,12 +45382,6 @@ msgstr "OAUTH 2.0"
 msgid "OAUth authentication"
 msgstr "OAUth認証"
 
-msgid "OAuth token"
-msgstr "OAuth トークン"
-
-msgid "OAuth token authentication"
-msgstr "OAuth トークン認証"
-
 msgid "OAuth2 (ClientID/TenantID)"
 msgstr "OAuth2（クライアントID/テナントID）"
 
@@ -45877,9 +45650,6 @@ msgstr "On %s(サーバー時間)。"
 
 msgid "On Checkmk agent uninstallation"
 msgstr "Checkmkエージェントのアンインストールにおいて"
-
-msgid "On Hold"
-msgstr "保留"
 
 msgid "On all services"
 msgstr "すべてのサービスにおいて"
@@ -49842,15 +49612,6 @@ msgstr ""
 "これは、インベントリルールの性質によるものです。"
 
 msgid ""
-"Please note that the mapping to the numeric ServiceNow state may be changed "
-"at your system and can differ from our definitions. In this case use the "
-"option below."
-msgstr ""
-"ServiceNowの数値状態へのマッピングは、お客様のシステムで変更される可能性があ"
-"り、当社の定義と異なる場合があることにご注意ください。この場合、以下のオプ"
-"ションを使用してください。"
-
-msgid ""
 "Please note that you have to set <tt>RequestHeader set X-Forwarded-Proto "
 "\"https\"</tt> in your system Apache configuration to tell the Checkmk GUI "
 "about the SSL setup."
@@ -50179,15 +49940,6 @@ msgid ""
 msgstr ""
 "サービスの説明には、az、AZ、0〜9、スペース、アンダースコア、ドット、ハイフ"
 "ン、スラッシュのみを使用してください"
-
-msgid ""
-"Please use this option if you have multiple sites in a distributed setup "
-"which send their notifications to the same ServiceNow instance. The site ID "
-"will be used as prefix for the problem ID on incident creation."
-msgstr ""
-"分散セットアップで、同じServiceNowインスタンスに通知を送信する複数のサイトが"
-"ある場合、このオプションを使用してください。サイトIDは、インシデント作成時に"
-"問題IDのプレフィックスとして使用されます。"
 
 msgid "Please wait..."
 msgstr "お待ちください..."
@@ -50802,9 +50554,6 @@ msgstr "Prio"
 
 msgid "Priority"
 msgstr "プライオリティ"
-
-msgid "Priority ID"
-msgstr "プライオリティID"
 
 msgid "Privacy pass phrase"
 msgstr "プライバシーパスフレーズ"
@@ -53879,15 +53628,6 @@ msgstr "PDUの残留電流パラメーター"
 msgid "Residual current phase name"
 msgstr "残留電流フレーズ名"
 
-msgid "Resolution notes for host cases"
-msgstr "ホスト案件の解決メモ"
-
-msgid "Resolution notes for service cases"
-msgstr "サービスケースの解決メモ"
-
-msgid "Resolved"
-msgstr "解決済み"
-
 #, fuzzy
 msgid "Resource"
 msgstr "ソース"
@@ -56003,17 +55743,6 @@ msgstr ""
 "e_status_queue.html)の\"キュー状況属性\"を参照してください。 。"
 
 msgid ""
-"See <a href=\"https://docs.servicenow.com/bundle/helsinki-it-service-"
-"management/page/product/incident-management/reference/"
-"r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</a> "
-"for more information."
-msgstr ""
-"詳細については、<a href=\"https://docs.servicenow.com/bundle/helsinki-it-"
-"service-management/page/product/incident-management/reference/"
-"r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNowインシデント</"
-"a>を参照してください。"
-
-msgid ""
 "See <a href=\"https://pushover.net/api#sounds\" target=\"_blank\">Pushover "
 "sounds</a> for more information and trying out available sounds."
 msgstr ""
@@ -56877,9 +56606,6 @@ msgstr "サービスカスタム属性(正規表現)"
 msgid "Service custom attributes"
 msgstr "サービスカスタム属性"
 
-msgid "Service custom field ID"
-msgstr "サービスカスタムフィールドID"
-
 msgid "Service description"
 msgstr "サービスの説明"
 
@@ -57255,12 +56981,6 @@ msgstr "サービス-レベル"
 msgid "Service: "
 msgstr "サービス: "
 
-msgid "ServiceNow URL"
-msgstr "ServiceNow URL"
-
-msgid "ServiceNow parameters"
-msgstr "ServiceNow パラメーター"
-
 msgid "Services"
 msgstr "サービス"
 
@@ -57378,14 +57098,6 @@ msgstr "IPv4アドレスを設定する"
 
 msgid "Set Setup to read only mode for other users"
 msgstr "セットアップを他のユーザーから読み取り専用にする"
-
-#, python-format
-msgid ""
-"Set a custom label for new issues. If not set, 'monitoring' will be used."
-"<br><br>%s"
-msgstr ""
-"新しい問題にカスタムラベルを設定します。設定されていない場合、\"監視\"が使用"
-"されます。<br><br>%s"
 
 msgid "Set absolute levels"
 msgstr "絶対レベルを設定する"
@@ -57540,12 +57252,6 @@ msgstr "最大経過日数を設定する"
 
 msgid "Set monitoring states for no-smoke and smoke cases"
 msgstr "煙のない場合とある場合の監視状態設定"
-
-msgid "Set optional timeout for connections to Jira"
-msgstr "JIRAへの接続にオプションのタイムアウトを設定する"
-
-msgid "Set optional timeout for connections to ServiceNow"
-msgstr "ServiceNowへの接続にオプションのタイムアウトを設定します"
 
 msgid "Set optional timeout for connections to the modem."
 msgstr "モデムへの接続にオプションのタイムアウトを設定する。"
@@ -57921,10 +57627,6 @@ msgstr "設定"
 msgid "Settings concerning the connection to the Checkmk and SNMP agents"
 msgstr "CheckmkおよびSNMPエージェントへの接続に関する設定"
 
-#, python-format
-msgid "Settings for %s state in case of recovery"
-msgstr "復旧時の%s状態の設定"
-
 msgid "Settings for Parent Scan"
 msgstr "親スキャンの設定"
 
@@ -57933,13 +57635,6 @@ msgstr "登録代理人に発行される証明書に関する設定。"
 
 msgid "Settings for host checks via Smart PING"
 msgstr "Smart PINGによるホストチェックの設定"
-
-#, fuzzy
-msgid "Settings for incident state in case of acknowledgment"
-msgstr "承認があった場合のインシデント状態の設定"
-
-msgid "Settings for incident state in case of downtime"
-msgstr "ダウンタイムの場合のインシデント状態の設定"
 
 msgid ""
 "Settings levels on the used bandwidth is optional. If you do set levels you "
@@ -58089,14 +57784,6 @@ msgstr "短い - DockerコンテナIDの最初の12文字を使用します"
 
 msgid "Short ID"
 msgstr "ショートID"
-
-#, python-format
-msgid "Short description for host %s"
-msgstr "ホストの%sの簡単な説明"
-
-#, python-format
-msgid "Short description for service %s"
-msgstr "サービス%sの簡単な説明"
 
 msgid "Short time intervals"
 msgstr "短い時間間隔"
@@ -58890,9 +58577,6 @@ msgstr "サイト接続"
 
 msgid "Site connectivity"
 msgstr "サイト接続性"
-
-msgid "Site custom field ID"
-msgstr "サイトカスタムフィールドID"
 
 msgid "Site dashboard $SITE$"
 msgstr "サイトダッシュボード $SITE$"
@@ -61141,14 +60825,6 @@ msgstr "次のエクステントのサイズがデフォルトの場合、状態
 msgid "State machine in invalid state"
 msgstr "無効な状態のステートマシン"
 
-#, python-format
-msgid "State of %s if recovery is set"
-msgstr "リカバリが設定されている場合の%s状態"
-
-#, python-format
-msgid "State of %s if recovery is set (as integer)"
-msgstr "リカバリが設定されている場合の%sの状態(整数)"
-
 msgid "State of NTP peer"
 msgstr "NTPピアの状態"
 
@@ -61162,44 +60838,11 @@ msgstr "ホストの状態"
 msgid "State of a service"
 msgstr "サービスの状態"
 
-msgid "State of case if recovery is set (predefined)"
-msgstr "リカバリが設定されている場合の状態(事前定義)"
-
 msgid "State of event changed by user"
 msgstr "ユーザーによって変更されたイベントの状態"
 
 msgid "State of host"
 msgstr "ホストの状態"
-
-#, fuzzy
-msgid "State of incident if acknowledgment is set"
-msgstr "承認が設定されている場合のインシデントの状態"
-
-#, fuzzy
-msgid "State of incident if acknowledgment is set (as integer)"
-msgstr "(整数として)承認応答が設定されている場合のインシデントの状態"
-
-#, fuzzy
-msgid "State of incident if acknowledgment is set (predefined)"
-msgstr "確認応答が設定されている場合のインシデントの状態(事前定義)"
-
-msgid "State of incident if downtime expires"
-msgstr "ダウンタイムが期限切れになった場合のインシデントの状態"
-
-msgid "State of incident if downtime expires (as integer)"
-msgstr "ダウンタイムが期限切れになった場合のインシデントの状態(整数として)"
-
-msgid "State of incident if downtime expires (predefined)"
-msgstr "ダウンタイムが期限切れになった場合のインシデントの状態(事前定義)"
-
-msgid "State of incident if downtime is set"
-msgstr "ダウンタイムが設定されている場合のインシデントの状態"
-
-msgid "State of incident if downtime is set (as integer)"
-msgstr "ダウンタイムが設定されている場合のインシデントの状態(整数として)"
-
-msgid "State of incident if downtime is set (predefined)"
-msgstr "ダウンタイムが設定されている場合(事前定義)のインシデントの状態"
 
 msgid "State of remaining services"
 msgstr "残りのサービスの状態"
@@ -63201,33 +62844,6 @@ msgstr "式の一致からの3番目の一致グループのテキスト(など.
 
 msgid "Text output"
 msgstr "テキスト出力"
-
-msgid ""
-"Text that should be set in field <tt>Description</tt> for host notifications."
-msgstr "ホスト通知のフィールド<tt>説明</tt>に設定する必要のあるテキスト。"
-
-msgid ""
-"Text that should be set in field <tt>Description</tt> for service "
-"notifications."
-msgstr "サービス通知の<tt>説明</tt>に設定するテキスト。"
-
-msgid ""
-"Text that should be set in field <tt>Resolution notes</tt> on recovery "
-"service notifications."
-msgstr ""
-"リカバリーサービス通知のフィールド<tt>解決メモ</tt>に設定するテキスト。"
-
-msgid ""
-"Text that should be set in field <tt>Short description</tt> for host "
-"notifications."
-msgstr ""
-"ホスト通知のフィールド<tt>簡単な説明</tt>に設定する必要のあるテキスト。"
-
-msgid ""
-"Text that should be set in field <tt>Short description</tt> for service "
-"notifications."
-msgstr ""
-"サービス通知のフィールド<tt>簡単な説明</tt>に設定する必要のあるテキスト。"
 
 msgid "Text to cancel event(s)"
 msgstr "キャンセルするテキスト"
@@ -66547,53 +66163,6 @@ msgstr ""
 #, fuzzy
 msgid "The number of the power phase."
 msgstr "電力フェーズの数。"
-
-msgid ""
-"The numerical ID of the Jira custom field for sites. Please use this option "
-"if you have multiple sites in a distributed setup which send their "
-"notifications to the same Jira instance."
-msgstr ""
-"サイト用の Jira カスタムフィールドの数値 ID。同じ Jira インスタンスに通知を送"
-"信する分散セットアップの複数のサイトがある場合、このオプションを使用してくだ"
-"さい。"
-
-msgid "The numerical Jira custom field ID for host problems."
-msgstr "ホスト問題の数値JIRAカスタムフィールドID。"
-
-msgid "The numerical Jira custom field ID for service problems."
-msgstr "サービス問題の数値 JIRA カスタムフィールド ID。"
-
-msgid ""
-"The numerical Jira issue type ID. If not set, it will be retrieved from a "
-"custom user attribute named <tt>jiraissuetype</tt>. If that is not set, the "
-"notification will fail."
-msgstr ""
-"数値のJIRA発行タイプID。設定されていない場合は、<tt>jiraissuetype</tt>という"
-"カスタムユーザー属性から取得されます。それが設定されていない場合、通知は失敗"
-"します。"
-
-msgid ""
-"The numerical Jira priority ID. If not set, it will be retrieved from a "
-"custom user attribute named <tt>jirapriority</tt>. If that is not set, the "
-"standard priority will be used."
-msgstr ""
-"数値のJIRA優先度ID。設定されていない場合は、<tt>jirapriority</tt>というカスタ"
-"ムユーザー属性から取得されます。それが設定されていない場合は、標準の優先度が"
-"使用されます。"
-
-msgid ""
-"The numerical Jira project ID. If not set, it will be retrieved from a "
-"custom user attribute named <tt>jiraproject</tt>. If that is not set, the "
-"notification will fail."
-msgstr ""
-"数値のJIRAプロジェクトID。設定されていない場合、<tt>jiraproject</tt>というカ"
-"スタムユーザー属性から取得されます。設定されていない場合、通知は失敗します。"
-
-#, fuzzy
-msgid ""
-"The numerical Jira resolution transition ID. 11 - 'To Do', 21 - 'In "
-"progress', 31 - 'Done'"
-msgstr "数値のJIRA解像度遷移ID。11-\"To Do \"、21-\"進行中\"、31-\"完了\""
 
 msgid "The official Checkmk User Guide"
 msgstr "コンテキスト: ドキュメント"
@@ -74072,19 +73641,32 @@ msgstr ""
 #, fuzzy
 msgid ""
 "To start updating the agent package, the agent updater must register at a "
-"monitoring site.<br>(_New with Checkmk 2.5_) By default, the agent updater "
-"will be registered by the agent controller, after its own successful "
-"registration, at the same site and with the same hostname.<br>Here you can "
-"configure the overwriting behavior of subsequent agent controller "
+"monitoring site.<br><br><i>New with Checkmk 2.5</i>: By default, the agent "
+"updater will be registered by the agent controller, after its own successful "
+"registration, at the same site and with the same hostname.<br><br>Here you "
+"can configure the overwriting behavior of subsequent agent controller "
 "registrations, or opt to skip the agent controller triggered agent updater "
 "registration entirely.<br>Consider the differences between agent controller "
 "and agent updater registrations: The agent controller can register at "
 "multiple sites, or overwrite existing registrations when registering for the "
 "same site again. The agent updater can only hold one registration at a time. "
 "Every new registration will overwrite the previous one, regardless of the "
-"connection details.<br>Note: Since the agent controller is available for "
-"Linux and Windows only, this setting is not relevant for Solaris, where the "
-"agent updater will always need to be registered manually."
+"connection details.<br><br>Available Choices:<ul><li><b>On first agent "
+"controller registration</b>: An existing Agent Updater registration will be "
+"kept. If you register the agent controller at multiple sites, only the first "
+"site will be used for agent updates.</li><li><b>On every agent controller "
+"registration</b>: The Agent Updater registration will be overwritten on "
+"every agent controller registration. If you register the agent controller at "
+"multiple sites, only the last site will be used for agent updates.</"
+"li><li><b>Manual</b>: Manually register the agent updater.<br>Either on "
+"agent controller registration with explicit flag: <tt>cmk-agent-ctl register "
+"[args] --automatic-updates</tt><br>Or separately: <tt>cmk-update-agent "
+"register</tt> (Linux)/<tt>check_mk_agent.exe updater register</tt> (Windows)."
+"<br>Since the registration is handled manually by the user, any existing "
+"agent updater registration will be overwritten.</li></ul><i>Note</i>: Since "
+"the agent controller is available for Linux and Windows only, this setting "
+"is not relevant for Solaris, where the agent updater will always need to be "
+"registered manually."
 msgstr ""
 "エージェントパッケージの更新を開始するには、エージェントアップデーターが監視"
 "サイトに登録する必要があります。従来の<tt>cmk-update-agent register</tt>呼び"
@@ -78689,9 +78271,6 @@ msgstr "モジュールを備えたデバイスの最後の再起動以降の稼
 msgid "Upturn supply levels"
 msgstr "供給水準の回復"
 
-msgid "Urgency"
-msgstr "緊急"
-
 msgid "Usability"
 msgstr "ユーザビリティ"
 
@@ -79128,12 +78707,6 @@ msgstr "レポートヘッダーに短いタイトルを使用する"
 
 msgid "Use single quotes, escape contained quotes with backslash"
 msgstr "一重引用符を使用し、バックスラッシュで引用符をエスケープします"
-
-msgid "Use site ID"
-msgstr "サイトIDを使用する"
-
-msgid "Use site ID prefix"
-msgstr "サイトIDプレフィックスを使用する"
 
 msgid "Use system wide CAs"
 msgstr "システム全体のCAを使用する"
@@ -83178,13 +82751,6 @@ msgstr ""
 "どうかがオプションとなりました。高権限を持つ自動化ユーザーのシークレットを保"
 "存することは推奨しません。"
 
-msgid ""
-"With ServiceNow you can create different types of management issues, "
-"currently supported are indicents and cases."
-msgstr ""
-"ServiceNowでは、様々なタイプの管理課題を作成することができます。現在サポート"
-"されているのは、インシデント管理とケース管理です。"
-
 #, python-format
 msgid ""
 "With authentication type set to 'OAuth2' the option '%s' must be specified."
@@ -86270,12 +85836,6 @@ msgstr "cAdvisor"
 msgid "cartridge specification"
 msgstr "カートリッジ仕様"
 
-msgid "case"
-msgstr "ケース"
-
-msgid "cases"
-msgstr "ケース"
-
 #, fuzzy
 msgid "central / standalone"
 msgstr "マスター／スタンドアロン"
@@ -87005,12 +86565,6 @@ msgstr "非活性"
 
 msgid "inactive hosts"
 msgstr "非アクティブなホスト"
-
-msgid "incident"
-msgstr "インシデント"
-
-msgid "incidents"
-msgstr "インシデント"
 
 msgid "incidents left"
 msgstr "残存インシデント"
@@ -92018,6 +91572,472 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#~ msgid "API or personal access token"
+#~ msgstr "APIまたは個人アクセストークン"
+
+#~ msgid "API/PAT token"
+#~ msgstr "API/PATトークン"
+
+#~ msgid "Activate resolution with following resolution transition ID"
+#~ msgstr "次の解像度遷移IDで解像度をアクティブ化する"
+
+#, fuzzy
+#~ msgid ""
+#~ "Assign created issues to defined user. This is the username of the user "
+#~ "(not email)."
+#~ msgstr ""
+#~ "作成されたissueを定義されたユーザに割り当てます。これはユーザーのユーザ名"
+#~ "です（電子メールではありません）。"
+
+#~ msgid "Assignee"
+#~ msgstr "受任者"
+
+#~ msgid "Attach graphs"
+#~ msgstr "グラフの添付"
+
+#~ msgid ""
+#~ "Attach graphs and limit the number of graphs that are attached to an "
+#~ "issue."
+#~ msgstr "グラフを添付し、issueに添付するグラフの数を制限できます。"
+
+#~ msgid "Attach up to"
+#~ msgstr "添付最大"
+
+#~ msgid ""
+#~ "Authentication details for communicating with ServiceNow. If you want to "
+#~ "create incidents, at least the role 'itil' is required. If you want to "
+#~ "create cases, at least 'csm_ws_integration' and "
+#~ "'sn_customerservice_agent' are required."
+#~ msgstr ""
+#~ "ServiceNowと通信するための認証の詳細。インシデントを作成する際は少なくとも"
+#~ "ロール'itil'が必要です。ケースを作成する場合はすくなくとも"
+#~ "\"csm_ws_integration\" と \"sn_customerservice_agent が必要です。"
+
+#~ msgid "Awaiting info"
+#~ msgstr "情報待ち"
+
+#~ msgid "Caller ID"
+#~ msgstr "発信者ID"
+
+#~ msgid ""
+#~ "Caller is the user on behalf of whom the incident is being reported "
+#~ "within ServiceNow. Please enter the name of the caller here. It is "
+#~ "recommended to use the same user as used for login. Otherwise, your ACL "
+#~ "rules in ServiceNow must be adjusted, so that the user who is used for "
+#~ "login can create/edit/resolve incidents on behalf of the caller. Please "
+#~ "have a look at ServiceNow documentation for details."
+#~ msgstr ""
+#~ "発信者は、ServiceNow内でインシデントが報告されているユーザーです。ここに発"
+#~ "信者の名前を入力してください。ログインに使用したのと同じユーザーを使用する"
+#~ "ことをお勧めします。それ以外の場合は、ログインに使用されるユーザーが呼び出"
+#~ "し元に代わってインシデントを作成/編集/解決できるように、ServiceNowのACL"
+#~ "ルールを調整する必要があります。詳細については、ServiceNowのドキュメントを"
+#~ "ご覧ください。"
+
+#~ msgid "Canceled"
+#~ msgstr "キャンセル"
+
+#~ msgid "Case"
+#~ msgstr "ケース"
+
+#~ msgid "Closed"
+#~ msgstr "クローズド"
+
+#~ msgid "Configure the Jira URL here."
+#~ msgstr "ここでJIRA URLを構成します。"
+
+#~ msgid ""
+#~ "Configure the base URL for the monitoring web GUI here. Include the site "
+#~ "name. Used for linking to Checkmk out of Jira."
+#~ msgstr ""
+#~ "監視 Web-GUI のベース URL をここで設定します。サイト名を含めてください。"
+#~ "JiraからCheckmkへのリンクに使用します。"
+
+#, fuzzy
+#~ msgid "Configure the username here."
+#~ msgstr "ここでユーザー名を構成します。"
+
+#~ msgid "Configure your ServiceNow URL here (e.g. https://myservicenow.com)."
+#~ msgstr "ここでServiceNow URLを構成します(例 https://myservicenow.com)。"
+
+#~ msgid "Custom fields"
+#~ msgstr "カスタマイズフィールド"
+
+#~ msgid "Description for host incidents"
+#~ msgstr "ホストインシデントの説明"
+
+#~ msgid "Description for service incidents"
+#~ msgstr "サービスインシデントの説明"
+
+#~ msgid "Don't change state"
+#~ msgstr "状態を変更しないでください"
+
+#~ msgid ""
+#~ "E.g., if you register the agent controller at multiple sites, only the "
+#~ "first site will be used for agent updates."
+#~ msgstr ""
+#~ "例えば、エージェントコントローラーを複数のサイトに登録した場合、エージェン"
+#~ "トの更新には最初のサイトのみが使用されます。"
+
+#~ msgid ""
+#~ "E.g., if you register the agent controller at multiple sites, only the "
+#~ "last site will be used for agent updates."
+#~ msgstr ""
+#~ "例：エージェントコントローラーを複数のサイトに登録した場合、エージェントの"
+#~ "更新には最後のサイトのみが使用されます。"
+
+#, python-format
+#~ msgid ""
+#~ "Enter the %s to connect Checkmk to self-hosted Jira or enter the %s to "
+#~ "connect to Jira Cloud."
+#~ msgstr ""
+#~ "Enter %s を入力して Checkmk をセルフホスト Jira に接続するか、%s を入力し"
+#~ "て Jira Cloud に接続します。"
+
+#~ msgid ""
+#~ "Enter the technical name of the field as defined in the ServiceNow "
+#~ "database."
+#~ msgstr ""
+#~ "ServiceNowデータベースで定義されているフィールドの技術名を入力します。"
+
+#~ msgid "Here you can configure timeout settings in seconds."
+#~ msgstr "ここでは、タイムアウト設定を秒単位で構成できます。"
+
+#, python-format
+#~ msgid ""
+#~ "Here you can define the state of the %s in case of a recovery of the "
+#~ "affected host or service problem."
+#~ msgstr ""
+#~ "ここでは、影響を受けたホストまたはサービスの問題が回復した場合の%sの状態を"
+#~ "定義できます。"
+
+#~ msgid ""
+#~ "Here you can define the state of the incident in case of a downtime of "
+#~ "the affected host or service."
+#~ msgstr ""
+#~ "ここでは、影響を受けるホストまたはサービスがダウンした場合のインシデントの"
+#~ "状態を定義することができます。"
+
+#~ msgid "Here you can define with which priority the case should be created."
+#~ msgstr ""
+#~ "ここで、どのような優先順位でケースを作成するかを定義することができます。"
+
+#, fuzzy
+#~ msgid ""
+#~ "Here, you can define the state of the incident in case of an "
+#~ "acknowledgment of the affected host or service problem."
+#~ msgstr ""
+#~ "ここでは、影響を受けるホストまたはサービスの問題が承認された場合のインシデ"
+#~ "ントの状態を定義できます。"
+
+#, fuzzy
+#~ msgid ""
+#~ "Here, you can define the state of the incident in case of an "
+#~ "acknowledgment of the host or service problem."
+#~ msgstr ""
+#~ "ここでは、ホストまたはサービスの問題が承認された場合のインシデントの状態を"
+#~ "定義できます。"
+
+#, fuzzy
+#~ msgid ""
+#~ "Here, you can define the state of the incident in case of an ending "
+#~ "acknowledgment of the host or service problem."
+#~ msgstr ""
+#~ "ここでは、ホストまたはサービスの問題の承認が終了した場合のインシデントの状"
+#~ "態を定義できます。"
+
+#~ msgid "Host custom field ID"
+#~ msgstr "ホストカスタムフィールドID"
+
+#~ msgid "Impact"
+#~ msgstr "影響"
+
+#, fuzzy
+#~ msgid "In progress"
+#~ msgstr "進行中"
+
+#~ msgid "Incident"
+#~ msgstr "インシデント"
+
+#~ msgid ""
+#~ "Invalid custom field. Only the characters a-z, A-Z, 0-9, _ and - are "
+#~ "allowed."
+#~ msgstr ""
+#~ "無効なカスタムフィールドです。文字a-z, A-Z, 0-9, _ および - のみが許可され"
+#~ "ます。"
+
+#~ msgid "Issue type ID"
+#~ msgstr "発行タイプID"
+
+#~ msgid "Jira URL"
+#~ msgstr "Jira URL"
+
+#~ msgid "Jira parameters"
+#~ msgstr "Jiraパラメータ"
+
+#~ msgid "Management type"
+#~ msgstr "マネジメントタイプ"
+
+#, fuzzy
+#~ msgid ""
+#~ "Manually register the agent updater.<br>Either on agent controller "
+#~ "registration with explicit flag: <tt>cmk-agent-ctl register [args] --"
+#~ "automatic-updates</tt><br>Or separately: <tt>cmk-update-agent register</"
+#~ "tt>(Linux)/<tt>check_mk_agent.exe updater register</tt>(Windows)."
+#~ "<br>Since the registration is handled manually by the user, any existing "
+#~ "agent updater registration will be overwritten."
+#~ msgstr ""
+#~ "エージェント更新プログラムは、<tt>cmk-agent-ctl register [args] --"
+#~ "automatic-updates</tt> によるエージェントコントローラー登録時、または "
+#~ "<tt>cmk-update-agent register</tt> で手動登録してください。登録はユーザー"
+#~ "が手動で行うため、既存のエージェント更新プログラム登録は上書きされます。"
+
+#~ msgid "Moderate"
+#~ msgstr "モード"
+
+#~ msgid "Monitoring URL"
+#~ msgstr "監視URL"
+
+#~ msgid "OAuth token"
+#~ msgstr "OAuth トークン"
+
+#~ msgid "OAuth token authentication"
+#~ msgstr "OAuth トークン認証"
+
+#~ msgid "On Hold"
+#~ msgstr "保留"
+
+#~ msgid ""
+#~ "Please note that the mapping to the numeric ServiceNow state may be "
+#~ "changed at your system and can differ from our definitions. In this case "
+#~ "use the option below."
+#~ msgstr ""
+#~ "ServiceNowの数値状態へのマッピングは、お客様のシステムで変更される可能性が"
+#~ "あり、当社の定義と異なる場合があることにご注意ください。この場合、以下のオ"
+#~ "プションを使用してください。"
+
+#~ msgid ""
+#~ "Please use this option if you have multiple sites in a distributed setup "
+#~ "which send their notifications to the same ServiceNow instance. The site "
+#~ "ID will be used as prefix for the problem ID on incident creation."
+#~ msgstr ""
+#~ "分散セットアップで、同じServiceNowインスタンスに通知を送信する複数のサイト"
+#~ "がある場合、このオプションを使用してください。サイトIDは、インシデント作成"
+#~ "時に問題IDのプレフィックスとして使用されます。"
+
+#~ msgid "Priority ID"
+#~ msgstr "プライオリティID"
+
+#~ msgid "Resolution notes for host cases"
+#~ msgstr "ホスト案件の解決メモ"
+
+#~ msgid "Resolution notes for service cases"
+#~ msgstr "サービスケースの解決メモ"
+
+#~ msgid "Resolved"
+#~ msgstr "解決済み"
+
+#~ msgid ""
+#~ "See <a href=\"https://docs.servicenow.com/bundle/helsinki-it-service-"
+#~ "management/page/product/incident-management/reference/"
+#~ "r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</"
+#~ "a> for more information."
+#~ msgstr ""
+#~ "詳細については、<a href=\"https://docs.servicenow.com/bundle/helsinki-it-"
+#~ "service-management/page/product/incident-management/reference/"
+#~ "r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNowインシデン"
+#~ "ト</a>を参照してください。"
+
+#~ msgid "Service custom field ID"
+#~ msgstr "サービスカスタムフィールドID"
+
+#~ msgid "ServiceNow URL"
+#~ msgstr "ServiceNow URL"
+
+#~ msgid "ServiceNow parameters"
+#~ msgstr "ServiceNow パラメーター"
+
+#, python-format
+#~ msgid ""
+#~ "Set a custom label for new issues. If not set, 'monitoring' will be used."
+#~ "<br><br>%s"
+#~ msgstr ""
+#~ "新しい問題にカスタムラベルを設定します。設定されていない場合、\"監視\"が使"
+#~ "用されます。<br><br>%s"
+
+#~ msgid "Set optional timeout for connections to Jira"
+#~ msgstr "JIRAへの接続にオプションのタイムアウトを設定する"
+
+#~ msgid "Set optional timeout for connections to ServiceNow"
+#~ msgstr "ServiceNowへの接続にオプションのタイムアウトを設定します"
+
+#, python-format
+#~ msgid "Settings for %s state in case of recovery"
+#~ msgstr "復旧時の%s状態の設定"
+
+#, fuzzy
+#~ msgid "Settings for incident state in case of acknowledgment"
+#~ msgstr "承認があった場合のインシデント状態の設定"
+
+#~ msgid "Settings for incident state in case of downtime"
+#~ msgstr "ダウンタイムの場合のインシデント状態の設定"
+
+#, python-format
+#~ msgid "Short description for host %s"
+#~ msgstr "ホストの%sの簡単な説明"
+
+#, python-format
+#~ msgid "Short description for service %s"
+#~ msgstr "サービス%sの簡単な説明"
+
+#~ msgid "Site custom field ID"
+#~ msgstr "サイトカスタムフィールドID"
+
+#, python-format
+#~ msgid "State of %s if recovery is set"
+#~ msgstr "リカバリが設定されている場合の%s状態"
+
+#, python-format
+#~ msgid "State of %s if recovery is set (as integer)"
+#~ msgstr "リカバリが設定されている場合の%sの状態(整数)"
+
+#~ msgid "State of case if recovery is set (predefined)"
+#~ msgstr "リカバリが設定されている場合の状態(事前定義)"
+
+#, fuzzy
+#~ msgid "State of incident if acknowledgment is set"
+#~ msgstr "承認が設定されている場合のインシデントの状態"
+
+#, fuzzy
+#~ msgid "State of incident if acknowledgment is set (as integer)"
+#~ msgstr "(整数として)承認応答が設定されている場合のインシデントの状態"
+
+#, fuzzy
+#~ msgid "State of incident if acknowledgment is set (predefined)"
+#~ msgstr "確認応答が設定されている場合のインシデントの状態(事前定義)"
+
+#~ msgid "State of incident if downtime expires"
+#~ msgstr "ダウンタイムが期限切れになった場合のインシデントの状態"
+
+#~ msgid "State of incident if downtime expires (as integer)"
+#~ msgstr "ダウンタイムが期限切れになった場合のインシデントの状態(整数として)"
+
+#~ msgid "State of incident if downtime expires (predefined)"
+#~ msgstr "ダウンタイムが期限切れになった場合のインシデントの状態(事前定義)"
+
+#~ msgid "State of incident if downtime is set"
+#~ msgstr "ダウンタイムが設定されている場合のインシデントの状態"
+
+#~ msgid "State of incident if downtime is set (as integer)"
+#~ msgstr "ダウンタイムが設定されている場合のインシデントの状態(整数として)"
+
+#~ msgid "State of incident if downtime is set (predefined)"
+#~ msgstr "ダウンタイムが設定されている場合(事前定義)のインシデントの状態"
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Description</tt> for host "
+#~ "notifications."
+#~ msgstr "ホスト通知のフィールド<tt>説明</tt>に設定する必要のあるテキスト。"
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Description</tt> for service "
+#~ "notifications."
+#~ msgstr "サービス通知の<tt>説明</tt>に設定するテキスト。"
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Resolution notes</tt> on recovery "
+#~ "service notifications."
+#~ msgstr ""
+#~ "リカバリーサービス通知のフィールド<tt>解決メモ</tt>に設定するテキスト。"
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Short description</tt> for host "
+#~ "notifications."
+#~ msgstr ""
+#~ "ホスト通知のフィールド<tt>簡単な説明</tt>に設定する必要のあるテキスト。"
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Short description</tt> for service "
+#~ "notifications."
+#~ msgstr ""
+#~ "サービス通知のフィールド<tt>簡単な説明</tt>に設定する必要のあるテキスト。"
+
+#~ msgid ""
+#~ "The numerical ID of the Jira custom field for sites. Please use this "
+#~ "option if you have multiple sites in a distributed setup which send their "
+#~ "notifications to the same Jira instance."
+#~ msgstr ""
+#~ "サイト用の Jira カスタムフィールドの数値 ID。同じ Jira インスタンスに通知"
+#~ "を送信する分散セットアップの複数のサイトがある場合、このオプションを使用し"
+#~ "てください。"
+
+#~ msgid "The numerical Jira custom field ID for host problems."
+#~ msgstr "ホスト問題の数値JIRAカスタムフィールドID。"
+
+#~ msgid "The numerical Jira custom field ID for service problems."
+#~ msgstr "サービス問題の数値 JIRA カスタムフィールド ID。"
+
+#~ msgid ""
+#~ "The numerical Jira issue type ID. If not set, it will be retrieved from a "
+#~ "custom user attribute named <tt>jiraissuetype</tt>. If that is not set, "
+#~ "the notification will fail."
+#~ msgstr ""
+#~ "数値のJIRA発行タイプID。設定されていない場合は、<tt>jiraissuetype</tt>とい"
+#~ "うカスタムユーザー属性から取得されます。それが設定されていない場合、通知は"
+#~ "失敗します。"
+
+#~ msgid ""
+#~ "The numerical Jira priority ID. If not set, it will be retrieved from a "
+#~ "custom user attribute named <tt>jirapriority</tt>. If that is not set, "
+#~ "the standard priority will be used."
+#~ msgstr ""
+#~ "数値のJIRA優先度ID。設定されていない場合は、<tt>jirapriority</tt>というカ"
+#~ "スタムユーザー属性から取得されます。それが設定されていない場合は、標準の優"
+#~ "先度が使用されます。"
+
+#~ msgid ""
+#~ "The numerical Jira project ID. If not set, it will be retrieved from a "
+#~ "custom user attribute named <tt>jiraproject</tt>. If that is not set, the "
+#~ "notification will fail."
+#~ msgstr ""
+#~ "数値のJIRAプロジェクトID。設定されていない場合、<tt>jiraproject</tt>という"
+#~ "カスタムユーザー属性から取得されます。設定されていない場合、通知は失敗しま"
+#~ "す。"
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical Jira resolution transition ID. 11 - 'To Do', 21 - 'In "
+#~ "progress', 31 - 'Done'"
+#~ msgstr "数値のJIRA解像度遷移ID。11-\"To Do \"、21-\"進行中\"、31-\"完了\""
+
+#~ msgid "Urgency"
+#~ msgstr "緊急"
+
+#~ msgid "Use site ID"
+#~ msgstr "サイトIDを使用する"
+
+#~ msgid "Use site ID prefix"
+#~ msgstr "サイトIDプレフィックスを使用する"
+
+#~ msgid ""
+#~ "With ServiceNow you can create different types of management issues, "
+#~ "currently supported are indicents and cases."
+#~ msgstr ""
+#~ "ServiceNowでは、様々なタイプの管理課題を作成することができます。現在サポー"
+#~ "トされているのは、インシデント管理とケース管理です。"
+
+#~ msgid "case"
+#~ msgstr "ケース"
+
+#~ msgid "cases"
+#~ msgstr "ケース"
+
+#~ msgid "incident"
+#~ msgstr "インシデント"
+
+#~ msgid "incidents"
+#~ msgstr "インシデント"
 
 #, python-format
 #~ msgid " of service %s on host %s"

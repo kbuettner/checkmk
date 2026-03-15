@@ -2860,10 +2860,6 @@ msgstr ""
 "globale of team integratie api sleutels gebruiken."
 
 #, fuzzy
-msgid "API or personal access token"
-msgstr "API Toegangstoken"
-
-#, fuzzy
 msgid "API response codes"
 msgstr "Hop responstijden"
 
@@ -2876,10 +2872,6 @@ msgstr "Gastheer status"
 
 #, fuzzy
 msgid "API token"
-msgstr "API sleutel/teken"
-
-#, fuzzy
-msgid "API/PAT token"
 msgstr "API sleutel/teken"
 
 msgid "APPEND"
@@ -3726,9 +3718,6 @@ msgstr ""
 
 msgid "Activate pending changes"
 msgstr "In behandeling zijnde wijzigingen activeren"
-
-msgid "Activate resolution with following resolution transition ID"
-msgstr "Activeer resolutie met de volgende resolutie overgang ID"
 
 msgid ""
 "Activate the changes by clicking the \"Activate on selected sites\" button."
@@ -7588,11 +7577,6 @@ msgstr "Wijs SLA-definitie toe aan dienst"
 msgid "Assign SLA to service"
 msgstr "Wijs SLA toe aan dienst"
 
-msgid ""
-"Assign created issues to defined user. This is the username of the user (not "
-"email)."
-msgstr ""
-
 msgid "Assign service to following host"
 msgstr "Wijs de dienst toe aan de volgende host"
 
@@ -7635,9 +7619,6 @@ msgstr "Toewijzen via reguliere expressies"
 #, fuzzy
 msgid "Assigned to host"
 msgstr "Toewijzen aan groep"
-
-msgid "Assignee"
-msgstr ""
 
 #, fuzzy
 msgid "Assignment mode"
@@ -7808,17 +7789,6 @@ msgstr ""
 "gebruiken om de eerste, tweede enz. overeenkomende groep in te voegen."
 
 #, fuzzy
-msgid "Attach graphs"
-msgstr "alle grafieken"
-
-#, fuzzy
-msgid ""
-"Attach graphs and limit the number of graphs that are attached to an issue."
-msgstr ""
-"Stelt een limiet in voor het aantal grafieken dat wordt weergegeven in een "
-"melding."
-
-#, fuzzy
 msgid ""
 "Attach information about a contact person. If you have bracketed groups in "
 "the text to match, then you can use the placeholders <tt>\\1</tt>, <tt>\\2</"
@@ -7828,10 +7798,6 @@ msgstr ""
 "staan die overeen moeten komen, dan kunt u de plaatshouders <tt>1</tt>, "
 "<tt>2</tt>, enz. gebruiken om de eerste, tweede enz. overeenkomende groep in "
 "te voegen."
-
-#, fuzzy
-msgid "Attach up to"
-msgstr "Laat je zien aan"
 
 msgid "Attempt to interpret OEM data"
 msgstr "Poging tot interpretatie van OEM gegevens"
@@ -7933,13 +7899,6 @@ msgstr "Authenticatie Verval"
 #, fuzzy
 msgid "Authentication context class reference"
 msgstr "Authenticatiebron"
-
-msgid ""
-"Authentication details for communicating with ServiceNow. If you want to "
-"create incidents, at least the role 'itil' is required. If you want to "
-"create cases, at least 'csm_ws_integration' and 'sn_customerservice_agent' "
-"are required."
-msgstr ""
 
 #, fuzzy
 msgid "Authentication error"
@@ -9130,9 +9089,6 @@ msgstr "Gem. aantal geblokkeerde verzoeken"
 
 msgid "Avg. request rate"
 msgstr "Gemiddeld aantal verzoeken"
-
-msgid "Awaiting info"
-msgstr "In afwachting van info"
 
 msgid "Azure"
 msgstr "Azure"
@@ -11979,25 +11935,6 @@ msgstr "Oproep met de volgende parameters:"
 msgid "Call with the following parameters:"
 msgstr "Oproep met de volgende parameters:"
 
-msgid "Caller ID"
-msgstr "Beller ID"
-
-msgid ""
-"Caller is the user on behalf of whom the incident is being reported within "
-"ServiceNow. Please enter the name of the caller here. It is recommended to "
-"use the same user as used for login. Otherwise, your ACL rules in ServiceNow "
-"must be adjusted, so that the user who is used for login can create/edit/"
-"resolve incidents on behalf of the caller. Please have a look at ServiceNow "
-"documentation for details."
-msgstr ""
-"De beller is de gebruiker namens wie het incident wordt gemeld binnen "
-"ServiceNow. Vul hier de naam van de beller in. Het is aan te raden om "
-"dezelfde gebruiker te gebruiken als die gebruikt wordt voor het inloggen. "
-"Anders moeten uw ACL regels in ServiceNow worden aangepast, zodat de "
-"gebruiker die wordt gebruikt om in te loggen incidenten kan aanmaken/"
-"bewerken/oplossen uit naam van de beller. Kijk in de ServiceNow documentatie "
-"voor details."
-
 msgid "Calling final hooks"
 msgstr "Definitieve haken oproepen"
 
@@ -12039,9 +11976,6 @@ msgstr "Annuleer meldingen voor dit plugin type"
 
 msgid "Cancel previous notifications"
 msgstr "Vorige kennisgevingen annuleren"
-
-msgid "Canceled"
-msgstr "Geannuleerd"
 
 #, python-format
 msgid ""
@@ -12414,9 +12348,6 @@ msgstr "Opsporingspercentage"
 
 msgid "Casa module: CPU temperature"
 msgstr "Casa module: CPU temperatuur"
-
-msgid "Case"
-msgstr "Zaak"
 
 msgid "Case insensitive"
 msgstr "Hoofdletterongevoelig"
@@ -14587,9 +14518,6 @@ msgstr ""
 msgid "Close timewarp"
 msgstr "Timewarp sluiten"
 
-msgid "Closed"
-msgstr "Gesloten"
-
 msgid "Closing connection"
 msgstr "Afsluitende verbinding"
 
@@ -15562,10 +15490,6 @@ msgstr ""
 "zal dan dit domein bevragen voor de dichtstbijzijnde domeincontroller om mee "
 "te communiceren."
 
-#, fuzzy
-msgid "Configure the Jira URL here."
-msgstr "Configureer hier de JIRA URL."
-
 msgid "Configure the agent updater whether to connect via proxy server."
 msgstr ""
 "Configureer de agent updater of hij verbinding moet maken via een proxy "
@@ -15590,14 +15514,6 @@ msgstr ""
 
 msgid "Configure the automatic removal of monitored hosts."
 msgstr "Configureer de automatische verwijdering van bewaakte hosts."
-
-#, fuzzy
-msgid ""
-"Configure the base URL for the monitoring web GUI here. Include the site "
-"name. Used for linking to Checkmk out of Jira."
-msgstr ""
-"Configureer hier de basis URL voor de Monitoring Web-GUI. Voeg de naam van "
-"de site toe. Gebruikt voor link naar check_mk uit jira."
 
 #, fuzzy, python-format
 msgid ""
@@ -15777,10 +15693,6 @@ msgstr ""
 "op de Pushover website."
 
 #, fuzzy
-msgid "Configure the username here."
-msgstr "Configureer hier de gebruikersnaam."
-
-#, fuzzy
 msgid ""
 "Configure this to have the notification plug-in connect directly to the SMTP "
 "server. This has the advantage of providing better error messages in case of "
@@ -15809,10 +15721,6 @@ msgid ""
 "Configure warning and critical upper thresholds for Corosync link latency: "
 "both instantaneous maximum values and the averaged latency."
 msgstr ""
-
-#, fuzzy
-msgid "Configure your ServiceNow URL here (e.g. https://myservicenow.com)."
-msgstr "Configureer hier uw ServiceNow URL (bijv. https://myservicenow.com)."
 
 #, python-format
 msgid "Configure your preferred way of license usage submission in %s"
@@ -18007,10 +17915,6 @@ msgstr ""
 
 msgid "Custom event limit"
 msgstr "Aangepaste gebeurtenislimiet"
-
-#, fuzzy
-msgid "Custom fields"
-msgstr "Aangepast"
 
 msgid "Custom footer links"
 msgstr "Aangepaste voettekst links"
@@ -20536,14 +20440,8 @@ msgstr ""
 msgid "Description for host alerts"
 msgstr "Beschrijving voor waarschuwingen van de gastheer"
 
-msgid "Description for host incidents"
-msgstr "Beschrijving voor incidenten met de gastheer"
-
 msgid "Description for service alerts"
 msgstr "Beschrijving voor dienstwaarschuwingen"
-
-msgid "Description for service incidents"
-msgstr "Beschrijving van service-incidenten"
 
 msgid "Description or comment"
 msgstr "Beschrijving of opmerking"
@@ -22456,9 +22354,6 @@ msgstr "Verwijder niet overeenkomende verdwenen diensten"
 msgid "Don't change parameters for matching services"
 msgstr "Bekijk en bewerk de parameters voor deze dienst"
 
-msgid "Don't change state"
-msgstr "Verander niet van toestand"
-
 #, fuzzy
 msgid "Don't compute a rate"
 msgstr "Snelheid afgeleverde berichten"
@@ -22924,16 +22819,6 @@ msgstr "E.Type"
 
 msgid "E.g. 'project = my_project and result = \"waiting for something\"'"
 msgstr "Bijv. \"project = mijn_project en resultaat = \"wachten op iets\""
-
-msgid ""
-"E.g., if you register the agent controller at multiple sites, only the first "
-"site will be used for agent updates."
-msgstr ""
-
-msgid ""
-"E.g., if you register the agent controller at multiple sites, only the last "
-"site will be used for agent updates."
-msgstr ""
 
 msgid "EC2 instances may take a few minutes to show up."
 msgstr ""
@@ -24480,12 +24365,6 @@ msgstr "Voer gebruikerswachtwoord in"
 msgid "Enter source name"
 msgstr "Voer gebruikersnaam in"
 
-#, python-format
-msgid ""
-"Enter the %s to connect Checkmk to self-hosted Jira or enter the %s to "
-"connect to Jira Cloud."
-msgstr ""
-
 msgid ""
 "Enter the Fully Qualified Domain Name (FQDN) where your Checkmk server is "
 "running including the protocol. Stop after the top level domain (TLD), so "
@@ -24574,10 +24453,6 @@ msgid ""
 msgstr ""
 "Voer alleen de gewone naam van de share in, bijvoorbeeld <tt>iso</tt>, "
 "<b>niet</b> de volledige UNC zoals <tt>servername</tt>"
-
-msgid ""
-"Enter the technical name of the field as defined in the ServiceNow database."
-msgstr ""
 
 #, fuzzy
 msgid ""
@@ -29643,9 +29518,6 @@ msgstr ""
 msgid "Here you can configure the credentials to be used."
 msgstr "Hier kunt u de time-out in seconden instellen."
 
-msgid "Here you can configure timeout settings in seconds."
-msgstr "Hier kunt u de time-out in seconden instellen."
-
 msgid "Here you can configure timeout settings."
 msgstr "Hier kunt u de time-out instellingen configureren."
 
@@ -29775,21 +29647,6 @@ msgstr ""
 "afzonderlijke processen. Om prestatieredenen wordt het gemiddelde virtuele "
 "geheugen niet toegepast op de niveaus van afzonderlijke processen."
 
-#, python-format
-msgid ""
-"Here you can define the state of the %s in case of a recovery of the "
-"affected host or service problem."
-msgstr ""
-"Hier kunt u de toestand van de %s definiëren in geval van een herstel van de "
-"getroffen host of een dienstprobleem."
-
-msgid ""
-"Here you can define the state of the incident in case of a downtime of the "
-"affected host or service."
-msgstr ""
-"Hier kunt u de status van het incident definiëren in geval van een downtime "
-"van de getroffen host of dienst."
-
 #, fuzzy
 msgid ""
 "Here you can define tree configurations for the snap-in <i>Virtual Host-"
@@ -29837,10 +29694,6 @@ msgstr ""
 msgid "Here you can define which protocol to use, default is https."
 msgstr ""
 "Hier kunt u bepalen welk protocol gebruikt moet worden, standaard is https."
-
-msgid "Here you can define with which priority the case should be created."
-msgstr ""
-"Hier kunt u bepalen met welke prioriteit de zaak moet worden aangemaakt."
 
 msgid ""
 "Here you can define, how many search results should be processed. The max. "
@@ -30345,30 +30198,6 @@ msgstr ""
 "overschrijven. Binnen een map is de volgorde van de regels van belang, "
 "d.w.z., regels verder onderaan in de lijst worden overschreven door regels "
 "verder bovenaan."
-
-#, fuzzy
-msgid ""
-"Here, you can define the state of the incident in case of an acknowledgment "
-"of the affected host or service problem."
-msgstr ""
-"Hier kunt u de status van het incident bepalen in geval van een bevestiging "
-"van de getroffen host of een dienstprobleem."
-
-#, fuzzy
-msgid ""
-"Here, you can define the state of the incident in case of an acknowledgment "
-"of the host or service problem."
-msgstr ""
-"Hier kunt u de status van het incident bepalen in geval van een bevestiging "
-"van het host- of dienstprobleem."
-
-#, fuzzy
-msgid ""
-"Here, you can define the state of the incident in case of an ending "
-"acknowledgment of the host or service problem."
-msgstr ""
-"Hier kunt u de status van het incident bepalen in geval van een beëindiging "
-"van de host of een dienstprobleem."
 
 #, fuzzy
 msgid ""
@@ -31855,9 +31684,6 @@ msgstr "Host aangepast attribuut"
 
 msgid "Host custom attributes"
 msgstr "Host aangepaste attributen"
-
-msgid "Host custom field ID"
-msgstr "Host aangepast veld ID"
 
 msgid "Host customer"
 msgstr "Gastheer klant"
@@ -35232,9 +35058,6 @@ msgstr "Afbeeldingen"
 msgid "Immediately scheduled checks"
 msgstr "Onmiddellijk geplande controles"
 
-msgid "Impact"
-msgstr "Impact"
-
 msgid "Import"
 msgstr "Importeren"
 
@@ -35680,10 +35503,6 @@ msgid ""
 "more information."
 msgstr ""
 
-#, fuzzy
-msgid "In progress"
-msgstr "In uitvoering"
-
 msgid "In relation to normal check interval"
 msgstr "In verhouding tot het normale controle-interval"
 
@@ -35868,9 +35687,6 @@ msgstr "5 Volt Uitvoer Ondergrens"
 #, fuzzy
 msgid "Inbound throughput upper levels (/sec)"
 msgstr "5 Volt Uitvoer Bovengrens"
-
-msgid "Incident"
-msgstr "Incident"
 
 msgid "Include Pattern"
 msgstr "Patroon opnemen"
@@ -36890,12 +36706,6 @@ msgid "Invalid credentials"
 msgstr "Ongeldige inloggegevens"
 
 #, fuzzy
-msgid ""
-"Invalid custom field. Only the characters a-z, A-Z, 0-9, _ and - are allowed."
-msgstr ""
-"Ongeldige tag ID. Alleen de tekens a-z, A-Z, 0-9, _ en - zijn toegestaan."
-
-#, fuzzy
 msgid "Invalid data"
 msgstr "Ongeldige ident"
 
@@ -37438,9 +37248,6 @@ msgstr ""
 msgid "Is-Home state (Netapp only)"
 msgstr "Is-Home status (alleen Netapp)"
 
-msgid "Issue type ID"
-msgstr "Uitgiftetype ID"
-
 msgid "Issued by"
 msgstr "Uitgegeven door"
 
@@ -37830,19 +37637,11 @@ msgstr "Jenkins wachtrij"
 msgid "Jenkins system metrics"
 msgstr "Oracle systeemparameters"
 
-#, fuzzy
-msgid "Jira URL"
-msgstr "JIRA URL"
-
 msgid "Jira custom service"
 msgstr "Jira aangepaste dienst"
 
 msgid "Jira instance to query"
 msgstr "Jira instantie om te bevragen"
-
-#, fuzzy
-msgid "Jira parameters"
-msgstr "Optionele parameters"
 
 msgid "Jira statistics"
 msgstr "Jira statistieken"
@@ -41895,9 +41694,6 @@ msgstr "Raad van bestuur"
 msgid "Management board config"
 msgstr "Configuratie raad van bestuur"
 
-msgid "Management type"
-msgstr "Type beheer"
-
 msgid "Managers"
 msgstr "Managers"
 
@@ -41934,15 +41730,6 @@ msgid ""
 msgstr ""
 "Laat de kern handmatig een melding sturen naar een host of dienst om te "
 "testen of meldingen correct zijn ingesteld"
-
-msgid ""
-"Manually register the agent updater.<br>Either on agent controller "
-"registration with explicit flag: <tt>cmk-agent-ctl register [args] --"
-"automatic-updates</tt><br>Or separately: <tt>cmk-update-agent register</"
-"tt>(Linux)/<tt>check_mk_agent.exe updater register</tt>(Windows).<br>Since "
-"the registration is handled manually by the user, any existing agent updater "
-"registration will be overwritten."
-msgstr ""
 
 #, python-format
 msgid "Manually set to %s by %s"
@@ -44057,9 +43844,6 @@ msgstr "Modem type"
 msgid "Modems"
 msgstr "Modems"
 
-msgid "Moderate"
-msgstr "Matig"
-
 msgid "Modifications"
 msgstr "Wijzigingen"
 
@@ -44412,9 +44196,6 @@ msgstr "Toezicht op Linux"
 
 msgid "Monitoring Microsoft Azure"
 msgstr "Toezicht op Microsoft Azure"
-
-msgid "Monitoring URL"
-msgstr "Controle URL"
 
 msgid "Monitoring VMWare ESXi"
 msgstr "Toezicht op VMWare ESXi"
@@ -48548,14 +48329,6 @@ msgstr ""
 msgid "OAUth authentication"
 msgstr "Authenticatie"
 
-#, fuzzy
-msgid "OAuth token"
-msgstr "API sleutel/teken"
-
-#, fuzzy
-msgid "OAuth token authentication"
-msgstr "Token authenticatie"
-
 msgid "OAuth2 (ClientID/TenantID)"
 msgstr "OAuth2 (ClientID/TenantID)"
 
@@ -48836,9 +48609,6 @@ msgstr "Server tijd"
 #, fuzzy
 msgid "On Checkmk agent uninstallation"
 msgstr "Checkmk Agent installatie auditing"
-
-msgid "On Hold"
-msgstr "On Hold"
 
 #, fuzzy
 msgid "On all services"
@@ -53160,15 +52930,6 @@ msgstr ""
 "inventarisatieregels."
 
 msgid ""
-"Please note that the mapping to the numeric ServiceNow state may be changed "
-"at your system and can differ from our definitions. In this case use the "
-"option below."
-msgstr ""
-"Merk op dat de mapping naar de numerieke ServiceNow status op uw systeem kan "
-"gewijzigd zijn en kan verschillen van onze definities. Gebruik in dit geval "
-"de onderstaande optie."
-
-msgid ""
 "Please note that you have to set <tt>RequestHeader set X-Forwarded-Proto "
 "\"https\"</tt> in your system Apache configuration to tell the Checkmk GUI "
 "about the SSL setup."
@@ -53522,16 +53283,6 @@ msgid ""
 msgstr ""
 "Gebruik alleen a-z, A-Z, 0-9, spatie, underscore, punt, koppelteken en slash "
 "voor uw dienstbeschrijving"
-
-msgid ""
-"Please use this option if you have multiple sites in a distributed setup "
-"which send their notifications to the same ServiceNow instance. The site ID "
-"will be used as prefix for the problem ID on incident creation."
-msgstr ""
-"Gebruik deze optie als u meerdere sites heeft in een gedistribueerde opzet "
-"die hun meldingen naar dezelfde ServiceNow instantie sturen. De site ID zal "
-"worden gebruikt als prefix voor de probleem ID bij het aanmaken van het "
-"incident."
 
 #, fuzzy
 msgid "Please wait..."
@@ -54192,9 +53943,6 @@ msgstr "Prio"
 
 msgid "Priority"
 msgstr "Prioriteit"
-
-msgid "Priority ID"
-msgstr "Prioriteit ID"
 
 msgid "Privacy pass phrase"
 msgstr "Privacy paswoord"
@@ -57414,15 +57162,6 @@ msgstr ""
 msgid "Residual current phase name"
 msgstr "huidige hostnaam"
 
-msgid "Resolution notes for host cases"
-msgstr "Nota's van oplossingen voor gevallen van ontvangst"
-
-msgid "Resolution notes for service cases"
-msgstr "Nota's van oplossingen voor dienstgevallen"
-
-msgid "Resolved"
-msgstr "Opgelost"
-
 #, fuzzy
 msgid "Resource"
 msgstr "Bronnen"
@@ -59645,17 +59384,6 @@ msgstr ""
 "voor een gedetailleerde uitleg van deze parameters."
 
 msgid ""
-"See <a href=\"https://docs.servicenow.com/bundle/helsinki-it-service-"
-"management/page/product/incident-management/reference/"
-"r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</a> "
-"for more information."
-msgstr ""
-"Zie <a href=\"https://docs.servicenow.com/bundle/helsinki-it-service-"
-"management/page/product/incident-management/reference/"
-"r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</a> "
-"voor meer informatie."
-
-msgid ""
 "See <a href=\"https://pushover.net/api#sounds\" target=\"_blank\">Pushover "
 "sounds</a> for more information and trying out available sounds."
 msgstr ""
@@ -60530,9 +60258,6 @@ msgstr "Dienst aangepast kenmerk"
 msgid "Service custom attributes"
 msgstr "Service aangepaste attributen"
 
-msgid "Service custom field ID"
-msgstr "Dienst aangepast veld ID"
-
 msgid "Service description"
 msgstr "Beschrijving van de dienst"
 
@@ -60936,13 +60661,6 @@ msgstr "Dienstverleningsniveau"
 msgid "Service: "
 msgstr "Service: "
 
-msgid "ServiceNow URL"
-msgstr "ServiceNow URL"
-
-#, fuzzy
-msgid "ServiceNow parameters"
-msgstr "Voorbeeld voor parameters"
-
 msgid "Services"
 msgstr "Diensten"
 
@@ -61069,14 +60787,6 @@ msgstr "IPv4-adres instellen"
 
 msgid "Set Setup to read only mode for other users"
 msgstr "Setup instellen op alleen lezen voor andere gebruikers"
-
-#, fuzzy, python-format
-msgid ""
-"Set a custom label for new issues. If not set, 'monitoring' will be used."
-"<br><br>%s"
-msgstr ""
-"Hier kunt u een eigen label instellen voor nieuwe problemen. Indien niet "
-"ingesteld, zal 'monitoring' worden gebruikt."
 
 msgid "Set absolute levels"
 msgstr "Absolute niveaus instellen"
@@ -61250,13 +60960,6 @@ msgstr "Maximumleeftijd instellen"
 #, fuzzy
 msgid "Set monitoring states for no-smoke and smoke cases"
 msgstr "Bewakingstoestand voor elke andere eenheidstoestand"
-
-#, fuzzy
-msgid "Set optional timeout for connections to Jira"
-msgstr "Stel een optionele time-out in voor verbindingen met JIRA"
-
-msgid "Set optional timeout for connections to ServiceNow"
-msgstr "Stel een optionele time-out in voor verbindingen met ServiceNow"
 
 msgid "Set optional timeout for connections to the modem."
 msgstr "Stel een optionele time-out in voor verbindingen met de modem."
@@ -61643,10 +61346,6 @@ msgstr "Instellingen"
 msgid "Settings concerning the connection to the Checkmk and SNMP agents"
 msgstr "Instellingen betreffende de verbinding met de Checkmk en SNMP agents"
 
-#, python-format
-msgid "Settings for %s state in case of recovery"
-msgstr "Instellingen voor %s toestand in geval van herstel"
-
 msgid "Settings for Parent Scan"
 msgstr "Instellingen voor Ouder Scannen"
 
@@ -61655,13 +61354,6 @@ msgstr "Instellingen voor certificaten afgegeven aan geregistreerde agenten."
 
 msgid "Settings for host checks via Smart PING"
 msgstr "Instellingen voor hostcontroles via Smart PING"
-
-#, fuzzy
-msgid "Settings for incident state in case of acknowledgment"
-msgstr "Instellingen voor incidentstatus in geval van bevestiging"
-
-msgid "Settings for incident state in case of downtime"
-msgstr "Instellingen voor incidentstatus in geval van downtime"
 
 msgid ""
 "Settings levels on the used bandwidth is optional. If you do set levels you "
@@ -61818,14 +61510,6 @@ msgstr "Kort - Gebruik de eerste 12 karakters van de docker container ID"
 #, fuzzy
 msgid "Short ID"
 msgstr "Haven"
-
-#, python-format
-msgid "Short description for host %s"
-msgstr "Korte beschrijving voor host %s"
-
-#, python-format
-msgid "Short description for service %s"
-msgstr "Korte beschrijving voor dienst %s"
 
 #, fuzzy
 msgid "Short time intervals"
@@ -62652,9 +62336,6 @@ msgstr "Aansluiting ter plaatse"
 
 msgid "Site connectivity"
 msgstr "Site connectiviteit"
-
-msgid "Site custom field ID"
-msgstr "Site aangepast veld ID"
 
 msgid "Site dashboard $SITE$"
 msgstr "Site dashboard $SITE$"
@@ -65020,14 +64701,6 @@ msgstr ""
 msgid "State machine in invalid state"
 msgstr "Staatsmachine in ongeldige toestand"
 
-#, python-format
-msgid "State of %s if recovery is set"
-msgstr "Toestand van %s indien herstel is ingesteld"
-
-#, python-format
-msgid "State of %s if recovery is set (as integer)"
-msgstr "Toestand van %s indien herstel is ingesteld (als geheel getal)"
-
 msgid "State of NTP peer"
 msgstr "Toestand van NTP peer"
 
@@ -65041,47 +64714,11 @@ msgstr "Staat van een host"
 msgid "State of a service"
 msgstr "Staat van een dienst"
 
-msgid "State of case if recovery is set (predefined)"
-msgstr "Staat van het geval indien herstel is ingesteld (vooraf bepaald)"
-
 msgid "State of event changed by user"
 msgstr "Toestand van gebeurtenis gewijzigd door gebruiker"
 
 msgid "State of host"
 msgstr "Staat van gastheer"
-
-#, fuzzy
-msgid "State of incident if acknowledgment is set"
-msgstr "Staat van incident indien bevestiging is ingesteld"
-
-#, fuzzy
-msgid "State of incident if acknowledgment is set (as integer)"
-msgstr "Status van incident indien bevestiging is ingesteld (als geheel getal)"
-
-#, fuzzy
-msgid "State of incident if acknowledgment is set (predefined)"
-msgstr ""
-"Status van incident indien ontvangstbevestiging is ingesteld "
-"(voorgedefinieerd)"
-
-msgid "State of incident if downtime expires"
-msgstr "Staat van het incident als de downtime verstrijkt"
-
-msgid "State of incident if downtime expires (as integer)"
-msgstr "Toestand van het incident als de downtime afloopt (als geheel getal)"
-
-msgid "State of incident if downtime expires (predefined)"
-msgstr ""
-"Toestand van het incident na afloop van de downtime (vooraf gedefinieerd)"
-
-msgid "State of incident if downtime is set"
-msgstr "Staat van incident indien downtime is ingesteld"
-
-msgid "State of incident if downtime is set (as integer)"
-msgstr "Staat van het incident indien downtime is ingesteld (als geheel getal)"
-
-msgid "State of incident if downtime is set (predefined)"
-msgstr "Staat van incident indien downtime is ingesteld (voorgedefinieerd)"
 
 msgid "State of remaining services"
 msgstr "Staat van resterende diensten"
@@ -67219,40 +66856,6 @@ msgstr ""
 
 msgid "Text output"
 msgstr "Tekstuitvoer"
-
-msgid ""
-"Text that should be set in field <tt>Description</tt> for host notifications."
-msgstr ""
-"Tekst die moet worden ingesteld in het veld <tt>Omschrijving</tt> voor "
-"hostmeldingen."
-
-msgid ""
-"Text that should be set in field <tt>Description</tt> for service "
-"notifications."
-msgstr ""
-"Tekst die moet worden ingesteld in het veld <tt>Beschrijving</tt> voor "
-"servicemeldingen."
-
-msgid ""
-"Text that should be set in field <tt>Resolution notes</tt> on recovery "
-"service notifications."
-msgstr ""
-"Tekst die moet worden ingesteld in het veld <tt>Oplossingsopmerkingen</tt> "
-"op meldingen van hersteldiensten."
-
-msgid ""
-"Text that should be set in field <tt>Short description</tt> for host "
-"notifications."
-msgstr ""
-"Tekst die moet worden ingesteld in het veld <tt>Korte beschrijving</tt> voor "
-"hostmeldingen."
-
-msgid ""
-"Text that should be set in field <tt>Short description</tt> for service "
-"notifications."
-msgstr ""
-"Tekst die moet worden ingesteld in het veld <tt>Korte beschrijving</tt> voor "
-"servicemeldingen."
 
 msgid "Text to cancel event(s)"
 msgstr "Tekst om evenement(en) te annuleren"
@@ -70640,63 +70243,6 @@ msgstr ""
 #, fuzzy
 msgid "The number of the power phase."
 msgstr "Het nummer van de machtsfase."
-
-#, fuzzy
-msgid ""
-"The numerical ID of the Jira custom field for sites. Please use this option "
-"if you have multiple sites in a distributed setup which send their "
-"notifications to the same Jira instance."
-msgstr ""
-"De numerieke ID van het JIRA aangepaste veld voor sites. Gebruik deze optie "
-"als u meerdere sites heeft in een gedistribueerde opstelling die hun "
-"meldingen naar dezelfde JIRA instantie sturen."
-
-#, fuzzy
-msgid "The numerical Jira custom field ID for host problems."
-msgstr "De numerieke JIRA custom field ID voor hostproblemen."
-
-#, fuzzy
-msgid "The numerical Jira custom field ID for service problems."
-msgstr "Het numerieke JIRA aangepaste veld ID voor service problemen."
-
-#, fuzzy
-msgid ""
-"The numerical Jira issue type ID. If not set, it will be retrieved from a "
-"custom user attribute named <tt>jiraissuetype</tt>. If that is not set, the "
-"notification will fail."
-msgstr ""
-"De numerieke JIRA issue type ID. Als dit niet is ingesteld, wordt het "
-"opgehaald uit een aangepast gebruikersattribuut met de naam "
-"<tt>jiraissuetype</tt>. Als dat niet is ingesteld, zal de melding mislukken."
-
-#, fuzzy
-msgid ""
-"The numerical Jira priority ID. If not set, it will be retrieved from a "
-"custom user attribute named <tt>jirapriority</tt>. If that is not set, the "
-"standard priority will be used."
-msgstr ""
-"De numerieke JIRA prioriteit ID. Als die niet is ingesteld, wordt die "
-"opgehaald uit een aangepast gebruikersattribuut met de naam "
-"<tt>jirapriority</tt>. Als dat niet is ingesteld, wordt de standaard "
-"prioriteit gebruikt."
-
-#, fuzzy
-msgid ""
-"The numerical Jira project ID. If not set, it will be retrieved from a "
-"custom user attribute named <tt>jiraproject</tt>. If that is not set, the "
-"notification will fail."
-msgstr ""
-"De numerieke JIRA project ID. Als dit niet is ingesteld, wordt het opgehaald "
-"uit een aangepast gebruikersattribuut met de naam <tt>jiraproject</tt>. Als "
-"dat niet is ingesteld, zal de melding mislukken."
-
-#, fuzzy
-msgid ""
-"The numerical Jira resolution transition ID. 11 - 'To Do', 21 - 'In "
-"progress', 31 - 'Done'"
-msgstr ""
-"De numerieke JIRA resolutie overgang ID. 11 - 'Te doen', 21 - 'In "
-"uitvoering', 31 - 'Gereed'"
 
 #, fuzzy
 msgid "The official Checkmk User Guide"
@@ -78419,19 +77965,32 @@ msgstr ""
 
 msgid ""
 "To start updating the agent package, the agent updater must register at a "
-"monitoring site.<br>(_New with Checkmk 2.5_) By default, the agent updater "
-"will be registered by the agent controller, after its own successful "
-"registration, at the same site and with the same hostname.<br>Here you can "
-"configure the overwriting behavior of subsequent agent controller "
+"monitoring site.<br><br><i>New with Checkmk 2.5</i>: By default, the agent "
+"updater will be registered by the agent controller, after its own successful "
+"registration, at the same site and with the same hostname.<br><br>Here you "
+"can configure the overwriting behavior of subsequent agent controller "
 "registrations, or opt to skip the agent controller triggered agent updater "
 "registration entirely.<br>Consider the differences between agent controller "
 "and agent updater registrations: The agent controller can register at "
 "multiple sites, or overwrite existing registrations when registering for the "
 "same site again. The agent updater can only hold one registration at a time. "
 "Every new registration will overwrite the previous one, regardless of the "
-"connection details.<br>Note: Since the agent controller is available for "
-"Linux and Windows only, this setting is not relevant for Solaris, where the "
-"agent updater will always need to be registered manually."
+"connection details.<br><br>Available Choices:<ul><li><b>On first agent "
+"controller registration</b>: An existing Agent Updater registration will be "
+"kept. If you register the agent controller at multiple sites, only the first "
+"site will be used for agent updates.</li><li><b>On every agent controller "
+"registration</b>: The Agent Updater registration will be overwritten on "
+"every agent controller registration. If you register the agent controller at "
+"multiple sites, only the last site will be used for agent updates.</"
+"li><li><b>Manual</b>: Manually register the agent updater.<br>Either on "
+"agent controller registration with explicit flag: <tt>cmk-agent-ctl register "
+"[args] --automatic-updates</tt><br>Or separately: <tt>cmk-update-agent "
+"register</tt> (Linux)/<tt>check_mk_agent.exe updater register</tt> (Windows)."
+"<br>Since the registration is handled manually by the user, any existing "
+"agent updater registration will be overwritten.</li></ul><i>Note</i>: Since "
+"the agent controller is available for Linux and Windows only, this setting "
+"is not relevant for Solaris, where the agent updater will always need to be "
+"registered manually."
 msgstr ""
 
 msgid "To unlock higher limits, purchase a license "
@@ -83676,9 +83235,6 @@ msgstr "Uptime sinds laatste reboot van apparaten met modules"
 msgid "Upturn supply levels"
 msgstr "Tonerniveaus verhogen"
 
-msgid "Urgency"
-msgstr "Urgentie"
-
 msgid "Usability"
 msgstr "Bruikbaarheid"
 
@@ -84136,12 +83692,6 @@ msgstr "Gebruik een korte titel in de koptekst van het verslag"
 msgid "Use single quotes, escape contained quotes with backslash"
 msgstr ""
 "Gebruik enkele aanhalingstekens, sluit aanhalingstekens uit met een backslash"
-
-msgid "Use site ID"
-msgstr "Gebruik site ID"
-
-msgid "Use site ID prefix"
-msgstr "Gebruik site ID prefix"
 
 msgid "Use system wide CAs"
 msgstr "Gebruik systeemwijde CA's"
@@ -88376,13 +87926,6 @@ msgid ""
 "users with high privileges."
 msgstr ""
 
-msgid ""
-"With ServiceNow you can create different types of management issues, "
-"currently supported are indicents and cases."
-msgstr ""
-"Met ServiceNow kunt u verschillende soorten management issues aanmaken, "
-"momenteel ondersteund zijn indicaties en cases."
-
 #, python-format
 msgid ""
 "With authentication type set to 'OAuth2' the option '%s' must be specified."
@@ -91596,12 +91139,6 @@ msgstr "cAdvisor"
 msgid "cartridge specification"
 msgstr "cartridge specificatie"
 
-msgid "case"
-msgstr "zaak"
-
-msgid "cases"
-msgstr "gevallen"
-
 #, fuzzy
 msgid "central / standalone"
 msgstr "master / standalone"
@@ -92360,12 +91897,6 @@ msgstr "inactief"
 
 msgid "inactive hosts"
 msgstr "inactieve hosts"
-
-msgid "incident"
-msgstr "incident"
-
-msgid "incidents"
-msgstr "incidenten"
 
 msgid "incidents left"
 msgstr "incidenten links"
@@ -97441,6 +96972,452 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, fuzzy
+#~ msgid "API or personal access token"
+#~ msgstr "API Toegangstoken"
+
+#, fuzzy
+#~ msgid "API/PAT token"
+#~ msgstr "API sleutel/teken"
+
+#~ msgid "Activate resolution with following resolution transition ID"
+#~ msgstr "Activeer resolutie met de volgende resolutie overgang ID"
+
+#, fuzzy
+#~ msgid "Attach graphs"
+#~ msgstr "alle grafieken"
+
+#, fuzzy
+#~ msgid ""
+#~ "Attach graphs and limit the number of graphs that are attached to an "
+#~ "issue."
+#~ msgstr ""
+#~ "Stelt een limiet in voor het aantal grafieken dat wordt weergegeven in "
+#~ "een melding."
+
+#, fuzzy
+#~ msgid "Attach up to"
+#~ msgstr "Laat je zien aan"
+
+#~ msgid "Awaiting info"
+#~ msgstr "In afwachting van info"
+
+#~ msgid "Caller ID"
+#~ msgstr "Beller ID"
+
+#~ msgid ""
+#~ "Caller is the user on behalf of whom the incident is being reported "
+#~ "within ServiceNow. Please enter the name of the caller here. It is "
+#~ "recommended to use the same user as used for login. Otherwise, your ACL "
+#~ "rules in ServiceNow must be adjusted, so that the user who is used for "
+#~ "login can create/edit/resolve incidents on behalf of the caller. Please "
+#~ "have a look at ServiceNow documentation for details."
+#~ msgstr ""
+#~ "De beller is de gebruiker namens wie het incident wordt gemeld binnen "
+#~ "ServiceNow. Vul hier de naam van de beller in. Het is aan te raden om "
+#~ "dezelfde gebruiker te gebruiken als die gebruikt wordt voor het inloggen. "
+#~ "Anders moeten uw ACL regels in ServiceNow worden aangepast, zodat de "
+#~ "gebruiker die wordt gebruikt om in te loggen incidenten kan aanmaken/"
+#~ "bewerken/oplossen uit naam van de beller. Kijk in de ServiceNow "
+#~ "documentatie voor details."
+
+#~ msgid "Canceled"
+#~ msgstr "Geannuleerd"
+
+#~ msgid "Case"
+#~ msgstr "Zaak"
+
+#~ msgid "Closed"
+#~ msgstr "Gesloten"
+
+#, fuzzy
+#~ msgid "Configure the Jira URL here."
+#~ msgstr "Configureer hier de JIRA URL."
+
+#, fuzzy
+#~ msgid ""
+#~ "Configure the base URL for the monitoring web GUI here. Include the site "
+#~ "name. Used for linking to Checkmk out of Jira."
+#~ msgstr ""
+#~ "Configureer hier de basis URL voor de Monitoring Web-GUI. Voeg de naam "
+#~ "van de site toe. Gebruikt voor link naar check_mk uit jira."
+
+#, fuzzy
+#~ msgid "Configure the username here."
+#~ msgstr "Configureer hier de gebruikersnaam."
+
+#, fuzzy
+#~ msgid "Configure your ServiceNow URL here (e.g. https://myservicenow.com)."
+#~ msgstr ""
+#~ "Configureer hier uw ServiceNow URL (bijv. https://myservicenow.com)."
+
+#, fuzzy
+#~ msgid "Custom fields"
+#~ msgstr "Aangepast"
+
+#~ msgid "Description for host incidents"
+#~ msgstr "Beschrijving voor incidenten met de gastheer"
+
+#~ msgid "Description for service incidents"
+#~ msgstr "Beschrijving van service-incidenten"
+
+#~ msgid "Don't change state"
+#~ msgstr "Verander niet van toestand"
+
+#~ msgid "Here you can configure timeout settings in seconds."
+#~ msgstr "Hier kunt u de time-out in seconden instellen."
+
+#, python-format
+#~ msgid ""
+#~ "Here you can define the state of the %s in case of a recovery of the "
+#~ "affected host or service problem."
+#~ msgstr ""
+#~ "Hier kunt u de toestand van de %s definiëren in geval van een herstel van "
+#~ "de getroffen host of een dienstprobleem."
+
+#~ msgid ""
+#~ "Here you can define the state of the incident in case of a downtime of "
+#~ "the affected host or service."
+#~ msgstr ""
+#~ "Hier kunt u de status van het incident definiëren in geval van een "
+#~ "downtime van de getroffen host of dienst."
+
+#~ msgid "Here you can define with which priority the case should be created."
+#~ msgstr ""
+#~ "Hier kunt u bepalen met welke prioriteit de zaak moet worden aangemaakt."
+
+#, fuzzy
+#~ msgid ""
+#~ "Here, you can define the state of the incident in case of an "
+#~ "acknowledgment of the affected host or service problem."
+#~ msgstr ""
+#~ "Hier kunt u de status van het incident bepalen in geval van een "
+#~ "bevestiging van de getroffen host of een dienstprobleem."
+
+#, fuzzy
+#~ msgid ""
+#~ "Here, you can define the state of the incident in case of an "
+#~ "acknowledgment of the host or service problem."
+#~ msgstr ""
+#~ "Hier kunt u de status van het incident bepalen in geval van een "
+#~ "bevestiging van het host- of dienstprobleem."
+
+#, fuzzy
+#~ msgid ""
+#~ "Here, you can define the state of the incident in case of an ending "
+#~ "acknowledgment of the host or service problem."
+#~ msgstr ""
+#~ "Hier kunt u de status van het incident bepalen in geval van een "
+#~ "beëindiging van de host of een dienstprobleem."
+
+#~ msgid "Host custom field ID"
+#~ msgstr "Host aangepast veld ID"
+
+#~ msgid "Impact"
+#~ msgstr "Impact"
+
+#, fuzzy
+#~ msgid "In progress"
+#~ msgstr "In uitvoering"
+
+#~ msgid "Incident"
+#~ msgstr "Incident"
+
+#, fuzzy
+#~ msgid ""
+#~ "Invalid custom field. Only the characters a-z, A-Z, 0-9, _ and - are "
+#~ "allowed."
+#~ msgstr ""
+#~ "Ongeldige tag ID. Alleen de tekens a-z, A-Z, 0-9, _ en - zijn toegestaan."
+
+#~ msgid "Issue type ID"
+#~ msgstr "Uitgiftetype ID"
+
+#, fuzzy
+#~ msgid "Jira URL"
+#~ msgstr "JIRA URL"
+
+#, fuzzy
+#~ msgid "Jira parameters"
+#~ msgstr "Optionele parameters"
+
+#~ msgid "Management type"
+#~ msgstr "Type beheer"
+
+#~ msgid "Moderate"
+#~ msgstr "Matig"
+
+#~ msgid "Monitoring URL"
+#~ msgstr "Controle URL"
+
+#, fuzzy
+#~ msgid "OAuth token"
+#~ msgstr "API sleutel/teken"
+
+#, fuzzy
+#~ msgid "OAuth token authentication"
+#~ msgstr "Token authenticatie"
+
+#~ msgid "On Hold"
+#~ msgstr "On Hold"
+
+#~ msgid ""
+#~ "Please note that the mapping to the numeric ServiceNow state may be "
+#~ "changed at your system and can differ from our definitions. In this case "
+#~ "use the option below."
+#~ msgstr ""
+#~ "Merk op dat de mapping naar de numerieke ServiceNow status op uw systeem "
+#~ "kan gewijzigd zijn en kan verschillen van onze definities. Gebruik in dit "
+#~ "geval de onderstaande optie."
+
+#~ msgid ""
+#~ "Please use this option if you have multiple sites in a distributed setup "
+#~ "which send their notifications to the same ServiceNow instance. The site "
+#~ "ID will be used as prefix for the problem ID on incident creation."
+#~ msgstr ""
+#~ "Gebruik deze optie als u meerdere sites heeft in een gedistribueerde "
+#~ "opzet die hun meldingen naar dezelfde ServiceNow instantie sturen. De "
+#~ "site ID zal worden gebruikt als prefix voor de probleem ID bij het "
+#~ "aanmaken van het incident."
+
+#~ msgid "Priority ID"
+#~ msgstr "Prioriteit ID"
+
+#~ msgid "Resolution notes for host cases"
+#~ msgstr "Nota's van oplossingen voor gevallen van ontvangst"
+
+#~ msgid "Resolution notes for service cases"
+#~ msgstr "Nota's van oplossingen voor dienstgevallen"
+
+#~ msgid "Resolved"
+#~ msgstr "Opgelost"
+
+#~ msgid ""
+#~ "See <a href=\"https://docs.servicenow.com/bundle/helsinki-it-service-"
+#~ "management/page/product/incident-management/reference/"
+#~ "r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</"
+#~ "a> for more information."
+#~ msgstr ""
+#~ "Zie <a href=\"https://docs.servicenow.com/bundle/helsinki-it-service-"
+#~ "management/page/product/incident-management/reference/"
+#~ "r_PrioritizationOfIncidents.html\" target=\"_blank\">ServiceNow Incident</"
+#~ "a> voor meer informatie."
+
+#~ msgid "Service custom field ID"
+#~ msgstr "Dienst aangepast veld ID"
+
+#~ msgid "ServiceNow URL"
+#~ msgstr "ServiceNow URL"
+
+#, fuzzy
+#~ msgid "ServiceNow parameters"
+#~ msgstr "Voorbeeld voor parameters"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "Set a custom label for new issues. If not set, 'monitoring' will be used."
+#~ "<br><br>%s"
+#~ msgstr ""
+#~ "Hier kunt u een eigen label instellen voor nieuwe problemen. Indien niet "
+#~ "ingesteld, zal 'monitoring' worden gebruikt."
+
+#, fuzzy
+#~ msgid "Set optional timeout for connections to Jira"
+#~ msgstr "Stel een optionele time-out in voor verbindingen met JIRA"
+
+#~ msgid "Set optional timeout for connections to ServiceNow"
+#~ msgstr "Stel een optionele time-out in voor verbindingen met ServiceNow"
+
+#, python-format
+#~ msgid "Settings for %s state in case of recovery"
+#~ msgstr "Instellingen voor %s toestand in geval van herstel"
+
+#, fuzzy
+#~ msgid "Settings for incident state in case of acknowledgment"
+#~ msgstr "Instellingen voor incidentstatus in geval van bevestiging"
+
+#~ msgid "Settings for incident state in case of downtime"
+#~ msgstr "Instellingen voor incidentstatus in geval van downtime"
+
+#, python-format
+#~ msgid "Short description for host %s"
+#~ msgstr "Korte beschrijving voor host %s"
+
+#, python-format
+#~ msgid "Short description for service %s"
+#~ msgstr "Korte beschrijving voor dienst %s"
+
+#~ msgid "Site custom field ID"
+#~ msgstr "Site aangepast veld ID"
+
+#, python-format
+#~ msgid "State of %s if recovery is set"
+#~ msgstr "Toestand van %s indien herstel is ingesteld"
+
+#, python-format
+#~ msgid "State of %s if recovery is set (as integer)"
+#~ msgstr "Toestand van %s indien herstel is ingesteld (als geheel getal)"
+
+#~ msgid "State of case if recovery is set (predefined)"
+#~ msgstr "Staat van het geval indien herstel is ingesteld (vooraf bepaald)"
+
+#, fuzzy
+#~ msgid "State of incident if acknowledgment is set"
+#~ msgstr "Staat van incident indien bevestiging is ingesteld"
+
+#, fuzzy
+#~ msgid "State of incident if acknowledgment is set (as integer)"
+#~ msgstr ""
+#~ "Status van incident indien bevestiging is ingesteld (als geheel getal)"
+
+#, fuzzy
+#~ msgid "State of incident if acknowledgment is set (predefined)"
+#~ msgstr ""
+#~ "Status van incident indien ontvangstbevestiging is ingesteld "
+#~ "(voorgedefinieerd)"
+
+#~ msgid "State of incident if downtime expires"
+#~ msgstr "Staat van het incident als de downtime verstrijkt"
+
+#~ msgid "State of incident if downtime expires (as integer)"
+#~ msgstr ""
+#~ "Toestand van het incident als de downtime afloopt (als geheel getal)"
+
+#~ msgid "State of incident if downtime expires (predefined)"
+#~ msgstr ""
+#~ "Toestand van het incident na afloop van de downtime (vooraf gedefinieerd)"
+
+#~ msgid "State of incident if downtime is set"
+#~ msgstr "Staat van incident indien downtime is ingesteld"
+
+#~ msgid "State of incident if downtime is set (as integer)"
+#~ msgstr ""
+#~ "Staat van het incident indien downtime is ingesteld (als geheel getal)"
+
+#~ msgid "State of incident if downtime is set (predefined)"
+#~ msgstr "Staat van incident indien downtime is ingesteld (voorgedefinieerd)"
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Description</tt> for host "
+#~ "notifications."
+#~ msgstr ""
+#~ "Tekst die moet worden ingesteld in het veld <tt>Omschrijving</tt> voor "
+#~ "hostmeldingen."
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Description</tt> for service "
+#~ "notifications."
+#~ msgstr ""
+#~ "Tekst die moet worden ingesteld in het veld <tt>Beschrijving</tt> voor "
+#~ "servicemeldingen."
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Resolution notes</tt> on recovery "
+#~ "service notifications."
+#~ msgstr ""
+#~ "Tekst die moet worden ingesteld in het veld <tt>Oplossingsopmerkingen</"
+#~ "tt> op meldingen van hersteldiensten."
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Short description</tt> for host "
+#~ "notifications."
+#~ msgstr ""
+#~ "Tekst die moet worden ingesteld in het veld <tt>Korte beschrijving</tt> "
+#~ "voor hostmeldingen."
+
+#~ msgid ""
+#~ "Text that should be set in field <tt>Short description</tt> for service "
+#~ "notifications."
+#~ msgstr ""
+#~ "Tekst die moet worden ingesteld in het veld <tt>Korte beschrijving</tt> "
+#~ "voor servicemeldingen."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical ID of the Jira custom field for sites. Please use this "
+#~ "option if you have multiple sites in a distributed setup which send their "
+#~ "notifications to the same Jira instance."
+#~ msgstr ""
+#~ "De numerieke ID van het JIRA aangepaste veld voor sites. Gebruik deze "
+#~ "optie als u meerdere sites heeft in een gedistribueerde opstelling die "
+#~ "hun meldingen naar dezelfde JIRA instantie sturen."
+
+#, fuzzy
+#~ msgid "The numerical Jira custom field ID for host problems."
+#~ msgstr "De numerieke JIRA custom field ID voor hostproblemen."
+
+#, fuzzy
+#~ msgid "The numerical Jira custom field ID for service problems."
+#~ msgstr "Het numerieke JIRA aangepaste veld ID voor service problemen."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical Jira issue type ID. If not set, it will be retrieved from a "
+#~ "custom user attribute named <tt>jiraissuetype</tt>. If that is not set, "
+#~ "the notification will fail."
+#~ msgstr ""
+#~ "De numerieke JIRA issue type ID. Als dit niet is ingesteld, wordt het "
+#~ "opgehaald uit een aangepast gebruikersattribuut met de naam "
+#~ "<tt>jiraissuetype</tt>. Als dat niet is ingesteld, zal de melding "
+#~ "mislukken."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical Jira priority ID. If not set, it will be retrieved from a "
+#~ "custom user attribute named <tt>jirapriority</tt>. If that is not set, "
+#~ "the standard priority will be used."
+#~ msgstr ""
+#~ "De numerieke JIRA prioriteit ID. Als die niet is ingesteld, wordt die "
+#~ "opgehaald uit een aangepast gebruikersattribuut met de naam "
+#~ "<tt>jirapriority</tt>. Als dat niet is ingesteld, wordt de standaard "
+#~ "prioriteit gebruikt."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical Jira project ID. If not set, it will be retrieved from a "
+#~ "custom user attribute named <tt>jiraproject</tt>. If that is not set, the "
+#~ "notification will fail."
+#~ msgstr ""
+#~ "De numerieke JIRA project ID. Als dit niet is ingesteld, wordt het "
+#~ "opgehaald uit een aangepast gebruikersattribuut met de naam "
+#~ "<tt>jiraproject</tt>. Als dat niet is ingesteld, zal de melding mislukken."
+
+#, fuzzy
+#~ msgid ""
+#~ "The numerical Jira resolution transition ID. 11 - 'To Do', 21 - 'In "
+#~ "progress', 31 - 'Done'"
+#~ msgstr ""
+#~ "De numerieke JIRA resolutie overgang ID. 11 - 'Te doen', 21 - 'In "
+#~ "uitvoering', 31 - 'Gereed'"
+
+#~ msgid "Urgency"
+#~ msgstr "Urgentie"
+
+#~ msgid "Use site ID"
+#~ msgstr "Gebruik site ID"
+
+#~ msgid "Use site ID prefix"
+#~ msgstr "Gebruik site ID prefix"
+
+#~ msgid ""
+#~ "With ServiceNow you can create different types of management issues, "
+#~ "currently supported are indicents and cases."
+#~ msgstr ""
+#~ "Met ServiceNow kunt u verschillende soorten management issues aanmaken, "
+#~ "momenteel ondersteund zijn indicaties en cases."
+
+#~ msgid "case"
+#~ msgstr "zaak"
+
+#~ msgid "cases"
+#~ msgstr "gevallen"
+
+#~ msgid "incident"
+#~ msgstr "incident"
+
+#~ msgid "incidents"
+#~ msgstr "incidenten"
 
 #, python-format
 #~ msgid " of service %s on host %s"
