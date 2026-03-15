@@ -13,7 +13,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from cmk.agent_based.v2 import Result, Service, State
-from cmk.legacy_checks.silverpeak_VX6000 import (
+from cmk.plugins.silverpeak.agent_based.silverpeak_VX6000 import (
     check_silverpeak,
     discover_silverpeak_VX6000,
     parse_silverpeak,

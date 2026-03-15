@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.silverpeak_VX6000 import (
+from cmk.plugins.silverpeak.agent_based.silverpeak_VX6000 import (
     check_silverpeak,
     discover_silverpeak_VX6000,
     parse_silverpeak,
