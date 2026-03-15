@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 # Example output:
 # <<<solaris_multipath>>>
 # /dev/rdsk/c4t600601608CB02A00DCFD2EEB19A0E111d0s2 4 4
@@ -16,67 +14,89 @@
 # and we check agains that later.
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
+from collections.abc import Mapping
+from typing import Any
 
-check_info = {}
-
-
-def discover_solaris_multipath(info):
-    for device, _total, operational in info:
-        item = device.split("/")[-1]
-        yield item, {"levels": int(operational)}
-
-
-def check_solaris_multipath(item, params, info):
-    for device, total, operational in info:
-        if item == device.split("/")[-1]:
-            operational = int(operational)
-            total = int(total)
-
-            # TODO: Clean this up! Compare to the multipath plugin.
-
-            infotext = "%d paths operational, %d paths total" % (operational, total)
-
-            levels = params.get("levels")
-            if levels is None:
-                state = 1
-                infotext += ", expected paths unknown, please redo service discovery"
-            elif isinstance(levels, tuple):
-                warn, crit = levels
-                warn_num = (warn / 100.0) * total
-                crit_num = (crit / 100.0) * total
-                levels = " (Warning/ Critical at %d/ %d)" % (warn_num, crit_num)
-                info = "paths active: %d" % (operational)
-                if operational <= crit_num:
-                    return 2, info + levels
-                if operational <= warn_num:
-                    return 1, info + levels
-                return 0, info
-
-            expected = int(levels)  # should be int, just for legacy reasons
-            if operational > expected:
-                state = 1
-            elif expected == operational:
-                state = 0
-            elif expected >= operational * 2:  # less than half of paths operational
-                state = 2
-            else:
-                state = 1
-            if state:
-                infotext += ", %d paths expected to be operational" % expected
-
-            return state, infotext
-    return None
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 
 def parse_solaris_multipath(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["solaris_multipath"] = LegacyCheckDefinition(
+agent_section_solaris_multipath = AgentSection(
     name="solaris_multipath",
     parse_function=parse_solaris_multipath,
+)
+
+
+def discover_solaris_multipath(section: StringTable) -> DiscoveryResult:
+    for device, _total, operational in section:
+        item = device.split("/")[-1]
+        yield Service(item=item, parameters={"levels": int(operational)})
+
+
+def check_solaris_multipath(
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
+    for device, total, operational in section:
+        if item == device.split("/")[-1]:
+            operational_int = int(operational)
+            total_int = int(total)
+
+            # TODO: Clean this up! Compare to the multipath plugin.
+
+            infotext = f"{operational_int} paths operational, {total_int} paths total"
+
+            levels = params.get("levels")
+            if levels is None:
+                yield Result(
+                    state=State.WARN,
+                    summary=f"{infotext}, expected paths unknown, please redo service discovery",
+                )
+                return
+
+            if isinstance(levels, tuple):
+                warn, crit = levels
+                warn_num = (warn / 100.0) * total_int
+                crit_num = (crit / 100.0) * total_int
+                levels_text = f" (Warning/ Critical at {warn_num:.0f}/ {crit_num:.0f})"
+                info = f"paths active: {operational_int}"
+                if operational_int <= crit_num:
+                    yield Result(state=State.CRIT, summary=info + levels_text)
+                elif operational_int <= warn_num:
+                    yield Result(state=State.WARN, summary=info + levels_text)
+                else:
+                    yield Result(state=State.OK, summary=info)
+                return
+
+            expected = int(levels)  # should be int, just for legacy reasons
+            if operational_int > expected:
+                state = State.WARN
+            elif expected == operational_int:
+                state = State.OK
+            elif expected >= operational_int * 2:  # less than half of paths operational
+                state = State.CRIT
+            else:
+                state = State.WARN
+            if state != State.OK:
+                infotext += f", {expected} paths expected to be operational"
+
+            yield Result(state=state, summary=infotext)
+            return
+
+
+check_plugin_solaris_multipath = CheckPlugin(
+    name="solaris_multipath",
     service_name="Multipath %s",
     discovery_function=discover_solaris_multipath,
     check_function=check_solaris_multipath,
