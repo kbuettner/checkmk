@@ -4,14 +4,13 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 # mypy: disable-error-code="misc"
-# mypy: disable-error-code="no-untyped-call"
 
 from collections.abc import Mapping, Sequence
 from typing import Any
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Result, Service, State, StringTable
 from cmk.legacy_checks.seh_ports import check_seh_ports, discover_seh_ports, parse_seh_ports
 
 
@@ -43,35 +42,50 @@ from cmk.legacy_checks.seh_ports import check_seh_ports, discover_seh_ports, par
                 ]
             ],
             [
-                ("10", {"status_at_discovery": "010.028.103.078"}),
-                ("12", {"status_at_discovery": "010.099.005.202"}),
-                ("13", {"status_at_discovery": "010.099.005.114"}),
-                ("14", {"status_at_discovery": "010.099.005.102"}),
-                ("15", {"status_at_discovery": "010.099.005.209"}),
-                ("16", {"status_at_discovery": "010.099.005.207"}),
-                ("17", {"status_at_discovery": "SAPOS-Admin (010.099.005.204)"}),
-                ("18", {"status_at_discovery": "SAPOS-Admin (010.099.005.206)"}),
-                ("19", {"status_at_discovery": "010.099.005.112"}),
-                ("2", {"status_at_discovery": "Available"}),
-                ("20", {"status_at_discovery": "ent.westphal (010.028.130.016)"}),
-                ("3", {"status_at_discovery": "SAPOS-Admin (010.099.005.205)"}),
-                ("4", {"status_at_discovery": "010.028.103.077"}),
-                ("5", {"status_at_discovery": "010.028.103.076"}),
-                ("6", {"status_at_discovery": "010.028.103.075"}),
-                ("7", {"status_at_discovery": "SAPOS-Admin (010.099.005.208)"}),
-                ("8", {"status_at_discovery": "010.099.005.111"}),
-                ("9", {"status_at_discovery": "SAPOS-Admin (010.099.005.203)"}),
+                Service(item="10", parameters={"status_at_discovery": "010.028.103.078"}),
+                Service(item="12", parameters={"status_at_discovery": "010.099.005.202"}),
+                Service(item="13", parameters={"status_at_discovery": "010.099.005.114"}),
+                Service(item="14", parameters={"status_at_discovery": "010.099.005.102"}),
+                Service(item="15", parameters={"status_at_discovery": "010.099.005.209"}),
+                Service(item="16", parameters={"status_at_discovery": "010.099.005.207"}),
+                Service(
+                    item="17", parameters={"status_at_discovery": "SAPOS-Admin (010.099.005.204)"}
+                ),
+                Service(
+                    item="18", parameters={"status_at_discovery": "SAPOS-Admin (010.099.005.206)"}
+                ),
+                Service(item="19", parameters={"status_at_discovery": "010.099.005.112"}),
+                Service(item="2", parameters={"status_at_discovery": "Available"}),
+                Service(
+                    item="20", parameters={"status_at_discovery": "ent.westphal (010.028.130.016)"}
+                ),
+                Service(
+                    item="3", parameters={"status_at_discovery": "SAPOS-Admin (010.099.005.205)"}
+                ),
+                Service(item="4", parameters={"status_at_discovery": "010.028.103.077"}),
+                Service(item="5", parameters={"status_at_discovery": "010.028.103.076"}),
+                Service(item="6", parameters={"status_at_discovery": "010.028.103.075"}),
+                Service(
+                    item="7", parameters={"status_at_discovery": "SAPOS-Admin (010.099.005.208)"}
+                ),
+                Service(item="8", parameters={"status_at_discovery": "010.099.005.111"}),
+                Service(
+                    item="9", parameters={"status_at_discovery": "SAPOS-Admin (010.099.005.203)"}
+                ),
             ],
         ),
     ],
 )
 def test_discover_seh_ports(
-    string_table: StringTable, expected_discoveries: Sequence[tuple[str, Mapping[str, Any]]]
+    string_table: list[StringTable],
+    expected_discoveries: Sequence[Service],
 ) -> None:
     """Test discovery function for seh_ports check."""
     parsed = parse_seh_ports(string_table)
     result = list(discover_seh_ports(parsed))
-    assert sorted(result) == sorted(expected_discoveries)
+    assert sorted(result, key=lambda s: s.item or "") == sorted(
+        expected_discoveries, key=lambda s: s.item or ""
+    )
 
 
 @pytest.mark.parametrize(
@@ -103,7 +117,10 @@ def test_discover_seh_ports(
                     ["21.0", "", "010.099.005.114", "13"],
                 ]
             ],
-            [(0, "Tag: 20786_Ent_GNSMART2"), (0, "Status: 010.099.005.111")],
+            [
+                Result(state=State.OK, summary="Tag: 20786_Ent_GNSMART2"),
+                Result(state=State.OK, summary="Status: 010.099.005.111"),
+            ],
         ),
         (
             "9",
@@ -132,9 +149,9 @@ def test_discover_seh_ports(
                 ]
             ],
             [
-                (0, "Tag: 20737_GNSMART1_Vernetzung_NI"),
-                (0, "Status: SAPOS-Admin (010.099.005.203)"),
-                (1, "Status during discovery: Available"),
+                Result(state=State.OK, summary="Tag: 20737_GNSMART1_Vernetzung_NI"),
+                Result(state=State.OK, summary="Status: SAPOS-Admin (010.099.005.203)"),
+                Result(state=State.WARN, summary="Status during discovery: Available"),
             ],
         ),
         (
@@ -164,15 +181,18 @@ def test_discover_seh_ports(
                 ]
             ],
             [
-                (0, "Tag: 20737_GNSMART1_Vernetzung_NI"),
-                (0, "Status: SAPOS-Admin (010.099.005.203)"),
-                (1, "Status during discovery: unknown"),
+                Result(state=State.OK, summary="Tag: 20737_GNSMART1_Vernetzung_NI"),
+                Result(state=State.OK, summary="Status: SAPOS-Admin (010.099.005.203)"),
+                Result(state=State.WARN, summary="Status during discovery: unknown"),
             ],
         ),
     ],
 )
 def test_check_seh_ports(
-    item: str, params: Mapping[str, Any], string_table: StringTable, expected_results: Sequence[Any]
+    item: str,
+    params: Mapping[str, Any],
+    string_table: list[StringTable],
+    expected_results: Sequence[Result],
 ) -> None:
     """Test check function for seh_ports check."""
     parsed = parse_seh_ports(string_table)
