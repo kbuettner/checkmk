@@ -3,14 +3,11 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="misc"
-
-from collections.abc import Mapping, Sequence
-from typing import Any
+from collections.abc import Sequence
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Result, Service, State, StringTable
 from cmk.legacy_checks.silverpeak_VX6000 import (
     check_silverpeak,
     discover_silverpeak_VX6000,
@@ -33,26 +30,24 @@ type InfoType = Sequence[StringTable]
                     ["8", "Disk is not in service", "mydisk"],
                 ],
             ],
-            [(None, {})],
+            [Service()],
         ),
     ],
 )
 def test_discover_silverpeak_VX6000(
-    info: InfoType, expected_discoveries: Sequence[tuple[str | None, Mapping[str, Any]]]
+    info: InfoType, expected_discoveries: Sequence[Service]
 ) -> None:
     """Test discovery function for silverpeak_VX6000 check."""
     parsed = parse_silverpeak(info)
     assert parsed is not None
     result = list(discover_silverpeak_VX6000(parsed))
-    assert sorted(result) == sorted(expected_discoveries)
+    assert sorted(result, key=str) == sorted(expected_discoveries, key=str)
 
 
 @pytest.mark.parametrize(
-    "item, params, info, expected_results",
+    "info, expected_results",
     [
         (
-            None,
-            {},
             [
                 [["4"]],
                 [
@@ -63,26 +58,33 @@ def test_discover_silverpeak_VX6000(
                 ],
             ],
             [
-                (0, "4 active alarms. OK: 1, WARN: 1, CRIT: 1, UNKNOWN: 1"),
-                (0, "\nAlarm: Tunnel state is Up, Alarm-Source: if1, Severity: info"),
-                (1, "\nAlarm: System BYPASS mode, Alarm-Source: mysystem, Severity: minor"),
-                (
-                    2,
-                    "\nAlarm: Tunnel state is Down, Alarm-Source: to_sp01-dnd_WAN-WAN, Severity: critical",
+                Result(
+                    state=State.OK,
+                    summary="4 active alarms. OK: 1, WARN: 1, CRIT: 1, UNKNOWN: 1",
                 ),
-                (
-                    3,
-                    "\nAlarm: Disk is not in service, Alarm-Source: mydisk, Severity: indeterminate",
+                Result(
+                    state=State.OK,
+                    summary="Alarm: Tunnel state is Up, Alarm-Source: if1, Severity: info",
+                ),
+                Result(
+                    state=State.WARN,
+                    summary="Alarm: System BYPASS mode, Alarm-Source: mysystem, Severity: minor",
+                ),
+                Result(
+                    state=State.CRIT,
+                    summary="Alarm: Tunnel state is Down, Alarm-Source: to_sp01-dnd_WAN-WAN, Severity: critical",
+                ),
+                Result(
+                    state=State.UNKNOWN,
+                    summary="Alarm: Disk is not in service, Alarm-Source: mydisk, Severity: indeterminate",
                 ),
             ],
         ),
     ],
 )
-def test_check_silverpeak_VX6000(
-    item: str, params: Mapping[str, Any], info: InfoType, expected_results: Sequence[Any]
-) -> None:
+def test_check_silverpeak_VX6000(info: InfoType, expected_results: Sequence[Result]) -> None:
     """Test check function for silverpeak_VX6000 check."""
     parsed = parse_silverpeak(info)
     assert parsed is not None
-    result = list(check_silverpeak(item, params, parsed))
+    result = list(check_silverpeak(parsed))
     assert result == expected_results

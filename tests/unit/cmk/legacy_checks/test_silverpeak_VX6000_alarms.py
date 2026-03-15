@@ -12,6 +12,7 @@
 from collections.abc import Mapping
 from typing import Any
 
+from cmk.agent_based.v2 import Result, Service, State
 from cmk.legacy_checks.silverpeak_VX6000 import (
     check_silverpeak,
     discover_silverpeak_VX6000,
@@ -45,38 +46,36 @@ def test_silverpeak_VX6000_discovery() -> None:
     # Should discover single alarm service
     assert len(discoveries) == 1
 
-    # Extract item and params from discovery tuple
-    item, params = discoveries[0]
-    assert item is None  # silverpeak uses None as item
-    assert params == {}
+    # Extract Service from discovery
+    service = discoveries[0]
+    assert isinstance(service, Service)
 
 
 def test_silverpeak_VX6000_check_alarms() -> None:
     """Test check function with multiple alarm severities."""
-    results = list(check_silverpeak(None, {}, parsed()))
+    results = list(check_silverpeak(parsed()))
 
     # Should have 5 results: summary + 4 individual alarms
     assert len(results) == 5
 
     # Check summary result (first one)
     first_result = results[0]
-    assert len(first_result) == 2  # state, summary
-    state, summary = first_result
-    assert state == 0  # OK state for summary
-    assert "4 active alarms" in summary
-    assert "OK: 1, WARN: 1, CRIT: 1, UNKNOWN: 1" in summary
+    assert isinstance(first_result, Result)
+    assert first_result.state == State.OK
+    assert "4 active alarms" in first_result.summary
+    assert "OK: 1, WARN: 1, CRIT: 1, UNKNOWN: 1" in first_result.summary
 
     # Check individual alarm results
     alarm_results = results[1:]
 
     # Extract states from alarm results
-    alarm_states = [result[0] for result in alarm_results]
+    alarm_states = [result.state for result in alarm_results if isinstance(result, Result)]
 
-    # Should have one of each state: OK(0), WARN(1), CRIT(2), UNKNOWN(3)
-    assert 0 in alarm_states  # info alarm (tunnel up)
-    assert 1 in alarm_states  # minor alarm (system bypass)
-    assert 2 in alarm_states  # critical alarm (tunnel down)
-    assert 3 in alarm_states  # indeterminate alarm (disk not in service)
+    # Should have one of each state: OK, WARN, CRIT, UNKNOWN
+    assert State.OK in alarm_states  # info alarm (tunnel up)
+    assert State.WARN in alarm_states  # minor alarm (system bypass)
+    assert State.CRIT in alarm_states  # critical alarm (tunnel down)
+    assert State.UNKNOWN in alarm_states  # indeterminate alarm (disk not in service)
 
 
 def test_silverpeak_VX6000_check_no_alarms() -> None:
@@ -90,16 +89,15 @@ def test_silverpeak_VX6000_check_no_alarms() -> None:
     )
     assert no_alarms_section is not None
 
-    results = list(check_silverpeak(None, {}, no_alarms_section))
+    results = list(check_silverpeak(no_alarms_section))
 
     # Should have single result indicating no alarms
     assert len(results) == 1
 
     first_result = results[0]
-    assert len(first_result) == 2  # state, summary
-    state, summary = first_result
-    assert state == 0  # OK state
-    assert "No active alarms" in summary
+    assert isinstance(first_result, Result)
+    assert first_result.state == State.OK
+    assert "No active alarms" in first_result.summary
 
 
 def test_silverpeak_VX6000_parse_function() -> None:
@@ -117,14 +115,14 @@ def test_silverpeak_VX6000_parse_function() -> None:
 
     # Check first alarm (info severity)
     info_alarm = alarms[0]
-    assert info_alarm["state"] == 0
+    assert info_alarm["state"] == State.OK
     assert info_alarm["severity_as_text"] == "info"
     assert info_alarm["descr"] == "Tunnel state is Up"
     assert info_alarm["source"] == "if1"
 
     # Check critical alarm
     crit_alarm = alarms[2]
-    assert crit_alarm["state"] == 2
+    assert crit_alarm["state"] == State.CRIT
     assert crit_alarm["severity_as_text"] == "critical"
     assert crit_alarm["descr"] == "Tunnel state is Down"
     assert crit_alarm["source"] == "to_sp01-dnd_WAN-WAN"

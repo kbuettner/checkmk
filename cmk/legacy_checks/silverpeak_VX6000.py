@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="type-arg"
-
 # .1.3.6.1.4.1.23867.3.1.1.1.4.0 4 --> SILVERPEAK-MGMT-MIB::spsActiveAlarmCount.0
 # .1.3.6.1.4.1.23867.3.1.1.2.1.1.3.1 4 --> SILVERPEAK-MGMT-MIB::spsActiveAlarmSeverity.1
 # .1.3.6.1.4.1.23867.3.1.1.2.1.1.3.2 4 --> SILVERPEAK-MGMT-MIB::spsActiveAlarmSeverity.2
@@ -21,30 +19,35 @@
 
 # Taken from SILVERPEAK-TC.txt: translates silverpeak severities to checkmk's OK,WARN,CRIT
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Mapping, Sequence
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import (
-    LegacyCheckDefinition,
-    LegacyCheckResult,
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
 )
-from cmk.agent_based.v2 import SNMPTree, startswith, StringTable
-
-check_info = {}
 
 Section = Mapping[str, Any]
 
 
 severity_to_states = {
-    "0": ("info", 0),
-    "1": ("warning", 1),
-    "2": ("minor", 1),
-    "3": ("major", 2),
-    "4": ("critical", 2),
-    "5": ("cleared", 3),
-    "6": ("acknowledged", 3),
-    "7": ("unacknowledged", 3),
-    "8": ("indeterminate", 3),
+    "0": ("info", State.OK),
+    "1": ("warning", State.WARN),
+    "2": ("minor", State.WARN),
+    "3": ("major", State.CRIT),
+    "4": ("critical", State.CRIT),
+    "5": ("cleared", State.UNKNOWN),
+    "6": ("acknowledged", State.UNKNOWN),
+    "7": ("unacknowledged", State.UNKNOWN),
+    "8": ("indeterminate", State.UNKNOWN),
 }
 
 
@@ -69,8 +72,8 @@ def parse_silverpeak(string_table: Sequence[StringTable]) -> Section | None:
             parsed.setdefault("alarms", [])
             parsed["alarms"].append(
                 {
-                    "state": severity_to_states.get(sever, ("unknown", 3))[1],
-                    "severity_as_text": severity_to_states.get(sever, "unkown[%s]" % sever)[0],
+                    "state": severity_to_states.get(sever, ("unknown", State.UNKNOWN))[1],
+                    "severity_as_text": severity_to_states.get(sever, (f"unkown[{sever}]",))[0],
                     "descr": descr,
                     "source": source,
                 }
@@ -79,43 +82,7 @@ def parse_silverpeak(string_table: Sequence[StringTable]) -> Section | None:
     return parsed
 
 
-def discover_silverpeak_VX6000(section: Section) -> Iterable[tuple[None, dict]]:
-    if section:
-        yield None, {}
-
-
-def check_silverpeak(
-    _item: object, _params: Mapping[str, Any], parsed: Section
-) -> LegacyCheckResult:
-    alarm_cnt = parsed.get("alarm_count", 0)
-    if alarm_cnt == 0:
-        yield 0, "No active alarms."
-        return
-
-    alarms = parsed["alarms"]
-
-    cnt_ok = len([alarm for alarm in alarms if alarm["state"] == 0])
-    cnt_warn = len([alarm for alarm in alarms if alarm["state"] == 1])
-    cnt_crit = len([alarm for alarm in alarms if alarm["state"] == 2])
-    cnt_unkn = len([alarm for alarm in alarms if alarm["state"] == 3])
-
-    yield (
-        0,
-        f"{alarm_cnt} active alarms. OK: {cnt_ok}, WARN: {cnt_warn}, CRIT: {cnt_crit}, UNKNOWN: {cnt_unkn}",
-    )
-
-    for elem in alarms:
-        yield (
-            elem["state"],
-            "\nAlarm: {}, Alarm-Source: {}, Severity: {}".format(
-                elem["descr"],
-                elem["source"],
-                elem["severity_as_text"],
-            ),
-        )
-
-
-check_info["silverpeak_VX6000"] = LegacyCheckDefinition(
+snmp_section_silverpeak_VX6000 = SNMPSection(
     name="silverpeak_VX6000",
     detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.23867"),
     fetch=[
@@ -129,6 +96,45 @@ check_info["silverpeak_VX6000"] = LegacyCheckDefinition(
         ),
     ],
     parse_function=parse_silverpeak,
+)
+
+
+def discover_silverpeak_VX6000(section: Section) -> DiscoveryResult:
+    if section:
+        yield Service()
+
+
+def check_silverpeak(section: Section) -> CheckResult:
+    alarm_cnt = section.get("alarm_count", 0)
+    if alarm_cnt == 0:
+        yield Result(state=State.OK, summary="No active alarms.")
+        return
+
+    alarms = section["alarms"]
+
+    cnt_ok = len([alarm for alarm in alarms if alarm["state"] == State.OK])
+    cnt_warn = len([alarm for alarm in alarms if alarm["state"] == State.WARN])
+    cnt_crit = len([alarm for alarm in alarms if alarm["state"] == State.CRIT])
+    cnt_unkn = len([alarm for alarm in alarms if alarm["state"] == State.UNKNOWN])
+
+    yield Result(
+        state=State.OK,
+        summary=f"{alarm_cnt} active alarms. OK: {cnt_ok}, WARN: {cnt_warn}, CRIT: {cnt_crit}, UNKNOWN: {cnt_unkn}",
+    )
+
+    for elem in alarms:
+        yield Result(
+            state=elem["state"],
+            summary="Alarm: {}, Alarm-Source: {}, Severity: {}".format(
+                elem["descr"],
+                elem["source"],
+                elem["severity_as_text"],
+            ),
+        )
+
+
+check_plugin_silverpeak_VX6000 = CheckPlugin(
+    name="silverpeak_VX6000",
     service_name="Alarms",
     discovery_function=discover_silverpeak_VX6000,
     check_function=check_silverpeak,
