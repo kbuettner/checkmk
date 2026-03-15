@@ -137,14 +137,16 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import (
-    LegacyCheckDefinition,
-    LegacyCheckResult,
-    LegacyDiscoveryResult,
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
 )
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
 
 
 def parse_solaris_fmadm(string_table: StringTable) -> Mapping[str, Any]:
@@ -174,35 +176,38 @@ def parse_solaris_fmadm(string_table: StringTable) -> Mapping[str, Any]:
     }
 
 
-def discover_solaris_fmadm(parsed: Mapping[str, Any]) -> LegacyDiscoveryResult:
-    return [(None, {})]
+agent_section_solaris_fmadm = AgentSection(
+    name="solaris_fmadm",
+    parse_function=parse_solaris_fmadm,
+)
 
 
-def check_solaris_fmadm(
-    _no_item: str | None, params: Mapping[str, Any], parsed: Mapping[str, Any]
-) -> LegacyCheckResult:
-    if not parsed:
-        yield 0, "No faults detected"
+def discover_solaris_fmadm(section: Mapping[str, Any]) -> DiscoveryResult:
+    yield Service()
+
+
+def check_solaris_fmadm(section: Mapping[str, Any]) -> CheckResult:
+    if not section:
+        yield Result(state=State.OK, summary="No faults detected")
         return
 
     map_state = {
-        "minor": (1, "minor"),
-        "major": (2, "major"),
-        "critical": (2, "critical"),
+        "minor": (State.WARN, "minor"),
+        "major": (State.CRIT, "major"),
+        "critical": (State.CRIT, "critical"),
     }
 
-    event = parsed["event"]
-    state, state_readable = map_state.get(event["severity"], (3, "unknown"))
-    yield state, "Severity: {} ({})".format(state_readable, event["time"])
+    event = section["event"]
+    state, state_readable = map_state.get(event["severity"], (State.UNKNOWN, "unknown"))
+    yield Result(state=state, summary=f"Severity: {state_readable} ({event['time']})")
 
-    problems = parsed["problems"]
+    problems = section["problems"]
     if problems:
-        yield 0, "Problems: %s" % ", ".join(problems)
+        yield Result(state=State.OK, summary=f"Problems: {', '.join(problems)}")
 
 
-check_info["solaris_fmadm"] = LegacyCheckDefinition(
+check_plugin_solaris_fmadm = CheckPlugin(
     name="solaris_fmadm",
-    parse_function=parse_solaris_fmadm,
     service_name="FMD Status",
     discovery_function=discover_solaris_fmadm,
     check_function=check_solaris_fmadm,
