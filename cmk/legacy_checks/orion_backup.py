@@ -3,37 +3,26 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, startswith, StringTable
-
-check_info = {}
-
-
-def discover_orion_backup(info):
-    return [(None, {})]
-
-
-def check_orion_backup(item, params, info):
-    map_states = {
-        "1": (1, "inactive"),
-        "2": (0, "OK"),
-        "3": (1, "occured"),
-        "4": (2, "fail"),
-    }
-
-    backup_time_status, backup_time = info[0]
-    state, state_readable = map_states[backup_time_status]
-    return state, f"Status: {state_readable}, Expected time: {backup_time} minutes"
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
 
 
 def parse_orion_backup(string_table: StringTable) -> StringTable | None:
     return string_table or None
 
 
-check_info["orion_backup"] = LegacyCheckDefinition(
+snmp_section_orion_backup = SimpleSNMPSection(
     name="orion_backup",
     parse_function=parse_orion_backup,
     detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.20246"),
@@ -41,6 +30,30 @@ check_info["orion_backup"] = LegacyCheckDefinition(
         base=".1.3.6.1.4.1.20246.2.3.1.1.1.2.5.3.3",
         oids=["2", "3"],
     ),
+)
+
+
+def discover_orion_backup(section: StringTable) -> DiscoveryResult:
+    yield Service()
+
+
+def check_orion_backup(section: StringTable) -> CheckResult:
+    map_states: dict[str, tuple[State, str]] = {
+        "1": (State.WARN, "inactive"),
+        "2": (State.OK, "OK"),
+        "3": (State.WARN, "occured"),
+        "4": (State.CRIT, "fail"),
+    }
+
+    backup_time_status, backup_time = section[0]
+    state, state_readable = map_states[backup_time_status]
+    yield Result(
+        state=state, summary=f"Status: {state_readable}, Expected time: {backup_time} minutes"
+    )
+
+
+check_plugin_orion_backup = CheckPlugin(
+    name="orion_backup",
     service_name="Backup",
     discovery_function=discover_orion_backup,
     check_function=check_orion_backup,
