@@ -109,11 +109,16 @@ const panelConfig = {
     title: 'maxOpen',
     help: '0 allows unlimited items to be expanded, while 1 restricts to only one item at a time.',
     initialState: 1
+  },
+  openedItems: {
+    type: 'string-array',
+    title: 'openedItems',
+    initialState: ['item-1'],
+    help: 'Type: string[]. IDs must match the value prop of each CmkAccordionItem. In the UCL app, enter one ID per line in the textarea, e.g.:item-1 item-2 item-3'
   }
 } satisfies PanelConfig
 
 const propState = ref(createPanelState(panelConfig))
-const openedItems = ref(['item-1'])
 
 const itemPanelConfig = {
   headerAs: {
@@ -145,7 +150,7 @@ const itemPropState = ref(createPanelState(itemPanelConfig))
 
     <UclDetailPageComponent>
       <CmkAccordion
-        v-model="openedItems"
+        v-model="propState.openedItems"
         :min-open="propState.minOpen"
         :max-open="propState.maxOpen"
       >

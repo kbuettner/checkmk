@@ -15,7 +15,7 @@ import {
   UclPropertiesPanel,
   createPanelState
 } from '@ucl/_ucl/components/detail-page'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import CmkDualList from '@/components/CmkDualList/CmkDualList.vue'
 import {
@@ -24,8 +24,6 @@ import {
 } from '@/components/CmkDualList/index.ts'
 
 defineProps<{ screenshotMode: boolean }>()
-
-const selectedData = ref<DualListElement[]>([{ name: 'host_admin', title: 'Host Administrator' }])
 const a11yDataCmkDualList = [
   {
     keys: ['Tab'],
@@ -69,6 +67,14 @@ const selectedRoles = ref<DualListElement[]>([availableRoles.value[2]!])
   />
 </template>`
 
+const elements: DualListElement[] = [
+  { name: 'host_admin', title: 'Host Administrator' },
+  { name: 'network_admin', title: 'Network Administrator' },
+  { name: 'db_admin', title: 'Database Administrator' },
+  { name: 'security_auditor', title: 'Security Auditor' },
+  { name: 'guest', title: 'Guest User' }
+]
+
 const panelConfig = {
   title: {
     type: 'string',
@@ -85,10 +91,24 @@ const panelConfig = {
       { title: 'Large', name: 'large' }
     ] satisfies Options<SearchableListWidthVariants>[],
     initialState: 'medium' as const
+  },
+  selectedData: {
+    type: 'string-array',
+    title: 'selectedData',
+    initialState: ['host_admin'],
+    help: 'Type: string[]. IDs must match the name of each available element. In the UCL app, enter one ID per line in the textarea, e.g.:host_admin network_admin db_admin'
   }
 } satisfies PanelConfig
 
 const propState = ref(createPanelState(panelConfig))
+
+const selectedData = computed({
+  get: (): DualListElement[] =>
+    elements.filter((el) => (propState.value.selectedData as string[]).includes(el.name)),
+  set: (val: DualListElement[]) => {
+    propState.value.selectedData = val.map((el) => el.name)
+  }
+})
 </script>
 
 <template>
@@ -98,13 +118,7 @@ const propState = ref(createPanelState(panelConfig))
     <UclDetailPageComponent>
       <CmkDualList
         v-model:data="selectedData"
-        :elements="[
-          { name: 'host_admin', title: 'Host Administrator' },
-          { name: 'network_admin', title: 'Network Administrator' },
-          { name: 'db_admin', title: 'Database Administrator' },
-          { name: 'security_auditor', title: 'Security Auditor' },
-          { name: 'guest', title: 'Guest User' }
-        ]"
+        :elements="elements"
         :title="propState.title"
         :validators="[]"
         :backend-validation="[]"

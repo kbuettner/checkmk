@@ -5,11 +5,15 @@ conditions defined in the file COPYING, which is part of this source code packag
 -->
 <script setup lang="ts">
 import {
+  type Options,
+  type PanelConfig,
   UclDetailPageAccessibility,
   UclDetailPageCodeExample,
   UclDetailPageComponent,
   UclDetailPageHeader,
-  UclDetailPageLayout
+  UclDetailPageLayout,
+  UclPropertiesPanel,
+  createPanelState
 } from '@ucl/_ucl/components/detail-page'
 import { ref } from 'vue'
 
@@ -77,7 +81,22 @@ const activeTab = ref('tab-1')
   </CmkTabs>
 </template>`
 
-const activeTab = ref('tab-1')
+type TabId = 'tab-1' | 'tab-2' | 'tab-3'
+
+const panelConfig = {
+  modelValue: {
+    type: 'list',
+    title: 'Active Tab',
+    options: [
+      { title: 'Search', name: 'tab-1' },
+      { title: 'Information', name: 'tab-2' },
+      { title: 'Disabled', name: 'tab-3' }
+    ] satisfies Options<TabId>[],
+    initialState: 'tab-1' as TabId
+  }
+} satisfies PanelConfig
+
+const propState = ref(createPanelState(panelConfig))
 </script>
 
 <template>
@@ -85,7 +104,7 @@ const activeTab = ref('tab-1')
     <UclDetailPageHeader>CmkTabs</UclDetailPageHeader>
 
     <UclDetailPageComponent>
-      <CmkTabs v-model="activeTab">
+      <CmkTabs v-model="propState.modelValue">
         <template #tabs>
           <CmkTab id="tab-1"><CmkIcon name="search" /> Search</CmkTab>
           <CmkTab id="tab-2"><CmkIcon name="info-circle" /> Information</CmkTab>
@@ -107,6 +126,10 @@ const activeTab = ref('tab-1')
           </CmkTabContent>
         </template>
       </CmkTabs>
+
+      <template #properties>
+        <UclPropertiesPanel v-model="propState" :config="panelConfig" />
+      </template>
     </UclDetailPageComponent>
 
     <UclDetailPageCodeExample :code="codeExampleCmkTabs" />

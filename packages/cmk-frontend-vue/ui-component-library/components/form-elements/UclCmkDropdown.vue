@@ -26,7 +26,6 @@ import { Response } from '@/components/CmkSuggestions/suggestions'
 import UclCmkDropdownDev from './UclCmkDropdownDev.vue'
 
 defineProps<{ screenshotMode: boolean }>()
-const selectedValue = ref<string | null>(null)
 
 const a11yDataCmkDropdown = [
   {
@@ -106,10 +105,28 @@ const panelConfig = {
   required: { type: 'boolean', title: 'Required', initialState: false },
   formValidation: { type: 'boolean', title: 'Form Validation Error', initialState: false },
   inputHint: { type: 'string', title: 'Input Hint', initialState: 'Please select an option...' },
-  noResultsHint: { type: 'string', title: 'No Results Hint', initialState: 'No matches found' }
+  noResultsHint: { type: 'string', title: 'No Results Hint', initialState: 'No matches found' },
+  selectedOption: {
+    type: 'list',
+    title: 'Selected Option',
+    options: [
+      { name: '', title: 'None' },
+      { name: '1', title: 'Option One' },
+      { name: '2', title: 'Option Two' },
+      { name: '3', title: 'Option Three' }
+    ],
+    initialState: ''
+  }
 } satisfies PanelConfig
 
 const propState = ref(createPanelState(panelConfig))
+
+const selectedOption = computed<string | null>({
+  get: () => propState.value.selectedOption || null,
+  set: (val) => {
+    propState.value.selectedOption = val ?? ''
+  }
+})
 
 const dynamicOptions = computed<Suggestions>(() => {
   const baseSuggestions = [
@@ -142,7 +159,7 @@ const dynamicOptions = computed<Suggestions>(() => {
 
     <UclDetailPageComponent>
       <CmkDropdown
-        v-model:selected-option="selectedValue"
+        v-model:selected-option="selectedOption"
         :options="dynamicOptions"
         :input-hint="propState.inputHint"
         :no-results-hint="propState.noResultsHint"

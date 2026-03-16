@@ -43,16 +43,24 @@ export interface MultilineStringPropDef {
   help?: string
 }
 
+export interface StringArrayPropDef {
+  type: 'string-array'
+  title: string
+  initialState: string[]
+  help?: string
+}
+
 export type PropDef =
   | BoolPropDef
   | StringPropDef
   | NumberPropDef
   | ListPropDef<string>
   | MultilineStringPropDef
+  | StringArrayPropDef
 
 export type PanelConfig = Record<string, PropDef>
 
-export type PanelState = Record<string, boolean | string | number>
+export type PanelState = Record<string, boolean | string | number | string[]>
 
 type InferStateFromDef<T extends PropDef> = T extends BoolPropDef
   ? boolean
@@ -64,7 +72,9 @@ type InferStateFromDef<T extends PropDef> = T extends BoolPropDef
         ? NonNullable<U>
         : T extends MultilineStringPropDef
           ? string
-          : never
+          : T extends StringArrayPropDef
+            ? string[]
+            : never
 
 export type InferPanelState<T extends PanelConfig> = {
   [K in keyof T]: InferStateFromDef<T[K]>
