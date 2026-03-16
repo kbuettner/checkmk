@@ -3,13 +3,18 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Metric,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 
 def saveint(i: str) -> int:
@@ -25,25 +30,33 @@ def saveint(i: str) -> int:
         return 0
 
 
-def discover_mailman_lists(info):
-    return [(i[0], None) for i in info]
-
-
-def check_mailman_lists(item, params, info):
-    for line in info:
-        name, num_members = line[0], saveint(line[1])
-        if name == item:
-            return (0, "%d members subscribed" % (num_members), [("count", num_members)])
-    return (3, "List could not be found in agent output")
-
-
 def parse_mailman_lists(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["mailman_lists"] = LegacyCheckDefinition(
+agent_section_mailman_lists = AgentSection(
     name="mailman_lists",
     parse_function=parse_mailman_lists,
+)
+
+
+def discover_mailman_lists(section: StringTable) -> DiscoveryResult:
+    for line in section:
+        yield Service(item=line[0])
+
+
+def check_mailman_lists(item: str, section: StringTable) -> CheckResult:
+    for line in section:
+        name, num_members = line[0], saveint(line[1])
+        if name == item:
+            yield Result(state=State.OK, summary=f"{num_members} members subscribed")
+            yield Metric("count", num_members)
+            return
+    yield Result(state=State.UNKNOWN, summary="List could not be found in agent output")
+
+
+check_plugin_mailman_lists = CheckPlugin(
+    name="mailman_lists",
     service_name="Mailinglist %s",
     discovery_function=discover_mailman_lists,
     check_function=check_mailman_lists,
