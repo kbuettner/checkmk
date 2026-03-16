@@ -3,10 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
-# Author: Lars Michelsen <lm@mathias-kettner.de>
-
 # Example outputs from agent:
 #
 # <<<heartbeat_nodes>>>
@@ -15,54 +11,71 @@
 # swi03 ping swi03 up
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
-
-
-def discover_heartbeat_nodes(info):
-    return [(line[0], None) for line in info if line[0] != ""]
-
-
-def check_heartbeat_nodes(item, params, info):
-    for line in info:
-        if line[0] == item:
-            status = 0
-            nodeStatus = line[1]
-
-            linkOutput = ""
-            for link, state in zip(line[2::2], line[3::2]):
-                state_txt = ""
-                if state != "up":
-                    status = 2
-                    state_txt = " (!!)"
-                linkOutput += f"{link}: {state}{state_txt}, "
-            linkOutput = linkOutput.rstrip(", ")
-
-            if nodeStatus in ["active", "up", "ping"] and status <= 0:
-                status = 0
-            elif nodeStatus == "dead" and status <= 2:
-                status = 2
-
-            if nodeStatus not in ["active", "up", "ping", "dead"]:
-                return (3, f"Node {line[0]} has an unhandled state: {nodeStatus}")
-
-            return (
-                status,
-                f'Node {line[0]} is in state "{nodeStatus}". Links: {linkOutput}',
-            )
-
-    return (3, "Node is not present anymore")
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 
 def parse_heartbeat_nodes(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["heartbeat_nodes"] = LegacyCheckDefinition(
+def discover_heartbeat_nodes(section: StringTable) -> DiscoveryResult:
+    for line in section:
+        if line[0] != "":
+            yield Service(item=line[0])
+
+
+def check_heartbeat_nodes(item: str, section: StringTable) -> CheckResult:
+    for line in section:
+        if line[0] == item:
+            status = State.OK
+            node_status = line[1]
+
+            link_output = ""
+            for link, state in zip(line[2::2], line[3::2]):
+                state_txt = ""
+                if state != "up":
+                    status = State.CRIT
+                    state_txt = " (!!)"
+                link_output += f"{link}: {state}{state_txt}, "
+            link_output = link_output.rstrip(", ")
+
+            if node_status in ["active", "up", "ping"] and status == State.OK:
+                status = State.OK
+            elif node_status == "dead":
+                status = State.CRIT
+
+            if node_status not in ["active", "up", "ping", "dead"]:
+                yield Result(
+                    state=State.UNKNOWN,
+                    summary=f"Node {line[0]} has an unhandled state: {node_status}",
+                )
+                return
+
+            yield Result(
+                state=status,
+                summary=f'Node {line[0]} is in state "{node_status}". Links: {link_output}',
+            )
+            return
+
+    yield Result(state=State.UNKNOWN, summary="Node is not present anymore")
+
+
+agent_section_heartbeat_nodes = AgentSection(
     name="heartbeat_nodes",
     parse_function=parse_heartbeat_nodes,
+)
+
+check_plugin_heartbeat_nodes = CheckPlugin(
+    name="heartbeat_nodes",
     service_name="Heartbeat Node %s",
     discovery_function=discover_heartbeat_nodes,
     check_function=check_heartbeat_nodes,
