@@ -367,14 +367,6 @@ const activationSuccessTitle = computed((): string => {
   )
 })
 
-function calcChangesHeight(): number {
-  if (!activationStatusCollapsible.value) {
-    return -0.78
-  } else {
-    return sitesAndChanges.value.sites.length > 5 ? 5 : sitesAndChanges.value.sites.length - 1
-  }
-}
-
 onMounted(async () => {
   // Fetch once on mount, then again when popup is opened to refresh data.
   // This avoids showing no changes when opening the menu for the first time,
@@ -571,10 +563,10 @@ div.cmk-alert-box {
 .cmk-div-mainmenu-container {
   display: flex;
   width: calc(100% - 2 * var(--spacing-double));
-  height: 943px;
   flex-direction: column;
   align-items: flex-start;
-  flex-shrink: 0;
+  flex: 1;
+  min-height: 0;
   margin: var(--spacing-double);
 }
 
@@ -589,7 +581,9 @@ div.cmk-alert-box {
   width: 100%;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 178px);
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .cmk-div-activation-result-container {
@@ -610,7 +604,9 @@ div.cmk-alert-box {
 
 .pending-changes-container {
   width: 100%;
-  height: calc(100vh - 178px - (48px * v-bind('calcChangesHeight()')));
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .sites-container {
@@ -640,7 +636,7 @@ div.cmk-alert-box {
 }
 
 .add-flex {
-  flex: 2;
+  flex: 0 0 auto;
 }
 
 .cmk-button-submit {
