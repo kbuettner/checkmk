@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 # Measures total allocated file handles.
 # The output displays
 #  - the number of allocated file handles
@@ -16,41 +14,54 @@
 # <<<filehandler>>>
 # 9376        0        817805
 
+from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import render, StringTable
-
-check_info = {}
-
-
-def discover_filehandler(info):
-    return [(None, {})]
-
-
-def check_filehandler(_no_item, params, info):
-    allocated, _used_or_unused, maximum = info[0]
-    perc = float(allocated) / float(maximum) * 100.0
-
-    # Add informational text about absolute values
-    yield 0, f"({allocated} of {maximum} file handles)", []
-
-    # Check levels on percentage
-    yield check_levels(
-        perc,
-        "filehandler_perc",
-        params["levels"],
-        human_readable_func=render.percent,
-        infoname="File handlers",
-    )
+from cmk.agent_based.v2 import (
+    AgentSection,
+    check_levels,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    render,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 
 def parse_filehandler(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["filehandler"] = LegacyCheckDefinition(
+def discover_filehandler(section: StringTable) -> DiscoveryResult:
+    yield Service()
+
+
+def check_filehandler(params: Mapping[str, Any], section: StringTable) -> CheckResult:
+    allocated, _used_or_unused, maximum = section[0]
+    perc = float(allocated) / float(maximum) * 100.0
+
+    yield Result(state=State.OK, summary=f"({allocated} of {maximum} file handles)")
+
+    warn, crit = params["levels"]
+    yield from check_levels(
+        perc,
+        metric_name="filehandler_perc",
+        levels_upper=("fixed", (warn, crit)),
+        render_func=render.percent,
+        label="File handlers",
+    )
+
+
+agent_section_filehandler = AgentSection(
     name="filehandler",
     parse_function=parse_filehandler,
+)
+
+check_plugin_filehandler = CheckPlugin(
+    name="filehandler",
     service_name="Filehandler",
     discovery_function=discover_filehandler,
     check_function=check_filehandler,
