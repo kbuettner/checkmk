@@ -42,7 +42,13 @@ def test_discover_appliance_uplinks() -> None:
 @pytest.fixture
 def params() -> CheckParams:
     return CheckParams(
-        status_map={"active": 0, "ready": 0, "connecting": 1, "not_connected": 1, "failed": 2},
+        status_map={
+            "active": State.OK.value,
+            "ready": State.OK.value,
+            "connecting": State.WARN.value,
+            "not_connected": State.WARN.value,
+            "failed": State.CRIT.value,
+        },
         show_traffic=True,
     )
 
