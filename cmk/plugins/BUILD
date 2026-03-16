@@ -151,7 +151,10 @@ py_library(
 py_library(
     name = "cmk_plugins_ultimate",
     srcs = glob(
-        include = ["**/nonfree/**/ultimate/**/*.py"],
+        include = [
+            "**/nonfree/**/ultimate/**/*.py",
+            "**/nonfree/__init__.py",
+        ],
         allow_empty = True,
         exclude = [
             # Exclude otel and custom_query_metric_backend nonfree files - they import from
@@ -171,7 +174,10 @@ py_library(
 py_library(
     name = "cmk_plugins_cloud",
     srcs = glob(
-        include = ["**/nonfree/**/cloud/**/*.py"],
+        include = [
+            "**/nonfree/**/cloud/**/*.py",
+            "**/nonfree/__init__.py",
+        ],
         allow_empty = True,
     ),
     imports = ["../.."],
@@ -186,7 +192,10 @@ py_library(
 py_library(
     name = "cmk_plugins_ultimatemt",
     srcs = glob(
-        include = ["**/nonfree/**/ultimatemt/**/*.py"],
+        include = [
+            "**/nonfree/**/ultimatemt/**/*.py",
+            "**/nonfree/__init__.py",
+        ],
         allow_empty = True,
     ),
     imports = ["../.."],
