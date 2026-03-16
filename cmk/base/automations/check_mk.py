@@ -36,6 +36,7 @@ import livestatus
 import cmk.base.parent_scan
 import cmk.ccc.cleanup
 import cmk.ccc.debug
+import cmk.ccc.site
 import cmk.utils.password_store
 import cmk.utils.paths
 import cmk.utils.timeperiod
@@ -1066,11 +1067,19 @@ def _make_configured_notify_relay(
     try:
         from cmk.relay_fetcher_trigger.relay_client import (  # type: ignore[import-not-found, unused-ignore]
             Client,
+            ClientConfig,
         )
     except ImportError:
         return noop
 
-    return Client.from_omd_config(omd_root=cmk.utils.paths.omd_root).publish_new_config  # type: ignore[no-any-return, unused-ignore]
+    config = cmk.ccc.site.get_omd_config(omd_root)
+    return Client(  # type: ignore[no-any-return, unused-ignore]
+        ClientConfig(
+            agent_receiver_port=int(config["CONFIG_AGENT_RECEIVER_PORT"]),
+            site_name=cmk.ccc.site.omd_site(),
+            omd_root=cmk.utils.paths.omd_root,
+        )
+    ).publish_new_config
 
 
 def _execute_autodiscovery(
