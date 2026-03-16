@@ -6,8 +6,7 @@ conditions defined in the file COPYING, which is part of this source code packag
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { RouterView } from 'vue-router'
-import { useRoute } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
 
 import UclFooter from './components/UclFooter.vue'
 import UclHeader from './components/UclHeader.vue'
@@ -18,6 +17,7 @@ useLegacyCss()
 
 const currentRoute = useRoute()
 const screenshotMode = ref(currentRoute.query.screenshot === 'true')
+const BUILD_COMMIT = import.meta.env.VITE_BUILD_COMMIT
 
 const documentationUrl = computed(() =>
   currentRoute.path === '/'
@@ -57,6 +57,14 @@ watch(
             :button-url="documentationUrl"
           />
         </footer>
+        <div class="ucl-app__footer-build-info">
+          <ul>
+            <li v-if="BUILD_COMMIT">
+              Built from commit <code>{{ BUILD_COMMIT }}</code>
+            </li>
+            <li v-else><i>Commit of this build is not known.</i></li>
+          </ul>
+        </div>
       </main>
     </div>
   </div>
@@ -142,6 +150,28 @@ watch(
 
 .ucl-app__footer {
   margin-top: auto;
-  padding: 0 16px 32px;
+  padding: 0 16px 16px;
+}
+
+.ucl-app__footer-build-info {
+  padding: 16px 0 0;
+  margin: 16px;
+  color: var(--ucl-footer-text-color);
+  border-top: 1px solid var(--ucl-elements-border-color);
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      float: left;
+      margin-right: 2em;
+
+      code {
+        font-family: monospace;
+      }
+    }
+  }
 }
 </style>

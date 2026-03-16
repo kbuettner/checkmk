@@ -11,6 +11,7 @@ load("@npm//:vue3-gettext/package_json.bzl", vue_gettext_bin = "bin")
 load("@npm//packages/cmk-frontend-vue:vite/package_json.bzl", vite_bin = "bin")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("//bazel/rules:git_hash_file.bzl", "git_hash_file")
 
 exports_files([
     "package.json",
@@ -230,9 +231,30 @@ vite_bin.vite(
     out_dirs = ["dist"],
 )
 
+# The next endpoints are used to build the "UI Component Library". This is not
+# shipped with Checkmk but always built from the master branch and published on
+# an internal webserver so UX and product can access it. Do not call those
+# entrypoints in a general Checkmk build.
+
+git_hash_file(
+    name = "hash_file",
+    out = "current-git-commit",
+    tags = ["manual"],
+)
+
+genrule(
+    name = "ucl_generate_env",
+    srcs = [":hash_file"],
+    outs = ["ui-component-library/.env"],
+    cmd = """
+        echo "VITE_BUILD_COMMIT=\\"$$(cat $(execpath hash_file))\\"" >> $@
+    """,
+    tags = ["manual"],
+)
+
 vite_bin.vite(
     name = "dist-ucl-hosted",
-    srcs = TOOLING + SRCS,
+    srcs = TOOLING + SRCS + ["ucl_generate_env"],
     # The --base argument needs to match the hosting web server config
     # (e.g. http://localhost/ui-component-library/)
     args = [
@@ -244,7 +266,10 @@ vite_bin.vite(
     ],
     chdir = package_name(),
     out_dirs = ["ui-component-library/dist"],
+    tags = ["manual"],
 )
+
+# "UI Component Library" end
 
 vitest_bin.vitest_test(
     name = "unit-test",
