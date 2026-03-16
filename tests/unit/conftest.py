@@ -47,7 +47,6 @@ from tests.unit.mocks_and_helpers import DummyLicensingHandler
 pytest.register_assert_rewrite(
     "tests.testlib",
     "tests.unit.cmk.legacy_checks.checktestlib",
-    "tests.unit.checks.generictests.run",
 )
 
 

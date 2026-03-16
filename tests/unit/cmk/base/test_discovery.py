@@ -31,7 +31,7 @@ from cmk.base.configlib.checkengine import DiscoveryConfig
 from cmk.base.configlib.servicename import make_final_service_name_config
 from cmk.ccc.exceptions import OnError
 from cmk.ccc.hostaddress import HostAddress, HostName
-from cmk.ccc.version import edition
+from cmk.ccc.version import Edition
 from cmk.checkengine.checkresults import ActiveCheckResult
 from cmk.checkengine.discovery import (
     ABCDiscoveryConfig,
@@ -96,7 +96,6 @@ from cmk.plugins.collection.agent_based.labels import agent_section_labels
 from cmk.plugins.collection.agent_based.uptime import agent_section_uptime
 from cmk.plugins.liebert.agent_based.liebert_fans import snmp_section_liebert_fans
 from cmk.snmplib import SNMPRawDataElem
-from cmk.utils import paths
 from cmk.utils.everythingtype import EVERYTHING
 from cmk.utils.ip_lookup import IPStackConfig
 from cmk.utils.labels import DiscoveredHostLabelsStore, HostLabel
@@ -1540,7 +1539,7 @@ def test_commandline_discovery(
     service_name_config = config_cache.make_passive_service_name_config(
         make_final_service_name_config(config_cache._loaded_config, config_cache.ruleset_matcher)
     )
-    app = make_app(edition(paths.omd_root))
+    app = make_app(Edition.COMMUNITY)
     fetcher = CMKFetcher(
         config_cache,
         get_relay_id=lambda hn: None,

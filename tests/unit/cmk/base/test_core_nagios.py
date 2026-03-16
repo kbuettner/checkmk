@@ -285,13 +285,7 @@ def test_format_nagios_object() -> None:
 def test_create_nagios_host_spec(
     hostname_str: str, result: dict[str, str], monkeypatch: MonkeyPatch
 ) -> None:
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.ULTIMATEMT:
-        result = result.copy()
-        result["_CUSTOMER"] = "provider"
-        result["__LABELSOURCE_cmk/customer"] = "discovered"
-        result["__LABEL_cmk/customer"] = "provider"
-
-    ts = Scenario()
+    ts = Scenario(edition=cmk_version.Edition.COMMUNITY)
     ts.add_host(HostName("localhost"))
     ts.add_host(HostName("host2"))
     ts.add_cluster(HostName("cluster1"))

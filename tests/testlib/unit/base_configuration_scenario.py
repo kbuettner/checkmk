@@ -21,7 +21,7 @@ from cmk.base.app import make_app
 from cmk.base.config import ConfigCache
 from cmk.ccc.hostaddress import HostAddress, HostName
 from cmk.ccc.site import SiteId
-from cmk.ccc.version import edition
+from cmk.ccc.version import Edition
 from cmk.checkengine.discovery import AutochecksMemoizer
 from cmk.checkengine.plugins import AutocheckEntry
 from cmk.utils.rulesets.ruleset_matcher import RuleSpec
@@ -56,11 +56,11 @@ class Scenario:
             self._edition,
         )
 
-    def __init__(self, site_id: str = "unit") -> None:
+    def __init__(self, site_id: str = "unit", edition: Edition = Edition.COMMUNITY) -> None:
         super().__init__()
 
-        self._edition = edition(cmk.utils.paths.omd_root)
-        self.get_builtin_host_labels = make_app(self._edition).get_builtin_host_labels
+        self._edition = edition
+        self.get_builtin_host_labels = make_app(edition).get_builtin_host_labels
         tag_config = cmk.utils.tags.sample_tag_config()
         self.tags = cmk.utils.tags.get_effective_tag_config(tag_config)
         self.site_id = site_id

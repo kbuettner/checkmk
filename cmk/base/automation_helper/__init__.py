@@ -121,6 +121,7 @@ def _application() -> FastAPI:
         configure_logger(omd_root / _RELATIVE_LOG_DIRECTORY)
 
     return make_application(
+        edition=cmk_version.edition(omd_root),
         engine=make_app(cmk_version.edition(omd_root)).automations,
         cache=Cache.setup(client=get_redis_client()),
         reloader_config=config.reloader_config,

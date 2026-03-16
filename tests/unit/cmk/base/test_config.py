@@ -49,7 +49,7 @@ from cmk.ccc.config_path import VersionedConfigPath
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.hostaddress import HostAddress, HostName
 from cmk.ccc.site import SiteId
-from cmk.ccc.version import Edition, edition
+from cmk.ccc.version import Edition
 from cmk.checkengine.checkerplugin import ConfiguredService
 from cmk.checkengine.discovery import (
     DiscoveryCheckParameters,
@@ -1921,9 +1921,6 @@ def test_host_label_rules_default() -> None:
 
 
 def test_labels(monkeypatch: MonkeyPatch) -> None:
-    additional_labels = {}
-    if edition(cmk.utils.paths.omd_root) is Edition.ULTIMATEMT:
-        additional_labels = {"cmk/customer": {"value": "provider", "source": "discovered"}}
     test_host = HostName("test-host")
     xyz_host = HostName("xyz")
 
@@ -1950,27 +1947,23 @@ def test_labels(monkeypatch: MonkeyPatch) -> None:
     ts.add_host(xyz_host)
 
     config_cache = ts.apply(monkeypatch)
-    assert config_cache.label_manager.labels_of_host(xyz_host) == {
-        "cmk/site": "unit",
-    } | {k: v["value"] for k, v in additional_labels.items()}
+    assert config_cache.label_manager.labels_of_host(xyz_host) == {"cmk/site": "unit"}
     assert config_cache.label_manager.labels_of_host(test_host) == {
         "cmk/site": "unit",
         "explicit": "ding",
         "from-rule": "rule1",
         "from-rule2": "rule2",
-    } | {k: v["value"] for k, v in additional_labels.items()}
+    }
     assert config_cache.label_manager.label_sources_of_host(test_host) == {
         "cmk/site": "discovered",
         "explicit": "explicit",
         "from-rule": "ruleset",
         "from-rule2": "ruleset",
-    } | {k: v["source"] for k, v in additional_labels.items()}
+    }
 
 
+# TODO: this tests very little. Rather test the label manager directly.
 def test_site_labels(monkeypatch: MonkeyPatch) -> None:
-    additional_labels = {}
-    if edition(cmk.utils.paths.omd_root) is Edition.ULTIMATEMT:
-        additional_labels = {"cmk/customer": {"value": "provider", "source": "discovered"}}
     test_host = HostName("test-host")
     xyz_host = HostName("xyz")
 
@@ -1979,18 +1972,11 @@ def test_site_labels(monkeypatch: MonkeyPatch) -> None:
     ts.add_host(xyz_host, site=SiteId("some_site"))
 
     config_cache = ts.apply(monkeypatch)
-    assert config_cache.label_manager.labels_of_host(xyz_host) == {
-        "cmk/site": "some_site",
-    } | {k: v["value"] for k, v in additional_labels.items()}
-    assert config_cache.label_manager.labels_of_host(test_host) == {
-        "cmk/site": "unit",
-    } | {k: v["value"] for k, v in additional_labels.items()}
+    assert config_cache.label_manager.labels_of_host(xyz_host) == {"cmk/site": "some_site"}
+    assert config_cache.label_manager.labels_of_host(test_host) == {"cmk/site": "unit"}
 
 
 def test_host_labels_of_host_discovered_labels(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    additional_labels = {}
-    if edition(cmk.utils.paths.omd_root) is Edition.ULTIMATEMT:
-        additional_labels = {"cmk/customer": {"value": "provider", "source": "discovered"}}
     test_host = HostName("test-host")
     ts = Scenario()
     ts.add_host(test_host)
@@ -2004,11 +1990,11 @@ def test_host_labels_of_host_discovered_labels(monkeypatch: MonkeyPatch, tmp_pat
     assert config_cache.label_manager.labels_of_host(test_host) == {
         "cmk/site": "unit",
         "äzzzz": "eeeeez",
-    } | {k: v["value"] for k, v in additional_labels.items()}
+    }
     assert config_cache.label_manager.label_sources_of_host(test_host) == {
         "cmk/site": "discovered",
         "äzzzz": "discovered",
-    } | {k: v["source"] for k, v in additional_labels.items()}
+    }
 
 
 def test_service_label_rules_default() -> None:
@@ -2601,8 +2587,8 @@ def test_get_config_file_paths_with_confd(
 def test_load_config_folder_paths(folder_path_test_config: LoadedConfigFragment) -> None:
     config_cache = config.ConfigCache(
         folder_path_test_config,
-        make_app(edition(cmk.utils.paths.omd_root)).get_builtin_host_labels,
-        edition(cmk.utils.paths.omd_root),
+        make_app(Edition.COMMUNITY).get_builtin_host_labels,
+        Edition.COMMUNITY,
     )
 
     assert config_cache.host_path(HostName("main-host")) == "/"
@@ -2713,7 +2699,7 @@ cmc_host_rrd_config = [
     _add_host_in_folder(wato_lvl2_folder, "lvl2-host")
     _add_rule_in_folder(wato_lvl2_folder, "LVL2")
 
-    _edition = edition(cmk.utils.paths.omd_root)
+    _edition = Edition.COMMUNITY
     yield config.load(
         discovery_rulesets=(),
         get_builtin_host_labels=make_app(_edition).get_builtin_host_labels,
@@ -2809,7 +2795,7 @@ def test_explicit_setting_loading(patch_omd_site: None) -> None:
         for foldername, setting, values in settings:
             _add_explicit_setting_in_folder(wato_main_folder / foldername, setting, values)
 
-        _edition = edition(cmk.utils.paths.omd_root)
+        _edition = Edition.COMMUNITY
         config.load(
             discovery_rulesets=(),
             get_builtin_host_labels=make_app(_edition).get_builtin_host_labels,
@@ -2847,7 +2833,7 @@ def test_load_packed_config(config_path: Path) -> None:
     config.PackedConfigStore.from_serial(config_path).write({"abcd": 1})
 
     assert "abcd" not in config.__dict__
-    _edition = edition(cmk.utils.paths.omd_root)
+    _edition = Edition.COMMUNITY
     config.load_packed_config(
         config_path,
         discovery_rulesets=(),

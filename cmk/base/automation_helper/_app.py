@@ -95,6 +95,7 @@ class HealthCheckResponse(BaseModel, frozen=True):
 
 def make_application(
     *,
+    edition: cmk_version.Edition,
     engine: AutomationEngine,
     cache: Cache,
     reloader_config: ReloaderConfig,
@@ -135,11 +136,23 @@ def make_application(
             last_reload_at=0,
             plugins=None,
             loading_result=None,
-            get_builtin_host_labels=make_app(
-                cmk_version.edition(paths.omd_root)
-            ).get_builtin_host_labels,
+            get_builtin_host_labels=make_app(edition).get_builtin_host_labels,
         ),
     )
+
+    async def _automation_endpoint(
+        request: Request, payload: AutomationPayload
+    ) -> AutomationResponse:
+        dependencies: _ApplicationDependencies = request.app.state.dependencies
+        async with dependencies.state.automation_or_reload_lock:
+            return _execute_automation_endpoint(
+                edition,
+                payload,
+                dependencies.automation_engine,
+                dependencies.changes_cache,
+                dependencies.clear_caches_before_each_call,
+                dependencies.state,
+            )
 
     app.post("/automation")(_automation_endpoint)
     app.get("/health")(_health_endpoint)
@@ -229,19 +242,8 @@ def _retrieve_last_change(cache: Cache) -> float:
         return 0
 
 
-async def _automation_endpoint(request: Request, payload: AutomationPayload) -> AutomationResponse:
-    dependencies: _ApplicationDependencies = request.app.state.dependencies
-    async with dependencies.state.automation_or_reload_lock:
-        return _execute_automation_endpoint(
-            payload,
-            dependencies.automation_engine,
-            dependencies.changes_cache,
-            dependencies.clear_caches_before_each_call,
-            dependencies.state,
-        )
-
-
 def _execute_automation_endpoint(
+    edition: cmk_version.Edition,
     payload: AutomationPayload,
     engine: AutomationEngine,
     cache: Cache,
@@ -285,7 +287,7 @@ def _execute_automation_endpoint(
             automation_start_time = time.time()
             result_or_error_code: ABCAutomationResult | int = engine.execute(
                 AutomationContext(
-                    edition=(app := make_app(cmk_version.edition(paths.omd_root))).edition,
+                    edition=(app := make_app(edition)).edition,
                     make_bake_on_restart=app.make_bake_on_restart,
                     create_core=app.create_core,
                     make_fetcher_trigger=app.make_fetcher_trigger,

@@ -11,9 +11,8 @@ from cmk.base.app import make_app
 from cmk.base.automations.automations import AutomationContext
 from cmk.base.config import LoadingResult
 from cmk.ccc.hostaddress import HostName
-from cmk.ccc.version import Edition, edition
+from cmk.ccc.version import Edition
 from cmk.checkengine.plugins import AgentBasedPlugins
-from cmk.utils import paths
 from cmk.utils.labels import LabelSource
 from cmk.utils.rulesets.ruleset_matcher import RuleSpec
 from tests.testlib.common.empty_config import EMPTY_CONFIG
@@ -23,9 +22,6 @@ from tests.testlib.unit.base_configuration_scenario import Scenario
 def test_analyse_host(monkeypatch: MonkeyPatch) -> None:
     additional_labels: dict[str, str] = {}
     additional_label_sources: dict[str, LabelSource] = {}
-    if edition(paths.omd_root) is Edition.ULTIMATEMT:
-        additional_labels = {"cmk/customer": "provider"}
-        additional_label_sources = {"cmk/customer": "discovered"}
 
     ts = Scenario()
     ts.add_host(HostName("test-host"))
@@ -45,7 +41,7 @@ def test_analyse_host(monkeypatch: MonkeyPatch) -> None:
     }
     assert automations.automation_analyse_host(
         AutomationContext(
-            edition=(app := make_app(edition(paths.omd_root))).edition,
+            edition=(app := make_app(Edition.COMMUNITY)).edition,
             make_bake_on_restart=app.make_bake_on_restart,
             create_core=app.create_core,
             make_fetcher_trigger=app.make_fetcher_trigger,
@@ -94,7 +90,7 @@ def test_service_labels(monkeypatch: MonkeyPatch) -> None:
 
     assert automations.automation_get_service_labels(
         AutomationContext(
-            edition=(app := make_app(edition(paths.omd_root))).edition,
+            edition=(app := make_app(Edition.COMMUNITY)).edition,
             make_bake_on_restart=app.make_bake_on_restart,
             create_core=app.create_core,
             make_fetcher_trigger=app.make_fetcher_trigger,

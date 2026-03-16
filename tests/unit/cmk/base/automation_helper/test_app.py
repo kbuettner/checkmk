@@ -20,7 +20,6 @@ from fastapi.testclient import TestClient
 from pytest_mock import MockerFixture
 from starlette import status
 
-import cmk.utils.paths
 from cmk.automations.helper_api import AutomationPayload, AutomationResponse
 from cmk.automations.results import ABCAutomationResult, SerializedResult
 from cmk.base.automation_helper._app import (
@@ -35,7 +34,7 @@ from cmk.base.automation_helper._config import ReloaderConfig
 from cmk.base.automations.automations import AutomationContext, AutomationError
 from cmk.base.config import ConfigCache, LoadingResult
 from cmk.ccc.site import SiteId
-from cmk.ccc.version import edition, Version
+from cmk.ccc.version import Edition, Version
 from cmk.checkengine.plugins import AgentBasedPlugins
 from cmk.utils.labels import get_builtin_host_labels, Labels
 from tests.testlib.common.empty_config import EMPTY_CONFIG
@@ -119,6 +118,7 @@ def _make_test_client(
 ) -> TestClient:
     return TestClient(
         make_application(
+            edition=Edition.COMMUNITY,
             engine=engine,
             cache=cache,
             reloader_config=reloader_config,
@@ -256,9 +256,7 @@ def test_health_check(cache: Cache) -> None:
         cache,
         lambda plugins, get_builtin_host_labels: LoadingResult(
             loaded_config=loaded_config,
-            config_cache=ConfigCache(
-                loaded_config, get_builtin_host_labels, edition(cmk.utils.paths.omd_root)
-            ),
+            config_cache=ConfigCache(loaded_config, get_builtin_host_labels, Edition.COMMUNITY),
         ),
         lambda ruleset_matcher: None,
     ) as client:
@@ -459,9 +457,7 @@ def test_automation_cache_error_on_stale_config() -> None:
         FailingCache(fakeredis.FakeRedis()),
         lambda plugins, get_builtin_host_labels: LoadingResult(
             loaded_config=EMPTY_CONFIG,
-            config_cache=ConfigCache(
-                EMPTY_CONFIG, get_builtin_host_labels, edition(cmk.utils.paths.omd_root)
-            ),
+            config_cache=ConfigCache(EMPTY_CONFIG, get_builtin_host_labels, Edition.COMMUNITY),
         ),
         lambda ruleset_matcher: None,
     ) as client:
