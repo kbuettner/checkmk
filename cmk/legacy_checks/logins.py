@@ -3,21 +3,22 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="type-arg"
-
 # Example output from agent:
 # <<<logins>>>
 # 3
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
-
-DiscoveryResult = Iterable[tuple[None, dict]]
-CheckResult = Iterable[tuple[int, str, list]]
+from cmk.agent_based.v2 import (
+    AgentSection,
+    check_levels,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Service,
+    StringTable,
+)
 
 Section = int
 
@@ -30,25 +31,28 @@ def parse_logins(string_table: StringTable) -> Section | None:
 
 
 def discover_logins(section: Section) -> DiscoveryResult:
-    yield None, {}
+    yield Service()
 
 
-def check_logins(
-    _no_item: None, params: Mapping[str, tuple[int, int]], section: Section
-) -> CheckResult:
-    yield check_levels(
+def check_logins(params: Mapping[str, Any], section: Section) -> CheckResult:
+    warn, crit = params["levels"]
+    yield from check_levels(
         section,
-        "logins",
-        params["levels"],
-        infoname="On system",
-        human_readable_func=lambda x: "%d" % x,
+        metric_name="logins",
+        levels_upper=("fixed", (warn, crit)),
+        render_func=lambda x: f"{int(x)}",
+        label="On system",
     )
 
 
-check_info["logins"] = LegacyCheckDefinition(
+agent_section_logins = AgentSection(
+    name="logins",
+    parse_function=parse_logins,
+)
+
+check_plugin_logins = CheckPlugin(
     name="logins",
     service_name="Logins",
-    parse_function=parse_logins,
     discovery_function=discover_logins,
     check_function=check_logins,
     check_ruleset_name="logins",
