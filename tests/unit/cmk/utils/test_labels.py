@@ -62,6 +62,19 @@ class _LabelManagerWithMockedDiscoerdLabels(LabelManager):
 
 
 class TestLabelManager:
+    def test_builtin_site_labels(self) -> None:
+        label_manager = LabelManager(
+            label_config=_LabelConfig(),
+            nodes_of={},
+            explicit_host_labels={},
+            builtin_host_labels={
+                HostName("host-a"): {"cmk/site": "site_a"},
+                HostName("host-b"): {"cmk/site": "site_b"},
+            },
+        )
+        assert label_manager.labels_of_host(HostName("host-a")) == {"cmk/site": "site_a"}
+        assert label_manager.labels_of_host(HostName("host-b")) == {"cmk/site": "site_b"}
+
     def test_host_label_merge_prio(self) -> None:
         label_manager = _LabelManagerWithMockedDiscoerdLabels(
             label_config=_LabelConfig(

@@ -48,7 +48,6 @@ from cmk.base.default_config.base import _PeriodicDiscovery
 from cmk.ccc.config_path import VersionedConfigPath
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.hostaddress import HostAddress, HostName
-from cmk.ccc.site import SiteId
 from cmk.ccc.version import Edition
 from cmk.checkengine.checkerplugin import ConfiguredService
 from cmk.checkengine.discovery import (
@@ -1961,20 +1960,6 @@ def test_labels(monkeypatch: MonkeyPatch) -> None:
         "from-rule": "ruleset",
         "from-rule2": "ruleset",
     }
-
-
-# TODO: this tests very little. Rather test the label manager directly.
-def test_site_labels(monkeypatch: MonkeyPatch) -> None:
-    test_host = HostName("test-host")
-    xyz_host = HostName("xyz")
-
-    ts = Scenario()
-    ts.add_host(test_host)
-    ts.add_host(xyz_host, site=SiteId("some_site"))
-
-    config_cache = ts.apply(monkeypatch)
-    assert config_cache.label_manager.labels_of_host(xyz_host) == {"cmk/site": "some_site"}
-    assert config_cache.label_manager.labels_of_host(test_host) == {"cmk/site": "unit"}
 
 
 def test_host_labels_of_host_discovered_labels(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
