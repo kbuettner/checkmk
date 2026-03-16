@@ -335,10 +335,10 @@ def render_graph_pdf(
         legend_column_width = (width - left_margin - left_border - right_margin) / 7.0
 
         def paint_legend_line(color: RGBColor | None, texts: Sequence[str | None]) -> None:
-            l = t_orig
+            line = t_orig
             if color:
                 pdf_document.render_rect(
-                    l,
+                    line,
                     legend_top + mm_per_ex * 0.2,
                     legend_box_size,
                     legend_box_size,
@@ -348,7 +348,7 @@ def render_graph_pdf(
             for nr, text in enumerate(texts):
                 if text:
                     pdf_document.render_aligned_text(
-                        l + (color and nr == 0 and legend_box_size + 0.8 or 0),
+                        line + (color and nr == 0 and legend_box_size + 0.8 or 0),
                         legend_top,
                         legend_column_width,
                         legend_lineskip,
@@ -357,9 +357,9 @@ def render_graph_pdf(
                         color=foreground_color,
                     )
                 if nr == 0:
-                    l += legend_column_width * 3
+                    line += legend_column_width * 3
                 else:
-                    l += legend_column_width
+                    line += legend_column_width
 
         scalars = [
             ("min", _("Minimum")),
