@@ -3,14 +3,11 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="misc"
-
-from collections.abc import Mapping, Sequence
-from typing import Any
+from collections.abc import Sequence
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Result, Service, State, StringTable
 from cmk.legacy_checks.sansymphony_virtualdiskstatus import (
     check_sansymphony_virtualdiskstatus,
     discover_sansymphony_virtualdiskstatus,
@@ -23,40 +20,42 @@ from cmk.legacy_checks.sansymphony_virtualdiskstatus import (
     [
         (
             [["testvmfs01", "Online"], ["vmfs01", "anything", "else"]],
-            [("testvmfs01", {}), ("vmfs01", {})],
+            [Service(item="testvmfs01"), Service(item="vmfs01")],
         ),
     ],
 )
 def test_discover_sansymphony_virtualdiskstatus(
-    string_table: StringTable, expected_discoveries: Sequence[tuple[str, Mapping[str, Any]]]
+    string_table: StringTable, expected_discoveries: Sequence[Service]
 ) -> None:
-    """Test discovery function for sansymphony_virtualdiskstatus check."""
     parsed = parse_sansymphony_virtualdiskstatus(string_table)
     result = list(discover_sansymphony_virtualdiskstatus(parsed))
-    assert sorted(result) == sorted(expected_discoveries)
+    assert sorted(result, key=lambda s: s.item or "") == sorted(
+        expected_discoveries, key=lambda s: s.item or ""
+    )
 
 
 @pytest.mark.parametrize(
-    "item, params, string_table, expected_results",
+    "item, string_table, expected_state, expected_summary",
     [
         (
             "testvmfs01",
-            {},
             [["testvmfs01", "Online"], ["vmfs01", "anything", "else"]],
-            [(0, "Volume state is: Online")],
+            State.OK,
+            "Volume state is: Online",
         ),
         (
             "vmfs01",
-            {},
             [["testvmfs01", "Online"], ["vmfs01", "anything", "else"]],
-            [(2, "Volume state is: anything else")],
+            State.CRIT,
+            "Volume state is: anything else",
         ),
     ],
 )
 def test_check_sansymphony_virtualdiskstatus(
-    item: str, params: Mapping[str, Any], string_table: StringTable, expected_results: Sequence[Any]
+    item: str, string_table: StringTable, expected_state: State, expected_summary: str
 ) -> None:
-    """Test check function for sansymphony_virtualdiskstatus check."""
     parsed = parse_sansymphony_virtualdiskstatus(string_table)
-    result = list(check_sansymphony_virtualdiskstatus(item, params, parsed))
-    assert result == expected_results
+    results = list(check_sansymphony_virtualdiskstatus(item, parsed))
+    result_objs = [r for r in results if isinstance(r, Result)]
+    assert result_objs[0].state == expected_state
+    assert result_objs[0].summary == expected_summary

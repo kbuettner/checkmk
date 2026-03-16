@@ -8,13 +8,16 @@
 # vmfs10 Online
 
 
-from collections.abc import Iterator, Mapping
-from typing import Any
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 Section = dict[str, str]
 
@@ -26,24 +29,25 @@ def parse_sansymphony_virtualdiskstatus(string_table: StringTable) -> Section:
     return parsed
 
 
-def check_sansymphony_virtualdiskstatus(
-    item: str, _no_params: Mapping[str, Any], parsed: Section
-) -> Iterator[tuple[int, str]]:
-    if not (data := parsed.get(item)):
-        return
-    state = 0 if data == "Online" else 2
-    yield state, "Volume state is: %s" % data
-
-
-def discover_sansymphony_virtualdiskstatus(
-    section: Section,
-) -> Iterator[tuple[str, dict[str, object]]]:
-    yield from ((item, {}) for item in section)
-
-
-check_info["sansymphony_virtualdiskstatus"] = LegacyCheckDefinition(
+agent_section_sansymphony_virtualdiskstatus = AgentSection(
     name="sansymphony_virtualdiskstatus",
     parse_function=parse_sansymphony_virtualdiskstatus,
+)
+
+
+def discover_sansymphony_virtualdiskstatus(section: Section) -> DiscoveryResult:
+    yield from (Service(item=item) for item in section)
+
+
+def check_sansymphony_virtualdiskstatus(item: str, section: Section) -> CheckResult:
+    if not (data := section.get(item)):
+        return
+    state = State.OK if data == "Online" else State.CRIT
+    yield Result(state=state, summary=f"Volume state is: {data}")
+
+
+check_plugin_sansymphony_virtualdiskstatus = CheckPlugin(
+    name="sansymphony_virtualdiskstatus",
     service_name="sansymphony Virtual Disk %s",
     discovery_function=discover_sansymphony_virtualdiskstatus,
     check_function=check_sansymphony_virtualdiskstatus,
