@@ -12,12 +12,13 @@ from ._from_api import (
     perfometers_from_api,
     RegisteredMetric,
 )
-from ._graph_images import graph_spec_from_request
+from ._graph_images import graph_spec_from_request, GraphSpec
 from ._graph_metric_expressions import (
     GraphConsolidationFunction,
     GraphMetricConstant,
     GraphMetricExpression,
     GraphMetricOperation,
+    LineType,
 )
 from ._graph_pdf import (
     compute_pdf_graph_data_range,
@@ -65,6 +66,7 @@ from ._rrd import (
     get_graph_data_from_livestatus,
     translate_and_merge_rrd_columns,
 )
+from ._time_series import TimeSeriesValues
 from ._translated_metrics import (
     lookup_metric_translations_for_check_command,
     parse_perf_data,
@@ -106,14 +108,16 @@ __all__ = [
     "GraphDestinations",
     "GraphMetric",
     "GraphMetricConstant",
-    "GraphRecipe",
     "GraphMetricExpression",
     "GraphMetricOperation",
     "GraphPluginChoice",
+    "GraphRecipe",
     "GraphRenderConfig",
     "GraphRenderConfigImage",
     "GraphRenderOptions",
+    "GraphSpec",
     "GraphSpecification",
+    "LineType",
     "MKCombinedGraphLimitExceededError",
     "MKGraphRecipeNotFoundError",
     "MKGraphWidgetTooSmallError",
@@ -121,6 +125,7 @@ __all__ = [
     "MetricSpec",
     "RegisteredMetric",
     "TemplateGraphSpecification",
+    "TimeSeriesValues",
     "TranslatedMetric",
     "UserSpecificUnit",
     "ValuesWithUnits",

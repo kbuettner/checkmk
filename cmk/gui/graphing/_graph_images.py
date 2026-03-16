@@ -12,7 +12,7 @@ import json
 import time
 import traceback
 from collections.abc import Mapping, Sequence
-from typing import Any, override
+from typing import Any, Literal, override, TypedDict
 
 from pydantic import ValidationError as PydanticValidationError
 
@@ -42,6 +42,7 @@ from ._artwork import (
     GraphArtwork,
 )
 from ._from_api import graphs_from_api, metrics_from_api, RegisteredMetric
+from ._graph_metric_expressions import LineType
 from ._graph_pdf import (
     compute_pdf_graph_data_range,
     get_mm_per_ex,
@@ -68,6 +69,7 @@ from ._metric_backend_registry import (
     metric_backend_registry,
 )
 from ._rrd import get_graph_data_from_livestatus
+from ._time_series import TimeSeriesValues
 from ._unit import get_temperature_unit
 
 
@@ -309,25 +311,40 @@ def graph_recipes_for_api_request(
     return GraphDataRange.model_validate(raw_graph_data_range), graph_recipes
 
 
+class CurveValues(TypedDict):
+    line_type: LineType | Literal["ref"]
+    color: str
+    title: str
+    attributes: Mapping[Literal["resource", "scope", "data_point"], Mapping[str, str]]
+    rrddata: TimeSeriesValues
+
+
+class GraphSpec(TypedDict):
+    start_time: int
+    end_time: int
+    step: int
+    curves: Sequence[CurveValues]
+
+
 def _compute_graph_spec(
     graph_data_range: GraphDataRange, curves_of_graph_metrics: Sequence[CurvesOfGraphMetric]
-) -> dict[str, Any]:
+) -> GraphSpec:
     api_curves = []
     (start, end), step = graph_data_range.time_range, 60  # empty graph
     for curves_of_graph_metric in curves_of_graph_metrics:
         for curve in curves_of_graph_metric.curves:
             time_series = curve["rrddata"]
             start, end, step = time_series.start, time_series.end, time_series.step
-            api_curve: dict[str, Any] = dict(curve)
-            api_curve["rrddata"] = curve["rrddata"].values
-            api_curves.append(api_curve)
-
-    return {
-        "start_time": start,
-        "end_time": end,
-        "step": step,
-        "curves": api_curves,
-    }
+            api_curves.append(
+                CurveValues(
+                    line_type=curve["line_type"],
+                    color=curve["color"],
+                    title=curve["title"],
+                    attributes=curve["attributes"],
+                    rrddata=curve["rrddata"].values,
+                )
+            )
+    return GraphSpec(start_time=start, end_time=end, step=step, curves=api_curves)
 
 
 def graph_spec_from_request(
@@ -339,7 +356,7 @@ def graph_spec_from_request(
     debug: bool,
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
-) -> dict[str, Any]:
+) -> GraphSpec:
     try:
         graph_data_range, graph_recipes = graph_recipes_for_api_request(
             api_request,

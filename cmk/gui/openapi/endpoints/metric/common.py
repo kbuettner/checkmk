@@ -6,14 +6,16 @@
 # mypy: disable-error-code="no-any-return"
 
 import re
+from collections.abc import Mapping, Sequence
 from datetime import datetime, UTC
-from typing import Any
+from typing import Any, Literal, TypedDict
 
 import marshmallow
 
 from cmk.fields import Nested, String
 from cmk.gui.fields import Timestamp
 from cmk.gui.fields.base import BaseSchema
+from cmk.gui.graphing import GraphSpec, LineType, TimeSeriesValues
 
 GRAPH_NAME_REGEX = r"^\w[_\-\w\d\.]*$"
 GRAPH_NAME_ERROR_MESSAGE = "{input} is not a valid value for this field. It must match the pattern {regex} and contain only ASCII characters."
@@ -97,7 +99,26 @@ class BaseRequestSchema(BaseSchema):
     )
 
 
-def reorganize_response(resp: dict[str, Any]) -> dict[str, Any]:
+class ReorganizedTimeRange(TypedDict):
+    start: int
+    end: int
+
+
+class ReorganizedCurveValues(TypedDict):
+    line_type: LineType | Literal["ref"]
+    color: str
+    title: str
+    attributes: Mapping[Literal["resource", "scope", "data_point"], Mapping[str, str]]
+    data_points: TimeSeriesValues
+
+
+class ReorganizedGraphSpec(TypedDict):
+    time_range: ReorganizedTimeRange
+    step: int
+    metrics: Sequence[ReorganizedCurveValues]
+
+
+def reorganize_response(graph_spec: GraphSpec) -> ReorganizedGraphSpec:
     """Reorganize a legacy WebApi response into the new format.
 
     >>> reorganize_response({
@@ -118,19 +139,23 @@ def reorganize_response(resp: dict[str, Any]) -> dict[str, Any]:
     ... })
     {'time_range': {'start': 123, 'end': 456}, 'step': 60, 'metrics': [{'color': '#ffffff', 'line_type': 'area', 'title': 'RAM used', 'data_points': [1.0, 2.0, 3.0, 1.0]}]}
     """
-    curves = resp["curves"]
-    for curve in curves:
-        curve["data_points"] = curve["rrddata"]
-        curve.pop("rrddata")
-
-    return {
-        "time_range": {
-            "start": resp["start_time"],
-            "end": resp["end_time"],
-        },
-        "step": resp["step"],
-        "metrics": curves,
-    }
+    return ReorganizedGraphSpec(
+        time_range=ReorganizedTimeRange(
+            start=graph_spec["start_time"],
+            end=graph_spec["end_time"],
+        ),
+        step=graph_spec["step"],
+        metrics=[
+            ReorganizedCurveValues(
+                line_type=curve["line_type"],
+                color=curve["color"],
+                title=curve["title"],
+                attributes=curve["attributes"],
+                data_points=curve["rrddata"],
+            )
+            for curve in graph_spec["curves"]
+        ],
+    )
 
 
 def reorganize_time_range(time_range: dict[str, Any] | None) -> dict[str, Any] | None:
