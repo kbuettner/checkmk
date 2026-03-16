@@ -182,6 +182,7 @@ from cmk.gui.watolib.rulesets import (
 from cmk.gui.watolib.rulespecs import (
     FormSpecNotImplementedError,
     get_rulegroup,
+    is_rulespec_for_service,
     main_module_from_rulespec_group_name,
     MatchType,
     Rulespec,
@@ -2112,6 +2113,7 @@ class ABCEditRuleMode(WatoMode):
                             if (self._rulespec.item_type and self._rulespec.item_name is not None)
                             else None
                         ),
+                        is_service_rule=is_rulespec_for_service(self._rulespec),
                     ),
                 )
 
@@ -2133,6 +2135,7 @@ class ABCEditRuleMode(WatoMode):
                             if (self._rulespec.item_type and self._rulespec.item_name is not None)
                             else None
                         ),
+                        is_service_rule=is_rulespec_for_service(self._rulespec),
                     ),
                 )
 
@@ -3298,6 +3301,7 @@ class ModeNewRule(ABCEditRuleMode):
                             tree=tree,
                             rule_spec_name=rule_spec_name,
                             rule_spec_item=rule_spec_item,
+                            is_service_rule=is_rulespec_for_service(self._rulespec),
                         ),
                         "_vue_edit_rule_conditions",
                     )
@@ -3317,6 +3321,7 @@ class ModeNewRule(ABCEditRuleMode):
                             tree=tree,
                             rule_spec_name=rule_spec_name,
                             rule_spec_item=rule_spec_item,
+                            is_service_rule=is_rulespec_for_service(self._rulespec),
                         ),
                         "_vue_edit_rule",
                     )
