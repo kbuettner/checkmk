@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 # This check verifies a given NFS export is registered with mountd.
 # Optionally we can add tracking of allowed clients and filesystem ID.
 
@@ -12,50 +10,51 @@
 # [['/mirrored/data/recording', '172.0.0.0/255.0.0.0']]
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
-
-
-def discover_nfsexports(info):
-    # reminder to self: inventorize the exported fs, and maybe even the fs id.
-    # but do not inventorize the allowed clients unless i'm really sure that
-    # it's not bugged for "features" like multiple different option exports of
-    # same FS.
-    inventory = []
-    for line in info:
-        # will not inventorize unless there is SOME export at inventory time.
-        if line[0].startswith("/"):
-            inventory.append((line[0], None))
-
-    return inventory
-
-
-def check_nfsexports(item, _no_params, info):
-    # if the agent returned an empty list then it found entries in /etc/exports
-    # but apparently no daemons were running.
-    if len(info) == 0:
-        return (
-            2,
-            "exports defined but no exports found in export list. Daemons might not be working",
-        )
-
-    # otherwise lets see if our export exists.
-    for line in info:
-        if item == line[0]:
-            return 0, "export is active"
-
-    return 2, "export not found in export list"
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 
 def parse_nfsexports(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["nfsexports"] = LegacyCheckDefinition(
+def discover_nfsexports(section: StringTable) -> DiscoveryResult:
+    for line in section:
+        if line[0].startswith("/"):
+            yield Service(item=line[0])
+
+
+def check_nfsexports(item: str, section: StringTable) -> CheckResult:
+    if len(section) == 0:
+        yield Result(
+            state=State.CRIT,
+            summary="exports defined but no exports found in export list. Daemons might not be working",
+        )
+        return
+
+    for line in section:
+        if item == line[0]:
+            yield Result(state=State.OK, summary="export is active")
+            return
+
+    yield Result(state=State.CRIT, summary="export not found in export list")
+
+
+agent_section_nfsexports = AgentSection(
     name="nfsexports",
     parse_function=parse_nfsexports,
+)
+
+check_plugin_nfsexports = CheckPlugin(
+    name="nfsexports",
     service_name="NFS export %s",
     discovery_function=discover_nfsexports,
     check_function=check_nfsexports,
