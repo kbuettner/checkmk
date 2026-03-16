@@ -10,6 +10,7 @@ import {
   UclDetailPageAccessibility,
   UclDetailPageCodeExample,
   UclDetailPageComponent,
+  UclDetailPageDeveloperPlayground,
   UclDetailPageHeader,
   UclDetailPageLayout,
   UclPropertiesPanel,
@@ -24,6 +25,8 @@ import CmkWizard, {
 } from '@/components/CmkWizard'
 import CmkHeading from '@/components/typography/CmkHeading.vue'
 import CmkParagraph from '@/components/typography/CmkParagraph.vue'
+
+import UclCmkWizardDev from './UclCmkWizardDev.vue'
 
 defineProps<{ screenshotMode: boolean }>()
 
@@ -176,5 +179,8 @@ const wizardMode = computed({
     <UclDetailPageCodeExample :code="codeExampleCmkWizard" />
 
     <UclDetailPageAccessibility :data="a11yDataCmkWizard" />
+    <UclDetailPageDeveloperPlayground>
+      <UclCmkWizardDev :screenshot-mode="screenshotMode" />
+    </UclDetailPageDeveloperPlayground>
   </UclDetailPageLayout>
 </template>
