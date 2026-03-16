@@ -3,17 +3,24 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="type-arg"
-
 
 import json
-from collections.abc import Generator, Iterable, Mapping
+from collections.abc import Mapping
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition, LegacyResult
-from cmk.agent_based.v2 import render, StringTable
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    AgentSection,
+    check_levels,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Metric,
+    render,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 Section = Mapping[str, float]
 
@@ -31,41 +38,47 @@ def parse_cadvisor_cpu(string_table: StringTable) -> Section:
     return parsed
 
 
-def discover_cadvisor_cpu(section: Section) -> Iterable[tuple[None, dict[str, Any]]]:
+def discover_cadvisor_cpu(section: Section) -> DiscoveryResult:
     if section:
-        yield None, {}
+        yield Service()
 
 
-def check_cadvisor_cpu(
-    _item: None, params: Mapping[str, Any], parsed: Section
-) -> Generator[LegacyResult]:
-    # No suitable function in cpu_util.include
-    cpu_user = parsed["cpu_user"]
-    cpu_system = parsed["cpu_system"]
+def check_cadvisor_cpu(params: Mapping[str, Any], section: Section) -> CheckResult:
+    cpu_user = section["cpu_user"]
+    cpu_system = section["cpu_system"]
     cpu_total = cpu_user + cpu_system
 
-    yield check_levels(cpu_user, "user", None, human_readable_func=render.percent, infoname="User")
-    yield check_levels(
-        cpu_system,
-        "system",
-        None,
-        human_readable_func=render.percent,
-        infoname="System",
-    )
-    yield check_levels(
-        cpu_total,
-        "util",
-        params.get("util"),
-        human_readable_func=render.percent,
-        infoname="Total CPU",
-    )
+    yield Result(state=State.OK, summary=f"User: {render.percent(cpu_user)}")
+    yield Metric("user", cpu_user)
+
+    yield Result(state=State.OK, summary=f"System: {render.percent(cpu_system)}")
+    yield Metric("system", cpu_system)
+
+    util_levels = params.get("util")
+    if util_levels is not None:
+        warn, crit = util_levels
+        yield from check_levels(
+            cpu_total,
+            metric_name="util",
+            levels_upper=("fixed", (warn, crit)),
+            render_func=render.percent,
+            label="Total CPU",
+        )
+    else:
+        yield Result(state=State.OK, summary=f"Total CPU: {render.percent(cpu_total)}")
+        yield Metric("util", cpu_total)
 
 
-check_info["cadvisor_cpu"] = LegacyCheckDefinition(
+agent_section_cadvisor_cpu = AgentSection(
     name="cadvisor_cpu",
     parse_function=parse_cadvisor_cpu,
+)
+
+check_plugin_cadvisor_cpu = CheckPlugin(
+    name="cadvisor_cpu",
     service_name="CPU utilization",
     discovery_function=discover_cadvisor_cpu,
     check_function=check_cadvisor_cpu,
     check_ruleset_name="cpu_utilization",
+    check_default_parameters={},
 )
