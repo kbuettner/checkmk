@@ -8,9 +8,7 @@
 # mypy: disable-error-code="type-arg"
 
 
-from collections.abc import Iterator
-
-import pytest
+import logging
 
 import cmk.fetchers._snmpscan as snmp_scan
 from cmk.ccc.exceptions import OnError
@@ -23,11 +21,8 @@ from cmk.snmplib import (
     SNMPSectionName,
     SNMPVersion,
 )
-from cmk.snmplib._table import SNMPDecodedString
-from cmk.utils.log import logger
 
-# C/P from `test_snmplib_snmp_table`.
-SNMPConfig = SNMPHostConfig(
+SNMP_CONFIG = SNMPHostConfig(
     is_ipv6_primary=False,
     hostname=HostName("testhost"),
     ipaddress=HostAddress("1.2.3.4"),
@@ -46,6 +41,9 @@ SNMPConfig = SNMPHostConfig(
 
 # Adapted from `test_snmplib_snmp_table`.
 class SNMPTestBackend(SNMPBackend):
+    def __init__(self) -> None:
+        super().__init__(SNMP_CONFIG, logging.getLogger())
+
     def get(self, /, oid, *, context):
         # See also: `snmp_mode.get_single_oid()`
         return None
@@ -54,30 +52,24 @@ class SNMPTestBackend(SNMPBackend):
         raise NotImplementedError("walk")
 
 
-@pytest.fixture
-def backend() -> Iterator[SNMPBackend]:
-    yield SNMPTestBackend(SNMPConfig, logger)
-
-
-@pytest.fixture
-def single_oid_cache() -> Iterator[dict[str, SNMPDecodedString | None]]:
-    # Cache OIDs to avoid actual SNMP I/O.
-    yield {snmp_scan.OID_SYS_DESCR: "sys description", snmp_scan.OID_SYS_OBJ: "sys object"}
+# Cache OIDs to avoid actual SNMP I/O.
+FAKE_OID_CACHE = {
+    snmp_scan.OID_SYS_DESCR: "sys description",
+    snmp_scan.OID_SYS_OBJ: "sys object",
+}
 
 
 def test_snmp_scan_find_plugins__success(
-    backend: SNMPBackend,
     agent_based_plugins: AgentBasedPlugins,
-    single_oid_cache: dict[str, SNMPDecodedString | None],
 ) -> None:
     sections = [
         (SNMPSectionName(s.name), s.detect_spec) for s in agent_based_plugins.snmp_sections.values()
     ]
     found = snmp_scan._find_sections(
         sections,
-        {k: v for k, v in single_oid_cache.items() if v is not None},
+        FAKE_OID_CACHE,
         on_error=OnError.RAISE,
-        backend=backend,
+        backend=SNMPTestBackend(),
     )
 
     assert sections
@@ -86,7 +78,6 @@ def test_snmp_scan_find_plugins__success(
 
 
 def test_gather_available_raw_section_names_defaults(
-    backend: SNMPBackend,
     agent_based_plugins: AgentBasedPlugins,
 ) -> None:
     assert snmp_scan.gather_available_raw_section_names(
@@ -98,7 +89,7 @@ def test_gather_available_raw_section_names_defaults(
             on_error=OnError.RAISE,
             missing_sys_description=True,
         ),
-        backend=backend,
+        backend=SNMPTestBackend(),
     ) == {
         SNMPSectionName("hr_mem"),
         SNMPSectionName("snmp_info"),
