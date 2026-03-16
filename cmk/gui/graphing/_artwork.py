@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
 from itertools import zip_longest
-from typing import assert_never, Literal, NotRequired, TypedDict
+from typing import assert_never, Literal, TypedDict
 
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel
@@ -67,10 +67,19 @@ class TimeAxisLabel(BaseModel, frozen=True):
     line_width: int
 
 
+class Scalars(TypedDict):
+    pin: tuple[TimeSeriesValue | None, str]
+    first: tuple[TimeSeriesValue | None, str]
+    last: tuple[TimeSeriesValue | None, str]
+    max: tuple[TimeSeriesValue | None, str]
+    min: tuple[TimeSeriesValue | None, str]
+    average: tuple[TimeSeriesValue | None, str]
+
+
 class _LayoutedCurveBase(TypedDict):
     color: str
     title: str
-    scalars: Mapping[str, tuple[TimeSeriesValue, str]]
+    scalars: Scalars
     attributes: Mapping[Literal["resource", "scope", "data_point"], Mapping[str, str]]
 
 
@@ -241,8 +250,6 @@ class Curve(TypedDict):
     title: str
     attributes: Mapping[Literal["resource", "scope", "data_point"], Mapping[str, str]]
     rrddata: TimeSeries
-    # Added during runtime by _compute_scalars
-    scalars: NotRequired[Mapping[str, tuple[TimeSeriesValue, str]]]
 
 
 # Compute the location of the curves of the graph, implement
@@ -377,7 +384,6 @@ def compute_graph_artwork_curves(
                         title=augmented_time_series.title,
                         attributes=augmented_time_series.attributes,
                         rrddata=augmented_time_series.time_series,
-                        scalars={},
                     )
                     for augmented_time_series in result.ok.time_series
                     if (
@@ -435,24 +441,33 @@ def _halfstep_interpolation(rrddata: TimeSeries) -> Iterator[TimeSeriesValue]:
 
 def _compute_scalars(
     unit_renderer: Callable[[float], str], pin_time: int | None, rrddata: TimeSeries
-) -> Mapping[str, tuple[TimeSeriesValue, str]]:
-    pin = None
-    if pin_time is not None:
-        pin = _get_value_at_timestamp(pin_time, rrddata)
-
-    if clean_rrddata := clean_time_series_point(rrddata):
-        scalars = {
-            "pin": pin,
-            "first": clean_rrddata[0],
-            "last": clean_rrddata[-1],
-            "max": max(clean_rrddata),
-            "min": min(clean_rrddata),
-            "average": sum(clean_rrddata) / float(len(clean_rrddata)),
-        }
-    else:
-        scalars = {x: None for x in ["pin", "first", "last", "max", "min", "average"]}
-
-    return {k: _render_scalar_value(v, unit_renderer) for k, v in scalars.items()}
+) -> Scalars:
+    pin = (
+        _render_scalar_value(_get_value_at_timestamp(pin_time, rrddata), unit_renderer)
+        if pin_time
+        else (None, _("n/a"))
+    )
+    return (
+        Scalars(
+            pin=pin,
+            first=_render_scalar_value(clean_rrddata[0], unit_renderer),
+            last=_render_scalar_value(clean_rrddata[-1], unit_renderer),
+            max=_render_scalar_value(max(clean_rrddata), unit_renderer),
+            min=_render_scalar_value(min(clean_rrddata), unit_renderer),
+            average=_render_scalar_value(
+                sum(clean_rrddata) / float(len(clean_rrddata)), unit_renderer
+            ),
+        )
+        if (clean_rrddata := clean_time_series_point(rrddata))
+        else Scalars(
+            pin=pin,
+            first=(None, _("n/a")),
+            last=(None, _("n/a")),
+            max=(None, _("n/a")),
+            min=(None, _("n/a")),
+            average=(None, _("n/a")),
+        )
+    )
 
 
 def compute_curve_values_at_timestamp(

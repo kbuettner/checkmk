@@ -361,6 +361,8 @@ def render_graph_pdf(
                 else:
                     line += legend_column_width
 
+        # TODO Improve: don't loose connection to titles while iterating over
+        # curves and horizontal rules
         scalars = [
             ("min", _("Minimum")),
             ("max", _("Maximum")),
@@ -374,10 +376,16 @@ def render_graph_pdf(
 
         for curve in graph_artwork.curves:
             legend_top -= legend_lineskip
-            texts = [str(curve["title"])]
-            for scalar, _title in scalars:
-                texts.append(curve["scalars"][scalar][1])
-            paint_legend_line(parse_color(curve["color"]), texts)
+            paint_legend_line(
+                parse_color(curve["color"]),
+                [
+                    str(curve["title"]),
+                    curve["scalars"]["min"][1],
+                    curve["scalars"]["max"][1],
+                    curve["scalars"]["average"][1],
+                    curve["scalars"]["last"][1],
+                ],
+            )
 
         if graph_artwork.horizontal_rules:
             pdf_document.render_line(t_orig, legend_top, t_orig + t_mm, legend_top)
