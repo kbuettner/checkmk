@@ -49,7 +49,7 @@ def params() -> CheckParams:
             "not_connected": State.WARN.value,
             "failed": State.CRIT.value,
         },
-        show_traffic=True,
+        show_traffic=False,
     )
 
 
@@ -81,10 +81,6 @@ def test_check_appliance_uplinks(params: CheckParams) -> None:
         Result(state=State.OK, summary="IP: 1.2.3.4"),
         Result(state=State.OK, summary="Public IP: 192.0.2.2"),
         Result(state=State.OK, notice="Network: main"),
-        Result(state=State.OK, summary="In: 26.7 Bit/s"),
-        Metric("if_in_bps", 26.666666666666668),
-        Result(state=State.OK, summary="Out: 13.3 Bit/s"),
-        Metric("if_out_bps", 13.333333333333334),
         Result(state=State.OK, notice="H/A enabled: True"),
         Result(state=State.OK, notice="H/A role: primary"),
         Result(state=State.OK, notice="Gateway: 1.2.3.5"),
@@ -96,7 +92,29 @@ def test_check_appliance_uplinks(params: CheckParams) -> None:
     assert value == expected
 
 
+def test_check_appliance_uplinks_show_traffic_active(params: CheckParams) -> None:
+    params["show_traffic"] = True
+    uplinks = _UplinkStatusesFactory.build(
+        usageByInterface={"wan1": {"received": 200, "sent": 100}},
+        uplinks=[{"interface": "wan1", "status": "active"}],
+    )
+    string_table = [[f"[{json.dumps(uplinks)}]"]]
+    section = parse_appliance_uplinks(string_table)
+    assert section
+
+    value = set(check_appliance_uplinks("wan1", params, section))
+    expected = {
+        Result(state=State.OK, summary="In: 26.7 Bit/s"),
+        Metric("if_in_bps", 26.666666666666668),
+        Result(state=State.OK, summary="Out: 13.3 Bit/s"),
+        Metric("if_out_bps", 13.333333333333334),
+    }
+
+    assert value & expected == expected
+
+
 def test_check_appliance_uplinks_zero_usage(params: CheckParams) -> None:
+    params["show_traffic"] = True
     uplinks = _UplinkStatusesFactory.build(
         usageByInterface={"wan1": {"received": 0, "sent": 0}},
         uplinks=[{"interface": "wan1", "status": "active"}],
@@ -117,6 +135,7 @@ def test_check_appliance_uplinks_zero_usage(params: CheckParams) -> None:
 
 
 def test_check_appliance_uplinks_bandwidth_works_with_ready_state(params: CheckParams) -> None:
+    params["show_traffic"] = True
     uplinks = _UplinkStatusesFactory.build(
         usageByInterface={"wan1": {"received": 0, "sent": 0}},
         uplinks=[{"interface": "wan1", "status": "ready"}],
