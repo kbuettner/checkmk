@@ -69,10 +69,13 @@ def _migrate_proxy_old_format(
     value: object,
 ) -> tuple[str, object]:
     match value:
+        # used for migration from 2.4.0 version
         case None:
             return "no_proxy", None
+        # used for migration from 2.4.0 version
         case "env":
             return "env_proxy", "env"
+        # used for migration from 2.4.0 version
         case {
             "server": server,
             "port": port,
@@ -93,7 +96,8 @@ def _migrate_proxy_old_format(
                 "proxy_protocol": protocol,
                 **creds,
             }
-        case (str() as choice, dict() as config):
+        # new format with CascadingSingleChoice element
+        case ((str() as choice), config):
             return choice, config
         case _:
             raise ValueError(value)
