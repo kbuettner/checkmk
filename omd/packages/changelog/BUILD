@@ -1,25 +1,6 @@
-load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("@bazel_skylib//rules:run_binary.bzl", "run_binary")
-load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
-
-write_file(
-    name = "werks_utils",
-    out = "werks_utils.py",
-    content = [
-        "import runpy",
-        "runpy.run_module('cmk.werks.utils', run_name=('__main__'))",
-    ],
-    tags = ["manual"],
-)
-
-py_binary(
-    name = "werks_utils_binary",
-    srcs = [":werks_utils.py"],
-    tags = ["manual"],
-    deps = ["//packages/cmk-werks"],
-)
 
 run_binary(
     name = "run_werks_precompile_community",
@@ -33,7 +14,7 @@ run_binary(
         "$(location werks_precompiled_community)",
     ],
     tags = ["manual"],
-    tool = ":werks_utils_binary",
+    tool = "//packages/cmk-werks:utils-bin",
 )
 
 run_binary(
@@ -48,7 +29,7 @@ run_binary(
         "$(location werks_precompiled_pro)",
     ],
     tags = ["manual"],
-    tool = ":werks_utils_binary",
+    tool = "//packages/cmk-werks:utils-bin",
 )
 
 run_binary(
@@ -63,7 +44,7 @@ run_binary(
         "$(location werks_precompiled_ultimate)",
     ],
     tags = ["manual"],
-    tool = ":werks_utils_binary",
+    tool = "//packages/cmk-werks:utils-bin",
 )
 
 run_binary(
@@ -78,7 +59,7 @@ run_binary(
         "$(location werks_precompiled_cloud)",
     ],
     tags = ["manual"],
-    tool = ":werks_utils_binary",
+    tool = "//packages/cmk-werks:utils-bin",
 )
 
 run_binary(
@@ -93,7 +74,7 @@ run_binary(
         "$(location werks_precompiled_ultimatemt)",
     ],
     tags = ["manual"],
-    tool = ":werks_utils_binary",
+    tool = "//packages/cmk-werks:utils-bin",
 )
 
 # One pkg_files per edition, each ships only that edition's werks under its own filename.

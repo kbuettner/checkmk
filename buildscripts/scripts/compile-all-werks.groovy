@@ -39,9 +39,9 @@ void main() {
             dir("${checkout_dir}") {
                 /* groovylint-disable LineLength */
                 sh("""
-                    bazel run //omd/packages/changelog:werks_utils_binary -- collect cmk ${WORKSPACE}/check_mk > cmk.json
-                    bazel run //omd/packages/changelog:werks_utils_binary -- collect cma ${WORKSPACE}/cma > cma.json
-                    bazel run //omd/packages/changelog:werks_utils_binary -- collect checkmk_kube_agent ${WORKSPACE}/checkmk_kube_agent > kube.json
+                    bazel run //packages/cmk-werks:utils-bin -- collect cmk ${WORKSPACE}/check_mk > cmk.json
+                    bazel run //packages/cmk-werks:utils-bin -- collect cma ${WORKSPACE}/cma > cma.json
+                    bazel run //packages/cmk-werks:utils-bin -- collect checkmk_kube_agent ${WORKSPACE}/checkmk_kube_agent > kube.json
 
                     # jq -s '.[0] * .[1] * .[2]' cma.json cmk.json kube.json > all_werks.json
                     # no need to install jq!!!!!

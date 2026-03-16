@@ -1,5 +1,5 @@
 load("@aspect_rules_js//js:defs.bzl", "js_binary")
-load("@aspect_rules_py//py:defs.bzl", "py_library", "py_pytest_main", "py_test")
+load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library", "py_pytest_main", "py_test")
 load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 load("@npm//:defs.bzl", "npm_link_all_packages")
@@ -141,4 +141,13 @@ sh_library(
         ".f12",
         "run",
     ],
+)
+
+py_binary(
+    name = "utils-bin",
+    srcs = ["cmk/werks/utils/__main__.py"],
+    imports = ["."],
+    main = "cmk/werks/utils/__main__.py",
+    visibility = ["//visibility:public"],
+    deps = ["//packages/cmk-werks"],
 )
