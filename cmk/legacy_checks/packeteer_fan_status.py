@@ -3,13 +3,34 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
+
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import DiscoveryResult, Service, SNMPTree, startswith, StringTable
+def parse_packeteer_fan_status(string_table: StringTable) -> StringTable | None:
+    return string_table or None
 
-check_info = {}
+
+snmp_section_packeteer_fan_status = SimpleSNMPSection(
+    name="packeteer_fan_status",
+    parse_function=parse_packeteer_fan_status,
+    detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.2334"),
+    fetch=SNMPTree(
+        base=".1.3.6.1.4.1.2334.2.1.5",
+        oids=["12", "14", "22", "24"],
+    ),
+)
 
 
 def discover_packeteer_fan_status(section: StringTable) -> DiscoveryResult:
@@ -18,30 +39,19 @@ def discover_packeteer_fan_status(section: StringTable) -> DiscoveryResult:
             yield Service(item=f"{nr}")
 
 
-def check_packeteer_fan_status(item, _no_params, info):
-    fan_status = info[0][int(item)]
+def check_packeteer_fan_status(item: str, section: StringTable) -> CheckResult:
+    fan_status = section[0][int(item)]
     if fan_status == "1":
-        return 0, "OK"
-    if fan_status == "2":
-        return 2, "Not OK"
-    if fan_status == "3":
-        return 2, "Not present"
-    return None
+        yield Result(state=State.OK, summary="OK")
+    elif fan_status == "2":
+        yield Result(state=State.CRIT, summary="Not OK")
+    elif fan_status == "3":
+        yield Result(state=State.CRIT, summary="Not present")
 
 
-def parse_packeteer_fan_status(string_table: StringTable) -> StringTable | None:
-    return string_table or None
-
-
-check_info["packeteer_fan_status"] = LegacyCheckDefinition(
+check_plugin_packeteer_fan_status = CheckPlugin(
     name="packeteer_fan_status",
-    parse_function=parse_packeteer_fan_status,
-    detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.2334"),
-    fetch=SNMPTree(
-        base=".1.3.6.1.4.1.2334.2.1.5",
-        oids=["12", "14", "22", "24"],
-    ),
-    service_name="Fan Status",
+    service_name="Fan Status %s",
     discovery_function=discover_packeteer_fan_status,
     check_function=check_packeteer_fan_status,
 )
