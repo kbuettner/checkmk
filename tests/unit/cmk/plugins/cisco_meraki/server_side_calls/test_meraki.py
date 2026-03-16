@@ -153,7 +153,6 @@ HOST_CONFIG = HostConfig(
                 )
             ],
             id="Empty sequences are ignored",
-            marks=pytest.mark.xfail(reason="Only checked against None", strict=True),
         ),
     ],
 )
