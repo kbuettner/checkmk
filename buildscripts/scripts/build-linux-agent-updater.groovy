@@ -42,9 +42,6 @@ void main() {
         set_docker_group_id: true,
         privileged: true,
     ) {
-        // TODO: check why this doesn't work
-        // docker_reference_image().inside(docker_args) {
-
         stage("Prepare workspace") {
             dir("${checkout_dir}") {
                 sh("""
@@ -90,7 +87,7 @@ void main() {
                 """);
             }
         }
-        }
+    }
 
     stage("Archive artifacts") {
         dir("${WORKSPACE}/build") {
@@ -102,6 +99,6 @@ void main() {
             }
         }
     }
-    }
+}
 
 return this;
