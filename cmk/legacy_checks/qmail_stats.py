@@ -7,15 +7,15 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import (
+from cmk.agent_based.v2 import (
+    AgentSection,
     check_levels,
-    LegacyCheckDefinition,
-    LegacyCheckResult,
-    LegacyDiscoveryResult,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Service,
+    StringTable,
 )
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
 
 
 @dataclass(frozen=True)
@@ -27,25 +27,28 @@ def parse_qmail_stats(string_table: StringTable) -> Queue:
     return Queue(int(string_table[0][0]))
 
 
-def discover_qmail_stats(section: Queue) -> LegacyDiscoveryResult:
-    yield None, {}
+def discover_qmail_stats(section: Queue) -> DiscoveryResult:
+    yield Service()
 
 
-def check_qmail_stats(
-    _no_item: None, params: Mapping[str, Any], section: Queue
-) -> LegacyCheckResult:
-    yield check_levels(
+def check_qmail_stats(params: Mapping[str, Any], section: Queue) -> CheckResult:
+    warn, crit = params["deferred"]
+    yield from check_levels(
         section.length,
-        "queue",
-        params["deferred"],
-        infoname="Deferred mails",
-        human_readable_func=str,
+        metric_name="queue",
+        levels_upper=("fixed", (warn, crit)),
+        render_func=str,
+        label="Deferred mails",
     )
 
 
-check_info["qmail_stats"] = LegacyCheckDefinition(
+agent_section_qmail_stats = AgentSection(
     name="qmail_stats",
     parse_function=parse_qmail_stats,
+)
+
+check_plugin_qmail_stats = CheckPlugin(
+    name="qmail_stats",
     service_name="Qmail Queue",
     discovery_function=discover_qmail_stats,
     check_function=check_qmail_stats,
