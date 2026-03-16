@@ -522,8 +522,7 @@ def _compute_scalars(
     if pin_time is not None:
         pin = _get_value_at_timestamp(pin_time, rrddata)
 
-    clean_rrddata = clean_time_series_point(rrddata)
-    if clean_rrddata:
+    if clean_rrddata := clean_time_series_point(rrddata):
         scalars = {
             "pin": pin,
             "first": clean_rrddata[0],
