@@ -29,7 +29,7 @@ from cmk.automations.results import (
 )
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.hostaddress import HostName
-from cmk.ccc.site import omd_site, SiteId
+from cmk.ccc.site import get_agent_receiver_port, omd_site, SiteId
 from cmk.ccc.version import omd_version
 from cmk.gui import forms, user_sites
 from cmk.gui.breadcrumb import Breadcrumb
@@ -51,7 +51,7 @@ from cmk.gui.page_menu import (
 )
 from cmk.gui.pages import AjaxPage, PageContext, PageEndpoint, PageRegistry, PageResult
 from cmk.gui.quick_setup.html import quick_setup_duplication_warning, quick_setup_locked_warning
-from cmk.gui.site_config import is_distributed_setup_remote_site
+from cmk.gui.site_config import is_distributed_setup_remote_site, site_is_local
 from cmk.gui.type_defs import ActionResult, IconNames, PermissionName, StaticIcon
 from cmk.gui.utils.agent_commands import (
     get_agent_slideout,
@@ -79,7 +79,11 @@ from cmk.gui.watolib import bakery
 from cmk.gui.watolib.agent_registration import remove_tls_registration
 from cmk.gui.watolib.attributes import SNMPCredentials as SNMPCredentialsVS
 from cmk.gui.watolib.audit_log_url import make_object_audit_log_url
-from cmk.gui.watolib.automations import make_automation_config
+from cmk.gui.watolib.automations import (
+    do_remote_automation,
+    make_automation_config,
+    remote_automation_config_from_site_config,
+)
 from cmk.gui.watolib.builtin_attributes import (
     HostAttributeIPv4Address,
     HostAttributeIPv6Address,
@@ -133,6 +137,9 @@ def register(mode_registry: ModeRegistry, page_registry: PageRegistry) -> None:
     page_registry.register(PageEndpoint("ajax_ping_host", PageAjaxPingHost()))
     page_registry.register(PageEndpoint("wato_ajax_diag_cmk_agent", PageAjaxDiagCmkAgent()))
     page_registry.register(PageEndpoint("wato_ajax_diag_snmp", PageAjaxDiagSnmp()))
+    page_registry.register(
+        PageEndpoint("wato_ajax_agent_receiver_port", PageAjaxAgentReceiverPort())
+    )
 
 
 class UpdateDnsCacheLoadingContainer:
@@ -1240,3 +1247,30 @@ class PageAjaxDiagSnmp(AjaxPage):
             "status_code": result.return_code,
             "output": result.response,
         }
+
+
+class PageAjaxAgentReceiverPort(AjaxPage):
+    @override
+    def page(self, ctx: PageContext) -> PageResult:
+        site_id = SiteId(ctx.request.get_str_input_mandatory("site_id"))
+        site_config = ctx.config.sites[site_id]
+        if site_is_local(site_config):
+            return {"port": get_agent_receiver_port(omd_root), "is_default": False}
+
+        try:
+            automation_config = remote_automation_config_from_site_config(site_config)
+            result = do_remote_automation(
+                automation_config,
+                command="get-agent-receiver-port",
+                vars_=[],
+                debug=ctx.config.debug,
+                timeout=5.0,
+            )
+            return {"port": int(result), "is_default": False}  # type: ignore[call-overload]
+        except Exception:
+            logger.debug(
+                "Failed to get agent receiver port from site %s, using default",
+                site_id,
+                exc_info=True,
+            )
+            return {"port": get_agent_receiver_port(omd_root), "is_default": True}
