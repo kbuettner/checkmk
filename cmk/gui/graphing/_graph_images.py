@@ -35,7 +35,12 @@ from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.utils.temperate_unit import TemperatureUnit
 from cmk.utils import paths
 
-from ._artwork import compute_graph_artwork, compute_graph_artwork_curves, GraphArtwork
+from ._artwork import (
+    compute_graph_artwork,
+    compute_graph_artwork_curves,
+    CurvesOfGraphMetric,
+    GraphArtwork,
+)
 from ._from_api import graphs_from_api, metrics_from_api, RegisteredMetric
 from ._graph_pdf import (
     compute_pdf_graph_data_range,
@@ -304,6 +309,27 @@ def graph_recipes_for_api_request(
     return GraphDataRange.model_validate(raw_graph_data_range), graph_recipes
 
 
+def _compute_graph_spec(
+    graph_data_range: GraphDataRange, curves_of_graph_metrics: Sequence[CurvesOfGraphMetric]
+) -> dict[str, Any]:
+    api_curves = []
+    (start, end), step = graph_data_range.time_range, 60  # empty graph
+    for curves_of_graph_metric in curves_of_graph_metrics:
+        for curve in curves_of_graph_metric.curves:
+            time_series = curve["rrddata"]
+            start, end, step = time_series.start, time_series.end, time_series.step
+            api_curve: dict[str, Any] = dict(curve)
+            api_curve["rrddata"] = curve["rrddata"].values
+            api_curves.append(api_curve)
+
+    return {
+        "start_time": start,
+        "end_time": end,
+        "step": step,
+        "curves": api_curves,
+    }
+
+
 def graph_spec_from_request(
     api_request: dict[str, Any],
     registered_metrics: Mapping[str, RegisteredMetric],
@@ -334,32 +360,17 @@ def graph_spec_from_request(
     except IndexError:
         raise MKUserError(None, _("The requested graph does not exist"))
 
-    curves = [
-        c
-        for r in compute_graph_artwork_curves(
-            graph_recipe,
-            graph_data_range,
-            registered_metrics,
-            temperature_unit=temperature_unit,
-            backend_time_series_fetcher=backend_time_series_fetcher,
-        )
-        if r.is_ok()
-        for c in r.ok.curves
-    ]
-
-    api_curves = []
-    (start, end), step = graph_data_range.time_range, 60  # empty graph
-
-    for c in curves:
-        time_series = c["rrddata"]
-        start, end, step = time_series.start, time_series.end, time_series.step
-        api_curve: dict[str, Any] = dict(c)
-        api_curve["rrddata"] = c["rrddata"].values
-        api_curves.append(api_curve)
-
-    return {
-        "start_time": start,
-        "end_time": end,
-        "step": step,
-        "curves": api_curves,
-    }
+    return _compute_graph_spec(
+        graph_data_range,
+        [
+            result.ok
+            for result in compute_graph_artwork_curves(
+                graph_recipe,
+                graph_data_range,
+                registered_metrics,
+                temperature_unit=temperature_unit,
+                backend_time_series_fetcher=backend_time_series_fetcher,
+            )
+            if result.is_ok()
+        ],
+    )
