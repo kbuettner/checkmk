@@ -127,22 +127,6 @@ class FileCache(Generic[_TRawData], abc.ABC):
         self.file_cache_mode = FileCacheMode(file_cache_mode)
         self._logger: Final = logging.getLogger("cmk.helper")
 
-    def __repr__(self) -> str:
-        return (
-            f"{type(self).__name__}("
-            + ", ".join(
-                (
-                    f"base_path={self.base_path}",
-                    f"relative_path_template={self.relative_path_template}",
-                    f"max_age={self.max_age}",
-                    f"simulation={self.simulation}",
-                    f"use_only_cache={self.use_only_cache}",
-                    f"file_cache_mode={self.file_cache_mode.value}",
-                )
-            )
-            + ")"
-        )
-
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, type(self)):
             return NotImplemented
@@ -183,7 +167,7 @@ class FileCache(Generic[_TRawData], abc.ABC):
         return True
 
     def read(self, mode: Mode) -> _TRawData | None:
-        self._logger.debug("Read from cache: %r", self)
+        self._logger.debug("Read from cache: %s", self.__class__.__name__)
         raw_data = self._read(mode)
         if raw_data is not None:
             self._logger.debug("Got %r bytes data from cache", len(raw_data))

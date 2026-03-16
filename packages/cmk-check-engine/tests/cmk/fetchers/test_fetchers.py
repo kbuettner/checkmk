@@ -125,25 +125,6 @@ def clone_file_cache(file_cache: FileCache[Sized]) -> FileCache[Sized]:
     )
 
 
-class TestFileCache:
-    @pytest.fixture(params=[AgentFileCache, SNMPFileCache])
-    def file_cache(self, request: pytest.FixtureRequest) -> FileCache[Sized]:
-        return cast(
-            FileCache[Sized],
-            request.param(
-                base_path=Path("/"),
-                relative_path_template="dev/null",
-                max_age=MaxAge.zero(),
-                simulation=True,
-                use_only_cache=True,
-                file_cache_mode=FileCacheMode.DISABLED,
-            ),
-        )
-
-    def test_repr(self, file_cache: FileCache[Sized]) -> None:
-        assert isinstance(repr(file_cache), str)
-
-
 class TestAgentFileCache_and_SNMPFileCache:
     @pytest.fixture
     def path(self, tmp_path: Path) -> Path:
