@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.sansymphony_virtualdiskstatus import (
+from cmk.plugins.sansymphony.agent_based.sansymphony_virtualdiskstatus import (
     check_sansymphony_virtualdiskstatus,
     discover_sansymphony_virtualdiskstatus,
     parse_sansymphony_virtualdiskstatus,
