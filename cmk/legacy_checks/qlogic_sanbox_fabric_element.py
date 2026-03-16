@@ -3,43 +3,54 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import any_of, OIDEnd, SNMPTree, startswith, StringTable
-
-check_info = {}
-
-
-def discover_qlogic_sanbox_fabric_element(info):
-    inventory = []
-    for _fe_status, fe_id in info:
-        inventory.append((fe_id, None))
-    return inventory
-
-
-def check_qlogic_sanbox_fabric_element(item, _no_params, info):
-    for fe_status, fe_id in info:
-        if fe_id == item:
-            if fe_status == "1":
-                return 0, "Fabric Element %s is online" % fe_id
-            if fe_status == "2":
-                return 2, "Fabric Element %s is offline" % fe_id
-            if fe_status == "3":
-                return 1, "Fabric Element %s is testing" % fe_id
-            if fe_status == "4":
-                return 2, "Fabric Element %s is faulty" % fe_id
-            return 3, f"Fabric Element {fe_id} is in unidentified status {fe_status}"
-
-    return 3, "No Fabric Element %s found" % item
+from cmk.agent_based.v2 import (
+    any_of,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    OIDEnd,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
 
 
 def parse_qlogic_sanbox_fabric_element(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["qlogic_sanbox_fabric_element"] = LegacyCheckDefinition(
+def discover_qlogic_sanbox_fabric_element(section: StringTable) -> DiscoveryResult:
+    for _fe_status, fe_id in section:
+        yield Service(item=fe_id)
+
+
+def check_qlogic_sanbox_fabric_element(item: str, section: StringTable) -> CheckResult:
+    for fe_status, fe_id in section:
+        if fe_id == item:
+            if fe_status == "1":
+                yield Result(state=State.OK, summary=f"Fabric Element {fe_id} is online")
+            elif fe_status == "2":
+                yield Result(state=State.CRIT, summary=f"Fabric Element {fe_id} is offline")
+            elif fe_status == "3":
+                yield Result(state=State.WARN, summary=f"Fabric Element {fe_id} is testing")
+            elif fe_status == "4":
+                yield Result(state=State.CRIT, summary=f"Fabric Element {fe_id} is faulty")
+            else:
+                yield Result(
+                    state=State.UNKNOWN,
+                    summary=f"Fabric Element {fe_id} is in unidentified status {fe_status}",
+                )
+            return
+
+    yield Result(state=State.UNKNOWN, summary=f"No Fabric Element {item} found")
+
+
+snmp_section_qlogic_sanbox_fabric_element = SimpleSNMPSection(
     name="qlogic_sanbox_fabric_element",
     parse_function=parse_qlogic_sanbox_fabric_element,
     detect=any_of(
@@ -50,6 +61,10 @@ check_info["qlogic_sanbox_fabric_element"] = LegacyCheckDefinition(
         base=".1.3.6.1.2.1.75.1.1.4.1",
         oids=["4", OIDEnd()],
     ),
+)
+
+check_plugin_qlogic_sanbox_fabric_element = CheckPlugin(
+    name="qlogic_sanbox_fabric_element",
     service_name="Fabric Element %s",
     discovery_function=discover_qlogic_sanbox_fabric_element,
     check_function=check_qlogic_sanbox_fabric_element,
