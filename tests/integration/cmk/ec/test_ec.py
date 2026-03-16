@@ -419,17 +419,17 @@ def test_ec_global_settings(
         site, _get_snmp_trap_cmd(event_message), "Failed to send message via SNMP trap."
     )
     query = "GET eventconsoleevents\nColumns: event_text"
-    snmb_pattern = "SNMP.*MIB"  # pattern expected after SNMP traps translation
+    snmp_pattern = "SNMP.*MIB"  # pattern expected after SNMP traps translation
     queried_event_messages = _wait_for_queried_column(
         site, f'{query}\nFilter: event_text ~ ^.*"{event_message}"$'
     )
     assert len(queried_event_messages) == 1, f"Did not find event with message: {event_message}"
 
-    if not re.search(snmb_pattern, queried_event_messages[0]):
+    if not re.search(snmp_pattern, queried_event_messages[0]):
         # query for the translated event
         translated_event_messages = _wait_for_queried_column(
             site,
-            f'{query}\nFilter: event_text ~ ^.*{snmb_pattern}.*"{event_message}"$',
+            f'{query}\nFilter: event_text ~ ^.*{snmp_pattern}.*"{event_message}"$',
             max_count=60,
             strict=False,
         )
