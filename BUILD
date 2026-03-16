@@ -397,7 +397,7 @@ sh_library(
 
 js_library(
     name = "eslintrc",
-    srcs = ["eslint.config.js"],
+    srcs = ["eslint.config.mjs"],
     visibility = ["//:__subpackages__"],
     deps = [
         ":node_modules/@eslint/js",
