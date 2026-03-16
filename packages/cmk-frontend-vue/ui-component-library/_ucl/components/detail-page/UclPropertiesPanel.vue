@@ -74,7 +74,7 @@ onMounted(() => {
   <div class="ucl-properties-panel__properties-panel">
     <CmkHeading type="h4">Properties</CmkHeading>
 
-    <div class="demo-properties-panel__copy">
+    <div class="ucl-properties-panel__copy">
       <CmkCopy :text="url">
         <CmkIconButton name="copied" size="medium" title="Copy permalink" />
       </CmkCopy>
