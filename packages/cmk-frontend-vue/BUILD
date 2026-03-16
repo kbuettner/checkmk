@@ -273,7 +273,10 @@ vite_bin.vite(
 
 vitest_bin.vitest_test(
     name = "unit-test",
-    args = ["run"],
+    args = [
+        "--configLoader=runner",
+        "run",
+    ],
     chdir = package_name(),
     data = TOOLING + SRCS_AND_TESTS + [":test_vue"],
 )

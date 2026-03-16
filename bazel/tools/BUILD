@@ -3,6 +3,7 @@ load("@bazel_env.bzl", "bazel_env")
 load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@npm//bazel/tools:eslint/package_json.bzl", eslint_bin = "bin")
 load("@npm//bazel/tools:npm-groovy-lint/package_json.bzl", groovy_bin = "bin")
 load("@npm//bazel/tools:stylelint/package_json.bzl", stylelint_bin = "bin")
 load("@rules_mypy//mypy:mypy.bzl", "mypy_cli")
@@ -11,6 +12,19 @@ load("@rules_python//python/entry_points:py_console_script_binary.bzl", "py_cons
 load("//bazel/rules:sh_expand_template.bzl", "sh_expand_template")
 
 npm_link_all_packages(name = "node_modules")
+
+eslint_bin.eslint_binary(
+    name = "eslint",
+    data = [
+        "//:node_modules/@eslint/js",
+        "//:node_modules/@typescript-eslint/parser",
+        "//:node_modules/@vue/eslint-config-prettier",
+        "//:node_modules/@vue/eslint-config-typescript",
+        "//:node_modules/eslint",
+        "//:node_modules/eslint-plugin-vue",
+    ],
+    visibility = ["//visibility:public"],
+)
 
 stylelint_bin.stylelint_binary(
     name = "stylelint",
