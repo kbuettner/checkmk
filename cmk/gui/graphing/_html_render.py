@@ -58,13 +58,13 @@ from cmk.utils.servicename import ServiceName
 from ._artwork import (
     compute_curve_values_at_timestamp,
     compute_graph_artwork,
-    compute_graph_artwork_curves,
-    Curve,
+    CurveValue,
     get_step_label,
     GraphArtwork,
     GraphArtworkOrErrors,
     LayoutedCurve,
 )
+from ._fetch_time_series import fetch_augmented_time_series
 from ._from_api import metrics_from_api, RegisteredMetric
 from ._graph_metric_expressions import GraphMetricExpression
 from ._graph_render_config import (
@@ -125,7 +125,7 @@ def _save_graph_pin(request: Request) -> None:
     user.save_file("graph_pin", None if pin_timestamp == -1 else pin_timestamp)
 
 
-def _order_graph_curves_for_legend_and_mouse_hover[TCurveType: (Curve, LayoutedCurve)](
+def _order_graph_curves_for_legend_and_mouse_hover[TCurveType: (LayoutedCurve, CurveValue)](
     curves: Sequence[TCurveType],
 ) -> list[TCurveType]:
     """
@@ -1441,6 +1441,7 @@ class AjaxGraphHover(Page):
         render_graph_hover_for_recipe(
             context.graph_recipe,
             context.data_range,
+            metrics_from_api,
             debug=ctx.config.debug,
             hover_time=ctx.request.get_integer_input_mandatory("hover_time"),
             temperature_unit=get_temperature_unit(user, ctx.config.default_temperature_unit),
@@ -1455,6 +1456,7 @@ class AjaxGraphHover(Page):
 def render_graph_hover_for_recipe(
     graph_recipe: GraphRecipe,
     graph_data_range: GraphDataRange,
+    registered_metrics: Mapping[str, RegisteredMetric],
     *,
     debug: bool,
     hover_time: int,
@@ -1469,25 +1471,24 @@ def render_graph_hover_for_recipe(
                 {
                     "rendered_hover_time": cmk.utils.render.date_and_time(hover_time),
                     "curve_values": list(
-                        compute_curve_values_at_timestamp(
-                            _order_graph_curves_for_legend_and_mouse_hover(
+                        _order_graph_curves_for_legend_and_mouse_hover(
+                            compute_curve_values_at_timestamp(
                                 [
-                                    c
-                                    for r in compute_graph_artwork_curves(
+                                    result.ok
+                                    for result in fetch_augmented_time_series(
+                                        registered_metrics,
                                         graph_recipe,
                                         graph_data_range,
-                                        metrics_from_api,
                                         temperature_unit=temperature_unit,
                                         backend_time_series_fetcher=backend_time_series_fetcher,
                                     )
-                                    if r.is_ok()
-                                    for c in r.ok.curves
-                                ]
-                            ),
-                            user_specific_unit(
-                                graph_recipe.unit_spec, temperature_unit
-                            ).formatter.render,
-                            hover_time,
+                                    if result.is_ok()
+                                ],
+                                user_specific_unit(
+                                    graph_recipe.unit_spec, temperature_unit
+                                ).formatter.render,
+                                hover_time,
+                            )
                         )
                     ),
                 }

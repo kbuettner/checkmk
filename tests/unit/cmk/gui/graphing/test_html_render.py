@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.gui.graphing._artwork import (
-    Curve,
+    CurveValue,
     LayoutedCurve,
     LayoutedCurveArea,
     LayoutedCurveLine,
@@ -19,7 +19,6 @@ from cmk.gui.graphing._html_render import (
     _order_graph_curves_for_legend_and_mouse_hover,
     _render_title_elements_plain,
 )
-from cmk.gui.graphing._time_series import TimeSeries
 
 
 @pytest.mark.parametrize(
@@ -40,114 +39,95 @@ def test_render_title_elements_plain(elements: Sequence[str], result: str) -> No
 
 
 def test__order_graph_curves_for_legend_and_mouse_hover_curves() -> None:
-    rrd_data = TimeSeries(
-        start=1,
-        end=2,
-        step=1,
-        values=[],
-    )
+    rendered_value = (123.456, "123.456")
     assert list(
         _order_graph_curves_for_legend_and_mouse_hover(
             [
-                Curve(
+                CurveValue(
                     line_type="line",
                     color="",
                     title="1",
-                    attributes={},
-                    rrddata=rrd_data,
+                    rendered_value=rendered_value,
                 ),
-                Curve(
+                CurveValue(
                     line_type="ref",
                     color="",
                     title="2",
-                    attributes={},
-                    rrddata=rrd_data,
+                    rendered_value=rendered_value,
                 ),
-                Curve(
+                CurveValue(
                     line_type="-area",
                     color="",
                     title="3",
-                    attributes={},
-                    rrddata=rrd_data,
+                    rendered_value=rendered_value,
                 ),
-                Curve(
+                CurveValue(
                     line_type="stack",
                     color="",
                     title="4",
-                    attributes={},
-                    rrddata=rrd_data,
+                    rendered_value=rendered_value,
                 ),
-                Curve(
+                CurveValue(
                     line_type="area",
                     color="",
                     title="5",
-                    attributes={},
-                    rrddata=rrd_data,
+                    rendered_value=rendered_value,
                 ),
-                Curve(
+                CurveValue(
                     line_type="-stack",
                     color="",
                     title="6",
-                    attributes={},
-                    rrddata=rrd_data,
+                    rendered_value=rendered_value,
                 ),
-                Curve(
+                CurveValue(
                     line_type="stack",
                     color="",
                     title="7",
-                    attributes={},
-                    rrddata=rrd_data,
+                    rendered_value=rendered_value,
                 ),
             ]
         )
     ) == [
-        Curve(
+        CurveValue(
             color="",
             line_type="line",
-            attributes={},
-            rrddata=rrd_data,
+            rendered_value=rendered_value,
             title="1",
         ),
-        Curve(
+        CurveValue(
             color="",
             line_type="stack",
-            attributes={},
-            rrddata=rrd_data,
+            rendered_value=rendered_value,
             title="7",
         ),
-        Curve(
+        CurveValue(
             color="",
             line_type="area",
-            attributes={},
-            rrddata=rrd_data,
+            rendered_value=rendered_value,
             title="5",
         ),
-        Curve(
+        CurveValue(
             color="",
             line_type="stack",
-            attributes={},
-            rrddata=rrd_data,
+            rendered_value=rendered_value,
             title="4",
         ),
-        Curve(
+        CurveValue(
             color="",
             line_type="-area",
-            attributes={},
-            rrddata=rrd_data,
+            rendered_value=rendered_value,
             title="3",
         ),
-        Curve(
+        CurveValue(
             color="",
             line_type="-stack",
-            attributes={},
-            rrddata=rrd_data,
+            rendered_value=rendered_value,
             title="6",
         ),
-        Curve(
+        CurveValue(
             color="",
             line_type="ref",
-            attributes={},
-            rrddata=rrd_data,
+            rendered_value=rendered_value,
             title="2",
         ),
     ]

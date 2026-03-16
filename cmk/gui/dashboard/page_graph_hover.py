@@ -29,6 +29,7 @@ from cmk.gui.dashboard.token_util import (
 )
 from cmk.gui.dashboard.type_defs import ABCGraphDashletConfig
 from cmk.gui.graphing import get_temperature_unit, metric_backend_registry
+from cmk.gui.graphing._from_api import metrics_from_api
 from cmk.gui.graphing._graph_render_config import GraphRenderConfigBase
 from cmk.gui.graphing._graph_specification import GraphSpecification
 from cmk.gui.graphing._html_render import (
@@ -120,6 +121,7 @@ class GraphHoverTokenAuthPage(DashboardTokenAuthenticatedPage):
             render_graph_hover_for_recipe(
                 recipes[0],
                 graph_data_range,
+                metrics_from_api,
                 debug=ctx.config.debug,
                 hover_time=ctx.request.get_integer_input_mandatory("hover_time"),
                 temperature_unit=get_temperature_unit(user, ctx.config.default_temperature_unit),

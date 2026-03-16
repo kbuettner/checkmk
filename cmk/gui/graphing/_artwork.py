@@ -11,7 +11,7 @@
 
 import math
 import time
-from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
@@ -23,7 +23,6 @@ from pydantic import BaseModel
 
 import cmk.utils.render
 from cmk import trace
-from cmk.ccc.resulttype import Error, OK, Result
 from cmk.gui.i18n import _
 from cmk.gui.unit_formatter import (
     Label,
@@ -41,6 +40,7 @@ from ._graph_metric_expressions import (
     QueryDataError,
 )
 from ._graph_specification import (
+    AugmentedTimeSeriesOfGraphMetric,
     FixedVerticalRange,
     GraphDataRange,
     GraphMetricLimit,
@@ -118,6 +118,7 @@ class TimeAxis(TypedDict):
 
 class CurveValue(TypedDict):
     title: str
+    line_type: LineType | Literal["ref"]
     color: str
     rendered_value: tuple[TimeSeriesValue, str]
 
@@ -177,29 +178,31 @@ def compute_graph_artwork(
 ) -> GraphArtworkOrErrors:
     unit_spec = user_specific_unit(graph_recipe.unit_spec, temperature_unit)
 
-    curves: list[Curve] = []
+    augmented_time_series_of_graph_metrics: list[AugmentedTimeSeriesOfGraphMetric] = []
     graph_metric_limits_reached: list[GraphMetricLimit] = []
     errors: list[QueryDataError] = []
-    for result in compute_graph_artwork_curves(
+    for result in fetch_augmented_time_series(
+        registered_metrics,
         graph_recipe,
         graph_data_range,
-        registered_metrics,
         temperature_unit=temperature_unit,
         backend_time_series_fetcher=backend_time_series_fetcher,
     ):
         if result.is_ok():
-            curves.extend(result.ok.curves)
+            augmented_time_series_of_graph_metrics.append(result.ok)
             if result.ok.limit and result.ok.limit.reached():
                 graph_metric_limits_reached.append(result.ok.limit)
         else:
             errors.append(result.error)
 
     # do stacking, mirroring
-    layouted_curves, mirrored = _layout_graph_curves(unit_spec.formatter.render, pin_time, curves)
+    layouted_curves, mirrored = _layout_graph_curves(
+        graph_recipe, unit_spec.formatter.render, pin_time, augmented_time_series_of_graph_metrics
+    )
     width, height = size
 
     try:
-        time_series = curves[0]["rrddata"]
+        time_series = augmented_time_series_of_graph_metrics[0].time_series[0].time_series
         start_time, end_time, step = time_series.start, time_series.end, time_series.step
     except IndexError:  # Empty graph
         (start_time, end_time), step = graph_data_range.time_range, 60
@@ -248,19 +251,14 @@ def compute_graph_artwork(
 #   '----------------------------------------------------------------------'
 
 
-class Curve(TypedDict):
-    line_type: LineType | Literal["ref"]
-    color: str
-    title: str
-    attributes: Mapping[Literal["resource", "scope", "data_point"], Mapping[str, str]]
-    rrddata: TimeSeries
-
-
 # Compute the location of the curves of the graph, implement
 # stacking and mirroring (displaying positive values in negative
 # direction).
 def _layout_graph_curves(
-    unit_renderer: Callable[[float], str], pin_time: int | None, curves: Sequence[Curve]
+    graph_recipe: GraphRecipe,
+    unit_renderer: Callable[[float], str],
+    pin_time: int | None,
+    augmented_time_series_of_graph_metrics: Sequence[AugmentedTimeSeriesOfGraphMetric],
 ) -> tuple[list[LayoutedCurve], bool]:
     mirrored = False  # True if negative area shows positive values
 
@@ -272,54 +270,67 @@ def _layout_graph_curves(
     # For areas we put (lower, higher) as point into the list of points.
     # For lines simply the values. For mirrored values from is >= to.
 
-    layouted_curves = []
-    for curve in curves:
-        line_type = curve["line_type"]
-        raw_points = list(_halfstep_interpolation(curve["rrddata"]))
+    layouted_curves: list[LayoutedCurve] = []
+    for augmented_time_series_of_metric in augmented_time_series_of_graph_metrics:
+        for augmented_time_series in augmented_time_series_of_metric.time_series:
+            if (
+                augmented_time_series.line_type is None
+                or augmented_time_series.color is None
+                or augmented_time_series.title is None
+            ):
+                continue
 
-        if line_type == "ref":  # Only for forecast graphs
-            stacks[1] = raw_points
-            continue
+            raw_points = list(_halfstep_interpolation(augmented_time_series.time_series))
 
-        if line_type[0] == "-":
-            raw_points = [None if p is None else -p for p in raw_points]
-            mirrored = True
-            stack_nr = 0
-        else:
-            stack_nr = 1
+            if augmented_time_series.line_type == "ref":  # Only for forecast graphs
+                stacks[1] = raw_points
+                continue
 
-        match line_type:
-            case "line" | "-line":
-                layouted_curve: LayoutedCurve = LayoutedCurveLine(
-                    color=curve["color"],
-                    title=curve["title"],
-                    scalars=_compute_scalars(unit_renderer, pin_time, curve["rrddata"]),
-                    attributes=curve["attributes"],
-                    line_type=line_type,
-                    points=raw_points,
-                )
-            case "area" | "-area":
-                layouted_curve = LayoutedCurveArea(
-                    color=curve["color"],
-                    title=curve["title"],
-                    scalars=_compute_scalars(unit_renderer, pin_time, curve["rrddata"]),
-                    attributes=curve["attributes"],
-                    line_type=line_type,
-                    points=_areastack(raw_points, []),
-                )
-                stacks[stack_nr] = [x[stack_nr] for x in layouted_curve["points"]]
-            case "stack" | "-stack":
-                layouted_curve = LayoutedCurveStack(
-                    color=curve["color"],
-                    title=curve["title"],
-                    scalars=_compute_scalars(unit_renderer, pin_time, curve["rrddata"]),
-                    attributes=curve["attributes"],
-                    line_type=line_type,
-                    points=_areastack(raw_points, stacks[stack_nr] or []),
-                )
-                stacks[stack_nr] = [x[stack_nr] for x in layouted_curve["points"]]
+            if augmented_time_series.line_type[0] == "-":
+                raw_points = [None if p is None else -p for p in raw_points]
+                mirrored = True
+                stack_nr = 0
+            else:
+                stack_nr = 1
 
-        layouted_curves.append(layouted_curve)
+            match augmented_time_series.line_type:
+                case "line" | "-line":
+                    layouted_curve: LayoutedCurve = LayoutedCurveLine(
+                        color=augmented_time_series.color,
+                        title=augmented_time_series.title,
+                        scalars=_compute_scalars(
+                            unit_renderer, pin_time, augmented_time_series.time_series
+                        ),
+                        attributes=augmented_time_series.attributes,
+                        line_type=augmented_time_series.line_type,
+                        points=raw_points,
+                    )
+                case "area" | "-area":
+                    layouted_curve = LayoutedCurveArea(
+                        color=augmented_time_series.color,
+                        title=augmented_time_series.title,
+                        scalars=_compute_scalars(
+                            unit_renderer, pin_time, augmented_time_series.time_series
+                        ),
+                        attributes=augmented_time_series.attributes,
+                        line_type=augmented_time_series.line_type,
+                        points=_areastack(raw_points, []),
+                    )
+                    stacks[stack_nr] = [x[stack_nr] for x in layouted_curve["points"]]
+                case "stack" | "-stack":
+                    layouted_curve = LayoutedCurveStack(
+                        color=augmented_time_series.color,
+                        title=augmented_time_series.title,
+                        scalars=_compute_scalars(
+                            unit_renderer, pin_time, augmented_time_series.time_series
+                        ),
+                        attributes=augmented_time_series.attributes,
+                        line_type=augmented_time_series.line_type,
+                        points=_areastack(raw_points, stacks[stack_nr] or []),
+                    )
+                    stacks[stack_nr] = [x[stack_nr] for x in layouted_curve["points"]]
+
+            layouted_curves.append(layouted_curve)
 
     return layouted_curves, mirrored
 
@@ -351,67 +362,6 @@ def _areastack(
 
     edge = list(map(add_points, zip_longest(base, raw_points)))
     return list(map(fix_swap, zip_longest(base, edge)))
-
-
-@dataclass(frozen=True)
-class CurvesOfGraphMetric:
-    curves: Sequence[Curve]
-    limit: GraphMetricLimit | None
-
-
-@tracer.instrument("graphing.compute_graph_artwork_curves")
-def compute_graph_artwork_curves(
-    graph_recipe: GraphRecipe,
-    graph_data_range: GraphDataRange,
-    registered_metrics: Mapping[str, RegisteredMetric],
-    *,
-    temperature_unit: TemperatureUnit,
-    backend_time_series_fetcher: FetchTimeSeries | None,
-) -> Iterator[Result[CurvesOfGraphMetric, QueryDataError]]:
-    curves_of_graph_metrics = []
-    for result in fetch_augmented_time_series(
-        registered_metrics,
-        graph_recipe,
-        graph_data_range,
-        temperature_unit=temperature_unit,
-        backend_time_series_fetcher=backend_time_series_fetcher,
-    ):
-        if result.is_error():
-            yield Error(result.error)
-            continue
-
-        curves_of_graph_metrics.append(
-            CurvesOfGraphMetric(
-                [
-                    Curve(
-                        line_type=augmented_time_series.line_type,
-                        color=augmented_time_series.color,
-                        title=augmented_time_series.title,
-                        attributes=augmented_time_series.attributes,
-                        rrddata=augmented_time_series.time_series,
-                    )
-                    for augmented_time_series in result.ok.time_series
-                    if (
-                        augmented_time_series.line_type is not None
-                        and augmented_time_series.color is not None
-                        and augmented_time_series.title is not None
-                    )
-                ],
-                result.ok.limit,
-            )
-        )
-
-    if graph_recipe.omit_zero_metrics:
-        curves_of_graph_metrics = [
-            CurvesOfGraphMetric(
-                [c for c in cogm.curves if any(c["rrddata"])],
-                cogm.limit,
-            )
-            for cogm in curves_of_graph_metrics
-        ]
-
-    for curves_of_graph_metric in curves_of_graph_metrics:
-        yield OK(curves_of_graph_metric)
 
 
 def _halfstep_interpolation(rrddata: TimeSeries) -> Iterator[TimeSeriesValue]:
@@ -476,29 +426,35 @@ def _compute_scalars(
 
 
 def compute_curve_values_at_timestamp(
-    curves: Iterable[Curve],
+    augmented_time_series_of_graph_metrics: Sequence[AugmentedTimeSeriesOfGraphMetric],
     unit_renderer: Callable[[float], str],
     hover_time: int,
-) -> Iterator[CurveValue]:
-    yield from (
+) -> Sequence[CurveValue]:
+    return [
         CurveValue(
-            title=curve["title"],
-            color=curve["color"],
+            title=augmented_time_series.title,
+            line_type=augmented_time_series.line_type,
+            color=augmented_time_series.color,
             rendered_value=_render_scalar_value(
-                _get_value_at_timestamp(hover_time, curve["rrddata"]), unit_renderer
+                _get_value_at_timestamp(hover_time, augmented_time_series.time_series),
+                unit_renderer,
             ),
         )
-        for curve in curves
-    )
+        for augmented_time_series_of_graph_metric in augmented_time_series_of_graph_metrics
+        for augmented_time_series in augmented_time_series_of_graph_metric.time_series
+        if (
+            augmented_time_series.line_type is not None
+            and augmented_time_series.color is not None
+            and augmented_time_series.title is not None
+        )
+    ]
 
 
 def _render_scalar_value(
     value: float | None,
     unit_renderer: Callable[[float], str],
 ) -> tuple[TimeSeriesValue, str]:
-    if value is None:
-        return None, _("n/a")
-    return value, unit_renderer(value)
+    return (None, _("n/a")) if value is None else (value, unit_renderer(value))
 
 
 def _get_value_at_timestamp(pin_time: int, rrddata: TimeSeries) -> TimeSeriesValue:

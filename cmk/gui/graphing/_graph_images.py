@@ -38,10 +38,9 @@ from cmk.utils import paths
 
 from ._artwork import (
     compute_graph_artwork,
-    compute_graph_artwork_curves,
-    CurvesOfGraphMetric,
     GraphArtwork,
 )
+from ._fetch_time_series import fetch_augmented_time_series
 from ._from_api import graphs_from_api, metrics_from_api, RegisteredMetric
 from ._graph_metric_expressions import LineType
 from ._graph_pdf import (
@@ -56,6 +55,7 @@ from ._graph_render_config import (
     GraphTitleFormat,
 )
 from ._graph_specification import (
+    AugmentedTimeSeriesOfGraphMetric,
     GraphDataRange,
     GraphRecipe,
     parse_raw_graph_specification,
@@ -331,21 +331,29 @@ class GraphSpec(TypedDict):
 
 
 def _compute_graph_spec(
-    graph_data_range: GraphDataRange, curves_of_graph_metrics: Sequence[CurvesOfGraphMetric]
+    graph_data_range: GraphDataRange,
+    augmented_time_series_of_graph_metrics: Sequence[AugmentedTimeSeriesOfGraphMetric],
 ) -> GraphSpec:
     api_curves = []
     (start, end), step = graph_data_range.time_range, 60  # empty graph
-    for curves_of_graph_metric in curves_of_graph_metrics:
-        for curve in curves_of_graph_metric.curves:
-            time_series = curve["rrddata"]
+    for augmented_time_series_of_graph_metric in augmented_time_series_of_graph_metrics:
+        for augmented_time_series in augmented_time_series_of_graph_metric.time_series:
+            if (
+                augmented_time_series.line_type is None
+                or augmented_time_series.color is None
+                or augmented_time_series.title is None
+            ):
+                continue
+
+            time_series = augmented_time_series.time_series
             start, end, step = time_series.start, time_series.end, time_series.step
             api_curves.append(
                 CurveValues(
-                    line_type=curve["line_type"],
-                    color=curve["color"],
-                    title=curve["title"],
-                    attributes=curve["attributes"],
-                    rrddata=curve["rrddata"].values,
+                    line_type=augmented_time_series.line_type,
+                    color=augmented_time_series.color,
+                    title=augmented_time_series.title,
+                    attributes=augmented_time_series.attributes,
+                    rrddata=time_series.values,
                 )
             )
     return GraphSpec(start_time=start, end_time=end, step=step, curves=api_curves)
@@ -386,10 +394,10 @@ def graph_spec_from_request(  # type: ignore[misc]
         graph_data_range,
         [
             result.ok
-            for result in compute_graph_artwork_curves(
+            for result in fetch_augmented_time_series(
+                registered_metrics,
                 graph_recipe,
                 graph_data_range,
-                registered_metrics,
                 temperature_unit=temperature_unit,
                 backend_time_series_fetcher=backend_time_series_fetcher,
             )

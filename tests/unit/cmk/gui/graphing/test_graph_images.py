@@ -3,10 +3,12 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-
-from cmk.gui.graphing._artwork import Curve, CurvesOfGraphMetric
 from cmk.gui.graphing._graph_images import _compute_graph_spec, CurveValues, GraphSpec
-from cmk.gui.graphing._graph_specification import GraphDataRange
+from cmk.gui.graphing._graph_metric_expressions import AugmentedTimeSeries
+from cmk.gui.graphing._graph_specification import (
+    AugmentedTimeSeriesOfGraphMetric,
+    GraphDataRange,
+)
 from cmk.gui.graphing._time_series import TimeSeries
 
 
@@ -14,26 +16,26 @@ def test__compute_graph_spec() -> None:
     assert _compute_graph_spec(
         GraphDataRange(time_range=(0, 3600), step=60),
         [
-            CurvesOfGraphMetric(
-                curves=[
-                    Curve(
+            AugmentedTimeSeriesOfGraphMetric(
+                time_series=[
+                    AugmentedTimeSeries(
                         line_type="line",
                         color="#123456",
                         title="A title 1.1",
                         attributes={},
-                        rrddata=TimeSeries(
+                        time_series=TimeSeries(
                             start=0,
                             end=3600,
                             step=60,
                             values=list(range(6)),
                         ),
                     ),
-                    Curve(
+                    AugmentedTimeSeries(
                         line_type="line",
                         color="#123456",
                         title="A title 1.2",
                         attributes={},
-                        rrddata=TimeSeries(
+                        time_series=TimeSeries(
                             start=3600,
                             end=7200,
                             step=60,
@@ -43,26 +45,26 @@ def test__compute_graph_spec() -> None:
                 ],
                 limit=None,
             ),
-            CurvesOfGraphMetric(
-                curves=[
-                    Curve(
+            AugmentedTimeSeriesOfGraphMetric(
+                time_series=[
+                    AugmentedTimeSeries(
                         line_type="line",
                         color="#123456",
                         title="A title 2.1",
                         attributes={},
-                        rrddata=TimeSeries(
+                        time_series=TimeSeries(
                             start=0,
                             end=3600,
                             step=60,
                             values=list(range(6)),
                         ),
                     ),
-                    Curve(
+                    AugmentedTimeSeries(
                         line_type="line",
                         color="#123456",
                         title="A title 2.2",
                         attributes={},
-                        rrddata=TimeSeries(
+                        time_series=TimeSeries(
                             start=3600,
                             end=7200,
                             step=60,

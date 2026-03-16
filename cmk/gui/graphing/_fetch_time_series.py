@@ -111,6 +111,11 @@ def fetch_augmented_time_series(
         for augmented_time_series in graph_metric.operation.compute_augmented_time_series(
             registered_metrics, rrd_data, query_data, fallback_time_range
         ):
+            if graph_recipe.omit_zero_metrics and not augmented_time_series.time_series:
+                # TODO omit_zero_metrics: Do we need this? (it was part of the
+                # legacy API, check other call sites)
+                continue
+
             yield OK(
                 AugmentedTimeSeriesOfGraphMetric(
                     time_series=list(
