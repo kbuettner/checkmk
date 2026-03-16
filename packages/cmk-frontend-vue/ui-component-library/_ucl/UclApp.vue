@@ -5,7 +5,7 @@ conditions defined in the file COPYING, which is part of this source code packag
 -->
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterView } from 'vue-router'
 import { useRoute } from 'vue-router'
 
@@ -18,6 +18,12 @@ useLegacyCss()
 
 const currentRoute = useRoute()
 const screenshotMode = ref(currentRoute.query.screenshot === 'true')
+
+const documentationUrl = computed(() =>
+  currentRoute.path === '/'
+    ? 'https://wiki.lan.checkmk.net/spaces/DS/pages/190546413/Design+System+Home'
+    : 'https://wiki.lan.checkmk.net/spaces/DS/pages/190552500/Components'
+)
 
 watch(
   () => currentRoute.query.screenshot,
@@ -48,7 +54,7 @@ watch(
             title="Design System documentation"
             subtitle="Explore detailed guidelines, usage principles, and processes in our Design System documentation. This space provides additional context to help you design, build, and maintain consistent components."
             button-text="View documentation"
-            button-url="https://www.checkmk.com"
+            :button-url="documentationUrl"
           />
         </footer>
       </main>
