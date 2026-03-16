@@ -58,10 +58,11 @@ from ._artwork import (
     compute_curve_values_at_timestamp,
     compute_graph_artwork,
     compute_graph_artwork_curves,
+    Curve,
     get_step_label,
     GraphArtwork,
     GraphArtworkOrErrors,
-    order_graph_curves_for_legend_and_mouse_hover,
+    LayoutedCurve,
 )
 from ._from_api import metrics_from_api, RegisteredMetric
 from ._graph_metric_expressions import GraphMetricExpression
@@ -119,6 +120,88 @@ def _save_graph_pin(request: Request) -> None:
     except ValueError:
         pin_timestamp = None
     user.save_file("graph_pin", None if pin_timestamp == -1 else pin_timestamp)
+
+
+def _order_graph_curves_for_legend_and_mouse_hover[TCurveType: (Curve, LayoutedCurve)](
+    curves: Sequence[TCurveType],
+) -> list[TCurveType]:
+    """
+    CMK-22181
+    Graph(
+        compound_lines = [
+            "compound-1",
+            "compound-2",
+        ],
+        simple_lines = [
+            "simple-1",
+            "simple-2",
+            Sum(["compound-1", "compound-2"]),
+        ],
+    )
+    Legend:
+    - Sum of compound-1 & compound-2
+    - simple-2
+    - simple-1
+    - compound-2
+    - compound-1
+
+    Bidirectional(
+        lower = Graph(
+            compound_lines = [
+                "lower-compound-1",
+                "lower-compound-2",
+            ],
+            simple_lines = [
+                "lower-simple-1",
+                "lower-simple-2",
+                Sum(["lower-compound-1", "lower-compound-2"]),
+            ],
+        ),
+        upper = Graph(
+            compound_lines = [
+                "upper-compound-1",
+                "upper-compound-2",
+            ],
+            simple_lines = [
+                "upper-simple-1",
+                "upper-simple-2",
+                Sum(["upper-compound-1", "upper-compound-2"]),
+            ],
+        ),
+    )
+    Legend:
+    - Sum of upper-compound-1 & upper-compound-2
+    - upper-simple-2
+    - upper-simple-1
+    - upper-compound-2
+    - upper-compound-1
+    - lower-compound-1
+    - lower-compound-2
+    - lower-simple-1
+    - lower-simple-2
+    - Sum of lower-compound-1 & lower-compound-2
+    """
+    lines: list[TCurveType] = []
+    areas: list[TCurveType] = []
+    mirrored_lines: list[TCurveType] = []
+    mirrored_areas: list[TCurveType] = []
+    refs: list[TCurveType] = []
+    for curve in curves:
+        match line_type := curve["line_type"]:
+            case "line":
+                target = lines
+            case "-line":
+                target = mirrored_lines
+            case "area" | "stack":
+                target = areas
+            case "-area" | "-stack":
+                target = mirrored_areas
+            case "ref":
+                target = refs
+            case _:
+                raise ValueError(line_type)
+        target.append(curve)
+    return lines[::-1] + areas[::-1] + mirrored_areas + mirrored_lines + refs
 
 
 #   .--HTML-Graphs---------------------------------------------------------.
@@ -634,7 +717,7 @@ def _show_graph_legend(
 
     # Render the curve related rows
     html.open_tbody()
-    for curve in order_graph_curves_for_legend_and_mouse_hover(graph_artwork.curves):
+    for curve in _order_graph_curves_for_legend_and_mouse_hover(graph_artwork.curves):
         html.open_tr()
 
         table_uuid_str = str(uuid4())
@@ -1380,7 +1463,7 @@ def render_graph_hover_for_recipe(
                     "rendered_hover_time": cmk.utils.render.date_and_time(hover_time),
                     "curve_values": list(
                         compute_curve_values_at_timestamp(
-                            order_graph_curves_for_legend_and_mouse_hover(
+                            _order_graph_curves_for_legend_and_mouse_hover(
                                 [
                                     c
                                     for r in compute_graph_artwork_curves(
