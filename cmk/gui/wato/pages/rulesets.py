@@ -31,7 +31,7 @@ from livestatus import SiteConfiguration
 import cmk.gui.watolib.changes as _changes
 from cmk import trace
 from cmk.ccc.exceptions import MKGeneralException
-from cmk.ccc.hostaddress import HostName
+from cmk.ccc.hostaddress import HostName, HostNameValidationError
 from cmk.ccc.regex import escape_regex_chars
 from cmk.ccc.site import SiteId
 from cmk.gui import deprecations, forms
@@ -3073,11 +3073,13 @@ class RuleConditionRenderer:
                 elif isinstance(host_spec, str):
                     # Make sure that the host exists and the lookup will not fail
                     # Otherwise the entire config would be read
-                    folder_hint = lookup_cache.get(HostName(host_spec))
-                    if (
-                        folder_hint is not None
-                        and (host := Host.host(HostName(host_spec))) is not None
-                    ):
+                    try:
+                        host_name = HostName(host_spec)
+                    except HostNameValidationError:
+                        text_list.append(HTMLWriter.render_b(host_spec))
+                        continue
+                    folder_hint = lookup_cache.get(host_name)
+                    if folder_hint is not None and (host := Host.host(host_name)) is not None:
                         text_list.append(
                             HTMLWriter.render_b(HTMLWriter.render_a(host_spec, host.edit_url()))
                         )
@@ -3099,11 +3101,16 @@ class RuleConditionRenderer:
                     expression = _("is not") if is_negate else _("is")
                     # Make sure that the host exists and the lookup will not fail
                     # Otherwise the entire config would be read
-                    folder_hint = lookup_cache.get(HostName(host_spec))
-                    if (
-                        folder_hint is not None
-                        and (host := Host.host(HostName(host_spec))) is not None
-                    ):
+                    try:
+                        host_name = HostName(host_spec)
+                    except HostNameValidationError:
+                        text_list.append(
+                            escape_to_html_permissive(expression + " ")
+                            + HTMLWriter.render_b(host_spec)
+                        )
+                        continue
+                    folder_hint = lookup_cache.get(host_name)
+                    if folder_hint is not None and (host := Host.host(host_name)) is not None:
                         text_list.append(
                             HTML.with_escaping(expression + " ")
                             + HTMLWriter.render_b(HTMLWriter.render_a(host_spec, host.edit_url()))
