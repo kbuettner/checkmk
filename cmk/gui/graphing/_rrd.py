@@ -20,6 +20,7 @@ import livestatus
 from livestatus import livestatus_lql
 
 import cmk.ccc.version as cmk_version
+from cmk import trace
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.hostaddress import HostName
 from cmk.ccc.site import SiteId
@@ -48,8 +49,11 @@ from ._time_series import TimeSeries, TimeSeriesValues
 from ._translated_metrics import find_matching_translation, TranslationSpec
 from ._unit import user_specific_unit
 
+tracer = trace.get_tracer()
 
-def get_graph_data_from_livestatus(
+
+@tracer.instrument("graphing.get_graph_data_from_livestatus")
+def get_graph_data_from_livestatus(  # type: ignore[misc]
     site_id: list[SiteId] | SiteId | None,
     host_name: HostName,
     service_description: ServiceName,
@@ -219,6 +223,7 @@ def _chop_last_empty_step(end_time: float, rrd_data: RRDData) -> None:
         _chop_end_of_the_curve(rrd_data, step)
 
 
+@tracer.instrument("graphing.fetch_time_series_rrd")
 def fetch_time_series_rrd(
     keys: Sequence[RRDDataKey],
     consolidation_function: GraphConsolidationFunction | None,
@@ -338,6 +343,7 @@ def all_rrd_columns_potentially_relevant_for_metric(
     )
 
 
+@tracer.instrument("graphing.translate_and_merge_rrd_columns")
 def translate_and_merge_rrd_columns(
     target_metric: MetricName,
     rrd_columms: Iterable[tuple[str, TimeSeriesValues]],

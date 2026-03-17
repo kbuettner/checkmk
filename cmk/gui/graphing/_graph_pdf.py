@@ -11,6 +11,7 @@
 from collections.abc import Sequence
 from typing import TypeGuard
 
+from cmk import trace
 from cmk.gui.color import parse_color
 from cmk.gui.i18n import _
 from cmk.gui.log import logger
@@ -21,7 +22,10 @@ from ._artwork import GraphArtwork, LayoutedCurve, LayoutedCurveArea, LayoutedCu
 from ._graph_render_config import GraphRenderConfigImage
 from ._graph_specification import GraphDataRange
 
+tracer = trace.get_tracer()
 
+
+@tracer.instrument("graphing.render_graph_pdf")
 def render_graph_pdf(
     pdf_document: Document,
     graph_artwork: GraphArtwork,

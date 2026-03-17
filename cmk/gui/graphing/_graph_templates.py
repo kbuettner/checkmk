@@ -12,6 +12,7 @@ from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal, Self
 
+from cmk import trace
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.hostaddress import HostName
 from cmk.ccc.site import SiteId
@@ -51,6 +52,8 @@ from ._graphs_order import GRAPHS_ORDER
 from ._rrd import get_graph_data_from_livestatus
 from ._translated_metrics import translated_metrics_from_row, TranslatedMetric
 from ._unit import ConvertibleUnitSpecification, user_specific_unit
+
+tracer = trace.get_tracer()
 
 
 class MKGraphNotFound(MKGeneralException): ...
@@ -380,6 +383,7 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
             ),
         )
 
+    @tracer.instrument("graphing.TemplateGraphSpecification.recipes")
     def recipes(
         self,
         registered_metrics: Mapping[str, RegisteredMetric],

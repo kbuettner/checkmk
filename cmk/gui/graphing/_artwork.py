@@ -22,6 +22,7 @@ from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel
 
 import cmk.utils.render
+from cmk import trace
 from cmk.ccc.resulttype import Error, OK, Result
 from cmk.gui.i18n import _
 from cmk.gui.unit_formatter import (
@@ -51,6 +52,8 @@ from ._metric_backend_registry import FetchTimeSeries
 from ._time_series import TimeSeries, TimeSeriesValue
 from ._unit import user_specific_unit, UserSpecificUnit
 from ._utils import Linear, SizeEx
+
+tracer = trace.get_tracer()
 
 Seconds = int
 
@@ -161,6 +164,7 @@ class GraphArtworkOrErrors:
     graph_metric_limits_reached: Sequence[GraphMetricLimit]
 
 
+@tracer.instrument("graphing.compute_graph_artwork")
 def compute_graph_artwork(
     graph_recipe: GraphRecipe,
     graph_data_range: GraphDataRange,
@@ -355,6 +359,7 @@ class CurvesOfGraphMetric:
     limit: GraphMetricLimit | None
 
 
+@tracer.instrument("graphing.compute_graph_artwork_curves")
 def compute_graph_artwork_curves(
     graph_recipe: GraphRecipe,
     graph_data_range: GraphDataRange,

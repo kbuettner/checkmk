@@ -18,6 +18,7 @@ from pydantic import BaseModel
 from livestatus import MKLivestatusNotFoundError
 
 import cmk.utils.render
+from cmk import trace
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.hostaddress import HostName
 from cmk.ccc.site import SiteId
@@ -86,6 +87,8 @@ from ._utils import (
     MKGraphRecipeNotFoundError,
     MKGraphWidgetTooSmallError,
 )
+
+tracer = trace.get_tracer()
 
 RenderOutput = HTML | str
 
@@ -236,6 +239,7 @@ min_resize_height = 6
 min_widget_height_ex = 11
 
 
+@tracer.instrument("graphing.host_service_graph_popup_cmk")
 def host_service_graph_popup_cmk(
     request: Request,
     site: SiteId | None,
@@ -862,6 +866,7 @@ class AjaxGraph(Page):
         return None
 
 
+@tracer.instrument("graphing.render_ajax_graph")
 def render_ajax_graph(
     request: Request,
     context: AjaxContext,
@@ -1050,6 +1055,7 @@ class UserGraphDataRangeStore:
 
 
 # TODO: still relies on the global request object because painters also use this function.
+@tracer.instrument("graphing.render_graphs_from_specification_html")
 def render_graphs_from_specification_html(
     graph_specification: GraphSpecification,
     graph_data_range: GraphDataRange,
@@ -1445,6 +1451,7 @@ class AjaxGraphHover(Page):
         return None
 
 
+@tracer.instrument("graphing.render_graph_hover_for_recipe")
 def render_graph_hover_for_recipe(
     graph_recipe: GraphRecipe,
     graph_data_range: GraphDataRange,
@@ -1522,6 +1529,7 @@ class GraphDestinations:
         ]
 
 
+@tracer.instrument("graphing.host_service_graph_dashlet_cmk")
 def host_service_graph_dashlet_cmk(
     request: Request,
     graph_recipes: Sequence[GraphRecipe],

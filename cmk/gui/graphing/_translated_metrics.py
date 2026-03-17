@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Literal, TypedDict
 
 import cmk.ccc.regex
+from cmk import trace
 from cmk.gui.log import logger
 from cmk.gui.type_defs import Perfdata, PerfDataTuple, Row
 from cmk.gui.utils.temperate_unit import TemperatureUnit
@@ -22,6 +23,8 @@ from ._from_api import RegisteredMetric
 from ._legacy import check_metrics, CheckMetricEntry
 from ._metrics import get_metric_spec_with_color
 from ._unit import ConvertibleUnitSpecification, user_specific_unit
+
+tracer = trace.get_tracer()
 
 
 def _parse_perf_values(
@@ -90,6 +93,7 @@ def _parse_check_command(check_command: str) -> str:
     return parts[0]
 
 
+@tracer.instrument("graphing.parse_perf_data")
 def parse_perf_data(
     perf_data_string: str, check_command: str | None = None, *, debug: bool
 ) -> tuple[Perfdata, str]:
@@ -230,6 +234,7 @@ def _translated_scalar(
     return scalars
 
 
+@tracer.instrument("graphing.translate_metrics")
 def translate_metrics(
     perf_data: Perfdata,
     check_command: str,
@@ -325,6 +330,7 @@ def available_metrics_translated(
     )
 
 
+@tracer.instrument("graphing.translated_metrics_from_row")
 def translated_metrics_from_row(
     row: Row,
     registered_metrics: Mapping[str, RegisteredMetric],

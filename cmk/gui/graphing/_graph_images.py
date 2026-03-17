@@ -18,6 +18,7 @@ from pydantic import ValidationError as PydanticValidationError
 
 import livestatus
 
+from cmk import trace
 from cmk.ccc.hostaddress import HostName
 from cmk.ccc.site import SiteId
 from cmk.ccc.version import edition
@@ -71,6 +72,8 @@ from ._metric_backend_registry import (
 from ._rrd import get_graph_data_from_livestatus
 from ._time_series import TimeSeriesValues
 from ._unit import get_temperature_unit
+
+tracer = trace.get_tracer()
 
 
 # NOTE
@@ -219,6 +222,7 @@ def graph_image_render_options(api_request: dict[str, Any] | None = None) -> Gra
     return graph_render_options
 
 
+@tracer.instrument("graphing.render_graph_image")
 def render_graph_image(
     graph_artwork: GraphArtwork,
     graph_render_config: GraphRenderConfigImage,
@@ -347,7 +351,8 @@ def _compute_graph_spec(
     return GraphSpec(start_time=start, end_time=end, step=step, curves=api_curves)
 
 
-def graph_spec_from_request(
+@tracer.instrument("graphing.graph_spec_from_request")
+def graph_spec_from_request(  # type: ignore[misc]
     api_request: dict[str, Any],
     registered_metrics: Mapping[str, RegisteredMetric],
     registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],

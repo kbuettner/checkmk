@@ -6,6 +6,7 @@
 from collections.abc import Iterator, Mapping, Sequence
 from typing import Literal
 
+from cmk import trace
 from cmk.ccc.resulttype import Error, OK, Result
 from cmk.gui.color import fade_color, parse_color, render_color
 from cmk.gui.utils.temperate_unit import TemperatureUnit
@@ -31,7 +32,10 @@ from ._metric_backend_registry import FetchTimeSeries
 from ._rrd import fetch_time_series_rrd
 from ._unit import user_specific_unit
 
+tracer = trace.get_tracer()
 
+
+@tracer.instrument("graphing.fetch_augmented_time_series")
 def fetch_augmented_time_series(
     registered_metrics: Mapping[str, RegisteredMetric],
     graph_recipe: GraphRecipe,
