@@ -134,9 +134,6 @@ VARIABLES:
     - NAME: CHANGED_CMK_EC_FILES
       SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/cmk-ec/' || true"
 
-    - NAME: CHANGED_CMK_RELAY_PROTOCOLS_FILES
-      SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/cmk-relay-protocols/' || true"
-
     - NAME: CHANGED_CMK_WERKS_FILES
       SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/cmk-werks/' || true"
 
@@ -151,9 +148,6 @@ VARIABLES:
 
     - NAME: CHANGED_SHARED_TYPING_FILES
       SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/cmk-shared-typing/' || true"
-
-    - NAME: CHANGED_RELAY_ENGINE_FILES
-      SH: "echo '${CHANGED_FILES_REL}' | grep '^non-free/packages/cmk-relay-engine/' || true"
 
 STAGES:
     - NAME: "Bazel sanity check (guarded)"
@@ -227,7 +221,7 @@ STAGES:
       JENKINS_TEST_RESULT_PATH: "testReport/(root)/"
 
     - NAME: "Python Requirements Test"
-      ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_PYTHON_REQUIREMENTS,CHANGED_FIND_PYTHON_FILES_SCRIPT,CHANGED_PYTHON_FILES,CHANGED_RELAY_ENGINE_FILES
+      ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_PYTHON_REQUIREMENTS,CHANGED_FIND_PYTHON_FILES_SCRIPT,CHANGED_PYTHON_FILES
       DIR: "tests"
       ENV_VARS:
           PYTEST_ADDOPTS: "--junitxml=${RESULTS}/python3-requirements-junit.xml --color=no"
@@ -317,14 +311,6 @@ STAGES:
 
     ########## packages ########################################################
 
-    - NAME: "Package cmk-agent-receiver"
-      ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_PYPROJECT_TOML_FILE,CHANGED_CMK_AGENT_RECEIVER_FILES,CHANGED_PYTHON_REQUIREMENTS,CHANGED_CMK_RELAY_PROTOCOLS_FILES
-      DIR: "packages/cmk-agent-receiver"
-      COMMAND: "bazel test ... &> ${RESULTS}/cmk-agent-receiver.txt"
-      BAZEL_LOCKS_AMOUNT: 1
-      TEXT_ON_SKIP: "No cmk-agent-receiver files changed"
-      RESULT_CHECK_FILE_PATTERN: "results/cmk-agent-receiver.txt"
-
     - NAME: "Package cmk-frontend-vue"
       ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_FRONTEND_VUE_FILES,CHANGED_SHARED_TYPING_FILES,CHANGED_JS_DEPENDENCIES
       DIR: "packages/cmk-frontend-vue"
@@ -343,14 +329,6 @@ STAGES:
       BAZEL_LOCKS_AMOUNT: 1
       TEXT_ON_SKIP: "No mk-oracle files changed"
       RESULT_CHECK_FILE_PATTERN: "mk-oracle.txt"
-
-    - NAME: "Package cmk-relay-engine"
-      ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_PYPROJECT_TOML_FILE,CHANGED_RELAY_ENGINE_FILES,CHANGED_PYTHON_REQUIREMENTS,CHANGED_CMK_RELAY_PROTOCOLS_FILES
-      DIR: "non-free/packages/cmk-relay-engine"
-      COMMAND: "bazel test ..."
-      BAZEL_LOCKS_AMOUNT: 1
-      TEXT_ON_SKIP: "No cmk-relay-engine files changed"
-      RESULT_CHECK_FILE_PATTERN: "cmk-relay-engine.txt"
 
     - NAME: "Format repository"
       COMMAND: "bazel run //:format.check &> ${RESULTS}/format.txt"

@@ -26,7 +26,6 @@ py_test(
         "WIREMOCK_JAR": "$(rootpath @wiremock_standalone//file)",
     },
     main = "__component_test__.py",
-    tags = ["component"],
     deps = [
         ":__component_test__",
         "//packages/cmk-agent-receiver",
