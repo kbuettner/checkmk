@@ -50,6 +50,7 @@ The user provides a natural language request or a direct command. Examples:
 - `/crash-report local` — list crash reports from local OMD sites
 - `/crash-report auto-fix popular --limit 3` — auto-fix top 3 popular crash groups
 - `/crash-report auto-fix search --type check --unsolved --limit 5` — auto-fix top 5 unsolved check crashes
+- `/crash-report auto-fix --dry-run popular --limit 3` — analyze and fix but don't commit/push
 
 ## Workflow
 
@@ -221,10 +222,12 @@ After the explain step (and optionally the unit test), implement a fix:
 When the user invokes `auto-fix`, the agent runs a fully automated pipeline that processes crash groups end-to-end without interactive prompts. The syntax is:
 
 ```
-auto-fix [popular|search ...] [--limit N]
+auto-fix [--dry-run] [popular|search ...] [--limit N]
 ```
 
 The arguments after `auto-fix` are passed directly to the `popular` or `search` command. If `--limit` is not specified, default to `--limit 5`.
+
+**`--dry-run` mode:** When `--dry-run` is specified, the agent runs the full analysis pipeline (fetch, analyze, create test, fix, run tests) but stops before creating a werk, committing, or pushing. Each group's branch is left with uncommitted changes so the user can review. The summary table uses status "Dry run: fix ready" or "Dry run: fix failed" instead of "Pushed".
 
 #### Pipeline
 
@@ -232,7 +235,14 @@ The arguments after `auto-fix` are passed directly to the `popular` or `search` 
 
 2. **For each crash group**, process sequentially:
 
-   a. **Branch.** Create a dedicated branch:
+   a. **Duplicate check.** Before starting work, check if this crash group has already been addressed:
+   - Check for an existing local branch: `git branch --list '*crash-group-<group_id>'`
+   - Check for an existing remote branch: `git branch -r --list '*crash-group-<group_id>'`
+   - Check for an open Gerrit change: `git log --all --oneline --grep='crash-group-<group_id>'`
+
+   If any match is found, skip this group with status "Skipped: existing branch/change found" and continue to the next group.
+
+   b. **Branch.** Create a dedicated branch:
 
    ```bash
    git checkout master && git checkout -b sandbox/<username>/master/crash-group-<group_id>
@@ -240,29 +250,36 @@ The arguments after `auto-fix` are passed directly to the `popular` or `search` 
 
    Where `<username>` is derived from `git config user.name` (lowercase, spaces replaced with hyphens).
 
-   b. **Fetch details.** Run `group <group_id>` to get the group info. Pick the most recent crash ID from the group, then run `show <crash_id>` to get the full crash report.
+   c. **Fetch details.** Run `group <group_id>` to get the group info. Pick the most recent crash ID from the group, then run `show <crash_id>` to get the full crash report.
 
-   c. **Analyze.** Execute Step 5 (Explain the Issue) silently — do not prompt the user for next steps.
+   d. **Analyze.** Execute Step 5 (Explain the Issue) silently — do not prompt the user for next steps.
 
-   d. **Unit test.** Execute Step 6 (Create Unit Test) — create an `xfail` test reproducing the crash.
+   e. **Unit test.** Execute Step 6 (Create Unit Test) — create an `xfail` test reproducing the crash.
 
-   e. **Fix.** Execute Step 7 (Fix the Issue) — implement the fix, remove `xfail`, run tests and lint via `/bazel`.
+   f. **Fix.** Execute Step 7 (Fix the Issue) — implement the fix, remove `xfail`, run tests and lint via `/bazel`.
 
-   f. **Werk.** Create a werk via `/werk` with class `fix`, level `1`, and the appropriate component inferred from the crash type and file path.
+   g. **Werk.** Create a werk via `/werk` with class `fix`, level `1`, and the appropriate component inferred from the crash type and file path.
 
-   g. **Commit.** Stage all changes and commit:
+   h. **Confidence check.** Before committing, self-assess the fix confidence as **high**, **medium**, or **low**:
+   - **High:** The crash has a clear root cause, the fix is a small localized change, and all tests pass.
+   - **Medium:** The fix is reasonable but touches non-trivial logic, or the crash context is ambiguous.
+   - **Low:** The fix is speculative, involves multiple files, or the agent is unsure about side effects.
+
+   i. **Commit.** Stage all changes and commit:
 
    ```
    <werk_id>: Fix crash in <component> (<crash_type>)
    ```
 
-   h. **Push.** Push to Gerrit:
+   j. **Push (high confidence only).** If confidence is **high**, push to Gerrit:
 
    ```bash
    git push -u origin <branch>
    ```
 
-   i. **Return.** Switch back to master for the next group:
+   If confidence is **medium** or **low**, do NOT push. The branch is committed locally. The summary table reports these as "Local only (medium confidence)" or "Local only (low confidence)" so the user can review before pushing.
+
+   k. **Return.** Switch back to master for the next group:
 
    ```bash
    git checkout master
@@ -270,19 +287,23 @@ The arguments after `auto-fix` are passed directly to the `popular` or `search` 
 
 3. **Summary.** After all groups are processed, print a summary table:
 
-   | Group ID | Crash Type | Branch                     | Status                       |
-   | -------- | ---------- | -------------------------- | ---------------------------- |
-   | 42       | check      | sandbox/.../crash-group-42 | Pushed                       |
-   | 57       | gui        | —                          | Skipped: needs manual review |
+   | Group ID | Crash Type | Branch                     | Confidence | Status                          |
+   | -------- | ---------- | -------------------------- | ---------- | ------------------------------- |
+   | 42       | check      | sandbox/.../crash-group-42 | High       | Pushed                          |
+   | 57       | gui        | sandbox/.../crash-group-57 | Medium     | Local only (medium)             |
+   | 63       | check      | sandbox/.../crash-group-63 | —          | Skipped: already solved         |
+   | 71       | gui        | sandbox/.../crash-group-71 | —          | Failed: tests fail, branch kept |
+   | 85       | check      | —                          | —          | Skipped: existing branch found  |
 
 #### Skip / Failure Handling
 
 The agent should **skip** a crash group (and report it in the summary) if:
 
+- **Duplicate:** A local or remote branch matching `*crash-group-<group_id>` already exists, or a commit message references it.
 - **Already solved:** The group data has `solved: true`.
 - **Code not found locally:** The traceback points to source files or functions that don't exist in the local `master` branch (version mismatch too large).
 - **Too complex:** The fix would require non-trivial architectural changes that the agent cannot confidently implement.
-- **Tests fail after fix:** If tests still fail after the fix attempt, revert the branch (`git checkout master && git branch -D <branch>`), and report the group as "needs manual review".
+- **Tests fail after fix:** If tests still fail after the fix attempt, commit the work-in-progress on the branch (with message `WIP: crash-group-<group_id> — tests failing`), switch back to master, and report the group as "Failed: tests fail, branch kept". Do NOT delete the branch — the user may want to inspect or continue the partial fix.
 
 When a group is skipped, log the reason and continue to the next group. Do not prompt the user.
 
