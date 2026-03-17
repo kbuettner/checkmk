@@ -158,97 +158,49 @@ class GraphArtwork(BaseModel):
 #   '----------------------------------------------------------------------'
 
 
-@dataclass(frozen=True)
-class GraphArtworkOrErrors:
-    artwork: GraphArtwork
-    errors: Sequence[QueryDataError]
-    graph_metric_limits_reached: Sequence[GraphMetricLimit]
+def _halfstep_interpolation(rrddata: TimeSeries) -> Iterator[TimeSeriesValue]:
+    if not rrddata:
+        return
 
-
-@tracer.instrument("graphing.compute_graph_artwork")
-def compute_graph_artwork(
-    graph_recipe: GraphRecipe,
-    graph_data_range: GraphDataRange,
-    size: tuple[float, float],
-    registered_metrics: Mapping[str, RegisteredMetric],
-    *,
-    temperature_unit: TemperatureUnit,
-    backend_time_series_fetcher: FetchTimeSeries | None,
-    pin_time: int | None = None,
-) -> GraphArtworkOrErrors:
-    unit_spec = user_specific_unit(graph_recipe.unit_spec, temperature_unit)
-
-    augmented_time_series_of_graph_metrics: list[AugmentedTimeSeriesOfGraphMetric] = []
-    graph_metric_limits_reached: list[GraphMetricLimit] = []
-    errors: list[QueryDataError] = []
-    for result in fetch_augmented_time_series(
-        registered_metrics,
-        graph_recipe,
-        graph_data_range,
-        temperature_unit=temperature_unit,
-        backend_time_series_fetcher=backend_time_series_fetcher,
-    ):
-        if result.is_ok():
-            augmented_time_series_of_graph_metrics.append(result.ok)
-            if result.ok.limit and result.ok.limit.reached():
-                graph_metric_limits_reached.append(result.ok.limit)
+    # These steps have to be in sync with graphs.ts. There we start from 'start_time' and
+    # go through the points with a stepsize of 'step / 2'.
+    rrddata_values = list(rrddata)
+    for left, right in zip(rrddata_values, rrddata_values[1:]):
+        yield left
+        if left is not None and right is not None:
+            yield (left + right) / 2.0
         else:
-            errors.append(result.error)
-
-    # do stacking, mirroring
-    layouted_curves, mirrored = _layout_graph_curves(
-        graph_recipe, unit_spec.formatter.render, pin_time, augmented_time_series_of_graph_metrics
-    )
-    width, height = size
-
-    try:
-        time_series = augmented_time_series_of_graph_metrics[0].time_series[0].time_series
-        start_time, end_time, step = time_series.start, time_series.end, time_series.step
-    except IndexError:  # Empty graph
-        (start_time, end_time), step = graph_data_range.time_range, 60
-
-    return GraphArtworkOrErrors(
-        GraphArtwork(
-            # Labelling, size, layout
-            title=graph_recipe.title,
-            # Actual data and axes
-            curves=layouted_curves,
-            horizontal_rules=graph_recipe.horizontal_rules,
-            vertical_axis=_compute_graph_v_axis(
-                unit_spec,
-                graph_recipe.explicit_vertical_range,
-                graph_data_range,
-                SizeEx(height),
-                layouted_curves,
-                mirrored,
-            ),
-            time_axis=_compute_graph_t_axis(start_time, end_time, width, step),
-            mark_requested_end_time=graph_recipe.mark_requested_end_time,
-            # Displayed range
-            start_time=int(start_time),
-            end_time=int(end_time),
-            step=int(step),
-            requested_vrange=graph_data_range.vertical_range,
-            requested_start_time=graph_data_range.time_range[0],
-            requested_end_time=graph_data_range.time_range[1],
-            pin_time=pin_time,
-        ),
-        errors,
-        graph_metric_limits_reached,
-    )
+            yield None
+    yield rrddata_values[-1]
 
 
-# .
-#   .--Layout Curves-------------------------------------------------------.
-#   |  _                            _      ____                            |
-#   | | |    __ _ _   _  ___  _   _| |_   / ___|   _ _ ____   _____  ___   |
-#   | | |   / _` | | | |/ _ \| | | | __| | |  | | | | '__\ \ / / _ \/ __|  |
-#   | | |__| (_| | |_| | (_) | |_| | |_  | |__| |_| | |   \ V /  __/\__ \  |
-#   | |_____\__,_|\__, |\___/ \__,_|\__|  \____\__,_|_|    \_/ \___||___/  |
-#   |             |___/                                                    |
-#   +----------------------------------------------------------------------+
-#   |  Translate mathematical values into points in grid to paint          |
-#   '----------------------------------------------------------------------'
+def _areastack(
+    raw_points: Sequence[TimeSeriesValue], base: Sequence[TimeSeriesValue]
+) -> list[tuple[TimeSeriesValue, TimeSeriesValue]]:
+    def add_points(pair: tuple[TimeSeriesValue, TimeSeriesValue]) -> TimeSeriesValue:
+        a, b = pair
+        if a is None and b is None:
+            return None
+        return denull(a) + denull(b)
+
+    def denull(value: TimeSeriesValue) -> float:
+        return value if value is not None else 0.0
+
+    # Make sure that first entry in pair is not greater than second
+    def fix_swap(
+        pp: tuple[TimeSeriesValue, TimeSeriesValue],
+    ) -> tuple[TimeSeriesValue, TimeSeriesValue]:
+        lower, upper = pp
+        if lower is None and upper is None:
+            return pp
+
+        lower, upper = map(denull, pp)
+        if lower <= upper:
+            return lower, upper
+        return upper, lower
+
+    edge = list(map(add_points, zip_longest(base, raw_points)))
+    return list(map(fix_swap, zip_longest(base, edge)))
 
 
 # Compute the location of the curves of the graph, implement
@@ -335,49 +287,84 @@ def _layout_graph_curves(
     return layouted_curves, mirrored
 
 
-def _areastack(
-    raw_points: Sequence[TimeSeriesValue], base: Sequence[TimeSeriesValue]
-) -> list[tuple[TimeSeriesValue, TimeSeriesValue]]:
-    def add_points(pair: tuple[TimeSeriesValue, TimeSeriesValue]) -> TimeSeriesValue:
-        a, b = pair
-        if a is None and b is None:
-            return None
-        return denull(a) + denull(b)
-
-    def denull(value: TimeSeriesValue) -> float:
-        return value if value is not None else 0.0
-
-    # Make sure that first entry in pair is not greater than second
-    def fix_swap(
-        pp: tuple[TimeSeriesValue, TimeSeriesValue],
-    ) -> tuple[TimeSeriesValue, TimeSeriesValue]:
-        lower, upper = pp
-        if lower is None and upper is None:
-            return pp
-
-        lower, upper = map(denull, pp)
-        if lower <= upper:
-            return lower, upper
-        return upper, lower
-
-    edge = list(map(add_points, zip_longest(base, raw_points)))
-    return list(map(fix_swap, zip_longest(base, edge)))
+@dataclass(frozen=True)
+class GraphArtworkOrErrors:
+    artwork: GraphArtwork
+    errors: Sequence[QueryDataError]
+    graph_metric_limits_reached: Sequence[GraphMetricLimit]
 
 
-def _halfstep_interpolation(rrddata: TimeSeries) -> Iterator[TimeSeriesValue]:
-    if not rrddata:
-        return
+@tracer.instrument("graphing.compute_graph_artwork")
+def compute_graph_artwork(
+    graph_recipe: GraphRecipe,
+    graph_data_range: GraphDataRange,
+    size: tuple[float, float],
+    registered_metrics: Mapping[str, RegisteredMetric],
+    *,
+    temperature_unit: TemperatureUnit,
+    backend_time_series_fetcher: FetchTimeSeries | None,
+    pin_time: int | None = None,
+) -> GraphArtworkOrErrors:
+    unit_spec = user_specific_unit(graph_recipe.unit_spec, temperature_unit)
 
-    # These steps have to be in sync with graphs.ts. There we start from 'start_time' and
-    # go through the points with a stepsize of 'step / 2'.
-    rrddata_values = list(rrddata)
-    for left, right in zip(rrddata_values, rrddata_values[1:]):
-        yield left
-        if left is not None and right is not None:
-            yield (left + right) / 2.0
+    augmented_time_series_of_graph_metrics: list[AugmentedTimeSeriesOfGraphMetric] = []
+    graph_metric_limits_reached: list[GraphMetricLimit] = []
+    errors: list[QueryDataError] = []
+    for result in fetch_augmented_time_series(
+        registered_metrics,
+        graph_recipe,
+        graph_data_range,
+        temperature_unit=temperature_unit,
+        backend_time_series_fetcher=backend_time_series_fetcher,
+    ):
+        if result.is_ok():
+            augmented_time_series_of_graph_metrics.append(result.ok)
+            if result.ok.limit and result.ok.limit.reached():
+                graph_metric_limits_reached.append(result.ok.limit)
         else:
-            yield None
-    yield rrddata_values[-1]
+            errors.append(result.error)
+
+    # do stacking, mirroring
+    layouted_curves, mirrored = _layout_graph_curves(
+        graph_recipe, unit_spec.formatter.render, pin_time, augmented_time_series_of_graph_metrics
+    )
+    width, height = size
+
+    try:
+        time_series = augmented_time_series_of_graph_metrics[0].time_series[0].time_series
+        start_time, end_time, step = time_series.start, time_series.end, time_series.step
+    except IndexError:  # Empty graph
+        (start_time, end_time), step = graph_data_range.time_range, 60
+
+    return GraphArtworkOrErrors(
+        GraphArtwork(
+            # Labelling, size, layout
+            title=graph_recipe.title,
+            # Actual data and axes
+            curves=layouted_curves,
+            horizontal_rules=graph_recipe.horizontal_rules,
+            vertical_axis=_compute_graph_v_axis(
+                unit_spec,
+                graph_recipe.explicit_vertical_range,
+                graph_data_range,
+                SizeEx(height),
+                layouted_curves,
+                mirrored,
+            ),
+            time_axis=_compute_graph_t_axis(start_time, end_time, width, step),
+            mark_requested_end_time=graph_recipe.mark_requested_end_time,
+            # Displayed range
+            start_time=int(start_time),
+            end_time=int(end_time),
+            step=int(step),
+            requested_vrange=graph_data_range.vertical_range,
+            requested_start_time=graph_data_range.time_range[0],
+            requested_end_time=graph_data_range.time_range[1],
+            pin_time=pin_time,
+        ),
+        errors,
+        graph_metric_limits_reached,
+    )
 
 
 # .
