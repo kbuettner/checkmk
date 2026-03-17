@@ -207,6 +207,7 @@ py_test(
         requirement("pytest-mock"),
         requirement("pytest-asyncio"),
         requirement("pytest-random-order"),
+        requirement("time-machine"),
     ] + select({
         "@//:gpl+nonfree_repo": [
             "//non-free/packages/cmc-protocols:py_config_proto",
