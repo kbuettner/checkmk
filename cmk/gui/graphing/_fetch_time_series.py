@@ -22,7 +22,7 @@ from ._graph_metric_expressions import (
     RRDDataKey,
 )
 from ._graph_specification import (
-    AugmentedTimeSeriesOfGraphMetrics,
+    AugmentedTimeSeriesOfGraphMetric,
     GraphDataRange,
     GraphMetricLimit,
     GraphRecipe,
@@ -39,7 +39,7 @@ def fetch_augmented_time_series(
     *,
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
-) -> Iterator[Result[AugmentedTimeSeriesOfGraphMetrics, QueryDataError]]:
+) -> Iterator[Result[AugmentedTimeSeriesOfGraphMetric, QueryDataError]]:
     consolidation_function = graph_recipe.consolidation_function
     conversion = user_specific_unit(graph_recipe.unit_spec, temperature_unit).conversion
     start_time = graph_data_range.time_range[0]
@@ -108,7 +108,7 @@ def fetch_augmented_time_series(
             registered_metrics, rrd_data, query_data, fallback_time_range
         ):
             yield OK(
-                AugmentedTimeSeriesOfGraphMetrics(
+                AugmentedTimeSeriesOfGraphMetric(
                     time_series=list(
                         _refine_augmented_time_series(
                             augmented_time_series.time_series,

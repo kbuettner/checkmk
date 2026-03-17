@@ -57,7 +57,7 @@ class GraphMetricLimit:
 
 
 @dataclass(frozen=True)
-class AugmentedTimeSeriesOfGraphMetrics:
+class AugmentedTimeSeriesOfGraphMetric:
     time_series: Sequence[AugmentedTimeSeries]
     limit: GraphMetricLimit | None
 
