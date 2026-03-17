@@ -5,7 +5,7 @@
 
 import argparse
 import datetime
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from itertools import chain
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -239,6 +239,34 @@ def test_main_rewrite_werk_rejects_v1_werks() -> None:
             mock_bail_out.assert_called_once_with(
                 "Can only evaluate Werk markdown files (with .md suffix)."
             )
+
+
+@pytest.mark.parametrize(
+    ("func", "args"),
+    [
+        pytest.param(main_evaluate, argparse.Namespace(id=None), id="evaluate"),
+        pytest.param(main_rewrite_werk, argparse.Namespace(id=None, append=False), id="rewrite"),
+        pytest.param(main_user_understanding, argparse.Namespace(id=None), id="user-understanding"),
+    ],
+)
+def test_meisterwerk_deprecation_warning(
+    capsys: pytest.CaptureFixture[str],
+    func: Callable[[argparse.Namespace], None],
+    args: argparse.Namespace,
+) -> None:
+    """Test that meisterwerk subcommands print a deprecation warning."""
+    with patch("cmk.werks.cli.get_last_werk", return_value=WerkId(99999)):
+        with patch("cmk.werks.cli.werk_path_by_id") as mock_werk_path_by_id:
+            with patch("cmk.werks.cli.bail_out") as mock_bail_out:
+                mock_path = MagicMock()
+                mock_path.exists.return_value = False
+                mock_werk_path_by_id.return_value = mock_path
+                mock_bail_out.side_effect = SystemExit(1)
+                with pytest.raises(SystemExit):
+                    func(args)
+
+    captured = capsys.readouterr()
+    assert "deprecated" in captured.err
 
 
 @pytest.mark.vcr

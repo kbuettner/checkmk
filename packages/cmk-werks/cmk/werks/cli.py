@@ -41,12 +41,10 @@ from .in_out_elements import (
 )
 from .meisterwerk import (
     build_meisterwerk_payload,
-    Choice,
     display_evaluation,
     display_rewritten_werk,
     display_user_understanding,
     evaluate_werk,
-    propose_rewriting,
     rewrite_werk,
     user_understanding_of_werk,
 )
@@ -785,71 +783,45 @@ def main_new(args: argparse.Namespace) -> None:
     save_werk(werk, get_werk_file_version())
 
     if args.non_interactive:
-        sys.stdout.write("Skipping Meisterwerk in non-interactive mode.\n")
         if get_config().create_commit:
             _git_add(werk_path)
             git_commit(werk, args.custom_files)
     else:
         edit_werk(werk_path, args.custom_files)
-        if _meisterwerk_for_new_werk(werk_path, werk_id, metadata):
-            _git_add(werk_path)
 
     stash.free_id(werk_id)
     stash.dump_to_file()
 
     sys.stdout.write(f"Werk {format_werk_id(werk_id)} saved.\n")
+    sys.stderr.write(
+        "NOTE: It is your responsibility to verify the Werk quality.\n"
+        "You can use the '/werk' Claude Code skill for automated checks.\n"
+    )
 
 
-def _meisterwerk_for_new_werk(werk_path: Path, werk_id: WerkId, metadata: dict[str, str]) -> bool:
-    """Evaluate and maybe rewrite the Werk with Meisterwerk.
-    Returns True if the Werk was changed on disk.
-    """
-    werk = load_werk(werk_path)
-    payload = build_meisterwerk_payload(werk)
-    evaluation = evaluate_werk(payload)
-    display_evaluation(evaluation)
-    if evaluation.evaluation.aggregated_scores.average_score <= 2.5:
-        rewritten_werk = rewrite_werk(payload, evaluation)
-        display_rewritten_werk(rewritten_werk)
-        match propose_rewriting():
-            case Choice.APPEND:
-                text_to_append = (
-                    f"\n\n\n<<<<<--- Rewritten Werk --->>>>\n\n{rewritten_werk.rewritten_text}"
-                )
-                with werk_path.open("a", encoding="utf-8") as f:
-                    f.write(text_to_append)
-                edit_werk(werk_path, None, commit=False)
-                return True
-            case Choice.REPLACE:
-                werk = Werk(
-                    id=werk_id,
-                    path=werk_path,
-                    content=WerkV3ParseResult(
-                        metadata=metadata,
-                        description=rewritten_werk.rewritten_text,
-                    ),
-                )
-                save_werk(werk, get_werk_file_version())
-                return True
-            case Choice.KEEP:
-                pass
-
-    return False
+def _meisterwerk_deprecation_warning() -> None:
+    sys.stderr.write(
+        "WARNING: The 'meisterwerk' subcommand is deprecated and will be removed in a future release.\n"
+        "Please use the '/werk' skill in Claude Code instead.\n"
+    )
 
 
 def main_evaluate(args: argparse.Namespace) -> None:
+    _meisterwerk_deprecation_warning()
     _, _, payload, _ = prepare_for_meisterwerk(args)
     evaluation = evaluate_werk(payload)
     display_evaluation(evaluation)
 
 
 def main_user_understanding(args: argparse.Namespace) -> None:
+    _meisterwerk_deprecation_warning()
     _, _, payload, werk_id = prepare_for_meisterwerk(args)
     understanding = user_understanding_of_werk(payload)
     display_user_understanding(understanding)
 
 
 def main_rewrite_werk(args: argparse.Namespace) -> None:
+    _meisterwerk_deprecation_warning()
     append_rewritten_werk: bool = args.append
     werk_path, _, payload, werk_id = prepare_for_meisterwerk(args)
     evaluation = evaluate_werk(payload)
