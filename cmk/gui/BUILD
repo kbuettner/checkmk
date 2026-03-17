@@ -246,7 +246,7 @@ py_library(
             ":pro",
             ":ultimate",
             "//cmk/utils:pro",
-            "//non-free/packages/cmk-multi-tenancy",
+            "//cmk/utils:ultimatemt",
         ],
         "@//:gpl_repo": [],
     }),

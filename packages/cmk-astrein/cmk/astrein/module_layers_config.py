@@ -415,12 +415,12 @@ CMK_UTILS_DEPENDENCIES = {
         "cmk.utils.password_store",
         "cmk.utils.paths",
     ),
-    Component("cmk.multi_tenancy.shared.customer"): _allow(
+    Component("cmk.utils.nonfree.ultimatemt.customer"): _allow(
         "cmk.ccc.store",
     ),
-    Component("cmk.multi_tenancy.shared.labels"): _allow(
+    Component("cmk.utils.nonfree.ultimatemt.labels"): _allow(
         "cmk.ccc.site",
-        "cmk.multi_tenancy.shared.customer",
+        "cmk.utils.nonfree.ultimatemt.customer",
     ),
     Component("cmk.utils.notify"): _allow(
         "cmk.utils.labels",
@@ -630,7 +630,6 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
         "cmk.fetcher_helper",
         "cmk.fetchers",
         "cmk.helper_interface",
-        "cmk.multi_tenancy.shared",
         "cmk.server_side_calls_backend",
         "cmk.utils",
     ),
@@ -981,7 +980,7 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
         "cmk.utils.automation_config",
         "cmk.utils.certs",
         "cmk.utils.licensing",
-        "cmk.multi_tenancy.shared",
+        "cmk.utils.nonfree.ultimatemt",
         "cmk.utils.images",
         "cmk.utils.password_store",
         "cmk.utils.paths",
