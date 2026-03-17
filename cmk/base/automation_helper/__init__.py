@@ -139,7 +139,12 @@ def _reload_automation_config(
 ) -> config.LoadingResult:
     cache_manager.clear()
     discovery_rulesets = extract_known_discovery_rulesets(plugins)
-    return config.load(discovery_rulesets, get_builtin_host_labels, validate_hosts=False)
+    return config.load(
+        discovery_rulesets,
+        get_builtin_host_labels,
+        cmk_version.edition(omd_root),
+        validate_hosts=False,
+    )
 
 
 def _clear_caches_before_each_call(config_cache: ConfigCache) -> None:

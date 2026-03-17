@@ -295,6 +295,7 @@ def _mode_notify(app: CheckmkBaseApp, options: dict, args: list[str]) -> int | N
         loading_result = config.load(
             discovery_rulesets=(),
             get_builtin_host_labels=app.get_builtin_host_labels,
+            edition=app.edition,
             with_conf_d=True,
             validate_hosts=False,
         )
@@ -921,6 +922,7 @@ def _automation_notification_replay(
     loading_result = loading_result or load_config(
         discovery_rulesets=(),
         get_builtin_host_labels=ctx.get_builtin_host_labels,
+        edition=ctx.edition,
     )
     logger = logging.getLogger("cmk.base.automations")  # this might go nowhere.
 
@@ -960,6 +962,7 @@ def _automation_notification_analyse(
     loading_result = loading_result or load_config(
         discovery_rulesets=(),
         get_builtin_host_labels=ctx.get_builtin_host_labels,
+        edition=ctx.edition,
     )
     logger = logging.getLogger("cmk.base.automations")  # this might go nowhere.
 
@@ -1003,6 +1006,7 @@ def _automation_notification_test(
     loading_result = loading_result or load_config(
         discovery_rulesets=(),
         get_builtin_host_labels=ctx.get_builtin_host_labels,
+        edition=ctx.edition,
     )
     ensure_nagios = make_ensure_nagios(loading_result.loaded_config.monitoring_core)
     logger = logging.getLogger("cmk.base.automations")  # this might go nowhere.

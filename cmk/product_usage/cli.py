@@ -41,9 +41,11 @@ class ProductUsageRequest:
 
 
 def load_config(logger: logging.Logger) -> ProductUsageConfig:
+    this_edition = edition(paths.omd_root)
     base_config = load(
         discovery_rulesets=(),
-        get_builtin_host_labels=make_app(edition(paths.omd_root)).get_builtin_host_labels,
+        get_builtin_host_labels=make_app(this_edition).get_builtin_host_labels,
+        edition=this_edition,
     )
 
     config = load_product_usage_config(paths.default_config_dir, logger)

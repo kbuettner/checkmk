@@ -122,7 +122,7 @@ class TestAutomationDiagHost:
             AgentBasedPlugins.empty(),
             config.LoadingResult(
                 loaded_config=loaded_config,
-                config_cache=ConfigCache(loaded_config, app.get_builtin_host_labels),
+                config_cache=ConfigCache(loaded_config, app.get_builtin_host_labels, app.edition),
             ),
         ) == DiagHostResult(
             0,
@@ -253,7 +253,7 @@ def test_automation_active_check(
     monkeypatch.setattr(config, config.load_resource_cfg_macros.__name__, lambda *a, **kw: {})
 
     app = make_app(edition(paths.omd_root))
-    config_cache = config.ConfigCache(EMPTY_CONFIG, app.get_builtin_host_labels)
+    config_cache = config.ConfigCache(EMPTY_CONFIG, app.get_builtin_host_labels, app.edition)
     monkeypatch.setattr(config_cache, "active_checks", lambda *a, **kw: active_checks)
 
     active_check = AutomationActiveCheckTestable()
@@ -330,7 +330,7 @@ def test_automation_active_check_invalid_args(
         EMPTY_CONFIG, ipaddresses={HostName("my_host"): HostAddress("127.0.0.1")}
     )
     app = make_app(edition(paths.omd_root))
-    config_cache = config.ConfigCache(loaded_config, app.get_builtin_host_labels)
+    config_cache = config.ConfigCache(loaded_config, app.get_builtin_host_labels, app.edition)
     monkeypatch.setattr(config_cache, "active_checks", lambda *a, **kw: active_checks)
 
     monkeypatch.setattr(cmk.ccc.debug, "enabled", lambda: False)

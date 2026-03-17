@@ -339,6 +339,7 @@ def automation_service_discovery(
         loading_result = load_config(
             discovery_rulesets=extract_known_discovery_rulesets(plugins),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
     loaded_config = loading_result.loaded_config
     ruleset_matcher = loading_result.config_cache.ruleset_matcher
@@ -517,6 +518,7 @@ def automation_special_agent_discovery_preview(
         loading_result = load_config(
             discovery_rulesets=extract_known_discovery_rulesets(plugins),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
 
     loaded_config = loading_result.loaded_config
@@ -604,6 +606,7 @@ def automation_discovery_preview(
         loading_result = load_config(
             discovery_rulesets=extract_known_discovery_rulesets(plugins),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
 
     loaded_config = loading_result.loaded_config
@@ -1142,6 +1145,7 @@ def _execute_autodiscovery(
         loading_result = load_config(
             discovery_rulesets=extract_known_discovery_rulesets(ab_plugins),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
     loaded_config = loading_result.loaded_config
     ruleset_matcher = loading_result.config_cache.ruleset_matcher
@@ -1504,6 +1508,7 @@ def automation_set_autochecks_v2(
         loading_result = load_config(
             discovery_rulesets=extract_known_discovery_rulesets(plugins),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
 
     loaded_config = loading_result.loaded_config
@@ -1578,6 +1583,7 @@ def automation_update_host_labels(
         loading_result = load_config(
             discovery_rulesets=(),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
     _trigger_discovery_check(
         loading_result.config_cache, hostname, loading_result.loaded_config.monitoring_core
@@ -1609,6 +1615,7 @@ class AutomationRenameHosts:
             loading_result = load_config(
                 discovery_rulesets=extract_known_discovery_rulesets(plugins),
                 get_builtin_host_labels=ctx.get_builtin_host_labels,
+                edition=ctx.edition,
             )
 
         loaded_config = loading_result.loaded_config
@@ -1975,6 +1982,7 @@ def automation_get_service_labels(
         loading_result = load_config(
             discovery_rulesets=extract_known_discovery_rulesets(plugins),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
 
     loaded_config = loading_result.loaded_config
@@ -2022,6 +2030,7 @@ def automation_get_service_name(
         loading_result = load_config(
             discovery_rulesets=extract_known_discovery_rulesets(plugins),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
 
     loaded_config = loading_result.loaded_config
@@ -2068,6 +2077,7 @@ class AutomationAnalyseServices:
             loading_result = load_config(
                 discovery_rulesets=extract_known_discovery_rulesets(plugins),
                 get_builtin_host_labels=ctx.get_builtin_host_labels,
+                edition=ctx.edition,
             )
         loaded_config = loading_result.loaded_config
         ruleset_matcher = loading_result.config_cache.ruleset_matcher
@@ -2359,6 +2369,7 @@ def automation_analyse_host(
         loading_result = load_config(
             discovery_rulesets=(),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
     ruleset_matcher = loading_result.config_cache.ruleset_matcher
     label_manager = loading_result.config_cache.label_manager
@@ -2384,6 +2395,7 @@ def automation_analyze_host_rule_matches(
         loading_result = load_config(
             discovery_rulesets=(),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
     ruleset_matcher = loading_result.config_cache.ruleset_matcher
     label_manager = loading_result.config_cache.label_manager
@@ -2423,6 +2435,7 @@ def automation_analyze_service_rule_matches(
         loading_result = load_config(
             discovery_rulesets=(),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
     ruleset_matcher = loading_result.config_cache.ruleset_matcher
     label_manager = loading_result.config_cache.label_manager
@@ -2463,6 +2476,7 @@ def automation_analyze_host_rule_effectiveness(
         loading_result = load_config(
             discovery_rulesets=(),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
     config_cache = loading_result.config_cache
     ruleset_matcher = config_cache.ruleset_matcher
@@ -2669,6 +2683,7 @@ class AutomationRestart:
             loading_result = load_config(
                 discovery_rulesets=extract_known_discovery_rulesets(plugins),
                 get_builtin_host_labels=ctx.get_builtin_host_labels,
+                edition=ctx.edition,
             )
         loaded_config = loading_result.loaded_config
         ruleset_matcher = loading_result.config_cache.ruleset_matcher
@@ -2871,6 +2886,7 @@ def automation_get_configuration(
     config.load(
         discovery_rulesets=(),
         get_builtin_host_labels=ctx.get_builtin_host_labels,
+        edition=ctx.edition,
         with_conf_d=False,
     )
 
@@ -2976,6 +2992,7 @@ def automation_scan_parents(
     loading_result = loading_result or load_config(
         extract_known_discovery_rulesets(plugins),
         get_builtin_host_labels=ctx.get_builtin_host_labels,
+        edition=ctx.edition,
     )
 
     hosts_config = config.make_hosts_config(loading_result.loaded_config)
@@ -3412,6 +3429,7 @@ class AutomationDiagHost:
         loading_result = loading_result or load_config(
             extract_known_discovery_rulesets(plugins),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
         label_manager = loading_result.config_cache.label_manager
 
@@ -3915,6 +3933,7 @@ class AutomationActiveCheck:
         loading_result = loading_result or load_config(
             extract_known_discovery_rulesets(plugins),
             get_builtin_host_labels=ctx.get_builtin_host_labels,
+            edition=ctx.edition,
         )
         config_cache = loading_result.config_cache
         config_cache.ruleset_matcher.ruleset_optimizer.set_all_processed_hosts({host_name})
@@ -4076,6 +4095,7 @@ def automation_update_passwords_merged_file(
     loading_result = loading_result or load_config(
         discovery_rulesets=(),
         get_builtin_host_labels=ctx.get_builtin_host_labels,
+        edition=ctx.edition,
     )
     cmk.utils.password_store.save(
         {k: s.reveal() for k, s in loading_result.config_cache.collect_passwords().items()},
@@ -4094,6 +4114,7 @@ def automation_update_dns_cache(
     loading_result = loading_result or load_config(
         extract_known_discovery_rulesets(plugins),
         get_builtin_host_labels=ctx.get_builtin_host_labels,
+        edition=ctx.edition,
     )
 
     hosts_config = loading_result.config_cache.hosts_config
@@ -4163,6 +4184,7 @@ def automation_get_agent_output(
     loading_result = loading_result or load_config(
         extract_known_discovery_rulesets(plugins),
         get_builtin_host_labels=ctx.get_builtin_host_labels,
+        edition=ctx.edition,
     )
     loaded_config = loading_result.loaded_config
     ruleset_matcher = loading_result.config_cache.ruleset_matcher

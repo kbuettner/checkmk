@@ -301,9 +301,11 @@ def _check_failed_gui_plugins(logger: logging.Logger) -> None:
 
 
 def _initialize_base_environment() -> None:
+    _edition = edition(paths.omd_root)
     base_config.load(
         discovery_rulesets=(),
-        get_builtin_host_labels=make_app(edition(paths.omd_root)).get_builtin_host_labels,
+        get_builtin_host_labels=make_app(_edition).get_builtin_host_labels,
+        edition=_edition,
     )
 
 

@@ -103,6 +103,7 @@ def test_checks_executor(
     config_cache = config.ConfigCache(
         EMPTY_CONFIG,
         (get_builtin_host_labels := make_app(edition(paths.omd_root)).get_builtin_host_labels),
+        edition(paths.omd_root),
     ).initialize(get_builtin_host_labels)
     parser_config = config.make_parser_config(
         EMPTY_CONFIG, config_cache.ruleset_matcher, config_cache.label_manager

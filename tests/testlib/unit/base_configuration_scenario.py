@@ -53,14 +53,14 @@ class Scenario:
                 **{k: v for k, v in self.config.items() if k in asdict(EMPTY_CONFIG)},
             ),
             self.get_builtin_host_labels,
+            self._edition,
         )
 
     def __init__(self, site_id: str = "unit") -> None:
         super().__init__()
 
-        self.get_builtin_host_labels = make_app(
-            edition(cmk.utils.paths.omd_root)
-        ).get_builtin_host_labels
+        self._edition = edition(cmk.utils.paths.omd_root)
+        self.get_builtin_host_labels = make_app(self._edition).get_builtin_host_labels
         tag_config = cmk.utils.tags.sample_tag_config()
         self.tags = cmk.utils.tags.get_effective_tag_config(tag_config)
         self.site_id = site_id

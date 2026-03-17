@@ -2602,6 +2602,7 @@ def test_load_config_folder_paths(folder_path_test_config: LoadedConfigFragment)
     config_cache = config.ConfigCache(
         folder_path_test_config,
         make_app(edition(cmk.utils.paths.omd_root)).get_builtin_host_labels,
+        edition(cmk.utils.paths.omd_root),
     )
 
     assert config_cache.host_path(HostName("main-host")) == "/"
@@ -2712,9 +2713,11 @@ cmc_host_rrd_config = [
     _add_host_in_folder(wato_lvl2_folder, "lvl2-host")
     _add_rule_in_folder(wato_lvl2_folder, "LVL2")
 
+    _edition = edition(cmk.utils.paths.omd_root)
     yield config.load(
         discovery_rulesets=(),
-        get_builtin_host_labels=make_app(edition(cmk.utils.paths.omd_root)).get_builtin_host_labels,
+        get_builtin_host_labels=make_app(_edition).get_builtin_host_labels,
+        edition=_edition,
     ).loaded_config
 
     # Cleanup after the test. Would be better to use a dedicated test directory
@@ -2806,11 +2809,11 @@ def test_explicit_setting_loading(patch_omd_site: None) -> None:
         for foldername, setting, values in settings:
             _add_explicit_setting_in_folder(wato_main_folder / foldername, setting, values)
 
+        _edition = edition(cmk.utils.paths.omd_root)
         config.load(
             discovery_rulesets=(),
-            get_builtin_host_labels=make_app(
-                edition(cmk.utils.paths.omd_root)
-            ).get_builtin_host_labels,
+            get_builtin_host_labels=make_app(_edition).get_builtin_host_labels,
+            edition=_edition,
         )
         assert config.explicit_host_conf["parents"][HostName("hostA")] == "setting1"
         assert config.explicit_host_conf["parents"][HostName("hostB")] == "setting2"
@@ -2844,10 +2847,12 @@ def test_load_packed_config(config_path: Path) -> None:
     config.PackedConfigStore.from_serial(config_path).write({"abcd": 1})
 
     assert "abcd" not in config.__dict__
+    _edition = edition(cmk.utils.paths.omd_root)
     config.load_packed_config(
         config_path,
         discovery_rulesets=(),
-        get_builtin_host_labels=make_app(edition(cmk.utils.paths.omd_root)).get_builtin_host_labels,
+        get_builtin_host_labels=make_app(_edition).get_builtin_host_labels,
+        edition=_edition,
     )
     # Mypy does not understand that we add some new member for testing
     assert config.abcd == 1  # type: ignore[attr-defined]

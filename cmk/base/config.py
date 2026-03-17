@@ -566,6 +566,7 @@ class LoadingResult:
 def load(
     discovery_rulesets: Iterable[RuleSetName],
     get_builtin_host_labels: Callable[[SiteId], Labels],
+    edition: cmk_version.Edition,
     with_conf_d: bool = True,
     validate_hosts: bool = True,
 ) -> LoadingResult:
@@ -579,7 +580,10 @@ def load(
     _changed_var_names = _load_config(storage_format, with_conf_d=with_conf_d)
 
     loading_result = _perform_post_config_loading_actions(
-        discovery_rulesets, get_builtin_host_labels, experimental_config
+        discovery_rulesets,
+        get_builtin_host_labels,
+        experimental_config,
+        edition=edition,
     )
 
     if validate_hosts:
@@ -606,6 +610,7 @@ def load_packed_config(
     config_path: Path,
     discovery_rulesets: Iterable[RuleSetName],
     get_builtin_host_labels: Callable[[SiteId], Labels],
+    edition: cmk_version.Edition,
 ) -> LoadingResult:
     """Load the configuration for the CMK helpers of CMC
 
@@ -626,6 +631,7 @@ def load_packed_config(
         discovery_rulesets,
         get_builtin_host_labels,
         load_experimental_config(cmk.utils.paths.default_config_dir),
+        edition=edition,
     )
 
 
@@ -637,6 +643,8 @@ def _perform_post_config_loading_actions(
     discovery_rulesets: Iterable[RuleSetName],
     get_builtin_host_labels: Callable[[SiteId], Labels],
     experimental: Mapping[str, object],
+    *,
+    edition: cmk_version.Edition,
 ) -> LoadingResult:
     """These tasks must be performed after loading the Check_MK base configuration"""
     # First cleanup things (needed for e.g. reloading the config)
@@ -722,7 +730,7 @@ def _perform_post_config_loading_actions(
         cmc_config_multiprocessing=cmc_config_multiprocessing,
     )
 
-    config_cache = ConfigCache(loaded_config, get_builtin_host_labels).initialize(
+    config_cache = ConfigCache(loaded_config, get_builtin_host_labels, edition).initialize(
         get_builtin_host_labels
     )
 
@@ -1560,9 +1568,11 @@ class ConfigCache:
         self,
         loaded_config: LoadedConfigFragment,
         get_builtin_host_labels: Callable[[SiteId], Labels],
+        edition: cmk_version.Edition,
     ) -> None:
         super().__init__()
         self._loaded_config: Final = loaded_config
+        self.edition: Final = edition
         self.hosts_config = Hosts(hosts=(), clusters=(), shadow_hosts=())
         self.__enforced_services_table: dict[
             HostName,
@@ -2890,12 +2900,8 @@ class ConfigCache:
             host_name, snmpv2c_hosts, self.label_manager.labels_of_host
         )
 
-    @staticmethod
-    def _is_inline_backend_supported() -> bool:
-        return (
-            "netsnmp" in sys.modules
-            and cmk_version.edition(cmk.utils.paths.omd_root) is not cmk_version.Edition.COMMUNITY
-        )
+    def _is_inline_backend_supported(self) -> bool:
+        return "netsnmp" in sys.modules and self.edition is not cmk_version.Edition.COMMUNITY
 
     def get_snmp_backend(self, host_name: HostName | HostAddress) -> SNMPBackendEnum:
         if result := self.__snmp_backend.get(host_name):
@@ -2911,7 +2917,7 @@ class ConfigCache:
         ):
             return SNMPBackendEnum.STORED_WALK
 
-        with_inline_snmp = ConfigCache._is_inline_backend_supported()
+        with_inline_snmp = self._is_inline_backend_supported()
 
         if host_backend_config := self.ruleset_matcher.get_host_values_all(
             host_name, snmp_backend_hosts, self.label_manager.labels_of_host
@@ -3314,7 +3320,7 @@ class ConfigCache:
         if actions := self.icons_and_actions(hostname):
             attrs["_ACTIONS"] = ",".join(actions)
 
-        if cmk_version.edition(cmk.utils.paths.omd_root) is cmk_version.Edition.ULTIMATEMT:
+        if self.edition is cmk_version.Edition.ULTIMATEMT:
             attrs["_CUSTOMER"] = current_customer  # type: ignore[name-defined,unused-ignore]
 
         return attrs

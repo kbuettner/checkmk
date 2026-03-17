@@ -84,6 +84,7 @@ class TestModeDumpAgent:
                 config_cache=config.ConfigCache(
                     loaded_config,
                     make_app(Edition.COMMUNITY).get_builtin_host_labels,
+                    Edition.COMMUNITY,
                 ),
             ),
         )

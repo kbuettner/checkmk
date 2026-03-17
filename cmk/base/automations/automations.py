@@ -200,6 +200,9 @@ def load_plugins() -> AgentBasedPlugins:
 def load_config(
     discovery_rulesets: Iterable[RuleSetName],
     get_builtin_host_labels: Callable[[SiteId], Labels],
+    edition: cmk_version.Edition,
 ) -> config.LoadingResult:
     with tracer.span("load_config"):
-        return config.load(discovery_rulesets, get_builtin_host_labels, validate_hosts=False)
+        return config.load(
+            discovery_rulesets, get_builtin_host_labels, edition, validate_hosts=False
+        )

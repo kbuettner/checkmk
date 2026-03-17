@@ -102,6 +102,7 @@ def main() -> int:
             active_config_path,
             discovery_rulesets=extract_known_discovery_rulesets(plugins),
             get_builtin_host_labels=app.get_builtin_host_labels,
+            edition=app.edition,
         )
 
         config.ipaddresses = CONFIG.ipaddresses

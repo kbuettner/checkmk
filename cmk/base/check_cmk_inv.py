@@ -146,6 +146,7 @@ def _inventory_as_check(
     loading_result = config.load(
         discovery_rulesets=extract_known_discovery_rulesets(plugins),
         get_builtin_host_labels=app.get_builtin_host_labels,
+        edition=app.edition,
     )
     loaded_config = loading_result.loaded_config
     ruleset_matcher = loading_result.config_cache.ruleset_matcher
