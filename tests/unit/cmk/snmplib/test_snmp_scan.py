@@ -13,7 +13,6 @@ import logging
 import cmk.fetchers._snmpscan as snmp_scan
 from cmk.ccc.exceptions import OnError
 from cmk.ccc.hostaddress import HostAddress, HostName
-from cmk.checkengine.plugins import AgentBasedPlugins
 from cmk.snmplib import (
     SNMPBackend,
     SNMPBackendEnum,
@@ -58,33 +57,33 @@ FAKE_OID_CACHE = {
     snmp_scan.OID_SYS_OBJ: "sys object",
 }
 
+# Sections with explicit detect specs for testing scan logic.
+# The first three match any sys-description value (including empty string),
+# the last one requires an OID that is never present in the test backend.
+_SNMP_SECTIONS: list[snmp_scan.SNMPScanSection] = [
+    (SNMPSectionName("hr_mem"), [[(snmp_scan.OID_SYS_DESCR, ".*", True)]]),
+    (SNMPSectionName("snmp_info"), [[(snmp_scan.OID_SYS_DESCR, ".*", True)]]),
+    (SNMPSectionName("snmp_uptime"), [[(snmp_scan.OID_SYS_DESCR, ".*", True)]]),
+    (SNMPSectionName("not_detected"), [[(".1.3.6.1.99.99.99", "some_value", True)]]),
+]
 
-def test_snmp_scan_find_plugins__success(
-    agent_based_plugins: AgentBasedPlugins,
-) -> None:
-    sections = [
-        (SNMPSectionName(s.name), s.detect_spec) for s in agent_based_plugins.snmp_sections.values()
-    ]
+
+def test_snmp_scan_find_plugins__success() -> None:
     found = snmp_scan._find_sections(
-        sections,
+        _SNMP_SECTIONS,
         FAKE_OID_CACHE,
         on_error=OnError.RAISE,
         backend=SNMPTestBackend(),
     )
 
-    assert sections
+    assert _SNMP_SECTIONS
     assert found
-    assert len(sections) > len(found)
+    assert len(_SNMP_SECTIONS) > len(found)
 
 
-def test_gather_available_raw_section_names_defaults(
-    agent_based_plugins: AgentBasedPlugins,
-) -> None:
+def test_gather_available_raw_section_names_defaults() -> None:
     assert snmp_scan.gather_available_raw_section_names(
-        [
-            (SNMPSectionName(s.name), s.detect_spec)
-            for s in agent_based_plugins.snmp_sections.values()
-        ],
+        _SNMP_SECTIONS,
         scan_config=snmp_scan.SNMPScanConfig(
             on_error=OnError.RAISE,
             missing_sys_description=True,
