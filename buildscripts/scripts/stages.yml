@@ -298,7 +298,6 @@ STAGES:
           bazel run //cmk/utils:werks_bin -- announce $(pwd)/.werks $(make print-VERSION) --format md &>> ${RESULTS}/werk_commands.txt
           bazel run //cmk/utils:werks_bin -- announce $(pwd)/.werks $(make print-VERSION) --format txt &>> ${RESULTS}/werk_commands.txt
           bazel run //omd/packages/changelog:werks_utils_binary -- precompile $(pwd)/.werks precompiled.json &>> ${RESULTS}/werk_commands.txt
-          bazel run //omd/packages/changelog:werks_utils_binary -- changelog CHANGELOG precompiled.json &>> ${RESULTS}/werk_commands.txt
           bazel run //cmk/utils:werks_bin -- mail $(pwd) HEAD werk_mail --assume-no-notes-but=$(git log --before="$(date --date="4 weeks ago" --iso=seconds)" --format="%H" --max-count=1) &>> ${RESULTS}/werk_commands.txt
           scripts/run-uvenv werk list &>> ${RESULTS}/werk_commands.txt
       TEXT_ON_SKIP: "No Werk code files changed"

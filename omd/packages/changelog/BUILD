@@ -1,7 +1,7 @@
 load("@aspect_rules_py//py:defs.bzl", "py_binary")
 load("@bazel_skylib//rules:run_binary.bzl", "run_binary")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
-load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "pkg_mklink")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 
 write_file(
@@ -96,83 +96,6 @@ run_binary(
     tool = ":werks_utils_binary",
 )
 
-run_binary(
-    name = "run_changelog",
-    srcs = select({
-        "@cmk//edition:cloud": [
-            ":werks_precompiled_cloud",
-            ":werks_precompiled_community",
-            ":werks_precompiled_pro",
-            ":werks_precompiled_ultimate",
-        ],
-        "@cmk//edition:community": [
-            ":werks_precompiled_community",
-        ],
-        "@cmk//edition:pro": [
-            ":werks_precompiled_community",
-            ":werks_precompiled_pro",
-        ],
-        "@cmk//edition:ultimate": [
-            ":werks_precompiled_community",
-            ":werks_precompiled_pro",
-            ":werks_precompiled_ultimate",
-        ],
-        "@cmk//edition:ultimatemt": [
-            ":werks_precompiled_community",
-            ":werks_precompiled_pro",
-            ":werks_precompiled_ultimate",
-            ":werks_precompiled_ultimatemt",
-        ],
-    }),
-    outs = ["changelog_file"],
-    args = [
-        "changelog",
-        "$(location changelog_file)",
-    ] + select({
-        "@cmk//edition:cloud": [
-            "$(location :werks_precompiled_community)",
-            "$(location :werks_precompiled_pro)",
-            "$(location :werks_precompiled_ultimate)",
-            "$(location :werks_precompiled_cloud)",
-        ],
-        "@cmk//edition:community": [
-            "$(location :werks_precompiled_community)",
-        ],
-        "@cmk//edition:pro": [
-            "$(location :werks_precompiled_community)",
-            "$(location :werks_precompiled_pro)",
-        ],
-        "@cmk//edition:ultimate": [
-            "$(location :werks_precompiled_community)",
-            "$(location :werks_precompiled_pro)",
-            "$(location :werks_precompiled_ultimate)",
-        ],
-        "@cmk//edition:ultimatemt": [
-            "$(location :werks_precompiled_community)",
-            "$(location :werks_precompiled_pro)",
-            "$(location :werks_precompiled_ultimate)",
-            "$(location :werks_precompiled_ultimatemt)",
-        ],
-    }),
-    tags = ["manual"],
-    tool = ":werks_utils_binary",
-    visibility = ["@@//omd:__subpackages__"],
-)
-
-pkg_files(
-    name = "changelog_pkg",
-    srcs = [":changelog_file"],
-    prefix = select({
-        "@cmk//edition:cloud": "share/doc/check_mk_cloud",
-        "@cmk//edition:community": "share/doc/check_mk_community",
-        "@cmk//edition:pro": "share/doc/check_mk_pro",
-        "@cmk//edition:ultimate": "share/doc/check_mk_ultimate",
-        "@cmk//edition:ultimatemt": "share/doc/check_mk_ultimatemt",
-    }),
-    renames = {":changelog_file": "ChangeLog"},
-    tags = ["manual"],
-)
-
 # One pkg_files per edition, each ships only that edition's werks under its own filename.
 # The pkg_tar select below composes the right set for each edition (layering).
 pkg_files(
@@ -215,19 +138,9 @@ pkg_files(
     tags = ["manual"],
 )
 
-pkg_mklink(
-    name = "changelog_link",
-    link_name = "share/doc/ChangeLog",
-    tags = ["manual"],
-    target = "check_mk/ChangeLog",
-)
-
 pkg_tar(
     name = "changelog",
-    srcs = [
-        "changelog_link",
-        "changelog_pkg",
-    ] + select({
+    srcs = select({
         "@cmk//edition:cloud": [
             "werks_pkg_cloud",
             "werks_pkg_community",
