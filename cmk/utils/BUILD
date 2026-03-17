@@ -113,7 +113,6 @@ py_library(
     ),
     imports = ["../.."],
     deps = [
-        ":utils",
         "//packages/cmk-ccc:resulttype",
         "//packages/cmk-crypto",
         requirement("python-dateutil"),

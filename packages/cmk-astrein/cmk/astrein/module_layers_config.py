@@ -385,7 +385,6 @@ CMK_UTILS_DEPENDENCIES = {
     Component("cmk.utils.msi_patch"): _allow(),
     Component("cmk.utils.nonfree.cloud.config"): _allow(
         "cmk.crypto",
-        "cmk.utils.paths",
     ),
     Component("cmk.dcd.protocols"): _allow(
         *PACKAGE_CCC,
