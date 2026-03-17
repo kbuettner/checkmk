@@ -417,11 +417,9 @@ CMK_UTILS_DEPENDENCIES = {
     ),
     Component("cmk.utils.nonfree.ultimatemt.customer"): _allow(
         "cmk.ccc.store",
-        "cmk.utils.paths",
     ),
     Component("cmk.utils.nonfree.ultimatemt.labels"): _allow(
         "cmk.ccc.site",
-        "cmk.utils.labels",
         "cmk.utils.nonfree.ultimatemt.customer",
     ),
     Component("cmk.utils.notify"): _allow(
