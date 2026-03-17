@@ -150,79 +150,83 @@ def default_developer_entries() -> list[NavItemTopicEntry]:
                 emblem="api",
             ),
         ),
-        NavItemTopicEntry(
-            mode=TopicItemMode.multilevel,
-            id="rest_api",
-            title=_("REST API"),
-            sort_index=30,
-            entries=[
-                NavItemTopicEntry(
-                    id="rest_api_introduction",
-                    title=_("Introduction"),
-                    url=doc_reference_url(DocReference.REST_API),
-                    target="_blank",
-                    sort_index=10,
-                    icon=EmblemIcon(
-                        icon=DefaultIcon(id=IconNames.global_settings),
-                        emblem="api",
-                    ),
-                ),
-                NavItemTopicEntry(
-                    mode=TopicItemMode.indented,
-                    id="rest_api_version_1",
-                    title=_("Version 1"),
-                    sort_index=20,
-                    entries=[
-                        NavItemTopicEntry(
-                            id="rest_api_documentation",
-                            title=_("Documentation"),
-                            url="openapi/",
-                            target="_blank",
-                            sort_index=10,
-                            icon=EmblemIcon(
-                                icon=DefaultIcon(id=IconNames.global_settings),
-                                emblem="api",
-                            ),
-                        ),
-                        NavItemTopicEntry(
-                            id="rest_api_interactive_gui",
-                            title=_("Interactive GUI"),
-                            url="api/1.0/ui/",
-                            target="_blank",
-                            sort_index=20,
-                            icon=EmblemIcon(
-                                icon=DefaultIcon(id=IconNames.global_settings),
-                                emblem="api",
-                            ),
-                        ),
-                    ],
-                ),
-                NavItemTopicEntry(
-                    mode=TopicItemMode.indented,
-                    id="rest_api_unstable",
-                    title=_("Unstable"),
-                    sort_index=30,
-                    entries=[
-                        NavItemTopicEntry(
-                            id="rest_api_unstable_documentation",
-                            title=_("Documentation"),
-                            url="api/unstable/doc/",
-                            target="_blank",
-                            sort_index=10,
-                            icon=EmblemIcon(
-                                icon=DefaultIcon(id=IconNames.global_settings),
-                                emblem="api",
-                            ),
-                        ),
-                    ],
-                ),
-            ],
-            icon=EmblemIcon(
-                icon=DefaultIcon(id=IconNames.global_settings),
-                emblem="api",
-            ),
-        ),
+        rest_api_menu_items(),
     ]
+
+
+def rest_api_menu_items() -> NavItemTopicEntry:
+    return NavItemTopicEntry(
+        mode=TopicItemMode.multilevel,
+        id="rest_api",
+        title=_("REST API"),
+        sort_index=30,
+        entries=[
+            NavItemTopicEntry(
+                id="rest_api_introduction",
+                title=_("Introduction"),
+                url=doc_reference_url(DocReference.REST_API),
+                target="_blank",
+                sort_index=10,
+                icon=EmblemIcon(
+                    icon=DefaultIcon(id=IconNames.global_settings),
+                    emblem="api",
+                ),
+            ),
+            NavItemTopicEntry(
+                mode=TopicItemMode.indented,
+                id="rest_api_version_1",
+                title=_("Version 1"),
+                sort_index=20,
+                entries=[
+                    NavItemTopicEntry(
+                        id="rest_api_documentation",
+                        title=_("Documentation"),
+                        url="openapi/",
+                        target="_blank",
+                        sort_index=10,
+                        icon=EmblemIcon(
+                            icon=DefaultIcon(id=IconNames.global_settings),
+                            emblem="api",
+                        ),
+                    ),
+                    NavItemTopicEntry(
+                        id="rest_api_interactive_gui",
+                        title=_("Interactive GUI"),
+                        url="api/1.0/ui/",
+                        target="_blank",
+                        sort_index=20,
+                        icon=EmblemIcon(
+                            icon=DefaultIcon(id=IconNames.global_settings),
+                            emblem="api",
+                        ),
+                    ),
+                ],
+            ),
+            NavItemTopicEntry(
+                mode=TopicItemMode.indented,
+                id="rest_api_unstable",
+                title=_("Unstable"),
+                sort_index=30,
+                entries=[
+                    NavItemTopicEntry(
+                        id="rest_api_unstable_documentation",
+                        title=_("Documentation"),
+                        url="api/unstable/doc/",
+                        target="_blank",
+                        sort_index=10,
+                        icon=EmblemIcon(
+                            icon=DefaultIcon(id=IconNames.global_settings),
+                            emblem="api",
+                        ),
+                    ),
+                ],
+            ),
+        ],
+        icon=EmblemIcon(
+            icon=DefaultIcon(id=IconNames.global_settings),
+            emblem="api",
+        ),
+    )
 
 
 def default_about_checkmk_entries() -> list[NavItemTopicEntry]:
