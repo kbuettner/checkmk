@@ -119,7 +119,7 @@ span {
     align-items: center;
 
     svg {
-      width: 8px;
+      width: 9px;
     }
   }
 }
@@ -129,10 +129,10 @@ span {
   background-color: var(--default-form-element-bg-color);
   border: 1px solid var(--default-form-element-bg-color);
   border-radius: 2px;
-  height: 14.5px;
-  width: 14.5px;
-  min-width: 14.5px;
-  min-height: 14.5px;
+  height: 15px;
+  width: 15px;
+  min-width: 15px;
+  min-height: 15px;
   box-shadow: none; /* disable active/focus style of button */
   padding: 0;
   margin: 0;

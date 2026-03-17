@@ -131,14 +131,15 @@ input[type='checkbox'] {
 
   + label::before {
     display: inline-block;
-    width: 12.5px;
-    height: 12.5px;
+    width: 13px;
+    height: 13px;
     padding: 0;
     margin: -2px 4px 0 0;
     vertical-align: middle;
     background-color: $input-background-color;
     border: 1px $input-background-color solid;
     content: '\00a0';
+    line-height: 13px;
   }
 
   &:checked {
