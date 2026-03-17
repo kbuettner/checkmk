@@ -263,18 +263,21 @@ void main() {
                 """.stripIndent();
 
             // this must not be called from within the container (results in yaml package missing)
-            files_to_upload.each { filename ->
-                artifacts_helper.upload_via_rsync(
-                    "${WORKSPACE}/deliverables",
-                    "${cmk_version_rc_aware}",
-                    "${filename}",
-                    WEB_DEPLOY_DEST,
-                    WEB_DEPLOY_PORT,
-                    exclude_pattern = exclude_pattern,
-                );
+            // Cloud edition packages must not be uploaded to the public download server
+            if (params.EDITION.toLowerCase() != "cloud") {
+                files_to_upload.each { filename ->
+                    artifacts_helper.upload_via_rsync(
+                        "${WORKSPACE}/deliverables",
+                        "${cmk_version_rc_aware}",
+                        "${filename}",
+                        WEB_DEPLOY_DEST,
+                        WEB_DEPLOY_PORT,
+                        exclude_pattern = exclude_pattern,
+                    );
+                }
             }
 
-            if (EDITION.toLowerCase() == "cloud" && versioning.is_official_release(cmk_version_rc_aware)) {
+            if (params.EDITION.toLowerCase() == "cloud" && versioning.is_official_release(cmk_version_rc_aware)) {
                 // uploads distro packages, source.tar.gz and hashes
                 artifacts_helper.upload_files_to_nexus(
                     "${deliverables_dir}/check-mk-cloud-${cmk_version}*",
