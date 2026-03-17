@@ -48,6 +48,8 @@ The user provides a natural language request or a direct command. Examples:
 - `/crash-report group <group_id>` — show crash group details
 - `/crash-report stats` — show aggregate statistics
 - `/crash-report local` — list crash reports from local OMD sites
+- `/crash-report auto-fix popular --limit 3` — auto-fix top 3 popular crash groups
+- `/crash-report auto-fix search --type check --unsolved --limit 5` — auto-fix top 5 unsolved check crashes
 
 ## Workflow
 
@@ -64,6 +66,8 @@ Translate the user's request into one of these commands:
 | "Show crash report ABC-123-..."      | `show <crash_id>`                              |
 | "Show crash group 42"                | `group 42`                                     |
 | "Overall crash statistics"           | `stats`                                        |
+| "Auto-fix popular crashes"           | `auto-fix popular --limit 5`                   |
+| "Fix all unsolved check crashes"     | `auto-fix search --type check --unsolved`      |
 | "What crashes are on my local site?" | `local`                                        |
 | "Show local GUI crashes"             | `local --type gui`                             |
 
@@ -209,6 +213,78 @@ After the explain step (and optionally the unit test), implement a fix:
 4. **Offer to finalize:**
    - Create a werk (changelog entry) via `/werk`
    - Commit the changes
+
+---
+
+### Auto-Fix Workflow
+
+When the user invokes `auto-fix`, the agent runs a fully automated pipeline that processes crash groups end-to-end without interactive prompts. The syntax is:
+
+```
+auto-fix [popular|search ...] [--limit N]
+```
+
+The arguments after `auto-fix` are passed directly to the `popular` or `search` command. If `--limit` is not specified, default to `--limit 5`.
+
+#### Pipeline
+
+1. **Get crash groups.** Run the user's query (e.g. `popular --limit 3` or `search --type check --unsolved --limit 5`) to obtain the list of crash groups.
+
+2. **For each crash group**, process sequentially:
+
+   a. **Branch.** Create a dedicated branch:
+
+   ```bash
+   git checkout master && git checkout -b sandbox/<username>/master/crash-group-<group_id>
+   ```
+
+   Where `<username>` is derived from `git config user.name` (lowercase, spaces replaced with hyphens).
+
+   b. **Fetch details.** Run `group <group_id>` to get the group info. Pick the most recent crash ID from the group, then run `show <crash_id>` to get the full crash report.
+
+   c. **Analyze.** Execute Step 5 (Explain the Issue) silently — do not prompt the user for next steps.
+
+   d. **Unit test.** Execute Step 6 (Create Unit Test) — create an `xfail` test reproducing the crash.
+
+   e. **Fix.** Execute Step 7 (Fix the Issue) — implement the fix, remove `xfail`, run tests and lint via `/bazel`.
+
+   f. **Werk.** Create a werk via `/werk` with class `fix`, level `1`, and the appropriate component inferred from the crash type and file path.
+
+   g. **Commit.** Stage all changes and commit:
+
+   ```
+   <werk_id>: Fix crash in <component> (<crash_type>)
+   ```
+
+   h. **Push.** Push to Gerrit:
+
+   ```bash
+   git push -u origin <branch>
+   ```
+
+   i. **Return.** Switch back to master for the next group:
+
+   ```bash
+   git checkout master
+   ```
+
+3. **Summary.** After all groups are processed, print a summary table:
+
+   | Group ID | Crash Type | Branch                     | Status                       |
+   | -------- | ---------- | -------------------------- | ---------------------------- |
+   | 42       | check      | sandbox/.../crash-group-42 | Pushed                       |
+   | 57       | gui        | —                          | Skipped: needs manual review |
+
+#### Skip / Failure Handling
+
+The agent should **skip** a crash group (and report it in the summary) if:
+
+- **Already solved:** The group data has `solved: true`.
+- **Code not found locally:** The traceback points to source files or functions that don't exist in the local `master` branch (version mismatch too large).
+- **Too complex:** The fix would require non-trivial architectural changes that the agent cannot confidently implement.
+- **Tests fail after fix:** If tests still fail after the fix attempt, revert the branch (`git checkout master && git branch -D <branch>`), and report the group as "needs manual review".
+
+When a group is skipped, log the reason and continue to the next group. Do not prompt the user.
 
 ---
 
