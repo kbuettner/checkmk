@@ -16,6 +16,7 @@ from cmk.gui.page_state import PageState, PageStateRenderer
 from cmk.gui.type_defs import IconNames, StaticIcon
 from cmk.gui.utils.html import HTML
 from cmk.gui.utils.urls import makeuri_contextless
+from cmk.utils import paths
 from cmk.utils.licensing.registry import get_licensing_user_effect
 
 from .debug_vars import debug_vars
@@ -88,9 +89,10 @@ def top_heading(
 def _may_show_license_expiry(writer: HTMLWriter) -> None:
     if (
         header_effect := get_licensing_user_effect(
+            paths.omd_root,
             licensing_settings_link=makeuri_contextless(
                 _request, [("mode", "licensing")], filename="wato.py"
-            )
+            ),
         ).header
     ) and (set(header_effect.roles).intersection(user.role_ids)):
         writer.show_warning(HTML.without_escaping(header_effect.message_html))
@@ -99,9 +101,10 @@ def _may_show_license_expiry(writer: HTMLWriter) -> None:
 def _may_show_license_banner(writer: HTMLWriter) -> None:
     if (
         header_effect := get_licensing_user_effect(
+            paths.omd_root,
             licensing_settings_link=makeuri_contextless(
                 _request, [("mode", "licensing")], filename="wato.py"
-            )
+            ),
         ).banner
     ) and (set(header_effect.roles).intersection(user.role_ids)):
         writer.write_html(HTML.without_escaping(header_effect.message_html))

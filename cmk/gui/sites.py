@@ -348,7 +348,7 @@ def _connect_multiple_sites(user: LoggedInUser) -> None:
         remote_edition = _edition_from_livestatus(
             version_str=livestatus_version, edition_str=remote_edition
         )
-        central_license_state = get_license_state()
+        central_license_state = get_license_state(paths.omd_root)
 
         compatibility = _get_distributed_monitoring_compatibility(
             site_id,

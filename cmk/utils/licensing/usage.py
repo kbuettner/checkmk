@@ -23,7 +23,6 @@ import cmk.ccc.version as cmk_version
 from cmk.ccc import store
 from cmk.ccc.site import omd_site
 from cmk.ccc.version import Edition
-from cmk.utils import paths
 from cmk.utils.licensing.active_metric_series_retriever_registry import (
     get_average_active_metric_series,
 )
@@ -43,7 +42,6 @@ from cmk.utils.licensing.helper import (
     rot47,
 )
 from cmk.utils.licensing.protocol_version import get_licensing_protocol_version
-from cmk.utils.paths import licensing_dir, omd_root
 
 CLOUD_SERVICE_PREFIXES = {"aws", "azure", "gcp"}
 
@@ -87,6 +85,9 @@ def try_update_license_usage(
     instance_id: UUID | None,
     site_hash: str,
     do_create_sample: DoCreateSample,
+    *,
+    omd_root: Path,
+    licensing_dir: Path,
 ) -> None:
     """Update the license usage history.
 
@@ -95,9 +96,9 @@ def try_update_license_usage(
     if instance_id is None:
         raise ValueError("No such instance ID")
 
-    report_file_path = get_license_usage_report_file_path()
+    report_file_path = get_license_usage_report_file_path(licensing_dir)
     licensing_dir.mkdir(parents=True, exist_ok=True)
-    next_run_file_path = get_next_run_file_path()
+    next_run_file_path = get_next_run_file_path(licensing_dir)
 
     with store.locked(next_run_file_path), store.locked(report_file_path):
         if now.dt.timestamp() < _get_next_run_ts(next_run_file_path):
@@ -108,7 +109,7 @@ def try_update_license_usage(
         save_license_usage_report(
             report_file_path,
             RawLicenseUsageReport(
-                VERSION=get_licensing_protocol_version(),
+                VERSION=get_licensing_protocol_version(omd_root),
                 history=history.for_report(),
             ),
         )
@@ -116,7 +117,9 @@ def try_update_license_usage(
         store.save_text_to_file(next_run_file_path, rot47(str(_create_next_run_ts(now))))
 
 
-def create_sample(now: Now, instance_id: UUID, site_hash: str) -> LicenseUsageSample:
+def create_sample(
+    now: Now, instance_id: UUID, site_hash: str, *, omd_root: Path, log_dir: Path
+) -> LicenseUsageSample:
     """Calculation of hosts and services:
     num_hosts: Hosts
         - that are not shadow hosts
@@ -173,15 +176,15 @@ def create_sample(now: Now, instance_id: UUID, site_hash: str) -> LicenseUsageSa
     services_counter = _get_services_counter()
     cloud_counter = _get_cloud_counter()
     synthetic_monitoring_counter = _get_synthetic_monitoring_counter()
-    num_active_metric_series = get_average_active_metric_series() or 0
+    num_active_metric_series = get_average_active_metric_series(omd_root, log_dir) or 0
 
     general_infos = cmk_version.get_general_version_infos(omd_root)
-    extensions = _load_extensions()
+    extensions = _load_extensions(licensing_dir=omd_root / "var/check_mk/licensing")
 
     return LicenseUsageSample(
         instance_id=instance_id,
         site_hash=site_hash,
-        version=cmk_version.omd_version(paths.omd_root),
+        version=cmk_version.omd_version(omd_root),
         edition=_cmk_edition_to_licensing_edition(general_infos["edition"]),
         platform=general_infos["os"],
         is_cma=cmk_version.is_cma(),
@@ -379,11 +382,11 @@ def _create_next_run_ts(now: Now) -> int:
     return random.randrange(int(start.timestamp()), int(end.timestamp()), 600)
 
 
-def get_license_usage_report_file_path() -> Path:
+def get_license_usage_report_file_path(licensing_dir: Path) -> Path:
     return licensing_dir / "history.json"
 
 
-def get_next_run_file_path() -> Path:
+def get_next_run_file_path(licensing_dir: Path) -> Path:
     return licensing_dir / "next_run"
 
 
@@ -463,13 +466,13 @@ class LocalLicenseUsageHistory:
 #   '----------------------------------------------------------------------'
 
 
-def _get_extensions_file_path() -> Path:
+def _get_extensions_file_path(licensing_dir: Path) -> Path:
     return licensing_dir / "extensions.json"
 
 
-def save_extensions(extensions: LicenseUsageExtensions) -> None:
+def save_extensions(extensions: LicenseUsageExtensions, *, licensing_dir: Path) -> None:
     licensing_dir.mkdir(parents=True, exist_ok=True)
-    extensions_file_path = _get_extensions_file_path()
+    extensions_file_path = _get_extensions_file_path(licensing_dir)
 
     with store.locked(extensions_file_path):
         store.save_bytes_to_file(
@@ -484,8 +487,8 @@ def _parse_extensions(raw: object) -> LicenseUsageExtensions:
     raise TypeError("Wrong extensions type: %r" % type(raw))
 
 
-def _load_extensions() -> LicenseUsageExtensions:
-    extensions_file_path = _get_extensions_file_path()
+def _load_extensions(*, licensing_dir: Path) -> LicenseUsageExtensions:
+    extensions_file_path = _get_extensions_file_path(licensing_dir)
     with store.locked(extensions_file_path):
         raw_extensions = deserialize_dump(
             store.load_bytes_from_file(
@@ -531,8 +534,10 @@ class LicenseUsageReportValidity(Enum):
     recent_enough = auto()
 
 
-def get_license_usage_report_validity() -> LicenseUsageReportValidity:
-    report_file_path = get_license_usage_report_file_path()
+def get_license_usage_report_validity(
+    *, omd_root: Path, licensing_dir: Path, log_dir: Path
+) -> LicenseUsageReportValidity:
+    report_file_path = get_license_usage_report_file_path(licensing_dir)
 
     with store.locked(report_file_path):
         # TODO use len(history)
@@ -541,7 +546,11 @@ def get_license_usage_report_validity() -> LicenseUsageReportValidity:
                 Now.make(),
                 load_instance_id(get_instance_id_file_path(omd_root)),
                 hash_site_id(omd_site()),
-                create_sample,
+                lambda now, instance_id, site_hash: create_sample(
+                    now, instance_id, site_hash, omd_root=omd_root, log_dir=log_dir
+                ),
+                omd_root=omd_root,
+                licensing_dir=licensing_dir,
             )
             return LicenseUsageReportValidity.recent_enough
 

@@ -167,7 +167,8 @@ def _get_default_dashboard_name() -> str:
 def _may_show_license_messages(request: Request) -> None:
     """Render license warning and banner above the Vue dashboard."""
     user_effect = get_licensing_user_effect(
-        makeuri_contextless(request, [("mode", "licensing")], filename="wato.py")
+        paths.omd_root,
+        makeuri_contextless(request, [("mode", "licensing")], filename="wato.py"),
     )
 
     if (header := user_effect.header) and set(header.roles).intersection(user.role_ids):

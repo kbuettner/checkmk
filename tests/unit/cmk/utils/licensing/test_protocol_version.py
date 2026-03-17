@@ -4,6 +4,7 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 from collections.abc import Generator
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
@@ -33,4 +34,4 @@ def test_get_licensing_protocol_version(
 ) -> None:
     """Test that get_licensing_protocol_version returns the correct version for different editions."""
     edition_fn_mock.return_value = edition
-    assert get_licensing_protocol_version() == expected_version
+    assert get_licensing_protocol_version(Path()) == expected_version

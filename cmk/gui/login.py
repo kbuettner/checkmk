@@ -309,7 +309,7 @@ class LoginPage(Page):
         html.close_a()
 
         try:
-            _show_remaining_trial_time(get_remaining_trial_time_rounded())
+            _show_remaining_trial_time(get_remaining_trial_time_rounded(cmk.utils.paths.omd_root))
         except LicenseStateError:
             pass
 

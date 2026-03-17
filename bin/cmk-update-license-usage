@@ -64,20 +64,24 @@ def average_active_metric_series_retriever() -> int | None:
 
 def main() -> int:
     args = _parse_arguments()
-    logger = init_logging()
+    logger = init_logging(paths.log_dir)
 
     if edition(paths.omd_root) in [Edition.ULTIMATE, Edition.ULTIMATEMT, Edition.CLOUD]:
         active_metric_series_retriever_registry.register(average_active_metric_series_retriever)
 
     if args.force:
-        get_next_run_file_path().unlink(missing_ok=True)
+        get_next_run_file_path(paths.licensing_dir).unlink(missing_ok=True)
 
     try:
         try_update_license_usage(
             Now.make(),
             load_instance_id(get_instance_id_file_path(omd_root)),
             hash_site_id(omd_site()),
-            create_sample,
+            lambda now, instance_id, site_hash: create_sample(
+                now, instance_id, site_hash, omd_root=omd_root, log_dir=paths.log_dir
+            ),
+            omd_root=omd_root,
+            licensing_dir=paths.licensing_dir,
         )
         logger.info("Successfully updated the license usage")
         return 0

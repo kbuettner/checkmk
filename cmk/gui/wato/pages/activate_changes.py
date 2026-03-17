@@ -386,7 +386,11 @@ class ModeActivateChanges(WatoMode):
         super().__init__()
         self._changes = activate_changes.ActivateChanges()
         self._changes.load(list(activation_sites(active_config.sites)))
-        self._license_usage_report_validity = get_license_usage_report_validity()
+        self._license_usage_report_validity = get_license_usage_report_validity(
+            omd_root=paths.omd_root,
+            licensing_dir=paths.licensing_dir,
+            log_dir=paths.log_dir,
+        )
         self._quick_setup_origin = request.get_ascii_input(self.VAR_ORIGIN) == "quick_setup"
 
     def title(self) -> str:
@@ -545,6 +549,7 @@ class ModeActivateChanges(WatoMode):
                 != LicenseUsageReportValidity.older_than_five_days
             )
             block_effect = get_licensing_user_effect(
+                paths.omd_root,
                 licensing_settings_link=makeuri_contextless(
                     request, [("mode", "licensing")], filename="wato.py"
                 ),
@@ -680,6 +685,7 @@ class ModeActivateChanges(WatoMode):
 
     def _show_license_validity(self) -> None:
         if block_effect := get_licensing_user_effect(
+            paths.omd_root,
             licensing_settings_link=makeuri_contextless(
                 request, [("mode", "licensing")], filename="wato.py"
             ),

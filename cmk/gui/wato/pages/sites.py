@@ -204,7 +204,7 @@ class ModeEditSite(WatoMode):
         self._clone_id = None if _clone_id_return is None else SiteId(_clone_id_return)
         self._new = self._site_id is None
 
-        if is_free() and (self._new or self._site_id != omd_site()):
+        if is_free(omd_root) and (self._new or self._site_id != omd_site()):
             raise MKUserError(None, get_free_message())
 
         self._configured_sites = self._site_mgmt.load_sites()
@@ -1200,7 +1200,7 @@ class ModeDistributedMonitoring(WatoMode):
     def page(self, config: Config) -> None:
         sites = sort_sites(site_configs := self._site_mgmt.load_sites())
 
-        if is_free():
+        if is_free(omd_root):
             html.show_message(get_free_message(format_html=True))
 
         html.div("", id_="message_container")

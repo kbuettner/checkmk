@@ -299,7 +299,7 @@ def _help_menu_topics(
 
 
 def _license_status() -> HTML | str:
-    status_message: HTML | str = get_license_message()
+    status_message: HTML | str = get_license_message(paths.omd_root)
     if not status_message:
         return ""
     if user.may("wato.licensing"):

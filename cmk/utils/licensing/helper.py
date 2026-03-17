@@ -9,15 +9,13 @@ from pathlib import Path
 from uuid import UUID
 
 from cmk.ccc.site import SiteId
-from cmk.utils import paths
-from cmk.utils.paths import log_dir
 
 
 def get_licensing_logger() -> logging.Logger:
     return logging.getLogger("cmk.licensing")
 
 
-def init_logging() -> logging.Logger:
+def init_logging(log_dir: Path) -> logging.Logger:
     log_dir.mkdir(parents=True, exist_ok=True)
 
     formatter = logging.Formatter("%(asctime)s [%(levelno)s] [%(name)s %(process)d] %(message)s")
@@ -62,13 +60,13 @@ def _rot47_char(c: str) -> str:
     return chr(33 + ((ord_c + 14) % 94)) if 33 <= ord_c <= 126 else c
 
 
-def get_licensed_state_file_path() -> Path:
-    return paths.licensing_dir / "licensed_state"
+def get_licensed_state_file_path(licensing_dir: Path) -> Path:
+    return licensing_dir / "licensed_state"
 
 
-def get_state_file_created_file_path() -> Path:
-    return paths.licensing_dir / "state_file_created"
+def get_state_file_created_file_path(licensing_dir: Path) -> Path:
+    return licensing_dir / "state_file_created"
 
 
-def get_state_change_path() -> Path:
-    return paths.licensing_dir / "state_change"
+def get_state_change_path(licensing_dir: Path) -> Path:
+    return licensing_dir / "state_change"

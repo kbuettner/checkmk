@@ -79,7 +79,7 @@ class AutomationPing(AutomationCommand[None]):
         return {
             "version": cmk_version.__version__,
             "edition": cmk_version.edition(paths.omd_root).short,
-            "license_state": get_license_state().name,
+            "license_state": get_license_state(paths.omd_root).name,
             "omd_status": self._get_omd_status(),
         }
 

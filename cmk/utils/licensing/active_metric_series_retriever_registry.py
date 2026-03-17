@@ -4,14 +4,16 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 import functools
+import logging
 from collections.abc import Callable
+from pathlib import Path
 
 from cmk.ccc.version import Edition, edition
-from cmk.utils import paths
 from cmk.utils.licensing.helper import init_logging
 
-# Don't call init_logging() at import time as it creates log directories.
-_get_logger = functools.wraps(init_logging)(functools.cache(init_logging))
+
+def _get_logger(log_dir: Path) -> logging.Logger:
+    return functools.cache(init_logging)(log_dir)
 
 
 class ActiveMetricSeriesRetrieverRegistry:
@@ -25,16 +27,18 @@ class ActiveMetricSeriesRetrieverRegistry:
 active_metric_series_retriever_registry = ActiveMetricSeriesRetrieverRegistry()
 
 
-def get_average_active_metric_series() -> int | None:
+def get_average_active_metric_series(omd_root: Path, log_dir: Path) -> int | None:
     if active_metric_series_retriever_registry.average_metric_series_retriever_function is not None:
         try:
             return (
                 active_metric_series_retriever_registry.average_metric_series_retriever_function()
             )
         except Exception as e:
-            _get_logger().error(
+            _get_logger(log_dir).error(
                 "Error when retrieving the active metric series count (%s): %s", type(e).__name__, e
             )
-    elif edition(paths.omd_root) in [Edition.ULTIMATE, Edition.ULTIMATEMT, Edition.CLOUD]:
-        _get_logger().error("There is no registered active metric series function, while it should")
+    elif edition(omd_root) in [Edition.ULTIMATE, Edition.ULTIMATEMT, Edition.CLOUD]:
+        _get_logger(log_dir).error(
+            "There is no registered active metric series function, while it should"
+        )
     return None

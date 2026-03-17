@@ -4,6 +4,7 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 from collections.abc import Iterator
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -43,7 +44,7 @@ def test_get_average_active_metric_series_returns_value_when_registered(
     registry.active_metric_series_retriever_registry.register(retriever_function)
 
     # when
-    result = registry.get_average_active_metric_series()
+    result = registry.get_average_active_metric_series(Path(), Path())
 
     # then
     assert result == retriever_return
@@ -60,7 +61,7 @@ def test_get_average_active_metric_series_returns_none_and_logs_on_exception(
     registry.active_metric_series_retriever_registry.register(retriever_function)
 
     # when
-    result = registry.get_average_active_metric_series()
+    result = registry.get_average_active_metric_series(Path(), Path())
 
     # then
     assert result is None
@@ -84,7 +85,7 @@ def test_get_average_active_metric_series_logs_when_missing_registry_when_expect
     registry.active_metric_series_retriever_registry.average_metric_series_retriever_function = None
 
     # when
-    result = registry.get_average_active_metric_series()
+    result = registry.get_average_active_metric_series(Path(), Path())
 
     # then
     assert result is None
@@ -107,7 +108,7 @@ def test_get_average_active_metric_series_no_log_when_missing_registry_when_not_
     registry.active_metric_series_retriever_registry.average_metric_series_retriever_function = None
 
     # when
-    result = registry.get_average_active_metric_series()
+    result = registry.get_average_active_metric_series(Path(), Path())
 
     # then
     assert result is None

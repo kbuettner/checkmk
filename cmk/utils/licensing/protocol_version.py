@@ -4,15 +4,15 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 
+from pathlib import Path
 from typing import Literal
 
 from cmk.ccc.version import Edition, edition
-from cmk.utils.paths import omd_root
 
 
-def get_licensing_protocol_version() -> Literal[
-    "1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "2.0", "2.1", "3.0", "3.1", "3.2"
-]:
+def get_licensing_protocol_version(
+    omd_root: Path,
+) -> Literal["1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "2.0", "2.1", "3.0", "3.1", "3.2"]:
     """Returns the current licensing protocol version."""
     if edition(omd_root) == Edition.CLOUD:
         return "3.2"

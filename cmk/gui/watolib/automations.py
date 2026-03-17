@@ -430,7 +430,7 @@ def get_url_raw(
     headers_ = {
         "x-checkmk-version": cmk_version.__version__,
         "x-checkmk-edition": cmk_version.edition(paths.omd_root).short,
-        "x-checkmk-license-state": get_license_state().readable,
+        "x-checkmk-license-state": get_license_state(paths.omd_root).readable,
     }
     headers_.update(add_headers or {})
 
@@ -477,7 +477,7 @@ def _verify_compatibility(response: requests.Response) -> None:
     """
     central_version = cmk_version.__version__
     central_edition_short = cmk_version.edition(paths.omd_root).short
-    central_license_state = get_license_state()
+    central_license_state = get_license_state(paths.omd_root)
 
     remote_version = response.headers.get("x-checkmk-version", "")
     remote_edition_short = response.headers.get("x-checkmk-edition", "")
@@ -528,7 +528,7 @@ def verify_request_compatibility(ignore_license_compatibility: bool) -> None:
     central_license_state = parse_license_state(request.headers.get("x-checkmk-license-state", ""))
     remote_version = cmk_version.__version__
     remote_edition_short = cmk_version.edition(paths.omd_root).short
-    remote_license_state = get_license_state()
+    remote_license_state = get_license_state(paths.omd_root)
 
     compatibility = _compatible_with_central_site(
         central_version,

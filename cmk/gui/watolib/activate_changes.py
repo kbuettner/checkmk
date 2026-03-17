@@ -1370,6 +1370,7 @@ class ActivateChanges:
         def _get_license_message() -> str | None:
             if (
                 user_effect := get_licensing_user_effect(
+                    paths.omd_root,
                     licensing_settings_link=makeuri_contextless(
                         _request, [("mode", "licensing")], filename="wato.py"
                     ),
@@ -2404,7 +2405,7 @@ def _sync_and_activate(
         activate_changes.load(list(all_site_configs))
         activate_changes.load_changes_until(activation_id, site_snapshot_settings.keys())
 
-        if is_free():
+        if is_free(paths.omd_root):
             if _handle_distributed_sites_in_free(site_snapshot_settings, time_started):
                 return
 
@@ -2855,7 +2856,8 @@ def _add_extensions_for_license_usage() -> None:
     save_extensions(
         LicenseUsageExtensions(
             ntop=is_ntop_configured(),
-        )
+        ),
+        licensing_dir=paths.licensing_dir,
     )
 
 
@@ -3745,6 +3747,7 @@ def get_restapi_response_for_activation_id(
 
 def _get_license_block_effect() -> ActivationBlock | None:
     return get_licensing_user_effect(
+        paths.omd_root,
         licensing_settings_link=makeuri_contextless(
             _request, [("mode", "licensing")], filename="wato.py"
         ),
