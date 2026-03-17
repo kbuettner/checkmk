@@ -3,12 +3,8 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="misc"
-# mypy: disable-error-code="no-untyped-def"
-# mypy: disable-error-code="type-arg"
-
-
 import logging
+from typing import NoReturn
 
 import cmk.fetchers._snmpscan as snmp_scan
 from cmk.ccc.exceptions import OnError
@@ -43,11 +39,11 @@ class SNMPTestBackend(SNMPBackend):
     def __init__(self) -> None:
         super().__init__(SNMP_CONFIG, logging.getLogger())
 
-    def get(self, /, oid, *, context):
+    def get(self, /, *_a: object, **_kw: object) -> None:
         # See also: `snmp_mode.get_single_oid()`
         return None
 
-    def walk(self, /, oid, *, context, **kw):
+    def walk(self, /, *_a: object, **_kw: object) -> NoReturn:
         raise NotImplementedError("walk")
 
 
@@ -69,7 +65,7 @@ _SNMP_SECTIONS: list[snmp_scan.SNMPScanSection] = [
 
 
 def test_snmp_scan_find_plugins__success() -> None:
-    found = snmp_scan._find_sections(
+    found = snmp_scan._find_sections(  # noqa: SLF001  # FIXME by not testing private members...
         _SNMP_SECTIONS,
         FAKE_OID_CACHE,
         on_error=OnError.RAISE,
