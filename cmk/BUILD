@@ -370,10 +370,10 @@ py_wheel(
             "//cmk/update_config:cmk_update_config_ultimatemt",
             "//cmk/utils:pro",
             "//cmk/utils:ultimate",
-            "//cmk/utils:ultimatemt",
             "//non-free/packages/cmc-protocols:py_config_proto",
             "//non-free/packages/cmc-protocols:py_cycletime_proto",
             "//non-free/packages/cmc-protocols:py_state_proto",
+            "//non-free/packages/cmk-multi-tenancy",
         ],
     }) + [
         ":cmkpasswd",

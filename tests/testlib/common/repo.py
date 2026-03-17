@@ -54,6 +54,12 @@ def add_python_paths() -> None:
     sys.path.insert(0, str(repo_path()))
     if is_pro_repo():
         sys.path.insert(0, os.path.join(repo_path(), "non-free", "packages", "cmk-update-agent"))
+    if is_ultimatemt_repo():
+        # TODO: Remove this once unit test targets pass EDITION per target (e.g.
+        # env={"EDITION": "community"} for gui_community). Currently all tests run
+        # with the ultimatemt edition, so community/pro/ultimate test targets end up
+        # importing ultimatemt code that depends on this package.
+        sys.path.insert(0, os.path.join(repo_path(), "non-free", "packages", "cmk-multi-tenancy"))
     sys.path.insert(0, os.path.join(repo_path(), "omd/packages/omd"))
 
 
