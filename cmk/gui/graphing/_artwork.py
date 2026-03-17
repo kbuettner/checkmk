@@ -116,7 +116,7 @@ class TimeAxis(TypedDict):
     title: str
 
 
-class CurveValue(TypedDict):
+class Curve(TypedDict):
     title: str
     line_type: LineType | Literal["ref"]
     color: str
@@ -412,13 +412,13 @@ def _compute_scalars(
     )
 
 
-def compute_curve_values_at_timestamp(
+def compute_curves_at_timestamp(
     augmented_time_series_of_graph_metrics: Sequence[AugmentedTimeSeriesOfGraphMetric],
     unit_renderer: Callable[[float], str],
     hover_time: int,
-) -> Sequence[CurveValue]:
+) -> Sequence[Curve]:
     return [
-        CurveValue(
+        Curve(
             title=augmented_time_series.title,
             line_type=augmented_time_series.line_type,
             color=augmented_time_series.color,

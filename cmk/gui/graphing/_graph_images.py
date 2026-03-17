@@ -315,7 +315,7 @@ def graph_recipes_for_api_request(
     return GraphDataRange.model_validate(raw_graph_data_range), graph_recipes
 
 
-class CurveValues(TypedDict):
+class Curves(TypedDict):
     line_type: LineType | Literal["ref"]
     color: str
     title: str
@@ -327,7 +327,7 @@ class GraphSpec(TypedDict):
     start_time: int
     end_time: int
     step: int
-    curves: Sequence[CurveValues]
+    curves: Sequence[Curves]
 
 
 def _compute_graph_spec(
@@ -348,7 +348,7 @@ def _compute_graph_spec(
             time_series = augmented_time_series.time_series
             start, end, step = time_series.start, time_series.end, time_series.step
             api_curves.append(
-                CurveValues(
+                Curves(
                     line_type=augmented_time_series.line_type,
                     color=augmented_time_series.color,
                     title=augmented_time_series.title,

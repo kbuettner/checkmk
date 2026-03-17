@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.gui.graphing._artwork import (
-    CurveValue,
+    Curve,
     LayoutedCurve,
     LayoutedCurveArea,
     LayoutedCurveLine,
@@ -43,43 +43,43 @@ def test__order_graph_curves_for_legend_and_mouse_hover_curves() -> None:
     assert list(
         _order_graph_curves_for_legend_and_mouse_hover(
             [
-                CurveValue(
+                Curve(
                     line_type="line",
                     color="",
                     title="1",
                     rendered_value=rendered_value,
                 ),
-                CurveValue(
+                Curve(
                     line_type="ref",
                     color="",
                     title="2",
                     rendered_value=rendered_value,
                 ),
-                CurveValue(
+                Curve(
                     line_type="-area",
                     color="",
                     title="3",
                     rendered_value=rendered_value,
                 ),
-                CurveValue(
+                Curve(
                     line_type="stack",
                     color="",
                     title="4",
                     rendered_value=rendered_value,
                 ),
-                CurveValue(
+                Curve(
                     line_type="area",
                     color="",
                     title="5",
                     rendered_value=rendered_value,
                 ),
-                CurveValue(
+                Curve(
                     line_type="-stack",
                     color="",
                     title="6",
                     rendered_value=rendered_value,
                 ),
-                CurveValue(
+                Curve(
                     line_type="stack",
                     color="",
                     title="7",
@@ -88,43 +88,43 @@ def test__order_graph_curves_for_legend_and_mouse_hover_curves() -> None:
             ]
         )
     ) == [
-        CurveValue(
+        Curve(
             color="",
             line_type="line",
             rendered_value=rendered_value,
             title="1",
         ),
-        CurveValue(
+        Curve(
             color="",
             line_type="stack",
             rendered_value=rendered_value,
             title="7",
         ),
-        CurveValue(
+        Curve(
             color="",
             line_type="area",
             rendered_value=rendered_value,
             title="5",
         ),
-        CurveValue(
+        Curve(
             color="",
             line_type="stack",
             rendered_value=rendered_value,
             title="4",
         ),
-        CurveValue(
+        Curve(
             color="",
             line_type="-area",
             rendered_value=rendered_value,
             title="3",
         ),
-        CurveValue(
+        Curve(
             color="",
             line_type="-stack",
             rendered_value=rendered_value,
             title="6",
         ),
-        CurveValue(
+        Curve(
             color="",
             line_type="ref",
             rendered_value=rendered_value,

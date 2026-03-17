@@ -56,9 +56,9 @@ from cmk.utils.paths import profile_dir
 from cmk.utils.servicename import ServiceName
 
 from ._artwork import (
-    compute_curve_values_at_timestamp,
+    compute_curves_at_timestamp,
     compute_graph_artwork,
-    CurveValue,
+    Curve,
     get_step_label,
     GraphArtwork,
     GraphArtworkOrErrors,
@@ -125,7 +125,7 @@ def _save_graph_pin(request: Request) -> None:
     user.save_file("graph_pin", None if pin_timestamp == -1 else pin_timestamp)
 
 
-def _order_graph_curves_for_legend_and_mouse_hover[TCurveType: (LayoutedCurve, CurveValue)](
+def _order_graph_curves_for_legend_and_mouse_hover[TCurveType: (LayoutedCurve, Curve)](
     curves: Sequence[TCurveType],
 ) -> list[TCurveType]:
     """
@@ -1472,7 +1472,7 @@ def render_graph_hover_for_recipe(
                     "rendered_hover_time": cmk.utils.render.date_and_time(hover_time),
                     "curve_values": list(
                         _order_graph_curves_for_legend_and_mouse_hover(
-                            compute_curve_values_at_timestamp(
+                            compute_curves_at_timestamp(
                                 [
                                     result.ok
                                     for result in fetch_augmented_time_series(

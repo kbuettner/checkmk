@@ -104,7 +104,7 @@ class ReorganizedTimeRange(TypedDict):
     end: int
 
 
-class ReorganizedCurveValues(TypedDict):
+class ReorganizedCurves(TypedDict):
     line_type: LineType | Literal["ref"]
     color: str
     title: str
@@ -115,7 +115,7 @@ class ReorganizedCurveValues(TypedDict):
 class ReorganizedGraphSpec(TypedDict):
     time_range: ReorganizedTimeRange
     step: int
-    metrics: Sequence[ReorganizedCurveValues]
+    metrics: Sequence[ReorganizedCurves]
 
 
 def reorganize_response(graph_spec: GraphSpec) -> ReorganizedGraphSpec:
@@ -146,7 +146,7 @@ def reorganize_response(graph_spec: GraphSpec) -> ReorganizedGraphSpec:
         ),
         step=graph_spec["step"],
         metrics=[
-            ReorganizedCurveValues(
+            ReorganizedCurves(
                 line_type=curve["line_type"],
                 color=curve["color"],
                 title=curve["title"],
