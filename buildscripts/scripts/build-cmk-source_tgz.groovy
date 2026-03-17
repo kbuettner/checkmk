@@ -130,7 +130,9 @@ void main() {
                 "source",
                 WORKSPACE,
                 checkout_dir,
-                cmk_version);
+                cmk_version,
+                params.FAKE_WINDOWS_ARTIFACTS,
+            );
         }
 
         stage("Archive stuff") {

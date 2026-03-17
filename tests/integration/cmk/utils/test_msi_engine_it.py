@@ -36,6 +36,7 @@ def _get_msi_file_path_standard(site: Site) -> Path:
 
 
 # check the export with site/bin tools
+@pytest.mark.skip_if_faked_artifacts
 def test_export_msi_file_table(site: Site) -> None:
     msi_in = _get_msi_file_path_standard(site)
     for name in ["File", "Property", "Component"]:

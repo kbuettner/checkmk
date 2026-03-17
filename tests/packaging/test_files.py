@@ -554,17 +554,13 @@ def test_monitoring_cores_packaging(package_path: str, cmk_version: str) -> None
     assert len(_get_file_from_package(package_path, cmk_version, version_rel_path="bin/nagios")) > 0
 
 
+@pytest.mark.skip_if_faked_artifacts
 def test_not_rc_tag(package_path: str, cmk_version: str) -> None:
     msi_file_path = os.path.join(
         os.path.dirname(__file__), "../../agents/windows/check_mk_agent.msi"
     )
     assert os.path.isfile(msi_file_path)
 
-    if os.stat(msi_file_path).st_size == 0:
-        pytest.skip(
-            f"The file {msi_file_path} was most likely faked by fake-artifacts, "
-            f"so there is no reason to check it with msiinfo"
-        )
     properties = {
         name: value
         for line in subprocess.check_output(
@@ -610,6 +606,7 @@ def load_license_csv(package_path: str, cmk_version: str) -> list[dict[str, str]
     return list(reader)
 
 
+@pytest.mark.skip_if_faked_artifacts
 def test_bom(bom_json: Bom) -> None:
     """Check that there is a BOM and it contains dependencies from various eco-systems"""
     purls_wo_version = {c["purl"].split("@", 1)[0] for c in bom_json["components"] if "purl" in c}
@@ -628,6 +625,7 @@ def test_bom(bom_json: Bom) -> None:
     "At the moment there is a lot of rework regarding WORKSPACE/MODULE.bazel (see CMK-20349)."
     "That's why the bom generation is mostly wrong at the moment.",
 )
+@pytest.mark.skip_if_faked_artifacts
 def test_bom_csv_synchronous(bom_json: Bom, license_csv_rows: list[dict[str, str]]) -> None:
     """test that the csv and bom contain the same versions
 
@@ -841,6 +839,7 @@ def _verify_signature(file_path: Path, file_name: str) -> None | str:
     ],
     ids=["deb_rpm_cma_docker", "tar_gz_source"],
 )
+@pytest.mark.skip_if_faked_artifacts
 def test_windows_artifacts_are_signed(
     package_path: str,
     cmk_version: str,

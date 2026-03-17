@@ -300,12 +300,16 @@ void sign_package(source_dir, package_path) {
     }
 }
 
-void test_package(package_path, name, workspace, source_dir, cmk_version) {
+void test_package(package_path, name, workspace, source_dir, cmk_version, fake_artifacts) {
     def junit_file = "junit-${name}.xml";
+    def pytest_addopts = "--junitxml=${workspace}/${junit_file}";
+    if (fake_artifacts) {
+        pytest_addopts +=  " --package-contains-faked-artifacts"
+    }
     try {
         sh("""
             PACKAGE_PATH=${package_path} \
-            PYTEST_ADDOPTS='--junitxml=${workspace}/${junit_file}' \
+            PYTEST_ADDOPTS='${pytest_addopts}' \
             make -C '${source_dir}/tests' VERSION=${cmk_version} test-packaging
         """);
     } finally {

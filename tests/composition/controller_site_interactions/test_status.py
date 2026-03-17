@@ -24,6 +24,8 @@ from tests.testlib.site import Site
 
 logger = logging.getLogger("agent-receiver")
 
+pytestmark = pytest.mark.skip_if_faked_artifacts
+
 
 @contextlib.contextmanager
 def _get_status_output_json(

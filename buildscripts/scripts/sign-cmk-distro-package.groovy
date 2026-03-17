@@ -126,7 +126,8 @@ void main() {
                     distro,
                     checkout_dir,
                     checkout_dir,
-                    cmk_version
+                    cmk_version,
+                    params.FAKE_WINDOWS_ARTIFACTS,
                 );
             }
 

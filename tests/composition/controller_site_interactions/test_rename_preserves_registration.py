@@ -15,6 +15,8 @@ from tests.testlib.agent import (
 )
 from tests.testlib.site import Site
 
+pytestmark = pytest.mark.skip_if_faked_artifacts
+
 
 def _test_rename_preserves_registration(
     *,

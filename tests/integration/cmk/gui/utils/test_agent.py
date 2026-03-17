@@ -4,12 +4,14 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 
+import pytest
 from pytest_mock import MockerFixture
 
 from cmk.gui.utils import agent
 from tests.testlib.site import Site
 
 
+@pytest.mark.skip_if_faked_artifacts
 def test_vanilla_agents_filenames(site: Site, mocker: MockerFixture) -> None:
     # we have functions to receive the path to the vanilla agent packages.
     # this test makes sure that those functions always point to existing files.

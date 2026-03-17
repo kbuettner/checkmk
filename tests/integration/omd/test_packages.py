@@ -333,6 +333,7 @@ def test_unixcat(site: Site) -> None:
 
 
 @pytest.mark.medium_test_chain
+@pytest.mark.skip_if_faked_artifacts
 @pytest.mark.parametrize(
     "distro,expectation",
     (

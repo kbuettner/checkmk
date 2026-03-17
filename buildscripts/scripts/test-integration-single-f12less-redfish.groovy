@@ -68,6 +68,7 @@ void main() {
                             branch_name: setup_values.safe_branch_name,
                             make_target: make_target,
                             test_filter: params.TEST_FILTER,
+                            faked_artifacts: params.FAKE_WINDOWS_ARTIFACTS,
                         );
                     }
                 }

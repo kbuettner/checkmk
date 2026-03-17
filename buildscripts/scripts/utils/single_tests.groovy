@@ -94,6 +94,7 @@ void fetch_package(Map args) {
 
 void run_make_target(Map args) {
     docker.withRegistry(DOCKER_REGISTRY, "nexus") {
+        def faked_artifacts = args.faked_artifacts ? "--package-contains-faked-artifacts" : "";
         // no inline bash comments are allowed in this sh call
         sh("""
             RESULT_PATH='${args.result_path}' \
@@ -103,6 +104,7 @@ void run_make_target(Map args) {
             DISTRO='${args.distro}' \
             BRANCH='${args.branch_name}' \
             TEST_FILTER='${args.test_filter}' \
+            FAKED_ARTIFACTS='${faked_artifacts}' \
             CI_NODE_NAME='${env.NODE_NAME}' \
             CI_WORKSPACE='${env.WORKSPACE}' \
             CI_JOB_NAME='${env.JOB_NAME}' \

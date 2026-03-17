@@ -51,6 +51,7 @@ SYSTEM_TESTS := \
     test-extension-compatibility
 PYTEST_SYSTEM_TEST_ARGS := \
     $(TEST_FILTER) \
+    $(FAKED_ARTIFACTS) \
     -p "no:cov" \
     --log-cli-level=INFO \
     --log-cli-format="%(asctime)s.%(msecs)03d %(levelname)s %(message)s"

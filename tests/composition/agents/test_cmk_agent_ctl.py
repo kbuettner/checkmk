@@ -12,6 +12,8 @@ from tests.testlib.common.utils2 import run
 
 logger = logging.getLogger(__name__)
 
+pytestmark = pytest.mark.skip_if_faked_artifacts
+
 
 @pytest.mark.skip_if_not_containerized
 def test_agent_controller_installed(agent_ctl: Path) -> None:

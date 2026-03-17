@@ -5,6 +5,7 @@
 
 # This file initializes the pytest environment
 
+import argparse
 import logging
 import os
 import subprocess
@@ -319,6 +320,15 @@ def pytest_addoption(parser: pytest.Parser) -> None:
             "variable 'CLEANUP' is used, if available. If neither is set, cleanup is enabled."
         ),
     )
+    parser.addoption(
+        "--package-contains-faked-artifacts",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help=(
+            "Set this if you used faked artifacts during the package build. "
+            "Some tests will then be skipped which rely on real built artifacts."
+        ),
+    )
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -372,6 +382,10 @@ def pytest_configure(config: pytest.Config) -> None:
         "markers",
         "skip_on_code_coverage: skip the tests when code-coverage measurement is active",
     )
+    config.addinivalue_line(
+        "markers",
+        "skip_if_faked_artifacts: skip test when --package-contains-faked-artifacts is set",
+    )
 
 
 def pytest_collection_modifyitems(items: list[pytest.Function], config: pytest.Config) -> None:
@@ -412,6 +426,11 @@ def pytest_runtest_setup(item: pytest.Item) -> None:
     if item.config.getoption("--dry-run"):
         pytest.xfail("*** DRY-RUN ***")
 
+    if item.get_closest_marker("skip_if_faked_artifacts") and item.config.getoption(
+        "--package-contains-faked-artifacts"
+    ):
+        pytest.skip(f"{item.nodeid}: Package contains faked artifacts!")
+
 
 def _iter_site_objects(pytest_item: pytest.Item) -> Iterator[Site]:
     """Yield all Site objects found in the function arguments of the given test."""
@@ -428,5 +447,6 @@ def _iter_site_objects(pytest_item: pytest.Item) -> Iterator[Site]:
 @pytest.hookimpl
 def pytest_runtest_teardown(item: pytest.Item) -> None:
     """Teardown hook to report crashes after each test."""
+    faked_artifacts = bool(item.config.getoption("--package-contains-faked-artifacts"))
     for site_obj in _iter_site_objects(item):
-        site_obj.report_crashes()
+        site_obj.report_crashes(ignore_bakery_crashes=faked_artifacts)

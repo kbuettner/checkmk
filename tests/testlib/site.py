@@ -1674,7 +1674,7 @@ class Site:
             for crash_id in self.listdir(self.crash_report_dir / crash_type)
         ]
 
-    def report_crashes(self) -> None:
+    def report_crashes(self, ignore_bakery_crashes: bool = False) -> None:
         logger.info(f"Checking crash reports for site {self.id}")
         for crash_dir in self.crash_reports_dirs():
             if crash_dir in self.known_crashes:
@@ -1693,6 +1693,8 @@ class Site:
                 continue
             if re.search("Licensed phase: too many services.", crash_detail):
                 logger.warning("Ignored crash report due to license violation!")
+            if ignore_bakery_crashes and re.search(r"bake-agents|bake_agents", crash_detail):
+                logger.warning("Ignored bakery crash report (package contains faked artifacts)")
                 continue
             if re.search(
                 'MKGeneralException: Cannot connect to site ".*": The site is not logged in.',
@@ -2598,11 +2600,11 @@ class SiteFactory:
             logger.info("Saving results of site %s", site.id)
             site.save_results()
 
-    def report_crashes(self) -> None:
+    def report_crashes(self, ignore_bakery_crashes: bool = False) -> None:
         logger.info("Reporting crashes")
         for _site_id, site in sorted(self._sites.items(), key=lambda x: x[0]):
             logger.info("Reporting crashes of site %s", site.id)
-            site.report_crashes()
+            site.report_crashes(ignore_bakery_crashes=ignore_bakery_crashes)
 
     def cleanup(self) -> None:
         logger.info("Removing sites")

@@ -543,6 +543,7 @@ def _container_env(package_info: CMKPackageInfo) -> dict[str, str]:
         "EDITION": package_info.edition.short,
         "BRANCH": package_info.version.branch,
         "TEST_FILTER": os.environ.get("TEST_FILTER", ""),
+        "FAKED_ARTIFACTS": os.environ.get("FAKED_ARTIFACTS", ""),
         "RESULT_PATH": "/results",
         "CI": os.environ.get("CI", ""),
         "CI_NODE_NAME": os.environ.get("CI_NODE_NAME", ""),
