@@ -1315,7 +1315,7 @@ const graphDesignerContentAsJson = computed(() => {
           {{ _t('Difference') }} {{ showSelectedIds('-') }}
         </CmkButton>
         <CmkButton @click="applyFraction">
-          {{ _t('Fraction') }} {{ showSelectedIds('-') }}
+          {{ _t('Fraction') }} {{ showSelectedIds('/') }}
         </CmkButton>
         <CmkButton @click="applyAverage">
           {{ _t('Average') }}
