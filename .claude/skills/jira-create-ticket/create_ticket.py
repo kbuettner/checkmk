@@ -173,6 +173,7 @@ def create_issue(
         "summary": summary,
         "description": description,
         "issuetype": {"name": issue_type},
+        "labels": ["jira-create-ticket"],
     }
 
     if component:
@@ -264,6 +265,7 @@ def main() -> None:
                     "developer_team": developer_team,
                     "priority": args.priority,
                     "parent": args.parent,
+                    "labels": ["jira-create-ticket"],
                     "link_epic": args.link_epic,
                 },
                 indent=2,
