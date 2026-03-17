@@ -66,7 +66,6 @@ from ._rrd import (
     get_graph_data_from_livestatus,
     translate_and_merge_rrd_columns,
 )
-from ._time_series import TimeSeriesValues
 from ._translated_metrics import (
     lookup_metric_translations_for_check_command,
     parse_perf_data,
@@ -125,7 +124,6 @@ __all__ = [
     "MetricSpec",
     "RegisteredMetric",
     "TemplateGraphSpecification",
-    "TimeSeriesValues",
     "TranslatedMetric",
     "UserSpecificUnit",
     "ValuesWithUnits",

@@ -28,7 +28,7 @@ from cmk.gui.graphing._graph_specification import (
     FixedVerticalRange,
     MinimalVerticalRange,
 )
-from cmk.gui.graphing._time_series import TimeSeries, TimeSeriesValue
+from cmk.gui.graphing._time_series import TimeSeries
 from cmk.gui.graphing._utils import SizeEx
 from cmk.gui.unit_formatter import AutoPrecision, DecimalFormatter, Label
 
@@ -373,7 +373,7 @@ def test_t_axis_labels_week() -> None:
     ],
 )
 def test_halfstep_interpolation(
-    values: Sequence[TimeSeriesValue], expected: Sequence[TimeSeriesValue]
+    values: Sequence[float | None], expected: Sequence[float | None]
 ) -> None:
     assert (
         list(
@@ -406,8 +406,8 @@ def test_halfstep_interpolation(
     ],
 )
 def test_fringe(
-    args: tuple[Sequence[TimeSeriesValue], Sequence[TimeSeriesValue]],
-    result: Sequence[tuple[TimeSeriesValue, TimeSeriesValue]],
+    args: tuple[Sequence[float | None], Sequence[float | None]],
+    result: Sequence[tuple[float | None, float | None]],
 ) -> None:
     assert _areastack(args[1], args[0]) == result
 

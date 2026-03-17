@@ -6,15 +6,12 @@
 from collections.abc import Callable, Iterator, Sequence
 from statistics import fmean
 
-TimeSeriesValue = float | None
-TimeSeriesValues = Sequence[TimeSeriesValue]
-
 
 def rrd_timestamps(*, start: int, end: int, step: int) -> list[int]:
     return [] if step == 0 else [t + step for t in range(start, end, step)]
 
 
-def _aggregation_functions(series: TimeSeriesValues, aggr: str | None) -> TimeSeriesValue:
+def _aggregation_functions(series: Sequence[float | None], aggr: str | None) -> float | None:
     """Aggregate data in series list according to aggr
 
     If series has None values they are dropped before aggregation"""
@@ -59,15 +56,15 @@ class TimeSeries:
         start: int,
         end: int,
         step: int,
-        values: TimeSeriesValues,
+        values: Sequence[float | None],
         conversion: Callable[[float], float] = lambda v: v,
     ) -> None:
         self.start = start
         self.end = end
         self.step = step
-        self.values: TimeSeriesValues = [v if v is None else conversion(v) for v in values]
+        self.values: Sequence[float | None] = [v if v is None else conversion(v) for v in values]
 
-    def forward_fill_resample(self, *, start: int, end: int, step: int) -> TimeSeriesValues:
+    def forward_fill_resample(self, *, start: int, end: int, step: int) -> Sequence[float | None]:
         """Upsample by forward filling values"""
         if start == self.start and end == self.end and step == self.step:
             return self.values
@@ -79,7 +76,7 @@ class TimeSeries:
 
     def downsample(
         self, *, start: int, end: int, step: int, cf: str | None = "max"
-    ) -> TimeSeriesValues:
+    ) -> Sequence[float | None]:
         """Downsample time series by consolidation function
         cf : str ('max', 'average', 'min')
              consolidation function imitating RRD methods
@@ -88,7 +85,7 @@ class TimeSeries:
             return self.values
 
         dwsa = []
-        co: list[TimeSeriesValue] = []
+        co: list[float | None] = []
         desired_times = rrd_timestamps(start=start, end=end, step=step)
         i = 0
         for t, val in self.time_data_pairs():
@@ -105,7 +102,7 @@ class TimeSeries:
 
         return dwsa
 
-    def time_data_pairs(self) -> list[tuple[int, TimeSeriesValue]]:
+    def time_data_pairs(self) -> list[tuple[int, float | None]]:
         return list(
             zip(rrd_timestamps(start=self.start, end=self.end, step=self.step), self.values)
         )
@@ -124,14 +121,14 @@ class TimeSeries:
             and self.values == other.values
         )
 
-    def __getitem__(self, i: int) -> TimeSeriesValue:
+    def __getitem__(self, i: int) -> float | None:
         return self.values[i]
 
     def __len__(self) -> int:
         return len(self.values)
 
-    def __iter__(self) -> Iterator[TimeSeriesValue]:
+    def __iter__(self) -> Iterator[float | None]:
         yield from self.values
 
-    def count(self, /, v: TimeSeriesValue) -> int:
+    def count(self, /, v: float | None) -> int:
         return self.values.count(v)

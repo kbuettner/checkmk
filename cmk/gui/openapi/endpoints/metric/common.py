@@ -15,7 +15,7 @@ import marshmallow
 from cmk.fields import Nested, String
 from cmk.gui.fields import Timestamp
 from cmk.gui.fields.base import BaseSchema
-from cmk.gui.graphing import GraphSpec, LineType, TimeSeriesValues
+from cmk.gui.graphing import GraphSpec, LineType
 
 GRAPH_NAME_REGEX = r"^\w[_\-\w\d\.]*$"
 GRAPH_NAME_ERROR_MESSAGE = "{input} is not a valid value for this field. It must match the pattern {regex} and contain only ASCII characters."
@@ -109,7 +109,7 @@ class ReorganizedCurves(TypedDict):
     color: str
     title: str
     attributes: Mapping[Literal["resource", "scope", "data_point"], Mapping[str, str]]
-    data_points: TimeSeriesValues
+    data_points: Sequence[float | None]
 
 
 class ReorganizedGraphSpec(TypedDict):

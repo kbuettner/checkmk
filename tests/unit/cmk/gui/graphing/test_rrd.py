@@ -3,7 +3,7 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-from collections.abc import Iterable, Iterator, Mapping
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from contextlib import contextmanager
 
 import pytest
@@ -35,7 +35,7 @@ from cmk.gui.graphing._rrd import (
     MetricProperties,
     translate_and_merge_rrd_columns,
 )
-from cmk.gui.graphing._time_series import TimeSeries, TimeSeriesValues
+from cmk.gui.graphing._time_series import TimeSeries
 from cmk.gui.graphing._translated_metrics import TranslationSpec
 from cmk.gui.graphing._unit import ConvertibleUnitSpecification, DecimalNotation
 from cmk.gui.unit_formatter import AutoPrecision
@@ -268,7 +268,7 @@ def test_translate_and_merge_rrd_columns_with_translation() -> None:
 )
 def test_translate_and_merge_rrd_columns_unit_conversion(
     default_temperature_unit: TemperatureUnit,
-    expected_data_points: TimeSeriesValues,
+    expected_data_points: Sequence[float | None],
 ) -> None:
     assert translate_and_merge_rrd_columns(
         MetricName("temp"),

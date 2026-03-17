@@ -49,7 +49,7 @@ from ._graph_specification import (
     MinimalVerticalRange,
 )
 from ._metric_backend_registry import FetchTimeSeries
-from ._time_series import TimeSeries, TimeSeriesValue
+from ._time_series import TimeSeries
 from ._unit import user_specific_unit, UserSpecificUnit
 from ._utils import Linear, SizeEx
 
@@ -71,12 +71,12 @@ class TimeAxisLabel(BaseModel, frozen=True):
 
 
 class Scalars(TypedDict):
-    pin: tuple[TimeSeriesValue | None, str]
-    first: tuple[TimeSeriesValue | None, str]
-    last: tuple[TimeSeriesValue | None, str]
-    max: tuple[TimeSeriesValue | None, str]
-    min: tuple[TimeSeriesValue | None, str]
-    average: tuple[TimeSeriesValue | None, str]
+    pin: tuple[float | None, str]
+    first: tuple[float | None, str]
+    last: tuple[float | None, str]
+    max: tuple[float | None, str]
+    min: tuple[float | None, str]
+    average: tuple[float | None, str]
 
 
 class _LayoutedCurveBase(TypedDict):
@@ -88,17 +88,17 @@ class _LayoutedCurveBase(TypedDict):
 
 class LayoutedCurveLine(_LayoutedCurveBase):
     line_type: Literal["line", "-line"]
-    points: Sequence[TimeSeriesValue]
+    points: Sequence[float | None]
 
 
 class LayoutedCurveArea(_LayoutedCurveBase):
     line_type: Literal["area", "-area"]
-    points: Sequence[tuple[TimeSeriesValue, TimeSeriesValue]]
+    points: Sequence[tuple[float | None, float | None]]
 
 
 class LayoutedCurveStack(_LayoutedCurveBase):
     line_type: Literal["stack"] | Literal["-stack"]
-    points: Sequence[tuple[TimeSeriesValue, TimeSeriesValue]]
+    points: Sequence[tuple[float | None, float | None]]
 
 
 LayoutedCurve = LayoutedCurveLine | LayoutedCurveArea | LayoutedCurveStack
@@ -120,7 +120,7 @@ class Curve(TypedDict):
     title: str
     line_type: LineType | Literal["ref"]
     color: str
-    rendered_value: tuple[TimeSeriesValue, str]
+    rendered_value: tuple[float | None, str]
 
 
 class GraphArtwork(BaseModel):
@@ -158,7 +158,7 @@ class GraphArtwork(BaseModel):
 #   '----------------------------------------------------------------------'
 
 
-def _halfstep_interpolation(rrddata: TimeSeries) -> Iterator[TimeSeriesValue]:
+def _halfstep_interpolation(rrddata: TimeSeries) -> Iterator[float | None]:
     if not rrddata:
         return
 
@@ -175,21 +175,21 @@ def _halfstep_interpolation(rrddata: TimeSeries) -> Iterator[TimeSeriesValue]:
 
 
 def _areastack(
-    raw_points: Sequence[TimeSeriesValue], base: Sequence[TimeSeriesValue]
-) -> list[tuple[TimeSeriesValue, TimeSeriesValue]]:
-    def add_points(pair: tuple[TimeSeriesValue, TimeSeriesValue]) -> TimeSeriesValue:
+    raw_points: Sequence[float | None], base: Sequence[float | None]
+) -> list[tuple[float | None, float | None]]:
+    def add_points(pair: tuple[float | None, float | None]) -> float | None:
         a, b = pair
         if a is None and b is None:
             return None
         return denull(a) + denull(b)
 
-    def denull(value: TimeSeriesValue) -> float:
+    def denull(value: float | None) -> float:
         return value if value is not None else 0.0
 
     # Make sure that first entry in pair is not greater than second
     def fix_swap(
-        pp: tuple[TimeSeriesValue, TimeSeriesValue],
-    ) -> tuple[TimeSeriesValue, TimeSeriesValue]:
+        pp: tuple[float | None, float | None],
+    ) -> tuple[float | None, float | None]:
         lower, upper = pp
         if lower is None and upper is None:
             return pp
@@ -215,7 +215,7 @@ def _layout_graph_curves(
     mirrored = False  # True if negative area shows positive values
 
     # Build positive and optional negative stack.
-    stacks: list[Sequence[TimeSeriesValue] | None] = [None, None]
+    stacks: list[Sequence[float | None] | None] = [None, None]
 
     # Compute the logical position (i.e. measured in the original unit)
     # of the data points, where stacking and Y-mirroring is being applied.
@@ -440,11 +440,11 @@ def compute_curves_at_timestamp(
 def _render_scalar_value(
     value: float | None,
     unit_renderer: Callable[[float], str],
-) -> tuple[TimeSeriesValue, str]:
+) -> tuple[float | None, str]:
     return (None, _("n/a")) if value is None else (value, unit_renderer(value))
 
 
-def _get_value_at_timestamp(pin_time: int, rrddata: TimeSeries) -> TimeSeriesValue:
+def _get_value_at_timestamp(pin_time: int, rrddata: TimeSeries) -> float | None:
     if not rrddata:
         return None
 

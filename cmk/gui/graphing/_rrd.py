@@ -45,7 +45,7 @@ from ._legacy import (
     CheckMetricEntry,
 )
 from ._metrics import get_metric_spec
-from ._time_series import TimeSeries, TimeSeriesValues
+from ._time_series import TimeSeries
 from ._translated_metrics import find_matching_translation, TranslationSpec
 from ._unit import user_specific_unit
 
@@ -346,7 +346,7 @@ def all_rrd_columns_potentially_relevant_for_metric(
 @tracer.instrument("graphing.translate_and_merge_rrd_columns")
 def translate_and_merge_rrd_columns(
     target_metric: MetricName,
-    rrd_columms: Iterable[tuple[str, TimeSeriesValues]],
+    rrd_columms: Iterable[tuple[str, Sequence[float | None]]],
     translations: Mapping[MetricName, TranslationSpec],
     registered_metrics: Mapping[str, RegisteredMetric],
     *,

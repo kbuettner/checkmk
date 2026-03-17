@@ -3,10 +3,11 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
+from collections.abc import Sequence
 
 import pytest
 
-from cmk.gui.graphing._time_series import rrd_timestamps, TimeSeries, TimeSeriesValues
+from cmk.gui.graphing._time_series import rrd_timestamps, TimeSeries
 
 
 @pytest.mark.parametrize(
@@ -79,7 +80,7 @@ def test_time_series_upsampling(
     start: int,
     end: int,
     step: int,
-    upsampled: TimeSeriesValues,
+    upsampled: Sequence[float | None],
 ) -> None:
     assert time_series.forward_fill_resample(start=start, end=end, step=step) == upsampled
 
@@ -159,7 +160,7 @@ def test_time_series_downsampling(
     end: int,
     step: int,
     cf: str,
-    downsampled: TimeSeriesValues,
+    downsampled: Sequence[float | None],
 ) -> None:
     assert time_series.downsample(start=start, end=end, step=step, cf=cf) == downsampled
 

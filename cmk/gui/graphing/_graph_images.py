@@ -70,7 +70,6 @@ from ._metric_backend_registry import (
     metric_backend_registry,
 )
 from ._rrd import get_graph_data_from_livestatus
-from ._time_series import TimeSeriesValues
 from ._unit import get_temperature_unit
 
 tracer = trace.get_tracer()
@@ -320,7 +319,7 @@ class Curves(TypedDict):
     color: str
     title: str
     attributes: Mapping[Literal["resource", "scope", "data_point"], Mapping[str, str]]
-    rrddata: TimeSeriesValues
+    rrddata: Sequence[float | None]
 
 
 class GraphSpec(TypedDict):
