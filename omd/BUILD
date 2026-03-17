@@ -34,6 +34,7 @@ edition_deps = select({
     "@cmk//edition:cloud": [
         "//cmk:cmk_tar",
         "//non-free/packages/cmk-bakery:pkg_tar",
+        "//non-free/packages/cmk-cloud:pkg_tar",
         "//non-free/packages/cmc-protocols:pkg_tar",
         "//non-free/packages/cmk-core-helpers:pkg_tar",
         "//non-free/packages/cmk-core-helpers:relay-fetcher-trigger-pkg_tar",

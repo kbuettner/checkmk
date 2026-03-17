@@ -383,7 +383,7 @@ CMK_UTILS_DEPENDENCIES = {
         "cmk.ccc.version",
     ),
     Component("cmk.utils.msi_patch"): _allow(),
-    Component("cmk.utils.nonfree.cloud.config"): _allow(
+    Component("cmk.cloud.config"): _allow(
         "cmk.crypto",
     ),
     Component("cmk.dcd.protocols"): _allow(
@@ -410,7 +410,7 @@ CMK_UTILS_DEPENDENCIES = {
         "cmk.crypto",
         "cmk.utils.licensing",
         "cmk.utils.mail",
-        "cmk.utils.nonfree.cloud.config",  # ARGL
+        "cmk.cloud.config",  # ARGL
         "cmk.utils.password_store",
         "cmk.utils.paths",
     ),
@@ -1001,7 +1001,7 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
         "cmk.utils.agent_registration",
         "cmk.utils.config_warnings",
         "cmk.utils.nonfree.pro",
-        "cmk.utils.nonfree.cloud",
+        "cmk.cloud",
         "cmk.utils.licensing",
         "cmk.utils.local_secrets",
         "cmk.utils.log",

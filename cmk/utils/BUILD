@@ -106,21 +106,6 @@ py_library(
 )
 
 py_library(
-    name = "cloud",
-    srcs = glob(
-        include = ["**/nonfree/**/cloud/**/*.py"],
-        allow_empty = True,
-    ),
-    imports = ["../.."],
-    deps = [
-        "//packages/cmk-ccc:resulttype",
-        "//packages/cmk-crypto",
-        requirement("python-dateutil"),
-        requirement("pydantic"),
-    ],
-)
-
-py_library(
     name = "ultimate",
     srcs = glob(
         include = ["**/nonfree/**/ultimate/**/*.py"],

@@ -277,7 +277,6 @@ py_wheel(
             "//cmk/post_rename_site:cmk_post_rename_site_ultimate",
             "//cmk/update_config:cmk_update_config_pro",
             "//cmk/update_config:cmk_update_config_ultimate",
-            "//cmk/utils:cloud",
             "//cmk/utils:pro",
             "//non-free/packages/cmc-protocols:py_config_proto",
             "//non-free/packages/cmc-protocols:py_cycletime_proto",

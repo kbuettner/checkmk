@@ -220,8 +220,8 @@ py_library(
         "@//:gpl+nonfree_repo": [
             ":pro",
             ":ultimate",
-            "//cmk/utils:cloud",
             "//cmk/utils:pro",
+            "//non-free/packages/cmk-cloud",
         ],
         "@//:gpl_repo": [],
     }),
