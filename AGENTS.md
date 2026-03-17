@@ -2,8 +2,12 @@
 
 ## Build & Test
 
-Bazel is the primary build system; use the bazel skill for all unit tests and
-linting. Integration, composition, and GUI E2E tests use Make:
+**NEVER run `pytest`, `ruff`, or `mypy` directly.** Always use `bazel` commands
+instead. Direct invocations bypass the build system's environment and dependency
+setup and produce incorrect results.
+
+Bazel is the primary build system for unit tests, linting, formatting, and type
+checking. Integration, composition, and GUI E2E tests use Make:
 
 ```
 make -C tests test-integration
