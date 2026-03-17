@@ -363,8 +363,10 @@ def test_crash_report_store_deduplication(tmp_path: Path) -> None:
     on_disk = [p for p in crashes_dir.glob("*") if p.is_dir()]
     assert len(on_disk) == 1
 
-    # The first crash's directory is kept; subsequent saves merge into it
-    assert on_disk[0].name == crash_ids[0]
+    # The first crash's directory is kept; subsequent saves merge into it.
+    # After save() merges a crash, the crash object's ID must be updated to the
+    # first-occurrence UUID so callers get a link/ID that resolves to an existing report.
+    assert crash_ids[0] == crash_ids[1] == crash_ids[2] == on_disk[0].name
 
     crash_info = json.loads((on_disk[0] / "crash.info").read_text())
     assert crash_info["crash_info_version"] == 1

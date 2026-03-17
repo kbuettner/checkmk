@@ -270,6 +270,10 @@ class CrashReportStore:
             crash_info_path,
             self.dump_crash_info(existing_info) + "\n",
         )
+        # Update the in-memory crash ID to the directory that was actually stored
+        # (the first-occurrence UUID). All callers that use crash.ident_to_text() after
+        # save() will then get a UUID that resolves to an existing crash report.
+        crash.crash_info["id"] = crash_info_path.parent.name
 
     @staticmethod
     def dump_crash_info(crash_info: CrashInfo[TDetails] | bytes) -> str:
