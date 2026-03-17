@@ -129,6 +129,7 @@ async function pollActivationStatusUntilComplete(activationId: string) {
       if (sitesWithWarningsOrErrors.value) {
         showActivationResultWarningsErrors.value = true
       }
+      mainMenu.restartBadgeUpdate('changes')
       activateChangesInProgress.value = false
     }
   } catch (error) {
@@ -143,6 +144,7 @@ async function pollActivationStatusUntilComplete(activationId: string) {
       ) {
         if (!restartInfoShown.value) {
           restartInfoShown.value = true
+          mainMenu.pauseBadgeUpdate('changes')
         }
 
         setTimeout(() => {
@@ -156,6 +158,7 @@ async function pollActivationStatusUntilComplete(activationId: string) {
     activateChangesInProgress.value = false
     activationPollStartTime.value = null
     restartInfoShown.value = false
+    mainMenu.restartBadgeUpdate('changes')
 
     throw new Error(`Polling of activation result failed: ${error}`)
   }

@@ -43,6 +43,7 @@ export class MainMenuService extends ServiceBase {
   protected userPopupMessages: UserPopupMessageRef[] = []
   protected itemBadge: { [key: string]: Ref<MenuItemBadge | null> } = {}
   protected api: MainMenuApiClient = new MainMenuApiClient()
+  private badgeUpdateTimeouts: Map<string, ReturnType<typeof setTimeout>> = new Map()
 
   public constructor(
     protected mainItems: NavItems = [],
@@ -301,12 +302,33 @@ export class MainMenuService extends ServiceBase {
     }
 
     if (badge.interval_in_seconds) {
-      setTimeout(
+      const timeout = setTimeout(
         () => {
           void this.updateBadgeValue(id, badge)
         },
         badge.interval_in_seconds * (success ? 1000 : 10000)
       )
+      this.badgeUpdateTimeouts.set(id, timeout)
+    }
+  }
+
+  public pauseBadgeUpdate(id: NavItemIdEnum) {
+    const existing = this.badgeUpdateTimeouts.get(id)
+    if (existing !== undefined) {
+      clearTimeout(existing)
+      this.badgeUpdateTimeouts.delete(id)
+    }
+  }
+
+  public restartBadgeUpdate(id: NavItemIdEnum) {
+    const existing = this.badgeUpdateTimeouts.get(id)
+    if (existing !== undefined) {
+      clearTimeout(existing)
+      this.badgeUpdateTimeouts.delete(id)
+    }
+    const item = [...this.mainItems, ...this.userItems].find((item) => item.id === id)
+    if (item?.badge) {
+      void this.updateBadgeValue(id, item.badge)
     }
   }
 
