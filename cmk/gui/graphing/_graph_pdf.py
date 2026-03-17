@@ -8,7 +8,6 @@
 
 # mypy: disable-error-code="unreachable"
 
-from collections.abc import Sequence
 from typing import TypeGuard
 
 from cmk import trace
@@ -338,7 +337,15 @@ def render_graph_pdf(
         legend_top = bottom - legend_top_margin + bottom_margin
         legend_column_width = (width - left_margin - left_border - right_margin) / 7.0
 
-        def paint_legend_line(color: RGBColor | None, texts: Sequence[str | None]) -> None:
+        def paint_legend_line(
+            color: RGBColor | None,
+            *,
+            column_value: str | None,
+            column_min: str | None,
+            column_max: str | None,
+            column_average: str | None,
+            column_last: str | None,
+        ) -> None:
             line = t_orig
             if color:
                 pdf_document.render_rect(
@@ -349,7 +356,9 @@ def render_graph_pdf(
                     fill_color=color,
                     line_width=legend_box_line_width,
                 )
-            for nr, text in enumerate(texts):
+            for nr, text in enumerate(
+                [column_value, column_min, column_max, column_average, column_last]
+            ):
                 if text:
                     pdf_document.render_aligned_text(
                         line + (color and nr == 0 and legend_box_size + 0.8 or 0),
@@ -365,30 +374,25 @@ def render_graph_pdf(
                 else:
                     line += legend_column_width
 
-        # TODO Improve: don't loose connection to titles while iterating over
-        # curves and horizontal rules
-        scalars = [
-            ("min", _("Minimum")),
-            ("max", _("Maximum")),
-            ("average", _("Average")),
-            ("last", _("Last")),
-        ]
-        scalars_legend_line: list[str | None] = [None]
-
-        paint_legend_line(None, scalars_legend_line + [x[1] for x in scalars])
+        paint_legend_line(
+            None,
+            column_value=None,
+            column_min=_("Minimum"),
+            column_max=_("Maximum"),
+            column_average=_("Average"),
+            column_last=_("Last"),
+        )
         pdf_document.render_line(t_orig, legend_top, t_orig + t_mm, legend_top)
 
         for curve in graph_artwork.curves:
             legend_top -= legend_lineskip
             paint_legend_line(
                 parse_color(curve["color"]),
-                [
-                    str(curve["title"]),
-                    curve["scalars"]["min"][1],
-                    curve["scalars"]["max"][1],
-                    curve["scalars"]["average"][1],
-                    curve["scalars"]["last"][1],
-                ],
+                column_value=str(curve["title"]),
+                column_min=curve["scalars"]["min"][1],
+                column_max=curve["scalars"]["max"][1],
+                column_average=curve["scalars"]["average"][1],
+                column_last=curve["scalars"]["last"][1],
             )
 
         if graph_artwork.horizontal_rules:
@@ -397,7 +401,11 @@ def render_graph_pdf(
                 legend_top -= legend_lineskip
                 paint_legend_line(
                     parse_color(horizontal_rule.color),
-                    [str(horizontal_rule.title), None, None, None, horizontal_rule.rendered_value],
+                    column_value=str(horizontal_rule.title),
+                    column_min=None,
+                    column_max=None,
+                    column_average=None,
+                    column_last=horizontal_rule.rendered_value,
                 )
 
     if graph_artwork.mark_requested_end_time:
