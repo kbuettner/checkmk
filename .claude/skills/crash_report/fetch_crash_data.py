@@ -289,7 +289,7 @@ def cmd_search(args: argparse.Namespace) -> None:
 def cmd_popular(args: argparse.Namespace) -> None:
     """Show popular unsolved crash groups."""
     # Use the search endpoint with min_crashes and unsolved filter
-    params: dict[str, str] = {"min_crashes": "10", "solved": "false", "limit": "50"}
+    params: dict[str, str] = {"min_crashes": "10", "solved": "false", "limit": str(args.limit)}
     if args.since:
         params["since"] = parse_date(args.since)
 
@@ -302,7 +302,8 @@ def cmd_popular(args: argparse.Namespace) -> None:
 
     anonymizer = Anonymizer()
 
-    print(f"# Popular Unsolved Crash Groups ({len(groups)} groups with >10 crashes)\n")
+    limit_note = f", limit {args.limit}" if args.limit != 50 else ""
+    print(f"# Popular Unsolved Crash Groups ({len(groups)} groups with >10 crashes{limit_note})\n")
     print("| Group ID | Type | Crashes | Exception | Jira |")
     print("|----------|------|---------|-----------|------|")
 
@@ -576,6 +577,7 @@ def main() -> None:
         "popular", help="Show popular (>10) unsolved crash groups"
     )
     popular_parser.add_argument("--since", help="Filter by date (ISO date or relative, e.g. '30d')")
+    popular_parser.add_argument("--limit", type=int, default=50, help="Max results (default: 50)")
 
     # stats
     stats_parser = subparsers.add_parser("stats", help="Show aggregate crash statistics")

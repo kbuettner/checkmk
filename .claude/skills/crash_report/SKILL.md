@@ -67,6 +67,22 @@ Translate the user's request into one of these commands:
 | "What crashes are on my local site?" | `local`                                        |
 | "Show local GUI crashes"             | `local --type gui`                             |
 
+### Step 1.5: Check Authentication
+
+Before running any query, check if a cached token exists and is valid:
+
+```bash
+test -f ~/.cache/cmk-crash-reporting/token.json && python3 -c "import json,time; t=json.load(open('$HOME/.cache/cmk-crash-reporting/token.json')); exit(0 if t['expires_at']>time.time()+60 else 1)"
+```
+
+If the token is missing or expired (non-zero exit), run the authenticate command first:
+
+```bash
+PYTHONPATH=.claude/skills python3 -m crash_report.authenticate
+```
+
+This avoids failed API calls due to expired/missing credentials.
+
 ### Step 2: Run the Helper Script
 
 ```bash
@@ -81,7 +97,7 @@ PYTHONPATH=.claude/skills python3 -m crash_report search \
   [--since DATE] [--min-crashes N] [--type TYPE] [--unsolved] [--version VER] [--limit N]
 
 # Popular unsolved crash groups (>10 crashes)
-PYTHONPATH=.claude/skills python3 -m crash_report popular [--since DATE]
+PYTHONPATH=.claude/skills python3 -m crash_report popular [--since DATE] [--limit N]
 
 # Aggregate crash statistics
 PYTHONPATH=.claude/skills python3 -m crash_report stats [--since DATE]
