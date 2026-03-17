@@ -135,20 +135,6 @@ py_library(
     ],
 )
 
-py_library(
-    name = "ultimatemt",
-    srcs = glob(
-        include = ["**/nonfree/**/ultimatemt/**/*.py"],
-        allow_empty = True,
-    ),
-    imports = ["../.."],
-    deps = [
-        ":utils",
-        "//packages/cmk-ccc:resulttype",
-        requirement("python-dateutil"),
-    ],
-)
-
 py_binary(
     name = "werks_bin",
     srcs = ["werks/__main__.py"],
