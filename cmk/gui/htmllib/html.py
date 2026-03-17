@@ -302,7 +302,8 @@ class HTMLGenerator(HTMLWriter):
         self.javascript("const startTime = Date.now();")
         # A lambda, so it will get evaluated at the end of the request, not the beginning.
         self.final_javascript(
-            lambda: f"""
+            lambda: (
+                f"""
                 const generationDuration = {round((time.monotonic() - self.request.started) * 1000, 0)};
                 const currentUrl = window.location.pathname + window.location.search;
                 document.addEventListener(
@@ -312,6 +313,7 @@ class HTMLGenerator(HTMLWriter):
                     }}
                 );
             """
+            )
         )
         self.javascript_file(HTMLGenerator._append_cache_busting_query("js/tracking_entry_min.js"))
 
@@ -1570,15 +1572,6 @@ class HTMLGenerator(HTMLWriter):
             class_=classes,
             id_="popup_trigger_%s" % ident,
             style=style,
-        )
-
-    def element_dragger_url(self, dragging_tag: str, base_url: str) -> None:
-        self.write_html(
-            HTMLGenerator.render_element_dragger(
-                dragging_tag,
-                drop_handler="function(index){return cmk.element_dragging.url_drop_handler(%s, index);})"
-                % json.dumps(base_url),
-            )
         )
 
     def element_dragger_js(
