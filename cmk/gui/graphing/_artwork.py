@@ -55,8 +55,6 @@ from ._utils import Linear, SizeEx
 
 tracer = trace.get_tracer()
 
-Seconds = int
-
 
 class VerticalAxisLabel(BaseModel, frozen=True):
     position: float
@@ -135,7 +133,7 @@ class GraphArtwork(BaseModel):
     # Displayed range
     start_time: int
     end_time: int
-    step: Seconds
+    step: int
     requested_vrange: tuple[float, float] | None
     requested_start_time: int
     requested_end_time: int
@@ -717,7 +715,7 @@ def _remove_useless_zeroes(label: str) -> str:
 #   '----------------------------------------------------------------------'
 
 
-def _compute_graph_t_axis(start_time: int, end_time: int, width: float, step: Seconds) -> TimeAxis:
+def _compute_graph_t_axis(start_time: int, end_time: int, width: float, step: int) -> TimeAxis:
     # Depending on which time range is being shown we have different
     # steps of granularity
 
@@ -974,14 +972,14 @@ def _t_axis_labels(
         pos += step_size
 
 
-def _add_step_to_title(title_label: str, step: Seconds) -> str:
+def _add_step_to_title(title_label: str, step: int) -> str:
     step_label = get_step_label(step)
     if title_label is None:
         return step_label
     return f"{title_label} @ {step_label}"
 
 
-def get_step_label(step: Seconds) -> str:
+def get_step_label(step: int) -> str:
     if step < 3600:
         return "%dm" % (step / 60)
     if step < 86400:

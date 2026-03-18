@@ -24,7 +24,6 @@ import {
 
 //types from cmk/utils/type_defs/_misc.py:81
 type Timestamp = number
-type Seconds = number
 type TimeRange = [number, number]
 export type TimeSeriesValue = number | null
 type SizePT = number
@@ -142,7 +141,7 @@ export interface GraphArtwork {
   //Displayed range
   start_time: Timestamp
   end_time: Timestamp
-  step: Seconds
+  step: number
   requested_vrange: [number, number] | null
   requested_start_time: Timestamp
   requested_end_time: Timestamp
