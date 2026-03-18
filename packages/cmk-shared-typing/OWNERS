@@ -2,6 +2,9 @@ set noparent  # don't inherit owners information from parent folders
 
 file:/component_owners/vue_framework/OWNERS_DEFINITION
 
+per-file BUILD=file:/component_owners/ui_framework/OWNERS_DEFINITION
+per-file BUILD=set noparent
+
 # Please
 #  - don't add individual owners here but provide a reference to an OWNERS_DEFINITION file instead
 #  - consider a `per-file <PATH>=set noparent` line for each `per-file` rule
