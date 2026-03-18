@@ -56,7 +56,7 @@ from cmk.relay_protocols.tasks import (
     TaskResponse,
 )
 from cmk.utils.keypair_store import KeyId
-from tests.testlib.version import CMKVersion, TypeCMKEdition, TypeCMKEditionOld
+from tests.testlib.version import CMKVersion, TypeCMKEdition
 
 logger = logging.getLogger("rest-session")
 tracer = trace.get_tracer()
@@ -118,7 +118,7 @@ class CMKOpenApiSession(requests.Session):
         user: str,
         password: str,
         site_version: CMKVersion,
-        site_edition: TypeCMKEdition | TypeCMKEditionOld,
+        site_edition: TypeCMKEdition,
         port: int = 80,
         site: str = "heute",
         api_version: str = "1.0",

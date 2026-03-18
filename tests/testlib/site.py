@@ -69,12 +69,10 @@ from tests.testlib.nonfree.cloud.utils import (  # type: ignore[import-untyped, 
 from tests.testlib.openapi_session import AgentReceiverApiSession, CMKOpenApiSession
 from tests.testlib.version import (
     CMKPackageInfo,
-    CMKPackageInfoOld,
     CMKVersion,
     edition_from_env,
     get_min_version,
     TypeCMKEdition,
-    TypeCMKEditionOld,
     version_from_env,
 )
 from tests.testlib.web_session import CMKWebSession
@@ -109,7 +107,7 @@ class Site:
 
     def __init__(
         self,
-        package: CMKPackageInfo | CMKPackageInfoOld,
+        package: CMKPackageInfo,
         site_id: str,
         reuse: bool = True,
         admin_password: str = "cmk",
@@ -165,11 +163,11 @@ class Site:
         return self._package.version
 
     @property
-    def edition(self) -> TypeCMKEdition | TypeCMKEditionOld:
+    def edition(self) -> TypeCMKEdition:
         return self._package.edition
 
     @property
-    def package(self) -> CMKPackageInfo | CMKPackageInfoOld:
+    def package(self) -> CMKPackageInfo:
         return self._package
 
     @property
@@ -929,7 +927,6 @@ class Site:
                     [
                         f"{repo_path()}/scripts/run-uvenv",
                         f"{repo_path()}/tests/scripts/install-cmk.py",
-                        "--old-edition-name" if isinstance(self.package, CMKPackageInfoOld) else "",
                     ],
                     env=dict(os.environ, VERSION=self.version.version, EDITION=self.edition.short),
                 )
@@ -964,14 +961,12 @@ class Site:
                         f"{repo_path()}/scripts/run-uvenv",
                         f"{repo_path()}/tests/scripts/install-cmk.py",
                         "--uninstall",
-                        "--old-edition-name" if isinstance(self.package, CMKPackageInfoOld) else "",
                     ],
                     env=dict(os.environ, VERSION=self.version.version, EDITION=self.edition.short),
                 )
             except subprocess.CalledProcessError as excp:
                 excp.add_note(
-                    "Execute 'tests/scripts/install-cmk.py --uninstall [--old-edition-name]' "
-                    "manually to debug the issue."
+                    "Execute 'tests/scripts/install-cmk.py --uninstall' manually to debug the issue."
                 )
                 if excp.returncode == 22:
                     raise RuntimeError(
@@ -1945,7 +1940,7 @@ class SiteFactory:
 
     def __init__(
         self,
-        package: CMKPackageInfo | CMKPackageInfoOld,
+        package: CMKPackageInfo,
         prefix: str | None = None,
         update: bool = False,
         update_conflict_mode: str = "install",
@@ -1968,7 +1963,7 @@ class SiteFactory:
         return self._package.version
 
     @property
-    def edition(self) -> TypeCMKEdition | TypeCMKEditionOld:
+    def edition(self) -> TypeCMKEdition:
         return self._package.edition
 
     def get_site(self, name: str, create: bool = True) -> Site:
@@ -2165,7 +2160,7 @@ class SiteFactory:
         Returns:
             Site:              The updated site object.
         """
-        base_package: CMKPackageInfo | CMKPackageInfoOld = test_site.package
+        base_package: CMKPackageInfo = test_site.package
         self._package = target_package
 
         # refresh site object to install the correct target version
@@ -2614,7 +2609,7 @@ class SiteFactory:
 def get_site_factory(
     *,
     prefix: str,
-    package: CMKPackageInfo | CMKPackageInfoOld | None = None,
+    package: CMKPackageInfo | None = None,
     fallback_branch: str | Callable[[], str] | None = None,
 ) -> SiteFactory:
     """retrieves a correctly parameterized SiteFactory object

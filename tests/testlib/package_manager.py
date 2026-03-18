@@ -24,11 +24,9 @@ from tests.testlib.common.utils2 import (
 from tests.testlib.version import (
     CMKEdition,
     CMKPackageInfo,
-    CMKPackageInfoOld,
     edition_from_env,
     package_hash_path,
     TypeCMKEdition,
-    TypeCMKEditionOld,
     version_from_env,
 )
 
@@ -53,8 +51,8 @@ DISTRO_CODES = {
     "sles-15sp7": "sles15sp7",
     "sles-16.0": "sles16.0",
 }
-TCMKPackageInfos = CMKPackageInfo | CMKPackageInfoOld
-TypeCMKEditions = TypeCMKEdition | TypeCMKEditionOld
+TCMKPackageInfos = CMKPackageInfo
+TypeCMKEditions = TypeCMKEdition
 
 
 class ABCPackageManager(abc.ABC):

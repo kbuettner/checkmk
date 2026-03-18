@@ -41,7 +41,6 @@ from tests.testlib.openapi_session import AgentReceiverApiSession, CMKOpenApiSes
 from tests.testlib.package_manager import ABCPackageManager
 from tests.testlib.version import (
     CMKPackageInfo,
-    CMKPackageInfoOld,
     edition_from_env,
     version_from_env,
 )
@@ -106,14 +105,14 @@ def send_to_container(c: docker.models.containers.Container, text: str) -> None:
     s.close()
 
 
-def image_name(package_info: CMKPackageInfo | CMKPackageInfoOld) -> str:
+def image_name(package_info: CMKPackageInfo) -> str:
     return (
         "docker-tests/check-mk-"
         f"{package_info.edition.long}-{package_info.version.branch}-{package_info.version.version}"
     )
 
 
-def package_name(package_info: CMKPackageInfo | CMKPackageInfoOld) -> str:
+def package_name(package_info: CMKPackageInfo) -> str:
     """Return full name of a debian-based Checkmk package."""
     return (
         f"check-mk-{package_info.edition.long}-{package_info.version.version}_0"
@@ -125,7 +124,7 @@ def prepare_build() -> None:
     assert subprocess.run(["make", "needed-packages"], cwd=build_path, check=False).returncode == 0
 
 
-def prepare_package(package_info: CMKPackageInfo | CMKPackageInfoOld) -> None:
+def prepare_package(package_info: CMKPackageInfo) -> None:
     """On Jenkins copies a previously built package to the build path."""
     pkg_name = package_name(package_info)
     test_package_path = build_path / pkg_name
@@ -161,7 +160,7 @@ def prepare_package(package_info: CMKPackageInfo | CMKPackageInfoOld) -> None:
 
 def pull_checkmk(
     client: docker.client.DockerClient,
-    package_info: CMKPackageInfo | CMKPackageInfoOld,
+    package_info: CMKPackageInfo,
 ) -> docker.models.images.Image:
     if not package_info.edition.is_community_edition():
         raise Exception("Can only fetch community edition at the moment")
@@ -184,7 +183,7 @@ def resolve_image_alias(alias: str) -> str:
 
 def build_checkmk(
     client: docker.client.DockerClient,
-    package_info: CMKPackageInfo | CMKPackageInfoOld,
+    package_info: CMKPackageInfo,
     prepare_pkg: bool = True,
 ) -> tuple[docker.models.images.Image, Iterator[JSON]]:
     """Builds (or reuses) and verifies a docker image for a given Checkmk version.
@@ -289,7 +288,7 @@ class CheckmkApp:
     def __init__(
         self,
         client: docker.client.DockerClient,
-        package_info: CMKPackageInfo | CMKPackageInfoOld | None = None,
+        package_info: CMKPackageInfo | None = None,
         is_update: bool = False,
         site_id: str = "cmk",
         name: str | None = None,

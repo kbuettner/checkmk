@@ -24,9 +24,7 @@ from tests.testlib.common.repo import add_python_paths
 from tests.testlib.package_manager import ABCPackageManager
 from tests.testlib.version import (
     CMKPackageInfo,
-    CMKPackageInfoOld,
     edition_from_env,
-    edition_from_env_old,
     version_from_env,
 )
 
@@ -42,7 +40,6 @@ class InstallCmkArgs(argparse.Namespace):
     def __init__(self):
         super().__init__()
         self.uninstall: bool = False
-        self.old_edition_name: bool = False
 
 
 def parse_args() -> tuple[InstallCmkArgs, list[str]]:
@@ -56,15 +53,6 @@ def parse_args() -> tuple[InstallCmkArgs, list[str]]:
         action=argparse.BooleanOptionalAction,
         default=False,
     )
-    parser.add_argument(
-        "--old-edition-name",
-        dest="old_edition_name",
-        action="store_true",
-        help=(
-            "Switch script-mode to support old naming logic for Checkmk editions; "
-            "'disabled' by default"
-        ),
-    )
     return parser.parse_known_args(namespace=InstallCmkArgs())
 
 
@@ -73,14 +61,7 @@ def main():
     operation = "uninstall" if args.uninstall else "install"
     add_python_paths()
 
-    pkg: CMKPackageInfo | CMKPackageInfoOld
-
-    # code for handling old editions scheme (< 2.5)
-    if args.old_edition_name:
-        pkg = CMKPackageInfoOld(version_from_env(), edition_from_env_old())
-    # code for handling new editions scheme (>= 2.5)
-    else:
-        pkg = CMKPackageInfo(version_from_env(), edition_from_env())
+    pkg = CMKPackageInfo(version_from_env(), edition_from_env())
 
     logger.info(
         "Version: %s (%s), Edition: %s, Branch: %s",

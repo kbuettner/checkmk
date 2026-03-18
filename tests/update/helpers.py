@@ -22,12 +22,10 @@ from tests.testlib.common.utils2 import (
 )
 from tests.testlib.site import Site, SiteFactory
 from tests.testlib.version import (
-    CMKEditionOld,
+    CMKEdition,
     CMKPackageInfo,
-    CMKPackageInfoOld,
     CMKVersion,
     edition_from_env,
-    edition_from_env_old,
     get_min_version,
     TypeCMKEdition,
 )
@@ -69,7 +67,7 @@ def get_site_status(site: Site) -> str | None:
     return None
 
 
-def _get_site_factory(package: CMKPackageInfo | CMKPackageInfoOld) -> SiteFactory:
+def _get_site_factory(package: CMKPackageInfo) -> SiteFactory:
     return SiteFactory(
         package=package,
         prefix="update_",
@@ -77,7 +75,7 @@ def _get_site_factory(package: CMKPackageInfo | CMKPackageInfoOld) -> SiteFactor
     )
 
 
-def create_site(base_package: CMKPackageInfoOld | CMKPackageInfo) -> Site:
+def create_site(base_package: CMKPackageInfo) -> Site:
     site_name = "central"
     site_factory = _get_site_factory(base_package)
     site = site_factory.get_existing_site(site_name)
@@ -284,16 +282,16 @@ class BaseVersions:
         return list(dict.fromkeys(earliest_versions + latest_versions))
 
     min_version = get_min_version()
-    _base_packages: list[CMKPackageInfoOld] | None = None
+    _base_packages: list[CMKPackageInfo] | None = None
 
     @classmethod
-    def get_base_packages(cls) -> list[CMKPackageInfoOld]:
+    def get_base_packages(cls) -> list[CMKPackageInfo]:
         if cls._base_packages is None:
             if edition_from_env().is_cloud_edition():
                 cls._base_packages = [
-                    CMKPackageInfoOld(
+                    CMKPackageInfo(
                         CMKVersion(CMKVersion.DAILY, "2.4.0", "2.4.0"),
-                        CMKEditionOld(CMKEditionOld.CLOUD),
+                        CMKEdition(CMKEdition.CLOUD),
                     )
                 ]
             else:
@@ -315,14 +313,14 @@ class BaseVersions:
                 )
 
                 cls._base_packages = [
-                    CMKPackageInfoOld(CMKVersion(base_version_str), edition_from_env_old())
+                    CMKPackageInfo(CMKVersion(base_version_str), edition_from_env())
                     for base_version_str in base_versions_pb + base_versions_cb
                 ]
         assert cls._base_packages, "No base packages found for the test!"
         return cls._base_packages
 
     @classmethod
-    def get_latest_base_package(cls) -> CMKPackageInfoOld:
+    def get_latest_base_package(cls) -> CMKPackageInfo:
         """Get the latest base package used for the test."""
         return cls.get_base_packages()[-1]
 

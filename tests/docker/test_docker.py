@@ -23,10 +23,7 @@ from tests.testlib.docker import (
 )
 from tests.testlib.version import (
     CMKEdition,
-    CMKEditionOld,
     CMKPackageInfo,
-    CMKPackageInfoOld,
-    CMKVersion,
     edition_from_env,
     get_min_version,
     version_from_env,
@@ -335,11 +332,7 @@ def test_container_agent(checkmk: CheckmkApp) -> None:
 @pytest.mark.skip(reason="No base versions available. Restore once 2.5.0b1 is released. CMK-29033.")
 def test_update(client: docker.DockerClient) -> None:
     min_version = get_min_version()
-    base_package = (
-        CMKPackageInfoOld(min_version, CMKEditionOld(CMKEditionOld.CRE))
-        if min_version < CMKVersion("2.6.0")
-        else CMKPackageInfo(min_version, CMKEdition(CMKEdition.COMMUNITY))
-    )
+    base_package = CMKPackageInfo(min_version, CMKEdition(CMKEdition.COMMUNITY))
     update_package = CMKPackageInfo(version_from_env(), edition_from_env())
     container_name = f"checkmk-{update_package.version.branch}_{randint(10000000, 99999999)}"
 

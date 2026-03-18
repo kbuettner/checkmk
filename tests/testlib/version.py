@@ -4,7 +4,6 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 """Consolidate methods which relate to processing version and edition of a Checkmk package."""
 
-import enum
 import logging
 import os
 import re
@@ -14,7 +13,6 @@ from pathlib import Path
 from typing import Final, Self
 
 from cmk.ccc.version import (
-    _EditionValue,
     Edition,
     Version,
     versions_compatible,
@@ -30,45 +28,6 @@ from tests.testlib.common.repo import (
 from tests.testlib.common.utils2 import version_spec_from_env
 
 logger = logging.getLogger()
-
-
-class EditionOld(enum.Enum):
-    """We here keep the old edition values to be used within update-tests.
-
-    Since the previous branch is still using the old edition-naming logic, we need to replicate here
-    such logic in order to be able to download the base packages for the update-tests.
-
-    TODO: remove such logic once the previous branch also uses the new edition-naming logic.
-    """
-
-    CRE = _EditionValue("cre", "raw", "Checkmk Raw Edition")
-    CEE = _EditionValue("cee", "enterprise", "Checkmk Enterprise Edition")
-    CCE = _EditionValue("cce", "cloud", "Checkmk Cloud Edition")
-    CSE = _EditionValue("cse", "saas", "Checkmk Cloud (SaaS)")
-    CME = _EditionValue("cme", "managed", "Checkmk Managed Services Edition")
-
-    @classmethod
-    def from_version_string(cls, raw: str) -> "EditionOld":
-        return cls.from_long_edition(raw.split(".")[-1])
-
-    @classmethod
-    def from_long_edition(cls, long: str) -> "EditionOld":
-        for e in cls:
-            if e.value.long == long:
-                return e
-        raise RuntimeError(f"Unknown long edition: {long}")
-
-    @property
-    def title(self) -> str:
-        return self.value.title
-
-    @property
-    def short(self) -> str:
-        return self.value.short
-
-    @property
-    def long(self) -> str:
-        return self.value.long
 
 
 class TypeCMKEdition:
@@ -144,26 +103,15 @@ class TypeCMKEdition:
         return self.edition_data.title
 
     @property
-    def old_edition_data(self) -> EditionOld:
-        """Return the legacy edition matching the new edition.
-
-        Raises:
-            KeyError: raised when the edition is not found.
-        """
-        return EditionOld(
-            {
-                Edition.COMMUNITY: EditionOld.CRE,
-                Edition.PRO: EditionOld.CEE,
-                Edition.ULTIMATE: EditionOld.CCE,
-                Edition.ULTIMATEMT: EditionOld.CME,
-                Edition.CLOUD: EditionOld.CSE,
-            }[self.edition_data]
-        )
-
-    @property
     def license_edition(self) -> str:
         """Return the legacy edition short name used in the licensing logic."""
-        return self.old_edition_data.short
+        return {
+            Edition.COMMUNITY: "cre",
+            Edition.PRO: "cee",
+            Edition.ULTIMATE: "cce",
+            Edition.ULTIMATEMT: "cme",
+            Edition.CLOUD: "cse",
+        }[self.edition_data]
 
     def is_ultimatemt_edition(self) -> bool:
         return self.edition_data is self.ULTIMATEMT
@@ -242,137 +190,6 @@ class TypeCMKEdition:
         """
         return TypeCMKEdition(self._edition_data.from_version_string(text))
 
-
-class TypeCMKEditionOld:
-    """Wrap `EditionOld` and extend with test-framework functionality."""
-
-    # map new attribute-names to old edition values
-    # keep old attribute-names for backward-compatibility
-    COMMUNITY = CRE = EditionOld.CRE
-    PRO = CEE = EditionOld.CEE
-    ULTIMATE = CCE = EditionOld.CCE
-    CLOUD = CSE = EditionOld.CSE
-    ULTIMATEMT = CME = EditionOld.CME
-
-    def __init__(self, edition: EditionOld | None = None) -> None:
-        self._edition_data: type[EditionOld] | EditionOld
-        self._edition_data = EditionOld if not edition else edition
-
-    def __call__(self, edition: EditionOld) -> "TypeCMKEditionOld":
-        """Return a new instance, which is initialized with an 'EditionOld' value."""
-        return TypeCMKEditionOld(edition)
-
-    def __eq__(self, item: object) -> bool:
-        """Enable comparison of two `TypeCMKEditionOld` objects.
-
-        Only compare objects which have an instantiated `edition_data` attribute.
-        """
-        if isinstance(item, self.__class__):
-            return self.edition_data == item.edition_data
-        raise TypeError(f"Expected comparison with another '{self.__class__.__name__}' object!")
-
-    @property
-    def edition_data(self) -> EditionOld:
-        """Return an instantiated attribute of type `EditionOld`.
-
-        Raises:
-            AttributeError: raised when the edition is not instantiated.
-        """
-        if isinstance(self._edition_data, EditionOld) and hasattr(self._edition_data, "value"):
-            return self._edition_data
-        raise AttributeError(
-            "An `edition` has not been assigned to the object!\n"
-            "Use `CMKEdition(CMKEdition.ULTIMATE/PRO/...)` to initialize the object with an edition."
-        )
-
-    @property
-    def short(self) -> str:
-        """Return short-form of Checkmk edition."""
-        return self.edition_data.short
-
-    @property
-    def long(self) -> str:
-        """Return Checkmk edition as string."""
-        return self.edition_data.long
-
-    @property
-    def title(self) -> str:
-        """Return edition as displayed on Checkmk UI."""
-        return self.edition_data.title
-
-    @property
-    def new_edition_data(self) -> Edition:
-        """Return the new edition matching the legacy edition.
-
-        Raises:
-            KeyError: raised when the edition is not found.
-        """
-        return Edition(
-            {
-                EditionOld.CRE: Edition.COMMUNITY,
-                EditionOld.CEE: Edition.PRO,
-                EditionOld.CCE: Edition.ULTIMATE,
-                EditionOld.CME: Edition.ULTIMATEMT,
-                EditionOld.CSE: Edition.CLOUD,
-            }[self.edition_data]
-        )
-
-    def is_ultimatemt_edition(self) -> bool:
-        return self.edition_data is self.ULTIMATEMT
-
-    def is_pro_edition(self) -> bool:
-        return self.edition_data is self.PRO
-
-    def is_community_edition(self) -> bool:
-        return self.edition_data is self.COMMUNITY
-
-    def is_ultimate_edition(self) -> bool:
-        return self.edition_data is self.ULTIMATE
-
-    def is_cloud_edition(self) -> bool:
-        return self.edition_data is self.CLOUD
-
-    def edition_from_text(self, value: str) -> "TypeCMKEditionOld":
-        """Parse Checkmk edition from short or long form of Checkmk edition texts.
-
-        Wraps the method `EditionOld::from_long_edition`.
-
-        Args:
-            value (str): Text corresponding to short / long form of Checkmk editions.
-                Example: 'raw', 'enterprise', 'cloud'
-
-        Raises:
-            excp: `ValueError` when the text can not be parsed.
-
-        Returns:
-            TypeCMKEditionOld: Object specific to the parsed Checkmk edition.
-        """
-        excp = ValueError()
-        try:
-            edition = self.from_long_edition(value)
-        except RuntimeError as excp_short:
-            excp.add_note(str(excp_short))
-            try:
-                edition = getattr(self, value.upper())
-            except AttributeError as excp_long:
-                excp.add_note(str(excp_long))
-                excp.add_note(
-                    f"String: '{value}' neither matches 'short' nor 'long' edition formats!"
-                )
-                raise excp
-        return TypeCMKEditionOld(edition)
-
-    def from_long_edition(self, text: str) -> EditionOld:
-        """Deprecated; use `CMKEditionOld.edition_from_text` instead.
-
-        Parse edition from long-form of edition text and wrap it in an object.
-        Example of long-form of edition text: 'enterprise'.
-        """
-        return self._edition_data.from_long_edition(text)
-
-
-# import this in other modules, rather than 'TypeCMKEditionOld'.
-CMKEditionOld: Final = TypeCMKEditionOld()
 
 # import this in other modules, rather than 'TypeCMKEdition'.
 CMKEdition: Final = TypeCMKEdition()
@@ -552,44 +369,7 @@ class CMKPackageInfo:
         return f"{self._version.version}.{self._edition.long}"
 
 
-class CMKPackageInfoOld:
-    """Consolidate information about a Checkmk package (old naming structure)."""
-
-    def __init__(self, version: CMKVersion, edition: TypeCMKEditionOld) -> None:
-        self._version = version
-        self._edition = edition
-
-    def __str__(self) -> str:
-        return self.omd_version()
-
-    def __repr__(self) -> str:
-        return (
-            "CMKPackageInfoOld"
-            f"([{self._version.version}][{self._edition.long}][{self._version.branch}])"
-        )
-
-    @property
-    def version(self) -> CMKVersion:
-        return self._version
-
-    @property
-    def edition(self) -> TypeCMKEditionOld:
-        return self._edition
-
-    def is_installed(self) -> bool:
-        return os.path.exists(self.version_path())
-
-    def version_path(self) -> str:
-        return "/omd/versions/%s" % self.version_directory()
-
-    def version_directory(self) -> str:
-        return self.omd_version()
-
-    def omd_version(self) -> str:
-        return f"{self._version.version}.{self._edition.short}"
-
-
-def package_hash_path(version: str, edition: TypeCMKEdition | TypeCMKEditionOld) -> Path:
+def package_hash_path(version: str, edition: TypeCMKEdition) -> Path:
     return Path(f"/tmp/cmk_package_hash_{version}_{edition.long}")
 
 
@@ -604,20 +384,28 @@ def version_from_env(
     )
 
 
+_OLD_SHORT_TO_EDITION: dict[str, Edition] = {
+    "cre": Edition.COMMUNITY,
+    "cee": Edition.PRO,
+    "cce": Edition.ULTIMATE,
+    "cme": Edition.ULTIMATEMT,
+    "cse": Edition.CLOUD,
+}
+
+
+def edition_from_old_short_name(short: str) -> TypeCMKEdition:
+    """Convert an old-style edition short name (e.g. 'cee') to a TypeCMKEdition."""
+    try:
+        return TypeCMKEdition(_OLD_SHORT_TO_EDITION[short])
+    except KeyError:
+        raise ValueError(f"Unknown old edition short name: {short!r}")
+
+
 def edition_from_env(fallback: TypeCMKEdition = CMKEdition(CMKEdition.PRO)) -> TypeCMKEdition:
     value = os.getenv("EDITION", "")
     if not value:
         return fallback
     return CMKEdition.edition_from_text(value)
-
-
-def edition_from_env_old(
-    fallback: TypeCMKEditionOld = CMKEditionOld(CMKEditionOld.PRO),
-) -> TypeCMKEditionOld:
-    value = os.getenv("EDITION", "")
-    if not value:
-        return fallback
-    return CMKEditionOld.edition_from_text(value)
 
 
 def get_min_version() -> CMKVersion:
