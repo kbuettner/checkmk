@@ -3,29 +3,40 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
+from typing import TypedDict
 
-
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, StringTable
+from cmk.agent_based.v1 import check_levels
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    StringTable,
+)
 from cmk.plugins.domino.lib import DETECT
 
-check_info = {}
+
+def discover_domino_transactions(section: StringTable) -> DiscoveryResult:
+    if section:
+        yield Service()
 
 
-def discover_domino_transactions(info):
-    if info:
-        yield None, {}
+class DominoTransactionsParams(TypedDict):
+    levels: tuple[int, int]
 
 
-def check_domino_transactions(_no_item, params, info):
-    if info:
-        yield check_levels(
-            int(info[0][0]),
-            "transactions",
-            params["levels"],
-            human_readable_func=str,
-            infoname="Transactions per minute (avg)",
+def check_domino_transactions(
+    params: DominoTransactionsParams, section: StringTable
+) -> CheckResult:
+    if section:
+        yield from check_levels(
+            int(section[0][0]),
+            levels_upper=params["levels"],
+            metric_name="transactions",
+            render_func=str,
+            label="Transactions per minute (avg)",
         )
 
 
@@ -33,14 +44,19 @@ def parse_domino_transactions(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["domino_transactions"] = LegacyCheckDefinition(
+snmp_section_domino_transactions = SimpleSNMPSection(
     name="domino_transactions",
-    parse_function=parse_domino_transactions,
     detect=DETECT,
     fetch=SNMPTree(
         base=".1.3.6.1.4.1.334.72.1.1.6.3",
         oids=["2"],
     ),
+    parse_function=parse_domino_transactions,
+)
+
+
+check_plugin_domino_transactions = CheckPlugin(
+    name="domino_transactions",
     service_name="Domino Server Transactions",
     discovery_function=discover_domino_transactions,
     check_function=check_domino_transactions,
