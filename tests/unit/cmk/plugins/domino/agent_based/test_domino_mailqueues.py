@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Metric, Result, State, StringTable
-from cmk.legacy_checks.domino_mailqueues import (
+from cmk.plugins.domino.agent_based.domino_mailqueues import (
     check_domino_mailqueues,
     discover_domino_mailqueues,
     DominoMailqueuesParams,
