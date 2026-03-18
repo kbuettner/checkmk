@@ -23,7 +23,6 @@ import {
 } from './utils'
 
 //types from cmk/utils/type_defs/_misc.py:81
-type Timestamp = number
 type TimeRange = [number, number]
 export type TimeSeriesValue = number | null
 type SizePT = number
@@ -139,13 +138,13 @@ export interface GraphArtwork {
   time_axis: TimeAxis
   mark_requested_end_time: boolean
   //Displayed range
-  start_time: Timestamp
-  end_time: Timestamp
+  start_time: number
+  end_time: number
   step: number
   requested_vrange: [number, number] | null
-  requested_start_time: Timestamp
-  requested_end_time: Timestamp
-  pin_time: Timestamp | null
+  requested_start_time: number
+  requested_end_time: number
+  pin_time: number | null
 }
 
 // Styling. Please note that for each visible pixel our canvas
