@@ -1203,6 +1203,29 @@ def test_check_dom_not_ok_sensors(
     assert list(ct.check_cisco_temperature_dom(item, {}, section_not_ok_sensors)) == expected_result
 
 
+def test_parse_empty_description_falls_back_to_sensor_id() -> None:
+    section = ct.parse_cisco_temperature(
+        [
+            [
+                ["21590", "", "module-1 Crossbar1(s1)"],
+                ["21591", "", ""],
+            ],
+            [
+                ["21590", "8", "9", "0", "62", "1"],
+                ["21591", "8", "9", "0", "58", "1"],
+            ],
+            [],
+            [],
+            [],
+            [],
+        ]
+    )
+    # Sensor 21590 has a non-empty description and should use it
+    assert "module-1 Crossbar1(s1)" in section["8"]
+    # Sensor 21591 has an empty description and should fall back to sensor_id
+    assert "21591" in section["8"]
+
+
 def test_ensure_invalid_data_is_ignored() -> None:
     parsed_section = ct.snmp_section_cisco_temperature.parse_function(TABLE_INVALID)
     assert parsed_section is not None
