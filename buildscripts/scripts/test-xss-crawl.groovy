@@ -95,6 +95,9 @@ void main() {
                             make_target: make_target,
                             test_filter: params.TEST_FILTER,
                             faked_artifacts: params.FAKE_WINDOWS_ARTIFACTS,
+                            // can hit 100min (without wait time)
+                            // using FoS of 3
+                            timeout: 300,
                         );
                     }
                 }
