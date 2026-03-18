@@ -3,16 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree
-from cmk.legacy_includes import dell_compellent
-from cmk.plugins.dell.lib import DETECT_DELL_COMPELLENT
-
-check_info = {}
-
 # example output
 # .1.3.6.1.4.1.674.11000.2000.500.1.2.14.1.2.1 1
 # .1.3.6.1.4.1.674.11000.2000.500.1.2.14.1.2.2 2
@@ -25,45 +15,83 @@ check_info = {}
 # .1.3.6.1.4.1.674.11000.2000.500.1.2.14.1.11.1 1
 # .1.3.6.1.4.1.674.11000.2000.500.1.2.14.1.11.2 1
 
-dell_compellent_disks_health_map = {
-    "1": (0, "healthy"),
-    "0": (2, "not healthy"),
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
+from cmk.plugins.dell.lib import compellent_dev_state_map, DETECT_DELL_COMPELLENT
+
+_HEALTH_MAP: Mapping[str, tuple[State, str]] = {
+    "1": (State.OK, "healthy"),
+    "0": (State.CRIT, "not healthy"),
 }
 
 
-def parse_dell_compellent_disks(string_table):
+@dataclass(frozen=True)
+class DiskInfo:
+    status: str
+    health: str
+    health_message: str
+    enclosure: str
+    serial: str | None
+
+
+Section = Mapping[str, DiskInfo]
+
+
+def parse_dell_compellent_disks(string_table: Sequence[StringTable]) -> Section:
     disk_info = string_table[0]
     disk_serials = dict(string_table[1])
 
     return {
-        disk_name_position: [status, health, health_message, enclosure, disk_serials.get(number)]
+        disk_name_position: DiskInfo(
+            status=status,
+            health=health,
+            health_message=health_message,
+            enclosure=enclosure,
+            serial=disk_serials.get(number),
+        )
         for number, status, disk_name_position, health, health_message, enclosure in disk_info
     }
 
 
-def check_dell_compellent_disks(item, _no_params, parsed):
-    if not (data := parsed.get(item)):
+def discover_dell_compellent_disks(section: Section) -> DiscoveryResult:
+    for item in section:
+        yield Service(item=item)
+
+
+def check_dell_compellent_disks(item: str, section: Section) -> CheckResult:
+    if not (disk := section.get(item)):
         return
-    dev_state, health, health_message, enclosure, serial = data
-    state, state_readable = dell_compellent.dev_state_map(dev_state)
-    yield state, "Status: %s" % state_readable
 
-    yield 0, "Location: Enclosure %s" % enclosure
-    if serial is not None:
-        yield 0, "Serial number: %s" % serial
+    state, state_readable = compellent_dev_state_map(disk.status)
+    yield Result(state=state, summary=f"Status: {state_readable}")
+    yield Result(state=State.OK, summary=f"Location: Enclosure {disk.enclosure}")
 
-    if health_message:
-        health_state, health_state_readable = dell_compellent_disks_health_map.get(
-            health, (3, "unknown[%s]" % health)
+    if disk.serial is not None:
+        yield Result(state=State.OK, summary=f"Serial number: {disk.serial}")
+
+    if disk.health_message:
+        health_state, health_state_readable = _HEALTH_MAP.get(
+            disk.health, (State.UNKNOWN, f"unknown[{disk.health}]")
         )
-        yield health_state, f"Health: {health_state_readable}, Reason: {health_message}"
+        yield Result(
+            state=health_state,
+            summary=f"Health: {health_state_readable}, Reason: {disk.health_message}",
+        )
 
 
-def discover_dell_compellent_disks(section):
-    yield from ((item, {}) for item in section)
-
-
-check_info["dell_compellent_disks"] = LegacyCheckDefinition(
+snmp_section_dell_compellent_disks = SNMPSection(
     name="dell_compellent_disks",
     detect=DETECT_DELL_COMPELLENT,
     fetch=[
@@ -77,6 +105,10 @@ check_info["dell_compellent_disks"] = LegacyCheckDefinition(
         ),
     ],
     parse_function=parse_dell_compellent_disks,
+)
+
+check_plugin_dell_compellent_disks = CheckPlugin(
+    name="dell_compellent_disks",
     service_name="Disk %s",
     discovery_function=discover_dell_compellent_disks,
     check_function=check_dell_compellent_disks,
