@@ -10,7 +10,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Result, State
-from cmk.legacy_checks.dell_compellent_disks import (
+from cmk.plugins.dell.agent_based.dell_compellent_disks import (
     check_dell_compellent_disks,
     discover_dell_compellent_disks,
     parse_dell_compellent_disks,
