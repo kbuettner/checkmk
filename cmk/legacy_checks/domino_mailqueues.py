@@ -3,14 +3,20 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
+from collections.abc import Mapping
+from typing import TypedDict
 
-
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree
+from cmk.agent_based.v1 import check_levels
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    StringTable,
+)
 from cmk.plugins.domino.lib import DETECT
-
-check_info = {}
 
 MAILQUEUES_LABEL = (
     ("lnDeadMail", "Dead mails"),
@@ -20,8 +26,14 @@ MAILQUEUES_LABEL = (
     ("InMailWaitingforDNS", "Mails waiting for DNS"),
 )
 
+Section = Mapping[str, tuple[str, int]]
 
-def parse_domino_mailqueues(string_table):
+
+class DominoMailqueuesParams(TypedDict, total=False):
+    queue_length: tuple[int, int]
+
+
+def parse_domino_mailqueues(string_table: StringTable) -> Section:
     if not string_table:
         return {}
 
@@ -31,24 +43,26 @@ def parse_domino_mailqueues(string_table):
     }
 
 
-def check_domino_mailqueues(item, params, parsed):
-    if not (data := parsed.get(item)):
+def check_domino_mailqueues(
+    item: str, params: DominoMailqueuesParams, section: Section
+) -> CheckResult:
+    if not (data := section.get(item)):
         return
     label, value = data
-    yield check_levels(
+    yield from check_levels(
         value,
-        "mails",
-        params.get("queue_length"),
-        infoname=label,
-        human_readable_func=lambda d: "%d" % int(d),
+        levels_upper=params.get("queue_length"),
+        metric_name="mails",
+        render_func=lambda d: "%d" % int(d),
+        label=label,
     )
 
 
-def discover_domino_mailqueues(section):
-    yield from ((item, {}) for item in section)
+def discover_domino_mailqueues(section: Section) -> DiscoveryResult:
+    yield from (Service(item=item) for item in section)
 
 
-check_info["domino_mailqueues"] = LegacyCheckDefinition(
+snmp_section_domino_mailqueues = SimpleSNMPSection(
     name="domino_mailqueues",
     detect=DETECT,
     fetch=SNMPTree(
@@ -56,6 +70,11 @@ check_info["domino_mailqueues"] = LegacyCheckDefinition(
         oids=["1", "6", "21", "31", "34"],
     ),
     parse_function=parse_domino_mailqueues,
+)
+
+
+check_plugin_domino_mailqueues = CheckPlugin(
+    name="domino_mailqueues",
     service_name="Domino Queue %s",
     discovery_function=discover_domino_mailqueues,
     check_function=check_domino_mailqueues,
