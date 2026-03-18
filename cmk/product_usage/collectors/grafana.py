@@ -75,7 +75,4 @@ def collect(var_dir: Path) -> GrafanaUsageData | None:
     if not grafana_fp.exists():
         return None
 
-    with grafana_fp.open() as f:
-        data_json = f.read()
-        data = GrafanaUsageData.model_validate_json(data_json)
-        return data
+    return GrafanaUsageData.model_validate_json(grafana_fp.read_text())
