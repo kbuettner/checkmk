@@ -10,7 +10,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Result, State
-from cmk.legacy_checks.dell_compellent_controller import (
+from cmk.plugins.dell.agent_based.dell_compellent_controller import (
     check_dell_compellent_controller,
     parse_dell_compellent_controller,
 )
