@@ -2,7 +2,6 @@ load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
 load("@aspect_rules_webpack//webpack:defs.bzl", "webpack_bundle")
 load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@npm//:defs.bzl", "npm_link_all_packages")
-load("@npm//bazel/tools:eslint/package_json.bzl", eslint_bin = "bin")
 load("@npm//packages/cmk-frontend:webpack-cli/package_json.bzl", webpack_cli_bin = "bin")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
@@ -129,20 +128,6 @@ alias(
 alias(
     name = "format.check",
     actual = "//bazel/tools/format:check",
-)
-
-# Note: this is not done via lint_eslint_aspect + lint_test intentionally.
-#       While that would be the superior approach I (frans) was not able to
-#       build the test target as demonstrated here:
-#       https://github.com/aspect-build/rules_lint/blob/main/docs/eslint.md
-eslint_bin.eslint_test(
-    name = "eslint",
-    args = [
-        "--max-warnings=0",
-        ".",
-    ],
-    chdir = package_name(),
-    data = SRCS + BUILD_DEPS + ["eslint.config.js"],
 )
 
 sh_library(

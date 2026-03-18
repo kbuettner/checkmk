@@ -31,7 +31,7 @@ HEADER_CEE = [
 FILES_IGNORED = {
     Path("pnpm-lock.yaml"),
     Path(".editorconfig"),
-    Path("eslint.config.js"),
+    Path("eslint.config.mjs"),
     Path("gettext.config.js"),
     Path(".f12"),
     Path(".gitignore"),

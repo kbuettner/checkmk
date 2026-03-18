@@ -4,7 +4,6 @@ load("@aspect_rules_py//py:defs.bzl", "py_test")
 load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 load("@npm//:defs.bzl", "npm_link_all_packages")
-load("@npm//:eslint/package_json.bzl", eslint_bin = "bin")
 load("@npm//:vitest/package_json.bzl", vitest_bin = "bin")
 load("@npm//:vue-tsc/package_json.bzl", vue_tsc_bin = "bin")
 load("@npm//:vue3-gettext/package_json.bzl", vue_gettext_bin = "bin")
@@ -316,20 +315,6 @@ alias(
 alias(
     name = "format.check",
     actual = "//bazel/tools/format:check",
-)
-
-# Note: this is not done via lint_eslint_aspect + lint_test intentionally.
-#       While that would be the superior approach I (frans) was not able to
-#       build the test target as demonstrated here:
-#       https://github.com/aspect-build/rules_lint/blob/main/docs/eslint.md
-eslint_bin.eslint_test(
-    name = "eslint",
-    args = [
-        "--max-warnings=0",
-        ".",
-    ],
-    chdir = package_name(),
-    data = TOOLING + SRCS_AND_TESTS + [":test_vue"],
 )
 
 pkg_files(

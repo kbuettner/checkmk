@@ -18,8 +18,7 @@ usage() {
     echo "  -t, --tests                run scss_content tests"
     echo "  -F, --check-format         check for correct formatting"
     echo "  -T, --tsc                  run tsc"
-    echo "  -E, --eslint               run eslint"
-    echo "  -a, --all                  shortcut for -b -t -F -T -E"
+    echo "  -a, --all                  shortcut for -b -t -F -T"
     echo "  -f, --format               format sources"
     echo "  -h, --help                 show this help"
 }
@@ -30,10 +29,9 @@ parse_options() {
     RUN_TESTS=no
     RUN_CHECK_FORMAT=no
     RUN_TSC=no
-    RUN_ESLINT=no
     RUN_FORMAT=no
 
-    if ! OPTIONS=$(getopt --options 'btFTEafh' --long 'build,tests,check-format,tsc,eslint,all,format,help' --name "$(basename "$0")" -- "$@"); then
+    if ! OPTIONS=$(getopt --options 'btFTafh' --long 'build,tests,check-format,tsc,all,format,help' --name "$(basename "$0")" -- "$@"); then
         usage >&2
         failure
     fi
@@ -62,17 +60,11 @@ parse_options() {
                 shift
                 continue
                 ;;
-            '-E' | '--eslint')
-                RUN_ESLINT=yes
-                shift
-                continue
-                ;;
             '-a' | '--all')
                 RUN_BUILD=yes
                 RUN_TESTS=yes
                 RUN_CHECK_FORMAT=yes
                 RUN_TSC=yes
-                RUN_ESLINT=yes
                 shift
                 continue
                 ;;
@@ -94,7 +86,7 @@ parse_options() {
         esac
     done
 
-    readonly RUN_BUILD RUN_TESTS RUN_CHECK_FORMAT RUN_TSC RUN_ESLINT RUN_FORMAT
+    readonly RUN_BUILD RUN_TESTS RUN_CHECK_FORMAT RUN_TSC RUN_FORMAT
 }
 
 run_build() {
@@ -107,10 +99,6 @@ run_check_format() {
 
 run_tsc() {
     bazel test :cmk-frontend-ts_typecheck_test
-}
-
-run_eslint() {
-    bazel test :eslint
 }
 
 run_format() {
@@ -130,7 +118,6 @@ main() {
     test ${RUN_TESTS} = yes && run_tests
     test ${RUN_CHECK_FORMAT} = yes && run_check_format
     test ${RUN_TSC} = yes && run_tsc
-    test ${RUN_ESLINT} = yes && run_eslint
     test ${RUN_FORMAT} = yes && run_format
     true
 }

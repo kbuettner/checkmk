@@ -22,7 +22,7 @@ usage() {
     echo "  -T, --tsc                  run type checker"
     echo "  -l, --lint                 run configured linters"
     echo "  -f, --format               format sources"
-    echo "  -a, --all                  shortcut for -b -B -t -F -T -E -d"
+    echo "  -a, --all                  shortcut for -b -B -t -F -T -d"
     echo "  -h, --help                 show this help"
 }
 
@@ -35,10 +35,9 @@ parse_options() {
     RUN_CHECK_FORMAT=no
     RUN_TSC=no
     RUN_LINT=no
-    RUN_ESLINT=no
     RUN_FORMAT=no
 
-    if ! OPTIONS=$(getopt --options 'bBtdFTlEafh' --long 'build,build-dev,tests,check-format,tsc,lint,eslint,all,format,help' --name "$(basename "$0")" -- "$@"); then
+    if ! OPTIONS=$(getopt --options 'bBtdFTlafh' --long 'build,build-dev,tests,check-format,tsc,lint,all,format,help' --name "$(basename "$0")" -- "$@"); then
         usage >&2
         failure
     fi
@@ -82,11 +81,6 @@ parse_options() {
                 shift
                 continue
                 ;;
-            '-E' | '--eslint')
-                RUN_ESLINT=yes
-                shift
-                continue
-                ;;
             '-a' | '--all')
                 RUN_BUILD=yes
                 RUN_BUILD_DEMO=yes
@@ -94,7 +88,6 @@ parse_options() {
                 RUN_TESTS=yes
                 RUN_CHECK_FORMAT=yes
                 RUN_TSC=yes
-                RUN_ESLINT=yes
                 shift
                 continue
                 ;;
@@ -116,7 +109,7 @@ parse_options() {
         esac
     done
 
-    readonly RUN_BUILD RUN_BUILD_DEMO RUN_TESTS RUN_CHECK_FORMAT RUN_TSC RUN_ESLINT RUN_FORMAT
+    readonly RUN_BUILD RUN_BUILD_DEMO RUN_TESTS RUN_CHECK_FORMAT RUN_TSC RUN_FORMAT
 }
 
 setup_venv() {
@@ -154,18 +147,10 @@ run_lint() {
         --quiet \
         --fixes=false \
         :all
-    # The following target will be part of `bazel lint`
-    # after CMK-25906.
-    bazel test :eslint
 }
 
 run_tsc() {
     bazel test :type-check
-}
-
-run_eslint() {
-    echo "WARNING: This target is deprecated, use the generic '--lint' instead."
-    bazel test :eslint
 }
 
 run_format() {
@@ -186,7 +171,6 @@ main() {
     test ${RUN_TESTS} = yes && run_tests
     test ${RUN_TSC} = yes && run_tsc
     test ${RUN_LINT} = yes && run_lint
-    test ${RUN_ESLINT} = yes && run_eslint
     test ${RUN_FORMAT} = yes && run_format
     test ${RUN_BUILD_DEV} = yes && run_build_dev
     test ${RUN_CHECK_FORMAT} = yes && run_check_format
