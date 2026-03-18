@@ -97,9 +97,10 @@ jobs:
             - name: Formatting
               if: ${{ !cancelled() }}
               run: bazel run //:format.check
-            - name: Lint repo
-              if: ${{ !cancelled() }}
-              run: bazel lint --fixes=false ...
+            # TODO: Re-enable lint stage as soon the runtime is down
+            #- name: Lint repo
+            #  if: ${{ !cancelled() }}
+            #  run: bazel lint --fixes=false ...
             - name: Check typing
               if: ${{ !cancelled() }}
               run: bazel build --config=mypy ...
