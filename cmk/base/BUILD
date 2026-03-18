@@ -152,10 +152,13 @@ py_library(
 
 py_library(
     name = "plugins-bakery",
-    srcs = glob([
-        "cee/plugins/**/*.py",
-        "plugins/**/*.py",
-    ]),
+    srcs = glob(
+        [
+            "cee/plugins/**/*.py",
+            "plugins/**/*.py",
+        ],
+        allow_empty = True,
+    ),
     imports = ["../.."],
     visibility = [
         "//cmk:__pkg__",
