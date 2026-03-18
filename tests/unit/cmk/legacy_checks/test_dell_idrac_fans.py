@@ -10,7 +10,7 @@ from typing import Any
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Result, Service, State, StringTable
 from cmk.legacy_checks.dell_idrac_fans import (
     check_dell_idrac_fans,
     discover_dell_idrac_fans,
@@ -27,17 +27,19 @@ from cmk.legacy_checks.dell_idrac_fans import (
                 ["2", "2", "", "System Board Fan1B", "", "", "", ""],
                 ["3", "10", "", "System Board Fan2A", "", "", "", ""],
             ],
-            [("3", {})],
+            [Service(item="3")],
         ),
     ],
 )
 def test_discover_dell_idrac_fans(
-    string_table: StringTable, expected_discoveries: Sequence[tuple[str, Mapping[str, Any]]]
+    string_table: StringTable, expected_discoveries: Sequence[Service]
 ) -> None:
     """Test discovery function for dell_idrac_fans check."""
     parsed = parse_dell_idrac_fans(string_table)
     result = list(discover_dell_idrac_fans(parsed))
-    assert sorted(result) == sorted(expected_discoveries)
+    assert sorted(result, key=lambda s: s.item or "") == sorted(
+        expected_discoveries, key=lambda s: s.item or ""
+    )
 
 
 @pytest.mark.parametrize(
@@ -51,12 +53,15 @@ def test_discover_dell_idrac_fans(
                 ["2", "2", "", "System Board Fan1B", "", "", "", ""],
                 ["3", "10", "", "System Board Fan2A", "", "", "", ""],
             ],
-            [(2, "Status: FAILED, Name: System Board Fan2A")],
+            [Result(state=State.CRIT, summary="Status: FAILED, Name: System Board Fan2A")],
         ),
     ],
 )
 def test_check_dell_idrac_fans(
-    item: str, params: Mapping[str, Any], string_table: StringTable, expected_results: Sequence[Any]
+    item: str,
+    params: Mapping[str, Any],
+    string_table: StringTable,
+    expected_results: Sequence[Any],
 ) -> None:
     """Test check function for dell_idrac_fans check."""
     parsed = parse_dell_idrac_fans(string_table)

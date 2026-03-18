@@ -7,44 +7,48 @@
 from collections.abc import Mapping
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import (
-    LegacyCheckDefinition,
-    LegacyCheckResult,
-    LegacyDiscoveryResult,
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
 )
-from cmk.agent_based.v2 import SNMPTree, startswith, StringTable
-from cmk.legacy_includes.fan import check_fan
-
-check_info = {}
+from cmk.plugins.lib.fan import check_fan
 
 DELL_IDRAC_FANS_STATE_MAP = {
-    "1": (3, "OTHER"),
-    "2": (3, "UNKNOWN"),
-    "3": (0, "OK"),
-    "4": (1, "NON CRITICAL UPPER"),
-    "5": (2, "CRITICAL UPPER"),
-    "6": (2, "NON RECOVERABLE UPPER"),
-    "7": (1, "NON CRITICAL LOWER"),
-    "8": (2, "CRITICAL LOWER"),
-    "9": (2, "NON RECOVERABLE LOWER"),
-    "10": (2, "FAILED"),
+    "1": (State.UNKNOWN, "OTHER"),
+    "2": (State.UNKNOWN, "UNKNOWN"),
+    "3": (State.OK, "OK"),
+    "4": (State.WARN, "NON CRITICAL UPPER"),
+    "5": (State.CRIT, "CRITICAL UPPER"),
+    "6": (State.CRIT, "NON RECOVERABLE UPPER"),
+    "7": (State.WARN, "NON CRITICAL LOWER"),
+    "8": (State.CRIT, "CRITICAL LOWER"),
+    "9": (State.CRIT, "NON RECOVERABLE LOWER"),
+    "10": (State.CRIT, "FAILED"),
 }
 
 
-def discover_dell_idrac_fans(info: StringTable) -> LegacyDiscoveryResult:
-    for index, state, _value, _name, _warn_upper, _crit_upper, _warn_lower, _crit_lower in info:
+def discover_dell_idrac_fans(section: StringTable) -> DiscoveryResult:
+    for index, state, _value, _name, _warn_upper, _crit_upper, _warn_lower, _crit_lower in section:
         # don't discover fans with a state of other or unknown
         if DELL_IDRAC_FANS_STATE_MAP[state][1] not in ("OTHER", "UNKNOWN"):
-            yield index, {}
+            yield Service(item=index)
 
 
 def check_dell_idrac_fans(
-    item: str, params: Mapping[str, Any], info: StringTable
-) -> LegacyCheckResult:
-    for index, status, value, name, warn_upper, crit_upper, warn_lower, crit_lower in info:
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
+    for index, status, value, name, warn_upper, crit_upper, warn_lower, crit_lower in section:
         if index == item:
             state, state_readable = DELL_IDRAC_FANS_STATE_MAP[status]
-            yield state, f"Status: {state_readable}, Name: {name}"
+            yield Result(state=state, summary=f"Status: {state_readable}, Name: {name}")
             if state_readable in ("OTHER", "UNKNOWN", "FAILED"):
                 return
 
@@ -56,23 +60,29 @@ def check_dell_idrac_fans(
             else:
                 fan_params = params
 
-            yield check_fan(rpm, fan_params)
+            yield from check_fan(rpm, fan_params)
 
 
 def parse_dell_idrac_fans(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["dell_idrac_fans"] = LegacyCheckDefinition(
+snmp_section_dell_idrac_fans = SimpleSNMPSection(
     name="dell_idrac_fans",
-    parse_function=parse_dell_idrac_fans,
     detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.674.10892.5"),
     fetch=SNMPTree(
         base=".1.3.6.1.4.1.674.10892.5.4.700.12.1",
         oids=["2", "5", "6", "8", "10", "11", "12", "13"],
     ),
+    parse_function=parse_dell_idrac_fans,
+)
+
+
+check_plugin_dell_idrac_fans = CheckPlugin(
+    name="dell_idrac_fans",
     service_name="Fan %s",
     discovery_function=discover_dell_idrac_fans,
     check_function=check_dell_idrac_fans,
+    check_default_parameters={},
     check_ruleset_name="hw_fans",
 )
