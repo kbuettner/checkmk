@@ -393,7 +393,7 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
         consolidation_function: GraphConsolidationFunction,
         debug: bool,
         temperature_unit: TemperatureUnit,
-    ) -> list[GraphRecipe]:
+    ) -> Sequence[GraphRecipe]:
         row = self._get_graph_data_from_livestatus()
         if not (
             translated_metrics := translated_metrics_from_row(

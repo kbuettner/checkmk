@@ -45,7 +45,7 @@ class ExplicitGraphSpecification(GraphSpecification, frozen=True):
         consolidation_function: GraphConsolidationFunction,
         debug: bool,
         temperature_unit: TemperatureUnit,
-    ) -> list[GraphRecipe]:
+    ) -> Sequence[GraphRecipe]:
         return [
             GraphRecipe(
                 title=self.title,
