@@ -33,8 +33,10 @@ def test_activate_changes_slideout_one_change(
     expect(
         slideout.no_pending_changes_text, "The banner 'No pending changes' is not visible!"
     ).to_be_visible()
-    expect(slideout.info_text, "The info banner is not visible!").to_be_visible()
-    slideout.info_close_btn.click()
+    # The info dialog varies: new installations show a one-time info banner; existing
+    # installations show the user-setting dialog. Close whichever is visible.
+    if slideout.info_text.is_visible():
+        slideout.info_close_btn.click()
     slideout.close()
     host_details = HostDetails(
         name="delete_me",

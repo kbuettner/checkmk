@@ -79,11 +79,19 @@ class ActivateChangesSlideout(LocatorHelper):
 
     @property
     def info_text(self) -> Locator:
-        return self.slideout.get_by_text("Changes are saved without affecting")
+        # New installations show a one-time info banner; existing installations show the
+        # user-setting dialog ("Working with a complex environment?"). Match either.
+        return self.slideout.get_by_text("Changes are saved without affecting").or_(
+            self.slideout.get_by_role("heading", name="Working with a complex environment?")
+        )
 
     @property
     def info_close_btn(self) -> Locator:
-        return self.slideout.get_by_role("button", name="Do not show again")
+        # "Do not show again" closes the new-install info banner; "Keep quick activation"
+        # dismisses the user-setting dialog.
+        return self.slideout.get_by_role("button", name="Do not show again").or_(
+            self.slideout.get_by_role("button", name="Keep quick activation")
+        )
 
     @property
     def sites_section(self) -> Locator:
@@ -181,7 +189,9 @@ class ActivateChangesSlideout(LocatorHelper):
         expect(
             self.slideout.get_by_role(
                 "heading",
-                name=f"Successfully activated {expected_changes} changes",
+                name=re.compile(
+                    rf"Successfully activated {expected_changes} pending changes on \d+ sites?"
+                ),
             )
         ).to_be_visible()
 

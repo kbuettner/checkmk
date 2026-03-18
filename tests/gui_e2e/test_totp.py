@@ -63,6 +63,10 @@ def test_totp(test_site: Site, dashboard_page: MainDashboard, credentials: CmkCr
     dashboard_page.page.get_by_role("spinbutton", name="OTP Digit 5").fill("1")
     dashboard_page.page.get_by_role("spinbutton", name="OTP Digit 6").fill("1")
 
+    # Wait for the async TOTP verification to complete and the error message to appear
+    expect(
+        dashboard_page.page.get_by_text("Incorrect or expired authenticator code")
+    ).to_be_visible()
     assert test_site.read_file("var/check_mk/web/cmkadmin/num_failed_logins.mk") == "1\n"
 
     for x, i in enumerate(otp_value):
