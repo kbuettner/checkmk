@@ -3,29 +3,39 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
+from collections.abc import Mapping
+from typing import Any
 
-
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, StringTable
+from cmk.agent_based.v1 import check_levels
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    StringTable,
+)
 from cmk.plugins.domino.lib import DETECT
 
-check_info = {}
+
+def discover_domino_users(section: StringTable) -> DiscoveryResult:
+    if section:
+        yield Service()
 
 
-def discover_domino_users(info):
-    if info:
-        yield None, {}
-
-
-def check_domino_users(_no_item, params, info):
+def check_domino_users(params: Mapping[str, Any], section: StringTable) -> CheckResult:
     try:
-        users = int(info[0][0])
+        users = int(section[0][0])
     except IndexError:
         return
 
-    yield check_levels(
-        users, "users", params["levels"], human_readable_func=str, infoname="Domino users on server"
+    yield from check_levels(
+        users,
+        levels_upper=params["levels"],
+        metric_name="users",
+        render_func=str,
+        label="Domino users on server",
     )
 
 
@@ -33,14 +43,19 @@ def parse_domino_users(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["domino_users"] = LegacyCheckDefinition(
+snmp_section_domino_users = SimpleSNMPSection(
     name="domino_users",
-    parse_function=parse_domino_users,
     detect=DETECT,
     fetch=SNMPTree(
         base=".1.3.6.1.4.1.334.72.1.1.6.3",
         oids=["6"],
     ),
+    parse_function=parse_domino_users,
+)
+
+
+check_plugin_domino_users = CheckPlugin(
+    name="domino_users",
     service_name="Domino Users",
     discovery_function=discover_domino_users,
     check_function=check_domino_users,
