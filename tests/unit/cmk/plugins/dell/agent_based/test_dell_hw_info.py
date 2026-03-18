@@ -8,7 +8,7 @@ from datetime import UTC
 from cmk.agent_based.v2 import (
     Attributes,
 )
-from cmk.plugins.collection.agent_based.dell_hw_info import (
+from cmk.plugins.dell.agent_based.dell_hw_info import (
     _inventory_testable,
     parse_dell_hw_info,
     Section,

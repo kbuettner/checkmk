@@ -4,7 +4,7 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.plugins.collection.agent_based.dell_om_processors import (
+from cmk.plugins.dell.agent_based.dell_om_processors import (
     check_dell_om_processors,
     discover_dell_om_processors,
     parse_dell_om_processors,
