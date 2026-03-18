@@ -88,6 +88,11 @@ common:ci --memory_profile=bazel-memory.profile
 common:ci --generate_json_trace_profile
 common:ci --profile=trace_profile.json
 common:ci --//bazel/toolchains/cc/gcc/local:gcc_path=opt
+# Limit JVM thread pools to match cgroup CPU limit (nproc reports host CPUs, not cgroup)
+# --host_jvm_args is a startup option, see https://bazel.build/run/bazelrc
+startup:ci --host_jvm_args=-XX:ActiveProcessorCount=8
+startup:ci --host_jvm_args=-XX:ParallelGCThreads=4
+startup:ci --host_jvm_args=-XX:ConcGCThreads=2
 # the onwards set jobs and CPU limits shall be aligned with the k8s pod limits
 common:ci --jobs=6
 common:ci --loading_phase_threads=4
