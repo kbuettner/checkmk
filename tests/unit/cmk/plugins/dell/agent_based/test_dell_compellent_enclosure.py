@@ -10,7 +10,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Result, State, StringTable
-from cmk.legacy_checks.dell_compellent_enclosure import (
+from cmk.plugins.dell.agent_based.dell_compellent_enclosure import (
     check_dell_compellent_enclosure,
     parse_dell_compellent_enclosure,
 )
