@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-# ruff: noqa: S105, S310, PLC0415, PLW2901
+# Copyright (C) 2026 Checkmk GmbH - License: GNU General Public License v2
+# This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
+# conditions defined in the file COPYING, which is part of this source code package.
 """Self-contained script to create a Jira ticket in the CMK project.
 
 Usage:
@@ -45,9 +47,7 @@ def _connect_jira(jira_server: str, jira_api_key: str) -> Any:
     from jira import JIRA
 
     try:
-        headers: dict[str, str] = JIRA.DEFAULT_OPTIONS["headers"].copy()  # type: ignore[attr-defined]
-        headers["Authorization"] = f"Bearer {jira_api_key}"
-        return JIRA(server=jira_server, options={"headers": headers})
+        return JIRA(server=jira_server, token_auth=jira_api_key)
     except Exception:
         raise ConnectionError("Jira connection could not be established")
 
@@ -61,8 +61,9 @@ def _fetch_compass_json(url: str) -> list[dict[str, Any]]:
     """Fetch the compass JSON from a URL. Exits if the endpoint is unreachable."""
     req = urllib.request.Request(url, headers={"Accept": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            return json.loads(resp.read().decode("utf-8"))
+        with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310
+            result: list[dict[str, Any]] = json.loads(resp.read().decode("utf-8"))
+            return result
     except Exception as e:
         print(f"ERROR: Cannot fetch compass JSON from {url}: {e}", file=sys.stderr)
         sys.exit(1)
