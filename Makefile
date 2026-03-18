@@ -202,3 +202,9 @@ check_python_requirements:
 # .venv is PHONY because the dependencies are resolved by bazel
 .venv: check_python_requirements
 	CC="gcc" bazel run //:create_venv
+
+test-github-actions:
+	EDITION=community bazel run //:format.check
+	EDITION=community bazel lint --fixes=false ...
+	EDITION=community make -C tests test-unit
+	bazel build --config=mypy ...
