@@ -113,6 +113,7 @@ def test_check_bazel_cache_disk_rate_increases_from_previous_value(section: bc.S
     )
 
 
+@time_machine.travel(TEST_TIME_2024)
 def test_check_bazel_cache_has_correct_timestamp(section: bc.Section) -> None:
     with time_machine.travel(TEST_TIME_2024):
         temp = list(bc.check_bazel_cache_impl(section, {}, 0))
