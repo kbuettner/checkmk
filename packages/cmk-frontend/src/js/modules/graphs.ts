@@ -23,7 +23,6 @@ import {
 } from './utils'
 
 //types from cmk/utils/type_defs/_misc.py:81
-type TimeRange = [number, number]
 export type TimeSeriesValue = number | null
 type SizePT = number
 
@@ -44,7 +43,7 @@ interface GraphRenderConfig {
 }
 
 interface GraphDataRange {
-  time_range: TimeRange
+  time_range: [number, number]
 }
 
 interface AjaxContext {
@@ -97,7 +96,7 @@ interface TimeAxisLabel {
 
 interface TimeAxis {
   labels: TimeAxisLabel[]
-  range: TimeRange
+  range: [number, number]
   //dynamic
   pixels_per_second: number
 }
