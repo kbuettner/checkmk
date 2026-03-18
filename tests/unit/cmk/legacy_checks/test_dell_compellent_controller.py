@@ -4,59 +4,53 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 # mypy: disable-error-code="misc"
-# mypy: disable-error-code="no-untyped-call"
 
-from collections.abc import Mapping, Sequence
-from typing import Any
+from collections.abc import Sequence
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Result, State
 from cmk.legacy_checks.dell_compellent_controller import (
     check_dell_compellent_controller,
     parse_dell_compellent_controller,
 )
 
+_STRING_TABLE = [
+    ["1", "1", "Foo", "1.2.3.4", "Model"],
+    ["2", "999", "Bar", "5.6.7.8", "Model"],
+    ["10", "2", "Baz", "1.3.5.7", "Model"],
+]
+
 
 @pytest.mark.parametrize(
-    "item, params, string_table, expected_results",
+    "item, expected_results",
     [
         (
             "1",
-            {},
             [
-                ["1", "1", "Foo", "1.2.3.4", "Model"],
-                ["2", "999", "Bar", "5.6.7.8", "Model"],
-                ["10", "2", "Baz", "1.3.5.7", "Model"],
+                Result(state=State.OK, summary="Status: UP"),
+                Result(state=State.OK, summary="Model: Model, Name: Foo, Address: 1.2.3.4"),
             ],
-            [(0, "Status: UP"), (0, "Model: Model, Name: Foo, Address: 1.2.3.4")],
         ),
         (
             "2",
-            {},
             [
-                ["1", "1", "Foo", "1.2.3.4", "Model"],
-                ["2", "999", "Bar", "5.6.7.8", "Model"],
-                ["10", "2", "Baz", "1.3.5.7", "Model"],
+                Result(state=State.UNKNOWN, summary="Status: unknown[999]"),
+                Result(state=State.OK, summary="Model: Model, Name: Bar, Address: 5.6.7.8"),
             ],
-            [(3, "Status: unknown[999]"), (0, "Model: Model, Name: Bar, Address: 5.6.7.8")],
         ),
         (
             "10",
-            {},
             [
-                ["1", "1", "Foo", "1.2.3.4", "Model"],
-                ["2", "999", "Bar", "5.6.7.8", "Model"],
-                ["10", "2", "Baz", "1.3.5.7", "Model"],
+                Result(state=State.CRIT, summary="Status: DOWN"),
+                Result(state=State.OK, summary="Model: Model, Name: Baz, Address: 1.3.5.7"),
             ],
-            [(2, "Status: DOWN"), (0, "Model: Model, Name: Baz, Address: 1.3.5.7")],
         ),
     ],
 )
 def test_check_dell_compellent_controller(
-    item: str, params: Mapping[str, Any], string_table: StringTable, expected_results: Sequence[Any]
+    item: str,
+    expected_results: Sequence[Result],
 ) -> None:
-    """Test check function for dell_compellent_controller check."""
-    parsed = parse_dell_compellent_controller(string_table)
-    result = list(check_dell_compellent_controller(item, params, parsed))
-    assert result == expected_results
+    parsed = parse_dell_compellent_controller(_STRING_TABLE)
+    assert list(check_dell_compellent_controller(item, parsed)) == expected_results

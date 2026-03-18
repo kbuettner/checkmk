@@ -3,16 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, StringTable
-from cmk.legacy_includes import dell_compellent
-from cmk.plugins.dell.lib import DETECT_DELL_COMPELLENT
-
-check_info = {}
-
 # example output
 # .1.3.6.1.4.1.674.11000.2000.500.1.2.13.1.2.1 1
 # .1.3.6.1.4.1.674.11000.2000.500.1.2.13.1.2.2 2
@@ -26,27 +16,51 @@ check_info = {}
 # .1.3.6.1.4.1.674.11000.2000.500.1.2.13.1.7.2 "CT_SC4020"
 
 
-def check_dell_compellent_controller(item, _no_params, info):
-    for number, status, name, addr, model in info:
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
+from cmk.plugins.dell.lib import compellent_dev_state_map, DETECT_DELL_COMPELLENT
+
+
+def discover_dell_compellent_controller(section: StringTable) -> DiscoveryResult:
+    for number, *_rest in section:
+        yield Service(item=number)
+
+
+def check_dell_compellent_controller(item: str, section: StringTable) -> CheckResult:
+    for number, status, name, addr, model in section:
         if number == item:
-            state, state_readable = dell_compellent.dev_state_map(status)
-            yield state, "Status: %s" % state_readable
-            yield 0, f"Model: {model}, Name: {name}, Address: {addr}"
+            state, state_readable = compellent_dev_state_map(status)
+            yield Result(state=state, summary=f"Status: {state_readable}")
+            yield Result(state=State.OK, summary=f"Model: {model}, Name: {name}, Address: {addr}")
 
 
 def parse_dell_compellent_controller(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["dell_compellent_controller"] = LegacyCheckDefinition(
+snmp_section_dell_compellent_controller = SimpleSNMPSection(
     name="dell_compellent_controller",
-    parse_function=parse_dell_compellent_controller,
     detect=DETECT_DELL_COMPELLENT,
     fetch=SNMPTree(
         base=".1.3.6.1.4.1.674.11000.2000.500.1.2.13.1",
         oids=["2", "3", "4", "5", "7"],
     ),
+    parse_function=parse_dell_compellent_controller,
+)
+
+
+check_plugin_dell_compellent_controller = CheckPlugin(
+    name="dell_compellent_controller",
     service_name="Controller %s",
-    discovery_function=dell_compellent.discover,
+    discovery_function=discover_dell_compellent_controller,
     check_function=check_dell_compellent_controller,
 )
