@@ -11,7 +11,7 @@ from typing import Any
 import pytest
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.dell_idrac_fans import (
+from cmk.plugins.dell.agent_based.dell_idrac_fans import (
     check_dell_idrac_fans,
     discover_dell_idrac_fans,
     parse_dell_idrac_fans,
