@@ -4,6 +4,7 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 import datetime
+import json
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -19,13 +20,36 @@ TEST_TIME_2024 = datetime.datetime(2024, 4, 30, 10, 2, 25, tzinfo=TEST_TIMEZONE)
 
 @pytest.fixture(scope="module", name="section")
 def _section() -> bc.Section:
-    return bc.parse_bazel_cache(
-        [
-            [
-                '{"bazel_remote_azblob_cache_hits": "0", "bazel_remote_azblob_cache_misses": "0", "bazel_remote_disk_cache_evicted_bytes_total": "0", "bazel_remote_disk_cache_logical_bytes": "6.66901065728e+11", "bazel_remote_disk_cache_longest_item_idle_time_seconds": "5.574440756946148e+06", "bazel_remote_disk_cache_overwritten_bytes_total": "24401", "bazel_remote_disk_cache_size_bytes": "2.8304451584e+11", "bazel_remote_http_cache_hits": "0", "bazel_remote_http_cache_misses": "0", "bazel_remote_incoming_requests_total_kind_ac_method_get_status_hit": "56728", "bazel_remote_incoming_requests_total_kind_ac_method_get_status_miss": "1544", "bazel_remote_incoming_requests_total_kind_cas_method_contains_status_hit": "767062", "bazel_remote_incoming_requests_total_kind_cas_method_contains_status_miss": "234067", "bazel_remote_incoming_requests_total_kind_cas_method_get_status_hit": "6.874294e+06", "bazel_remote_s3_cache_hits": "0", "bazel_remote_s3_cache_misses": "0", "process_cpu_seconds_total": "7810.13", "process_max_fds": "1.048576e+06", "process_open_fds": "12", "process_resident_memory_bytes": "7.968219136e+09", "process_start_time_seconds": "1.71402738122e+09", "process_virtual_memory_bytes": "5.8050449408e+10", "process_virtual_memory_max_bytes": "1.8446744073709552e+19", "promhttp_metric_handler_requests_in_flight": "1", "promhttp_metric_handler_requests_total_code_200": "690", "promhttp_metric_handler_requests_total_code_500": "0", "promhttp_metric_handler_requests_total_code_503": "0"}'
-            ]
-        ]
-    )
+    payload = {
+        "bazel_remote_azblob_cache_hits": "0",
+        "bazel_remote_azblob_cache_misses": "0",
+        "bazel_remote_disk_cache_evicted_bytes_total": "0",
+        "bazel_remote_disk_cache_logical_bytes": "6.66901065728e+11",
+        "bazel_remote_disk_cache_longest_item_idle_time_seconds": "5.574440756946148e+06",
+        "bazel_remote_disk_cache_overwritten_bytes_total": "24401",
+        "bazel_remote_disk_cache_size_bytes": "2.8304451584e+11",
+        "bazel_remote_http_cache_hits": "0",
+        "bazel_remote_http_cache_misses": "0",
+        "bazel_remote_incoming_requests_total_kind_ac_method_get_status_hit": "56728",
+        "bazel_remote_incoming_requests_total_kind_ac_method_get_status_miss": "1544",
+        "bazel_remote_incoming_requests_total_kind_cas_method_contains_status_hit": "767062",
+        "bazel_remote_incoming_requests_total_kind_cas_method_contains_status_miss": "234067",
+        "bazel_remote_incoming_requests_total_kind_cas_method_get_status_hit": "6.874294e+06",
+        "bazel_remote_s3_cache_hits": "0",
+        "bazel_remote_s3_cache_misses": "0",
+        "process_cpu_seconds_total": "7810.13",
+        "process_max_fds": "1.048576e+06",
+        "process_open_fds": "12",
+        "process_resident_memory_bytes": "7.968219136e+09",
+        "process_start_time_seconds": "1.71402738122e+09",
+        "process_virtual_memory_bytes": "5.8050449408e+10",
+        "process_virtual_memory_max_bytes": "1.8446744073709552e+19",
+        "promhttp_metric_handler_requests_in_flight": "1",
+        "promhttp_metric_handler_requests_total_code_200": "690",
+        "promhttp_metric_handler_requests_total_code_500": "0",
+        "promhttp_metric_handler_requests_total_code_503": "0",
+    }
+    return bc.parse_bazel_cache([[json.dumps(payload)]])
 
 
 def test_discover_bazel_cache(section: bc.Section) -> None:

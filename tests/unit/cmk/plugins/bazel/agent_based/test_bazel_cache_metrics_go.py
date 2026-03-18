@@ -4,6 +4,7 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 import datetime
+import json
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -19,13 +20,42 @@ TEST_TIME_2024 = datetime.datetime(2024, 4, 30, 10, 2, 25, tzinfo=TEST_TIMEZONE)
 
 @pytest.fixture(scope="module", name="section")
 def _section() -> bcmg.Section:
-    return bcmg.parse_bazel_cache_go(
-        [
-            [
-                '{"go_gc_duration_seconds_count": "241", "go_gc_duration_seconds_quantile_0": "2.556e-05", "go_gc_duration_seconds_quantile_0_25": "0.000118884", "go_gc_duration_seconds_quantile_0_5": "0.000279329", "go_gc_duration_seconds_quantile_0_75": "0.000566935", "go_gc_duration_seconds_quantile_1": "0.006215666", "go_gc_duration_seconds_sum": "0.109311885", "go_goroutines": "13", "go_info": "1", "go_memstats_alloc_bytes": "6.017385136e+09", "go_memstats_alloc_bytes_total": "1.069483667848e+12", "go_memstats_buck_hash_sys_bytes": "2.157607e+06", "go_memstats_frees_total": "8.230473771e+09", "go_memstats_gc_sys_bytes": "1.13489564e+09", "go_memstats_heap_alloc_bytes": "6.017385136e+09", "go_memstats_heap_idle_bytes": "4.5727956992e+10", "go_memstats_heap_inuse_bytes": "6.433456128e+09", "go_memstats_heap_objects": "8.2156623e+07", "go_memstats_heap_released_bytes": "4.5536632832e+10", "go_memstats_heap_sys_bytes": "5.216141312e+10", "go_memstats_last_gc_time_seconds": "1.7140514771001196e+09", "go_memstats_lookups_total": "0", "go_memstats_mallocs_total": "8.312630394e+09", "go_memstats_mcache_inuse_bytes": "4800", "go_memstats_mcache_sys_bytes": "15600", "go_memstats_mspan_inuse_bytes": "9.93192e+07", "go_memstats_mspan_sys_bytes": "2.249712e+08", "go_memstats_next_gc_bytes": "1.1127494592e+10", "go_memstats_other_sys_bytes": "2.0319041e+07", "go_memstats_stack_inuse_bytes": "7.20896e+06", "go_memstats_stack_sys_bytes": "7.20896e+06", "go_memstats_sys_bytes": "5.3550981168e+10", "go_threads": "205"}'
-            ]
-        ]
-    )
+    payload = {
+        "go_gc_duration_seconds_count": "241",
+        "go_gc_duration_seconds_quantile_0": "2.556e-05",
+        "go_gc_duration_seconds_quantile_0_25": "0.000118884",
+        "go_gc_duration_seconds_quantile_0_5": "0.000279329",
+        "go_gc_duration_seconds_quantile_0_75": "0.000566935",
+        "go_gc_duration_seconds_quantile_1": "0.006215666",
+        "go_gc_duration_seconds_sum": "0.109311885",
+        "go_goroutines": "13",
+        "go_info": "1",
+        "go_memstats_alloc_bytes": "6.017385136e+09",
+        "go_memstats_alloc_bytes_total": "1.069483667848e+12",
+        "go_memstats_buck_hash_sys_bytes": "2.157607e+06",
+        "go_memstats_frees_total": "8.230473771e+09",
+        "go_memstats_gc_sys_bytes": "1.13489564e+09",
+        "go_memstats_heap_alloc_bytes": "6.017385136e+09",
+        "go_memstats_heap_idle_bytes": "4.5727956992e+10",
+        "go_memstats_heap_inuse_bytes": "6.433456128e+09",
+        "go_memstats_heap_objects": "8.2156623e+07",
+        "go_memstats_heap_released_bytes": "4.5536632832e+10",
+        "go_memstats_heap_sys_bytes": "5.216141312e+10",
+        "go_memstats_last_gc_time_seconds": "1.7140514771001196e+09",
+        "go_memstats_lookups_total": "0",
+        "go_memstats_mallocs_total": "8.312630394e+09",
+        "go_memstats_mcache_inuse_bytes": "4800",
+        "go_memstats_mcache_sys_bytes": "15600",
+        "go_memstats_mspan_inuse_bytes": "9.93192e+07",
+        "go_memstats_mspan_sys_bytes": "2.249712e+08",
+        "go_memstats_next_gc_bytes": "1.1127494592e+10",
+        "go_memstats_other_sys_bytes": "2.0319041e+07",
+        "go_memstats_stack_inuse_bytes": "7.20896e+06",
+        "go_memstats_stack_sys_bytes": "7.20896e+06",
+        "go_memstats_sys_bytes": "5.3550981168e+10",
+        "go_threads": "205",
+    }
+    return bcmg.parse_bazel_cache_go([[json.dumps(payload)]])
 
 
 def test_discover_bazel_cache(section: bcmg.Section) -> None:
