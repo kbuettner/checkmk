@@ -7231,10 +7231,6 @@ msgid "Appliance uplink statuses"
 msgstr "Estado de Apache"
 
 #, fuzzy
-msgid "Appliance utilization"
-msgstr "Utilización del codificador"
-
-#, fuzzy
 msgid "Appliances"
 msgstr "Electrodomésticos"
 
@@ -14169,16 +14165,16 @@ msgid "Cisco Meraki appliance VPNs"
 msgstr "Mostrar el estado del servicio"
 
 #, fuzzy
+msgid "Cisco Meraki appliance performance"
+msgstr "Automatización de Checkmk"
+
+#, fuzzy
 msgid "Cisco Meraki appliance performance utilization"
 msgstr "Automatización de Checkmk"
 
 #, fuzzy
 msgid "Cisco Meraki appliance uplinks"
 msgstr "Cisco Meraki"
-
-#, fuzzy
-msgid "Cisco Meraki appliance utilization"
-msgstr "Mostrar el estado del servicio"
 
 #, fuzzy
 msgid "Cisco Meraki device status"
@@ -14201,7 +14197,7 @@ msgid "Cisco Meraki switch port statuses"
 msgstr "Mostrar el estado del servicio"
 
 #, fuzzy
-msgid "Cisco Meraki wireless device statuses"
+msgid "Cisco Meraki wireless SSID statuses"
 msgstr "Mostrar el estado del servicio"
 
 #, fuzzy
@@ -14409,7 +14405,7 @@ msgstr ""
 
 msgid ""
 "Click the \"Add Prometheus configuration\" button to start setting up your "
-"first Prometheus scraper configuration."
+"first Prometheus configuration."
 msgstr ""
 
 msgid ""
@@ -38427,9 +38423,10 @@ msgstr ""
 "clave:valor<br><br>Checkmk no realiza ninguna validación en las etiquetas "
 "que utilice."
 
+#, fuzzy
 msgid ""
 "Labels need to be in the format \"[KEY]:[VALUE]\". For example "
-"\"os:windows\"."
+"\"os:windows\" or \"net:ip:v4\"."
 msgstr ""
 "Las etiquetas deben tener el formato \"[CLAVE]:[VALOR]\". Por ejemplo "
 "\"os:windows\"."
@@ -55264,15 +55261,6 @@ msgstr "Leer average exe"
 
 msgid "REST API"
 msgstr "API REST"
-
-msgid "REST API documentation"
-msgstr "Documentación de la API REST"
-
-msgid "REST API interactive GUI"
-msgstr "GUI interactiva de la API REST"
-
-msgid "REST API introduction"
-msgstr "Introducción a la API REST"
 
 msgid "REST API: Use HTTP ETags for optimistic locking"
 msgstr "API REST: Utiliza las etiquetas HTTP para el bloqueo optimista"
@@ -96843,6 +96831,14 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "A relay alias is required"
+msgstr "Expresión regular que se espera en el contenido"
+
+#, fuzzy
+msgid "This relay alias is already in use"
+msgstr "Este ID de regla ya está utilizado."
+
+#, fuzzy
 msgid "Name the relay"
 msgstr "Nombre del Proxy"
 
@@ -97797,6 +97793,23 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Appliance utilization"
+#~ msgstr "Utilización del codificador"
+
+#, fuzzy
+#~ msgid "Cisco Meraki appliance utilization"
+#~ msgstr "Mostrar el estado del servicio"
+
+#~ msgid "REST API documentation"
+#~ msgstr "Documentación de la API REST"
+
+#~ msgid "REST API interactive GUI"
+#~ msgstr "GUI interactiva de la API REST"
+
+#~ msgid "REST API introduction"
+#~ msgstr "Introducción a la API REST"
 
 #, fuzzy
 #~ msgid "Add Prometheus scraping configuration"

@@ -7165,10 +7165,6 @@ msgid "Appliance uplink statuses"
 msgstr "Apache status"
 
 #, fuzzy
-msgid "Appliance utilization"
-msgstr "Encodergebruik"
-
-#, fuzzy
 msgid "Appliances"
 msgstr "Toestel"
 
@@ -14062,16 +14058,16 @@ msgid "Cisco Meraki appliance VPNs"
 msgstr "Toon dienst status"
 
 #, fuzzy
+msgid "Cisco Meraki appliance performance"
+msgstr "Checkmk automatisering"
+
+#, fuzzy
 msgid "Cisco Meraki appliance performance utilization"
 msgstr "Checkmk automatisering"
 
 #, fuzzy
 msgid "Cisco Meraki appliance uplinks"
 msgstr "Cisco Meraki"
-
-#, fuzzy
-msgid "Cisco Meraki appliance utilization"
-msgstr "Toon dienst status"
 
 #, fuzzy
 msgid "Cisco Meraki device status"
@@ -14094,7 +14090,7 @@ msgid "Cisco Meraki switch port statuses"
 msgstr "Toon dienst status"
 
 #, fuzzy
-msgid "Cisco Meraki wireless device statuses"
+msgid "Cisco Meraki wireless SSID statuses"
 msgstr "Toon dienst status"
 
 #, fuzzy
@@ -14301,7 +14297,7 @@ msgstr ""
 
 msgid ""
 "Click the \"Add Prometheus configuration\" button to start setting up your "
-"first Prometheus scraper configuration."
+"first Prometheus configuration."
 msgstr ""
 
 msgid ""
@@ -38145,9 +38141,10 @@ msgstr ""
 "key:value<br><br>Checkmk voert geen validatie uit op de labels die u "
 "gebruikt."
 
+#, fuzzy
 msgid ""
 "Labels need to be in the format \"[KEY]:[VALUE]\". For example "
-"\"os:windows\"."
+"\"os:windows\" or \"net:ip:v4\"."
 msgstr ""
 "Labels moeten zijn in het formaat \"[KEY]:[VALUE]\". Bijvoorbeeld "
 "\"os:windows\"."
@@ -54831,15 +54828,6 @@ msgstr "Lees gemiddelde exe"
 
 msgid "REST API"
 msgstr "REST-API"
-
-msgid "REST API documentation"
-msgstr "REST API documentatie"
-
-msgid "REST API interactive GUI"
-msgstr "REST API interactieve GUI"
-
-msgid "REST API introduction"
-msgstr "REST API inleiding"
 
 msgid "REST API: Use HTTP ETags for optimistic locking"
 msgstr "REST API: Gebruik HTTP ETags voor optimistische vergrendeling"
@@ -96101,6 +96089,14 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "A relay alias is required"
+msgstr "Reguliere uitdrukking te verwachten in de inhoud"
+
+#, fuzzy
+msgid "This relay alias is already in use"
+msgstr "Deze regel ID wordt al gebruikt."
+
+#, fuzzy
 msgid "Name the relay"
 msgstr "Naam van de gevolmachtigde"
 
@@ -97054,6 +97050,23 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Appliance utilization"
+#~ msgstr "Encodergebruik"
+
+#, fuzzy
+#~ msgid "Cisco Meraki appliance utilization"
+#~ msgstr "Toon dienst status"
+
+#~ msgid "REST API documentation"
+#~ msgstr "REST API documentatie"
+
+#~ msgid "REST API interactive GUI"
+#~ msgstr "REST API interactieve GUI"
+
+#~ msgid "REST API introduction"
+#~ msgstr "REST API inleiding"
 
 #, fuzzy
 #~ msgid "Add Prometheus scraping configuration"

@@ -6803,10 +6803,6 @@ msgstr "アプライアンスパフォーマンス"
 msgid "Appliance uplink statuses"
 msgstr "アプライアンスアップリンクステータス"
 
-#, fuzzy
-msgid "Appliance utilization"
-msgstr "アプライアンス機器の利用状況"
-
 msgid "Appliances"
 msgstr "アプライアンス"
 
@@ -13107,14 +13103,15 @@ msgid "Cisco Meraki appliance VPNs"
 msgstr "Cisco Meraki アプライアンスVPN"
 
 #, fuzzy
+msgid "Cisco Meraki appliance performance"
+msgstr "Checkmkアプライアンス情報"
+
+#, fuzzy
 msgid "Cisco Meraki appliance performance utilization"
 msgstr "Checkmkアプライアンス情報"
 
 msgid "Cisco Meraki appliance uplinks"
 msgstr "Cisco Meraki アプライアンスアップリンク"
-
-msgid "Cisco Meraki appliance utilization"
-msgstr "Cisco Meraki アプライアンス使用率"
 
 msgid "Cisco Meraki device status"
 msgstr "Cisco Meraki デバイスステータス"
@@ -13131,7 +13128,8 @@ msgstr "Cisco Meraki power supply"
 msgid "Cisco Meraki switch port statuses"
 msgstr "Cisco Meraki スイッチポートステータス"
 
-msgid "Cisco Meraki wireless device statuses"
+#, fuzzy
+msgid "Cisco Meraki wireless SSID statuses"
 msgstr "Cisco Meraki ワイヤレスデバイスステータス"
 
 msgid "Cisco Nexus Supervisor memory usage"
@@ -13333,7 +13331,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "Click the \"Add Prometheus configuration\" button to start setting up your "
-"first Prometheus scraper configuration."
+"first Prometheus configuration."
 msgstr ""
 "「Prometheusスクレイパー設定を追加」ボタンをクリックして、最初のPrometheusス"
 "クレイパー設定のセットアップを開始してください。"
@@ -35718,9 +35716,10 @@ msgstr ""
 "key:value<br><br>キーにも値にも「:」は使用できません。Checkmkは、使用するラベ"
 "ルに対して他のバリデーションは行いません。"
 
+#, fuzzy
 msgid ""
 "Labels need to be in the format \"[KEY]:[VALUE]\". For example "
-"\"os:windows\"."
+"\"os:windows\" or \"net:ip:v4\"."
 msgstr ""
 "ラベルは\"[KEY]:[VALUE]\"という形式である必要があります。例えば、"
 "\"os:windows \"のように。"
@@ -51440,15 +51439,6 @@ msgstr "RAM使用量（平均）"
 
 msgid "REST API"
 msgstr "REST API"
-
-msgid "REST API documentation"
-msgstr "REST API ドキュメント"
-
-msgid "REST API interactive GUI"
-msgstr "RESTAPIインタラクティブGUI"
-
-msgid "REST API introduction"
-msgstr "REST API紹介"
 
 msgid "REST API: Use HTTP ETags for optimistic locking"
 msgstr "REST API: 楽観的ロックにHTTP Etags を使用する"
@@ -90785,6 +90775,14 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "A relay alias is required"
+msgstr "正規表現が必要"
+
+#, fuzzy
+msgid "This relay alias is already in use"
+msgstr "このルールIDはすでに使用されています。"
+
+#, fuzzy
 msgid "Name the relay"
 msgstr "プロキシの名前"
 
@@ -91719,6 +91717,22 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Appliance utilization"
+#~ msgstr "アプライアンス機器の利用状況"
+
+#~ msgid "Cisco Meraki appliance utilization"
+#~ msgstr "Cisco Meraki アプライアンス使用率"
+
+#~ msgid "REST API documentation"
+#~ msgstr "REST API ドキュメント"
+
+#~ msgid "REST API interactive GUI"
+#~ msgstr "RESTAPIインタラクティブGUI"
+
+#~ msgid "REST API introduction"
+#~ msgstr "REST API紹介"
 
 #, fuzzy
 #~ msgid "Add Prometheus scraping configuration"
