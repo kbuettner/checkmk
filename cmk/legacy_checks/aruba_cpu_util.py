@@ -3,19 +3,25 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-call"
+import time
+from collections.abc import Mapping
+from typing import TypedDict
 
-from collections.abc import Iterable, Mapping, Sequence
-from typing import Any
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    StringTable,
+)
+from cmk.plugins.lib.cpu_util import check_cpu_util
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition, LegacyCheckResult
-from cmk.agent_based.v2 import SNMPTree, startswith
-from cmk.legacy_includes.cpu_util import check_cpu_util
 
-check_info = {}
-
-
-def parse_aruba_cpu_util(string_table: Sequence[Sequence[str]]) -> dict[str, float]:
+def parse_aruba_cpu_util(string_table: StringTable) -> dict[str, float]:
     parsed: dict[str, float] = {}
     for description, raw_cpu_util in string_table:
         try:
@@ -25,24 +31,34 @@ def parse_aruba_cpu_util(string_table: Sequence[Sequence[str]]) -> dict[str, flo
     return parsed
 
 
+class ArubaCpuUtilParams(TypedDict, total=False):
+    levels: tuple[float, float]
+    average: int
+
+
 # no get_parsed_item_data because the cpu utilization can be exactly 0 for some devices, which would
 # result in "UNKN - Item not found in monitoring data", because parsed[item] evaluates to False
 def check_aruba_cpu_util(
-    item: str, params: Mapping[str, Any], parsed: Mapping[str, float]
-) -> LegacyCheckResult:
-    measured_cpu_util = parsed.get(item)
+    item: str, params: ArubaCpuUtilParams, section: Mapping[str, float]
+) -> CheckResult:
+    measured_cpu_util = section.get(item)
     if measured_cpu_util is None:
         return
-    yield from check_cpu_util(measured_cpu_util, params)
+    yield from check_cpu_util(
+        util=measured_cpu_util,
+        params=params,
+        value_store=get_value_store(),
+        this_time=time.time(),
+    )
 
 
 def discover_aruba_cpu_util(
     section: Mapping[str, float],
-) -> Iterable[tuple[str, dict[str, Any]]]:
-    yield from ((item, {}) for item in section)
+) -> DiscoveryResult:
+    yield from (Service(item=item) for item in section)
 
 
-check_info["aruba_cpu_util"] = LegacyCheckDefinition(
+snmp_section_aruba_cpu_util = SimpleSNMPSection(
     name="aruba_cpu_util",
     detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.14823"),
     fetch=SNMPTree(
@@ -50,6 +66,11 @@ check_info["aruba_cpu_util"] = LegacyCheckDefinition(
         oids=["2", "3"],
     ),
     parse_function=parse_aruba_cpu_util,
+)
+
+
+check_plugin_aruba_cpu_util = CheckPlugin(
+    name="aruba_cpu_util",
     service_name="CPU utilization %s",
     discovery_function=discover_aruba_cpu_util,
     check_function=check_aruba_cpu_util,
