@@ -310,7 +310,7 @@ Edit werk: werk edit [ID]
 
 ## Important Notes
 
-- Always activate the venv before running werk commands: `source .venv/bin/activate`
+- Always use the repo venv for werk commands: `.venv/bin/python`
 - Run werk commands from the repository root
 - The werk tool handles all git operations automatically
 - Werk IDs are managed by the stash system - don't manually assign them

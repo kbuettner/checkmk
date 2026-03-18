@@ -6,7 +6,7 @@
 """Fetch and anonymize crash report data from crash.checkmk.com.
 
 Usage:
-    PYTHONPATH=.claude/skills python3 -m crash_report.fetch_crash_data <command> [options]
+    PYTHONPATH=.github/skills python3 -m crash_report.fetch_crash_data <command> [options]
 
 Commands:
     search   Search crash groups with filters
@@ -184,7 +184,7 @@ def _get_auth_headers() -> dict[str, str]:
 
     raise AuthenticationError(
         "No authentication token available.\n"
-        "Run: PYTHONPATH=.claude/skills python3 -m crash_report.authenticate\n"
+        "Run: PYTHONPATH=.github/skills python3 -m crash_report.authenticate\n"
         "Or set: export CRASH_REPORTING_TOKEN='<token>'"
     )
 

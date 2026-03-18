@@ -18,7 +18,7 @@ The skill authenticates with crash.checkmk.com using **Google OAuth** (preferred
 Run the authentication script — it opens a browser for Google Sign-In:
 
 ```bash
-PYTHONPATH=.claude/skills python3 -m crash_report.authenticate
+PYTHONPATH=.github/skills .venv/bin/python -m crash_report.authenticate
 ```
 
 No setup required — the server handles the Google OAuth flow. This caches a temporary bearer token at `~/.cache/cmk-crash-reporting/token.json` (valid for 1 hour). The token is automatically used by all subsequent API calls. Re-run with `--force` to re-authenticate before expiry.
@@ -77,13 +77,13 @@ Translate the user's request into one of these commands:
 Before running any query, check if a cached token exists and is valid:
 
 ```bash
-test -f ~/.cache/cmk-crash-reporting/token.json && python3 -c "import json,time; t=json.load(open('$HOME/.cache/cmk-crash-reporting/token.json')); exit(0 if t['expires_at']>time.time()+60 else 1)"
+test -f ~/.cache/cmk-crash-reporting/token.json && .venv/bin/python -c "import json,time; t=json.load(open('$HOME/.cache/cmk-crash-reporting/token.json')); exit(0 if t['expires_at']>time.time()+60 else 1)"
 ```
 
 If the token is missing or expired (non-zero exit), run the authenticate command first:
 
 ```bash
-PYTHONPATH=.claude/skills python3 -m crash_report.authenticate
+PYTHONPATH=.github/skills .venv/bin/python -m crash_report.authenticate
 ```
 
 This avoids failed API calls due to expired/missing credentials.
@@ -91,30 +91,30 @@ This avoids failed API calls due to expired/missing credentials.
 ### Step 2: Run the Helper Script
 
 ```bash
-PYTHONPATH=.claude/skills python3 -m crash_report <command> [options]
+PYTHONPATH=.github/skills .venv/bin/python -m crash_report <command> [options]
 ```
 
 **Available commands:**
 
 ```bash
 # Search crash groups with filters
-PYTHONPATH=.claude/skills python3 -m crash_report search \
+PYTHONPATH=.github/skills .venv/bin/python -m crash_report search \
   [--since DATE] [--min-crashes N] [--type TYPE] [--unsolved] [--version VER] [--limit N]
 
 # Popular unsolved crash groups (>10 crashes)
-PYTHONPATH=.claude/skills python3 -m crash_report popular [--since DATE] [--limit N]
+PYTHONPATH=.github/skills .venv/bin/python -m crash_report popular [--since DATE] [--limit N]
 
 # Aggregate crash statistics
-PYTHONPATH=.claude/skills python3 -m crash_report stats [--since DATE]
+PYTHONPATH=.github/skills .venv/bin/python -m crash_report stats [--since DATE]
 
 # Individual crash report (anonymized)
-PYTHONPATH=.claude/skills python3 -m crash_report show <crash_id>
+PYTHONPATH=.github/skills .venv/bin/python -m crash_report show <crash_id>
 
 # Crash group detail (anonymized)
-PYTHONPATH=.claude/skills python3 -m crash_report group <group_id>
+PYTHONPATH=.github/skills .venv/bin/python -m crash_report group <group_id>
 
 # List crash reports from local OMD sites
-PYTHONPATH=.claude/skills python3 -m crash_report local [--type TYPE]
+PYTHONPATH=.github/skills .venv/bin/python -m crash_report local [--type TYPE]
 ```
 
 Date arguments accept:

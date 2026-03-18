@@ -6,7 +6,7 @@
 """Authenticate with crash.checkmk.com and cache a bearer token.
 
 Usage:
-    PYTHONPATH=.claude/skills python3 -m crash_report.authenticate [--force]
+    PYTHONPATH=.github/skills python3 -m crash_report.authenticate [--force]
 
 This script:
 1. Opens a browser pointing to crash.checkmk.com's authentication endpoint

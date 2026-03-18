@@ -40,7 +40,7 @@ py_test(
     ],
     args = [
         "--import-mode=importlib",
-        ".claude/skills/crash_report/tests/",
+        ".github/skills/crash_report/tests/",
     ],
     main = "__test__.py",
     deps = [
