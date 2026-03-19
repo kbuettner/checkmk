@@ -45,6 +45,14 @@ sh_library(
     ],
 )
 
+py_library(
+    name = "doc_documentation_py",
+    srcs = [
+        "__init__.py",
+        "conf.py",
+    ],
+)
+
 build_test(
     name = "build_test",
     targets = [":documentation"],

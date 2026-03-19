@@ -42,6 +42,14 @@ py_binary(
     ],
 )
 
+py_library(
+    name = "doc_plugin_api_py",
+    srcs = [
+        "__init__.py",
+        "conf.py",
+    ],
+)
+
 filegroup(
     name = "srcs",
     srcs = glob(
