@@ -382,6 +382,7 @@ def automation_service_discovery(
             loading_result.loaded_config,
             config_cache.ruleset_matcher,
             config_cache.label_manager,
+            ip_address_of=config_cache.primary_ip_address_of,
         ),
         selected_sections=NO_SELECTION,
         keep_outdated=file_cache_options.keep_outdated,
@@ -952,7 +953,12 @@ def _execute_discovery(
         config_cache, plugins.check_plugins, passive_service_name_config
     )
     parser = CMKParser(
-        config.make_parser_config(loaded_config, ruleset_matcher, label_manager),
+        config.make_parser_config(
+            loaded_config,
+            ruleset_matcher,
+            label_manager,
+            ip_address_of=config_cache.primary_ip_address_of,
+        ),
         selected_sections=NO_SELECTION,
         keep_outdated=file_cache_options.keep_outdated,
         logger=logger,
@@ -1185,7 +1191,12 @@ def _execute_autodiscovery(
     ip_address_of_mgmt = ip_lookup.make_lookup_mgmt_board_ip_address(ip_lookup_config)
 
     parser = CMKParser(
-        config.make_parser_config(loaded_config, ruleset_matcher, label_manager),
+        config.make_parser_config(
+            loaded_config,
+            ruleset_matcher,
+            label_manager,
+            ip_address_of=config_cache.primary_ip_address_of,
+        ),
         selected_sections=NO_SELECTION,
         keep_outdated=file_cache_options.keep_outdated,
         logger=logging.getLogger("cmk.base.discovery"),
@@ -4353,6 +4364,7 @@ def automation_get_agent_output(
                             loading_result.loaded_config,
                             config_cache.ruleset_matcher,
                             config_cache.label_manager,
+                            ip_address_of=config_cache.primary_ip_address_of,
                         ),
                         source_info.hostname,
                         source_info.ipaddress,
@@ -4384,9 +4396,9 @@ def automation_get_agent_output(
                     # The PiggybackFetcher returns empty data by design.
                     # The actual piggyback data is read from disk by the
                     # PiggybackParser, so we need to read it directly here.
-
-                    for msg in get_piggyback_messages_for(hostname, cmk.utils.paths.omd_root):
-                        info += msg.raw_data
+                    for address in (hostname, ipaddress) if ipaddress else (hostname,):
+                        for msg in get_piggyback_messages_for(address, cmk.utils.paths.omd_root):
+                            info += msg.raw_data
                 else:
                     assert raw_data.ok is not None
                     info += raw_data.ok
