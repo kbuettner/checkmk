@@ -3,15 +3,23 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
+from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, startswith, StringTable
-from cmk.legacy_includes.humidity import check_humidity
-from cmk.legacy_includes.temperature import check_temperature
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    StringTable,
+)
+from cmk.plugins.lib.humidity import check_humidity
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
 
 #   .--Temperature---------------------------------------------------------.
 #   |     _____                                   _                        |
@@ -25,34 +33,17 @@ check_info = {}
 # ambient temperature levels for a datacenter
 
 
-def discover_bluenet_sensor_temp(info):
-    for sensor_id, sensor_type, _temp, _hum in info:
-        # temperature and combined temperature/humidity sensor
-        if sensor_type in ("1", "2"):
-            if sensor_id == "0":
-                descr = "internal"
-            else:
-                descr = "external %s" % sensor_id
-            yield descr, {}
-
-
-def check_bluenet_sensor_temp(item, params, info):
-    for sensor_id, _sensor_type, temp, _hum in info:
-        if sensor_id == "0":
-            descr = "internal"
-        else:
-            descr = "external %s" % sensor_id
-        if descr == item:
-            temperature = float(temp) / 10.0
-            return check_temperature(temperature, params, "bluenet_sensor_temp_%s" % item, "c")
-    return None
+def _sensor_descr(sensor_id: str) -> str:
+    if sensor_id == "0":
+        return "internal"
+    return f"external {sensor_id}"
 
 
 def parse_bluenet_sensor(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["bluenet_sensor"] = LegacyCheckDefinition(
+snmp_section_bluenet_sensor = SimpleSNMPSection(
     name="bluenet_sensor",
     parse_function=parse_bluenet_sensor,
     detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.21695.1"),
@@ -60,6 +51,34 @@ check_info["bluenet_sensor"] = LegacyCheckDefinition(
         base=".1.3.6.1.4.1.21695.1.10.7.3.1",
         oids=["1", "2", "4", "5"],
     ),
+)
+
+
+def discover_bluenet_sensor_temp(section: StringTable) -> DiscoveryResult:
+    for sensor_id, sensor_type, _temp, _hum in section:
+        # temperature and combined temperature/humidity sensor
+        if sensor_type in ("1", "2"):
+            yield Service(item=_sensor_descr(sensor_id))
+
+
+def check_bluenet_sensor_temp(
+    item: str, params: TempParamType, section: StringTable
+) -> CheckResult:
+    for sensor_id, _sensor_type, temp, _hum in section:
+        if _sensor_descr(sensor_id) == item:
+            temperature = float(temp) / 10.0
+            yield from check_temperature(
+                reading=temperature,
+                params=params,
+                unique_name=f"bluenet_sensor_temp_{item}",
+                value_store=get_value_store(),
+                dev_unit="c",
+            )
+            return
+
+
+check_plugin_bluenet_sensor = CheckPlugin(
+    name="bluenet_sensor",
     service_name="Temperature %s",
     discovery_function=discover_bluenet_sensor_temp,
     check_function=check_bluenet_sensor_temp,
@@ -84,34 +103,32 @@ check_info["bluenet_sensor"] = LegacyCheckDefinition(
 bluenet_sensor_humidity_default_levels = (35, 40, 60, 65)
 
 
-def discover_bluenet_sensor_hum(info):
-    for sensor_id, sensor_type, _temp, _hum in info:
+def discover_bluenet_sensor_hum(section: StringTable) -> DiscoveryResult:
+    for sensor_id, sensor_type, _temp, _hum in section:
         # humidity for combined temperature/humidity sensor
         if sensor_type == "2":
-            if sensor_id == "0":
-                descr = "internal"
-            else:
-                descr = "external %s" % sensor_id
-            yield descr, bluenet_sensor_humidity_default_levels
+            yield Service(
+                item=_sensor_descr(sensor_id),
+                parameters={"levels": (60, 65), "levels_lower": (40, 35)},
+            )
 
 
-def check_bluenet_sensor_hum(item, params, info):
-    for sensor_id, _sensor_type, _temp, hum in info:
-        if sensor_id == "0":
-            descr = "internal"
-        else:
-            descr = "external %s" % sensor_id
-        if descr == item:
+def check_bluenet_sensor_hum(
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
+    for sensor_id, _sensor_type, _temp, hum in section:
+        if _sensor_descr(sensor_id) == item:
             humidity = float(hum) / 10.0
-            return check_humidity(humidity, params)
-    return None
+            yield from check_humidity(humidity, params)
+            return
 
 
-check_info["bluenet_sensor.hum"] = LegacyCheckDefinition(
+check_plugin_bluenet_sensor_hum = CheckPlugin(
     name="bluenet_sensor_hum",
     service_name="Humidity %s",
     sections=["bluenet_sensor"],
     discovery_function=discover_bluenet_sensor_hum,
     check_function=check_bluenet_sensor_hum,
     check_ruleset_name="humidity",
+    check_default_parameters={},
 )
