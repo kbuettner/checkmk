@@ -4,7 +4,7 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 from cmk.agent_based.v2 import Service
-from cmk.legacy_checks.dell_compellent_folder import (
+from cmk.plugins.dell.agent_based.dell_compellent_folder import (
     discover_dell_compellent_folder,
     parse_dell_compellent_folder,
 )
