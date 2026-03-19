@@ -23,7 +23,7 @@ py_library(
     ],
     deps = [
         ":repo",
-        "//cmk/base:configlib",
+        "//cmk/base/configlib",
         "//cmk/utils",
         "//packages/cmk-trace",
         requirement("beautifulsoup4"),
