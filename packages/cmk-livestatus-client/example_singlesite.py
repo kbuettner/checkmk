@@ -16,7 +16,7 @@ except KeyError:
     sys.stderr.write("not using OMD.\n")
     sys.exit(1)
 
-socket_path = "unix:" + omd_root + "/tmp/run/live"
+socket_path = "unix:" + omd_root + "/tmp/run/live"  # nosec B108 # BNS:7a2427
 
 try:
     # Make a single connection for each query

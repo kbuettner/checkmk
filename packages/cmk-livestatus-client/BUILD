@@ -69,6 +69,21 @@ py_library(
     deps = [":cmk-livestatus-client"],
 )
 
+py_library(
+    name = "examples",
+    srcs = [
+        "example_api.py",
+        "example_multisite.py",
+        "example_singlesite.py",
+    ],
+    imports = ["."],
+    deps = [
+        ":py_livestatus",
+        "//packages/cmk-ccc:hostaddress",
+        "//packages/cmk-ccc:user",
+    ],
+)
+
 py_doc_test(
     name = "doctest",
     size = "small",
