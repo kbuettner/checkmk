@@ -647,6 +647,62 @@ def get_edition_components(edition: str) -> list[tuple[str, str]]:
     return get_config().components + get_config().edition_components.get(edition, [])
 
 
+_SECURITY_WERK_DESCRIPTION_TEMPLATE = """\
+<!--
+TODO: Please fill in the template below. Reach out to team security for help and missing info.
+Remove this and the other comments.
+-->
+
+<!--
+Description of the problem and fix, as usual. Feel free to use sub-sections.
+-->
+<PROBLEM DESCRIPTION>
+
+### Who is Affected
+
+<!--
+Help users understand if this issue is relevant to their setup. Often, everyone is affected. Then say just that.
+However, if only some editions, specific configurations or optional components are affected it helps users a lot to know that their setup is safe.
+-->
+<AFFECTED SETUPS>
+
+### Affected Checkmk Versions
+
+<!--
+List all versions affected, regardless if they receive the fix or not.
+Start from the most recent release (including beta releases) until most recent EOL, inclusive.
+-->
+* 2.5.0
+* 2.4.0
+* 2.3.0
+* 2.2.0 (EOL)
+
+### Vulnerability Management
+
+We have rated the issue with a CVSS Score of <CVSS SCORE> <SEVERITY> (`CVSS:4.0/<VECTOR>`) and assigned `<CVE ID>`.
+
+We thank <REPORTER NAME> (<AFFILIATION>) for reporting this issue.
+<!-- Or: This issue was found by internal review. -->
+<!-- Or: This issue was found in a commissioned penetration test conducted by <PENTESTER COMPANY>. -->
+
+### Indicators of Compromise
+
+<!--
+Describe how users can check if the vulnerability has been exploited on their system (usually checking specific logs, files, ...).
+Leave out the whole section if nothing can be said.
+-->
+<INDICATORS>
+
+### Mitigations
+
+<!--
+Can users take any mitigating measures besides updating? For example disabling affected features.
+Leave out the whole section if nothing can be said.
+-->
+<MITIGATIONS>
+
+"""
+
 WERK_NOTES = """
     .---Werk----------------------------------------------------------------------.
     |                                                                             |
@@ -713,6 +769,8 @@ def main_new(args: argparse.Namespace) -> None:
     ]
     if args.description_file:
         description = args.description_file.read_text(encoding="utf-8")
+    elif metadata["class"] == "security":
+        description = _SECURITY_WERK_DESCRIPTION_TEMPLATE
     else:
         # Interactive modes opens the editor, so the user can add
         # the description to the freshly created werk
