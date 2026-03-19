@@ -165,8 +165,11 @@ STAGES:
       BAZEL_LOCKS_AMOUNT: 1
 
     - NAME: "Bazel sanity check"
+      # omdlib/__init__.py is checked in in the repo but then overwritten by bazel. No way to lint the checked in file.
       COMMAND: |
-          ./scripts/in_bazel.sh "py" "py_binary|py_library|py_test" 1 > ${RESULTS}/results.txt
+          ./scripts/in_bazel.sh "py" "py_binary|py_library|py_test" \
+              --known-offender omd/packages/omd/omdlib/__init__.py \
+              > ${RESULTS}/results.txt
       RESULT_CHECK_FILE_PATTERN: "results/results.txt"
       BAZEL_LOCKS_AMOUNT: 1
 
