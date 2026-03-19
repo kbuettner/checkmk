@@ -94,7 +94,7 @@ immediateWatch(
   font-weight: var(--font-weight-bold);
 
   &:hover {
-    background: var(--color-midnight-grey-50);
+    background: var(--input-hover-bg-color);
   }
 }
 

@@ -65,12 +65,12 @@ const emit = defineEmits<{
     }
 
     &:hover {
-      background: rgb(255 255 255 / 20%);
+      background: var(--color-popup-backdrop);
       border: 1px solid var(--success);
 
       span {
-        color: var(--font-color);
-        background: rgb(0 0 0 / 80%);
+        color: var(--default-tooltip-text-color);
+        background: var(--default-tooltip-background-color);
       }
     }
   }
