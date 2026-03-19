@@ -5,93 +5,95 @@
 
 
 from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import (
-    LegacyCheckDefinition,
-    LegacyCheckResult,
-    LegacyDiscoveryResult,
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
 )
-from cmk.agent_based.v2 import SNMPTree, StringTable
-from cmk.legacy_includes.fan import check_fan
 from cmk.plugins.dell.lib import DETECT_OPENMANAGE
+from cmk.plugins.lib.fan import check_fan
 
-check_info = {}
-
-
-def discover_dell_om_fans(info: StringTable) -> LegacyDiscoveryResult:
-    for line in info:
-        yield (line[0], {})
+_TRANSLATE_STATUS: Mapping[str, tuple[State, str]] = {
+    "1": (State.UNKNOWN, "OTHER"),
+    "2": (State.UNKNOWN, "UNKNOWN"),
+    "3": (State.OK, "OK"),
+    "4": (State.WARN, "NON CRITICAL UPPER"),
+    "5": (State.CRIT, "CRITICAL UPPER"),
+    "6": (State.CRIT, "NON RECOVERABLE UPPER"),
+    "7": (State.WARN, "NON CRITICAL LOWER"),
+    "8": (State.CRIT, "CRITICAL LOWER"),
+    "9": (State.CRIT, "NON RECOVERABLE LOWER"),
+    "10": (State.CRIT, "FAILED"),
+}
 
 
 def _construct_levels(
     warn_upper: str, crit_upper: str, warn_lower: str, crit_lower: str
-) -> tuple[tuple[int, int] | tuple[None, None], tuple[int, int] | tuple[None, None]]:
+) -> Mapping[str, Any]:
     # We've seen several possibilities:
     # - 1, 2, 3, 4
     # - "", "", 3, 4
     # - "", "", "", 4
+    params: dict[str, tuple[int, int]] = {}
+
     if warn_lower not in ["", None] and crit_lower not in ["", None]:
-        lower: tuple[int, int] | tuple[None, None] = (int(warn_lower), int(crit_lower))
+        params["lower"] = (int(warn_lower), int(crit_lower))
     elif crit_lower not in ["", None]:
-        lower = (int(crit_lower), int(crit_lower))
-    else:
-        lower = (None, None)
+        params["lower"] = (int(crit_lower), int(crit_lower))
 
     if warn_upper not in ["", None] and crit_upper not in ["", None]:
-        upper: tuple[int, int] | tuple[None, None] = (int(warn_upper), int(crit_upper))
+        params["upper"] = (int(warn_upper), int(crit_upper))
     elif crit_upper not in ["", None]:
-        upper = (int(crit_upper), int(crit_upper))
-    else:
-        upper = (None, None)
+        params["upper"] = (int(crit_upper), int(crit_upper))
 
-    return lower, upper
+    return params
 
 
-def check_dell_om_fans(
-    item: str, params: Mapping[str, object], info: StringTable
-) -> LegacyCheckResult:
-    translate_status = {
-        "1": (3, "OTHER"),
-        "2": (3, "UNKNOWN"),
-        "3": (0, "OK"),
-        "4": (1, "NON CRITICAL UPPER"),
-        "5": (2, "CRITICAL UPPER"),
-        "6": (2, "NON RECOVERABLE UPPER"),
-        "7": (1, "NON CRITICAL LOWER"),
-        "8": (2, "CRITICAL LOWER"),
-        "9": (2, "NON RECOVERABLE LOWER"),
-        "10": (2, "FAILED"),
-    }
+def discover_dell_om_fans(section: StringTable) -> DiscoveryResult:
+    for line in section:
+        yield Service(item=line[0])
 
-    for index, status, value, name, warn_upper, crit_upper, warn_lower, crit_lower in info:
+
+def check_dell_om_fans(item: str, params: Mapping[str, Any], section: StringTable) -> CheckResult:
+    for index, status, value, name, warn_upper, crit_upper, warn_lower, crit_lower in section:
         if index == item:
-            state, state_readable = translate_status[status]
-            yield state, f"Status: {state_readable}, Name: {name}"
-            if params:
-                constructed_params = params
-            else:
-                lower, upper = _construct_levels(warn_upper, crit_upper, warn_lower, crit_lower)
-                constructed_params = {
-                    "lower": lower,
-                    "upper": upper,
-                }
-            yield check_fan(int(value), constructed_params)
+            state, state_readable = _TRANSLATE_STATUS[status]
+            yield Result(state=state, summary=f"Status: {state_readable}, Name: {name}")
+            fan_params = (
+                params
+                if params
+                else _construct_levels(warn_upper, crit_upper, warn_lower, crit_lower)
+            )
+            yield from check_fan(int(value), fan_params)
 
 
 def parse_dell_om_fans(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["dell_om_fans"] = LegacyCheckDefinition(
+snmp_section_dell_om_fans = SimpleSNMPSection(
     name="dell_om_fans",
-    parse_function=parse_dell_om_fans,
     detect=DETECT_OPENMANAGE,
     fetch=SNMPTree(
         base=".1.3.6.1.4.1.674.10892.1.700.12.1",
         oids=["2", "5", "6", "8", "10", "11", "12", "13"],
     ),
+    parse_function=parse_dell_om_fans,
+)
+
+check_plugin_dell_om_fans = CheckPlugin(
+    name="dell_om_fans",
     service_name="Fan %s",
     discovery_function=discover_dell_om_fans,
     check_function=check_dell_om_fans,
+    check_default_parameters={},
     check_ruleset_name="hw_fans",
 )
