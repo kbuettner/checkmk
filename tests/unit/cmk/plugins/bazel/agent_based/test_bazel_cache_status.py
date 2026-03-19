@@ -36,7 +36,8 @@ def test_discover_bazel_cache_status(section: CacheSection) -> None:
 
 
 def test_check_bazel_cache_status(section: CacheSection) -> None:
-    assert list(check_bazel_cache_status(section)) == [
+    value = list(check_bazel_cache_status(section))
+    expected = [
         Result(state=State.OK, summary="Bazel Cache Status is OK"),
         Result(state=State.OK, summary="Current size: 264 GiB"),
         Metric("bazel_cache_status_curr_size", 283044515840.0),
@@ -51,3 +52,4 @@ def test_check_bazel_cache_status(section: CacheSection) -> None:
         Result(state=State.OK, summary="Uncompressed size: 621 GiB"),
         Metric("bazel_cache_status_uncompressed_size", 666901065728.0),
     ]
+    assert value == expected

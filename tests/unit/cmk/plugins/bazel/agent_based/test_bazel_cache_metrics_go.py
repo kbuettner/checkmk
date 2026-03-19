@@ -69,7 +69,8 @@ def test_discover_bazel_cache(section: Section) -> None:
 
 @time_machine.travel(TEST_TIME_2024)
 def test_check_bazel_cache_go(section: Section) -> None:
-    assert list(check_bazel_cache_go(section)) == [
+    value = list(check_bazel_cache_go(section))
+    expected = [
         Result(state=State.OK, summary="Bazel Cache Go is OK"),
         Result(
             state=State.OK,
@@ -111,3 +112,4 @@ def test_check_bazel_cache_go(section: Section) -> None:
         Result(state=State.OK, summary="Number of OS threads created: 205 B"),
         Metric("bazel_cache_go_go_threads", 205.0),
     ]
+    assert value == expected
