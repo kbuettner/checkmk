@@ -7,12 +7,17 @@ import json
 
 import pytest
 
-import cmk.plugins.bazel.agent_based.bazel_cache_status as bcs
 from cmk.agent_based.v2 import Metric, Result, Service, State
+from cmk.plugins.bazel.agent_based.bazel_cache_status import (
+    CacheSection,
+    check_bazel_cache_status,
+    discover_bazel_cache_status,
+    parse_bazel_cache_status,
+)
 
 
 @pytest.fixture(scope="module", name="section")
-def _section() -> bcs.CacheSection:
+def _section() -> CacheSection:
     payload = {
         "curr_size": 283044515840,
         "git_commit": "c5bf6e13938aa89923c637b5a4f01c2203a3c9f8",
@@ -23,15 +28,15 @@ def _section() -> bcs.CacheSection:
         "server_time": 1714051616,
         "uncompressed_size": 666901065728,
     }
-    return bcs.parse_bazel_cache_status([[json.dumps(payload)]])
+    return parse_bazel_cache_status([[json.dumps(payload)]])
 
 
-def test_discover_bazel_cache_status(section: bcs.CacheSection) -> None:
-    assert list(bcs.discover_bazel_cache_status(section)) == [Service()]
+def test_discover_bazel_cache_status(section: CacheSection) -> None:
+    assert list(discover_bazel_cache_status(section)) == [Service()]
 
 
-def test_check_bazel_cache_status(section: bcs.CacheSection) -> None:
-    assert list(bcs.check_bazel_cache_status(section)) == [
+def test_check_bazel_cache_status(section: CacheSection) -> None:
+    assert list(check_bazel_cache_status(section)) == [
         Result(state=State.OK, summary="Bazel Cache Status is OK"),
         Result(state=State.OK, summary="Current size: 264 GiB"),
         Metric("bazel_cache_status_curr_size", 283044515840.0),
