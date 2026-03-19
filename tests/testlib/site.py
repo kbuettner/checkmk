@@ -1696,9 +1696,8 @@ class Site:
             if ignore_bakery_crashes and re.search(r"bake-agents|bake_agents", crash_detail):
                 logger.warning("Ignored bakery crash report (package contains faked artifacts)")
                 continue
-            if re.search(
-                'MKGeneralException: Cannot connect to site ".*": The site is not logged in.',
-                crash_detail,
+            if crash_type == "MKGeneralException" and re.search(
+                'Cannot connect to site ".*": The site is not logged in.', crash_detail
             ):
                 logger.warning(
                     "Ignored crash report due to failed remote site login. See CMK-25875."
