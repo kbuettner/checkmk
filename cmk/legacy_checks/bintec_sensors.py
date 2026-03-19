@@ -3,24 +3,33 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
+from collections.abc import Mapping
+from typing import Any
 
-# mypy: disable-error-code="var-annotated"
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, startswith, StringTable
-from cmk.legacy_includes.fan import check_fan
-from cmk.legacy_includes.temperature import check_temperature
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    Metric,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
+from cmk.plugins.lib.fan import check_fan
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
 
 
 def parse_bintec_sensors(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["bintec_sensors"] = LegacyCheckDefinition(
+snmp_section_bintec_sensors = SimpleSNMPSection(
     name="bintec_sensors",
     parse_function=parse_bintec_sensors,
     detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.272.4"),
@@ -40,22 +49,22 @@ check_info["bintec_sensors"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_bintec_sensors_fan(info):
-    inventory = []
-    for _sensor_id, sensor_descr, sensor_type, _sensor_value, _sensor_unit in info:
+def discover_bintec_sensors_fan(section: StringTable) -> DiscoveryResult:
+    for _sensor_id, sensor_descr, sensor_type, _sensor_value, _sensor_unit in section:
         if sensor_type == "2":
-            inventory.append((sensor_descr, {}))
-    return inventory
+            yield Service(item=sensor_descr)
 
 
-def check_bintec_sensors_fan(item, params, info):
-    for _sensor_id, sensor_descr, _sensor_type, sensor_value, _sensor_unit in info:
+def check_bintec_sensors_fan(
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
+    for _sensor_id, sensor_descr, _sensor_type, sensor_value, _sensor_unit in section:
         if sensor_descr == item:
-            return check_fan(int(sensor_value), params)
-    return None
+            yield from check_fan(int(sensor_value), params)
+            return
 
 
-check_info["bintec_sensors.fan"] = LegacyCheckDefinition(
+check_plugin_bintec_sensors_fan = CheckPlugin(
     name="bintec_sensors_fan",
     service_name="%s",
     sections=["bintec_sensors"],
@@ -78,21 +87,29 @@ check_info["bintec_sensors.fan"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_bintec_sensors_temp(info):
-    for _sensor_id, sensor_descr, sensor_type, _sensor_value, _sensor_unit in info:
+def discover_bintec_sensors_temp(section: StringTable) -> DiscoveryResult:
+    for _sensor_id, sensor_descr, sensor_type, _sensor_value, _sensor_unit in section:
         if sensor_type == "1":
-            yield sensor_descr, {}
+            yield Service(item=sensor_descr)
 
 
-def check_bintec_sensors_temp(item, params, info):
-    for _sensor_id, sensor_descr, _sensor_type, sensor_value, _sensor_unit in info:
+def check_bintec_sensors_temp(
+    item: str, params: TempParamType, section: StringTable
+) -> CheckResult:
+    for _sensor_id, sensor_descr, _sensor_type, sensor_value, _sensor_unit in section:
         if sensor_descr == item:
-            return check_temperature(int(sensor_value), params, "bintec_sensors_%s" % item)
+            yield from check_temperature(
+                reading=int(sensor_value),
+                params=params,
+                unique_name=f"bintec_sensors_{item}",
+                value_store=get_value_store(),
+            )
+            return
 
-    return 3, "Sensor not found in SNMP data"
+    yield Result(state=State.UNKNOWN, summary="Sensor not found in SNMP data")
 
 
-check_info["bintec_sensors.temp"] = LegacyCheckDefinition(
+check_plugin_bintec_sensors_temp = CheckPlugin(
     name="bintec_sensors_temp",
     service_name="Temperature %s",
     sections=["bintec_sensors"],
@@ -113,28 +130,24 @@ check_info["bintec_sensors.temp"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_bintec_sensors_voltage(info):
-    inventory = []
-    for _sensor_id, sensor_descr, sensor_type, _sensor_value, _sensor_unit in info:
+def discover_bintec_sensors_voltage(section: StringTable) -> DiscoveryResult:
+    for _sensor_id, sensor_descr, sensor_type, _sensor_value, _sensor_unit in section:
         if sensor_type == "3":
-            inventory.append((sensor_descr, None))
-    return inventory
+            yield Service(item=sensor_descr)
 
 
-def check_bintec_sensors_voltage(item, _no_params, info):
-    for _sensor_id, sensor_descr, _sensor_type, sensor_value, _sensor_unit in info:
+def check_bintec_sensors_voltage(item: str, section: StringTable) -> CheckResult:
+    for _sensor_id, sensor_descr, _sensor_type, sensor_value, _sensor_unit in section:
         if sensor_descr == item:
-            sensor_value = int(sensor_value) / 1000.0
+            voltage = int(sensor_value) / 1000.0
+            yield Result(state=State.OK, summary=f"{sensor_descr} is at {voltage} V")
+            yield Metric("voltage", voltage)
+            return
 
-            message = f"{sensor_descr} is at {sensor_value} V"
-            perfdata = [("voltage", str(sensor_value) + "V")]
-
-            return 0, message, perfdata
-
-    return 3, "Sensor %s not found" % item
+    yield Result(state=State.UNKNOWN, summary=f"Sensor {item} not found")
 
 
-check_info["bintec_sensors.voltage"] = LegacyCheckDefinition(
+check_plugin_bintec_sensors_voltage = CheckPlugin(
     name="bintec_sensors_voltage",
     service_name="Voltage %s",
     sections=["bintec_sensors"],
