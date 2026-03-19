@@ -10,7 +10,7 @@ from cmk.base.plugins.bakery.rds_licenses import get_rds_licenses_files
 
 
 def test_rds_licenses_files() -> None:
-    result = list(get_rds_licenses_files(None))
+    result = list(get_rds_licenses_files({"deployment": ("sync", None)}))
     expected = [
         Plugin(base_os=OS.WINDOWS, source=Path("rds_licenses.ps1")),
     ]
