@@ -56,3 +56,12 @@ py_binary(
     main = "decent_output.py",
     visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "scripts_py",
+    srcs = [
+        "prune_compilation_db.py",
+        "update_python_libs.py",
+    ],
+    deps = [requirement("sarif-tools")],
+)

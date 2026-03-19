@@ -77,3 +77,14 @@ pkg_tar(
     extension = "tar.gz",
     visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "omd_appliance_py",
+    srcs = [
+        "webconf_snapin.py",
+    ],
+    deps = [
+        "//cmk/gui",
+        "//packages/cmk-ccc:version",
+    ],
+)

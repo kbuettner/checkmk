@@ -773,7 +773,10 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
         "cmk.utils.paths",
         "cmk.ccc.site",
     ),
-    Component("cmk.diskspace"): _allow(*PACKAGE_CCC),
+    Component("cmk.diskspace"): _allow(
+        *PACKAGE_CCC,
+        "cmk.utils.paths",
+    ),
     Component("cmk.events"): _allow(
         *PACKAGE_CCC,
         "cmk.livestatus_client",
@@ -1738,7 +1741,10 @@ EXPLICIT_FILE_TO_DEPENDENCIES = {
     ModulePath("buildscripts/scripts/publish_cloud_images.py"): _allow(*PACKAGE_CCC),
     ModulePath("buildscripts/scripts/unpublish-container-image.py"): _allow(*PACKAGE_CCC),
     ModulePath("buildscripts/scripts/lib/registry.py"): _allow(*PACKAGE_CCC),
-    ModulePath("omd/packages/check_mk/post-create/01_create-sample-config.py"): _allow(),
+    ModulePath("omd/packages/check_mk/post-create/01_create-sample-config.py"): _allow(
+        "cmk.gui",
+        "cmk.utils.log",
+    ),
     ModulePath("omd/non-free/packages/licensing/cmk-license-email-notification.py"): _allow(
         "cmk.utils",
         "cmk.licensing.nonfree",

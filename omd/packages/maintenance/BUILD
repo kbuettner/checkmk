@@ -75,3 +75,15 @@ pkg_tar(
     tags = ["manual"],
     visibility = ["//omd:__pkg__"],
 )
+
+py_library(
+    name = "diskspace_py",
+    srcs = [
+        "diskspace.py",
+    ],
+    deps = [
+        "//cmk/diskspace:cmk_diskspace",
+        "//cmk/utils",
+        "//omd/packages/omd:omdlib",
+    ],
+)

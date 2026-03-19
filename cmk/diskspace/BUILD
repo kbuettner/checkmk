@@ -4,7 +4,10 @@ py_library(
     name = "cmk_diskspace",
     srcs = glob(["**/*.py"]),
     imports = ["../.."],
-    visibility = ["//cmk:__subpackages__"],
+    visibility = [
+        "//cmk:__subpackages__",
+        "//omd:__subpackages__",
+    ],
     deps = [
         "//packages/cmk-ccc:store",
     ],

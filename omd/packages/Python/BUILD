@@ -236,3 +236,10 @@ pkg_tar(
     tags = ["manual"],
     visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "python_py",
+    srcs = [
+        "sitecustomize.py",
+    ],
+)

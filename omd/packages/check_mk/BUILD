@@ -247,3 +247,15 @@ sh_library(
         "//omd/packages/omd:skel/.profile",
     ],
 )
+
+py_library(
+    name = "omd_packages_check_mk_py",
+    srcs = [
+        "post-create/01_create-sample-config.py",
+        "skel/etc/agent-receiver/gunicorn.conf.py",
+    ],
+    deps = [
+        "//cmk/gui",
+        "//cmk/utils",
+    ],
+)

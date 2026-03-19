@@ -34,7 +34,7 @@ py_library(
         "//non-free/packages/cmk-metric-backend:__pkg__",
         "//non-free/packages/cmk-notification-plugins-nonfree:__pkg__",
         "//non-free/packages/cmk-robotmk:__pkg__",
-        "//omd/packages/omd:__pkg__",
+        "//omd/packages:__subpackages__",
         "//packages/cmk-notification-plugins:__pkg__",
         "//tests:__subpackages__",
     ],
@@ -97,6 +97,7 @@ py_library(
         "//non-free/packages/cmk-dcd:__pkg__",
         "//non-free/packages/cmk-liveproxyd:__pkg__",
         "//non-free/packages/cmk-robotmk:__pkg__",
+        "//omd:__subpackages__",
         "//tests:__subpackages__",
     ],
     deps = [
