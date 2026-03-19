@@ -3,17 +3,9 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.legacy_includes.dell_om import parse_omreport, status_translate_omreport
-
-check_info = {}
-
 # sample agent output:
 #
-# <<<omreport_vdisk>>>
+# <<<dell_om_vdisks>>>
 # ID                               : 0
 # Status                           : Ok
 # Name                             : Virtual Disk 0
@@ -33,29 +25,79 @@ check_info = {}
 # Stripe Element Size              : 64 KB
 # Disk Cache Policy                : Unchanged
 
+from collections.abc import Iterable, Mapping
 
-def discover_dell_om_vdisks(parsed):
-    return [(key, None) for key in parsed]
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
+
+Section = Mapping[str, Mapping[str, str]]
+
+_STATUS_MAP: Mapping[str, State] = {
+    "ok": State.OK,
+    "non-critical": State.WARN,
+    "critical": State.CRIT,
+    "not found": State.UNKNOWN,
+}
 
 
-def check_dell_om_vdisks(item, params, parsed):
-    if item in parsed:
-        status = status_translate_omreport(parsed[item]["Status"])
-        if parsed[item]["State"] != "Ready":
-            status = 2
+def _parse_single_objects(string_table: StringTable) -> Iterable[Mapping[str, str]]:
+    current_obj: dict[str, str] = {}
+    for line in string_table:
+        try:
+            idx = line.index(":")
+        except ValueError:
+            continue
+        key = " ".join(line[:idx])
+        value = " ".join(line[idx + 1 :])
+        if key == "ID" and current_obj:
+            yield current_obj
+            current_obj = {}
+        current_obj[key] = value
+    yield current_obj
 
-        return status, "Device: {}, Status: {}, State: {}, Layout: {}".format(
-            parsed[item]["Device Name"],
-            parsed[item]["Status"],
-            parsed[item]["State"],
-            parsed[item]["Layout"],
-        )
-    return None
+
+def parse_dell_om_vdisks(string_table: StringTable) -> Section:
+    return {o["ID"]: o for o in _parse_single_objects(string_table)}
 
 
-check_info["dell_om_vdisks"] = LegacyCheckDefinition(
+def discover_dell_om_vdisks(section: Section) -> DiscoveryResult:
+    for key in section:
+        yield Service(item=key)
+
+
+def check_dell_om_vdisks(item: str, section: Section) -> CheckResult:
+    if item not in section:
+        return
+    data = section[item]
+    state = _STATUS_MAP.get(data["Status"].lower(), State.CRIT)
+    if data["State"] != "Ready":
+        state = State.CRIT
+    yield Result(
+        state=state,
+        summary="Device: {}, Status: {}, State: {}, Layout: {}".format(
+            data["Device Name"],
+            data["Status"],
+            data["State"],
+            data["Layout"],
+        ),
+    )
+
+
+agent_section_dell_om_vdisks = AgentSection(
     name="dell_om_vdisks",
-    parse_function=parse_omreport,
+    parse_function=parse_dell_om_vdisks,
+)
+
+check_plugin_dell_om_vdisks = CheckPlugin(
+    name="dell_om_vdisks",
     service_name="Virtual Disk %s",
     discovery_function=discover_dell_om_vdisks,
     check_function=check_dell_om_vdisks,
