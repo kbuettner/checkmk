@@ -13,7 +13,7 @@ from collections.abc import Mapping
 import pytest
 
 from cmk.agent_based.v2 import Result, State
-from cmk.legacy_checks.carel_sensors import (
+from cmk.plugins.carel.agent_based.carel_sensors import (
     carel_sensors_parse,
     check_carel_sensors_temp,
     discover_carel_sensors_temp,
@@ -46,7 +46,7 @@ def test_carel_sensors_discovery() -> None:
 
 
 def test_carel_sensors_check_room_ok(monkeypatch: pytest.MonkeyPatch) -> None:
-    from cmk.legacy_checks import carel_sensors
+    from cmk.plugins.carel.agent_based import carel_sensors
 
     monkeypatch.setattr(carel_sensors, "get_value_store", lambda: {})
 
@@ -59,7 +59,7 @@ def test_carel_sensors_check_room_ok(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_carel_sensors_check_missing_item(monkeypatch: pytest.MonkeyPatch) -> None:
-    from cmk.legacy_checks import carel_sensors
+    from cmk.plugins.carel.agent_based import carel_sensors
 
     monkeypatch.setattr(carel_sensors, "get_value_store", lambda: {})
 
