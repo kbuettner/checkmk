@@ -1008,7 +1008,6 @@ class PersistentVolumeClaimSpec(ClientModel):
     volume_name:
         VolumeName is the binding reference to the PersistentVolume backing this claim
         (pv.metadata.name)
-
     """
 
     model_config = ConfigDict(from_attributes=True)
@@ -1038,11 +1037,18 @@ class PersistentVolumeClaimPhase(enum.Enum):
 
 # TODO: bring consistency to models CMK-11887
 class PersistentVolumeClaimStatus(ClientModel):
+    """
+    current_volume_attributes_class_name:
+        name of the VolumeAttributesClass required by the claim
+        (https://kubernetes.io/docs/concepts/storage/volume-attributes-classes/)
+    """
+
     model_config = ConfigDict(from_attributes=True)
 
     phase: PersistentVolumeClaimPhase | None = None
     access_modes: Sequence[AccessMode] | None = None
     capacity: StorageRequirement | None = None
+    current_volume_attributes_class_name: str | None = None
 
 
 class PersistentVolumeClaim(BaseModel):
