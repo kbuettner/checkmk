@@ -3,18 +3,13 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-from collections.abc import Mapping, Sequence
-
-import pytest
-
-from .checktestlib import Check
-
-
-@pytest.mark.parametrize(
-    "info, expected_result", [([["", "", ""], ["2", "237273", "130456"]], [("2", {})])]
+from cmk.agent_based.v2 import Service
+from cmk.legacy_checks.dell_compellent_folder import (
+    discover_dell_compellent_folder,
+    parse_dell_compellent_folder,
 )
-def test_discover_dell_compellent_folder(
-    info: Sequence[Sequence[str]], expected_result: Sequence[tuple[str, Mapping[object, object]]]
-) -> None:
-    result = Check("dell_compellent_folder").run_discovery(info)
-    assert list(result) == expected_result
+
+
+def test_discover_dell_compellent_folder() -> None:
+    section = parse_dell_compellent_folder([["", "", ""], ["2", "237273", "130456"]])
+    assert list(discover_dell_compellent_folder(section)) == [Service(item="2")]

@@ -3,44 +3,63 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
+import time
+from collections.abc import Mapping
+from typing import Any
 
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, StringTable
-from cmk.legacy_includes.df import df_check_filesystem_list, FILESYSTEM_DEFAULT_PARAMS
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    StringTable,
+)
 from cmk.plugins.dell.lib import DETECT_DELL_COMPELLENT
+from cmk.plugins.lib.df import df_check_filesystem_list, FILESYSTEM_DEFAULT_PARAMS
 
-check_info = {}
 
-
-def discover_dell_compellent_folder(info):
-    for line in info:
+def discover_dell_compellent_folder(section: StringTable) -> DiscoveryResult:
+    for line in section:
         if line[1] and float(line[1]) != 0:
-            yield (line[0], {})
+            yield Service(item=line[0])
 
 
-def check_dell_compellent_folder(item, params, info):
-    for number, total, used in info:
+def check_dell_compellent_folder(
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
+    for number, total, used in section:
         if number == item:
             # sizes delivered in GiB
-            total = float(total) * 1024
-            free = total - float(used) * 1024
-            yield df_check_filesystem_list(item, params, [(item, total, free, 0)])
+            total_mb = float(total) * 1024
+            free_mb = total_mb - float(used) * 1024
+            yield from df_check_filesystem_list(
+                get_value_store(),
+                item,
+                params,
+                [(item, total_mb, free_mb, 0)],
+                this_time=time.time(),
+            )
 
 
 def parse_dell_compellent_folder(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["dell_compellent_folder"] = LegacyCheckDefinition(
+snmp_section_dell_compellent_folder = SimpleSNMPSection(
     name="dell_compellent_folder",
-    parse_function=parse_dell_compellent_folder,
     detect=DETECT_DELL_COMPELLENT,
     fetch=SNMPTree(
         base=".1.3.6.1.4.1.674.11000.2000.500.1.2.32.1",
         oids=["2", "5", "6"],
     ),
+    parse_function=parse_dell_compellent_folder,
+)
+
+check_plugin_dell_compellent_folder = CheckPlugin(
+    name="dell_compellent_folder",
     service_name="Folder %s",
     discovery_function=discover_dell_compellent_folder,
     check_function=check_dell_compellent_folder,
