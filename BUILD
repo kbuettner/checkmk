@@ -145,10 +145,11 @@ compile_requirements_in(
     requirements = [
         "//agents/plugins:dev-requirements.in",
         "//cmk:requirements.in",
-        "//tests:dev-requirements.in",
-        "//packages:python_requirements",
+        "//.github/skills:dev-requirements.in",
         "//packages:dev_python_requirements",
+        "//packages:python_requirements",
         "//scripts:requirements.in",
+        "//tests:dev-requirements.in",
     ] + select({
         "@//:gpl+nonfree_repo": [
             "//non-free/packages:python_requirements",

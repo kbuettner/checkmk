@@ -2,7 +2,7 @@
 
 current_offenders() {
     comm -23 \
-        <(git ls-files "*\.$ext" ":!doc/*" ":!.claude/*" ":!.github/*" | sort) \
+        <(git ls-files "*\.$ext" ":!doc/*" | sort) \
         <(
             bazel cquery '
            kind("source file", deps(kind("'"$kind"'", //...)))

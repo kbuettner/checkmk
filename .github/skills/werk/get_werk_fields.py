@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (C) 2026 Checkmk GmbH - License: GNU General Public License v2
+# This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
+# conditions defined in the file COPYING, which is part of this source code package.
 
 import importlib.machinery
 import importlib.util
@@ -12,6 +15,7 @@ if (spec := importlib.util.spec_from_file_location("c", werks_config_file, loade
     raise ImportError(f"Could not load {werks_config_file}")
 
 werks_config = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
 spec.loader.exec_module(werks_config)
 
 result: dict[str, list[str] | dict[str, list[str]]] = {
