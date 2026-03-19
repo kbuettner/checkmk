@@ -104,7 +104,7 @@ Rules specific to Task:
 Fetch the full component list from the compass endpoint:
 
 ```bash
-.venv/bin/python .claude/skills/jira-create-ticket/create_ticket.py \
+.venv/bin/python .github/skills/jira-create-ticket/create_ticket.py \
   --summary "<drafted summary>" \
   --guess
 ```
@@ -116,7 +116,7 @@ This returns a JSON array of all ~220 components, each with `name`, `teams`, and
 Fetch all open roadmap epics:
 
 ```bash
-.venv/bin/python .claude/skills/jira-create-ticket/create_ticket.py \
+.venv/bin/python .github/skills/jira-create-ticket/create_ticket.py \
   --find-epics \
   --summary "<drafted summary>"
 ```
@@ -152,7 +152,7 @@ If the user wants changes, incorporate them and verify again.
 Once confirmed, run:
 
 ```bash
-.venv/bin/python .claude/skills/jira-create-ticket/create_ticket.py \
+.venv/bin/python .github/skills/jira-create-ticket/create_ticket.py \
   --summary "<summary>" \
   --description "<description>" \
   --issue-type "<type>" \

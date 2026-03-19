@@ -17,10 +17,10 @@ The user provides a Jira ticket key as the argument (e.g., `/jira-plan-ticket CM
 
 ### 1. Fetch ticket context
 
-Run the helper script to retrieve the full ticket context:
+Run the shared ticket reader script to retrieve the full ticket context:
 
 ```bash
-.venv/bin/python3 .claude/skills/jira-plan-ticket/fetch_jira_context.py <TICKET_KEY>
+.venv/bin/python .github/skills/jira-read-ticket/read_ticket.py <TICKET_KEY>
 ```
 
 This fetches the ticket's description, comments, linked tickets, and metadata from Jira.

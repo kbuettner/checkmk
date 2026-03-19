@@ -8,6 +8,7 @@
       "Skill(jenkins)",
       "Skill(owners)",
       "Skill(jira-plan-ticket)",
+      "Skill(jira-read-ticket)",
 
       "Bash(bazel *)",
       "Bash(make *)",
@@ -68,7 +69,7 @@
       "Bash(mkdir /tmp/jenkins-artifacts)",
       "Bash(tar -xf /tmp/jenkins-artifacts/*)",
       "Read(//tmp/jenkins-artifacts/**)",
-      "Bash(.venv/bin/python3 .claude/skills/jira-plan-ticket/fetch_jira_context.py *)",
+      "Bash(.venv/bin/python .github/skills/jira-read-ticket/read_ticket.py *)",
 
       "WebFetch(domain:*.tribe29.com)",
       "WebFetch(domain:*.checkmk.net)"

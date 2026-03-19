@@ -2,12 +2,12 @@
 # Copyright (C) 2024 Checkmk GmbH - License: GNU General Public License v2
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
-"""Fetch Jira ticket context for Claude Code skill.
+"""Fetch Jira ticket context for Claude Code skills.
 
 NOTE: This skill is limited to the CMK project to avoid interfering with sensitive
 customer data. Only CMK- prefixed tickets are supported.
 
-Usage: .venv/bin/python3 .claude/skills/jira-plan-ticket/fetch_jira_context.py <TICKET_KEY>
+Usage: .venv/bin/python .github/skills/jira-read-ticket/read_ticket.py <TICKET_KEY>
 
 Environment: JIRA_PAT - Personal Access Token for Jira authentication.
 
@@ -149,7 +149,7 @@ def jira_wiki_to_markdown(text: str) -> str:
     text = _NESTED_NUMBERED_RE.sub("   1. ", text)
     text = _NUMBERED_RE.sub("1. ", text)
     text = _NESTED_BULLET_RE.sub("  - ", text)
-    # Top-level bullets: Jira "* item" → "- item" (but not "**" which is nested)
+    # Top-level bullets: Jira "* item" -> "- item" (but not "**" which is nested)
     # Only match "* " at start of line that isn't already handled
     text = re.sub(r"^\*\s+", "- ", text, flags=re.MULTILINE)
 
@@ -327,38 +327,19 @@ def format_linked_issue(client: JIRA, key: str, link_desc: str) -> str:
     return "\n".join(parts)
 
 
-def main() -> None:
-    if len(sys.argv) != 2:
-        sys.stderr.write("Usage: fetch_jira_context.py <TICKET_KEY>\n")
-        sys.exit(1)
+def fetch_ticket(key: str, token: str) -> str:
+    """Fetch a Jira ticket and return formatted markdown output.
 
-    key = sys.argv[1].upper()
-    if not key.startswith(PROJECT_PREFIX):
-        sys.stderr.write(
-            f"Error: Only CMK- tickets are supported (limited to the CMK project"
-            f" to avoid interfering with sensitive customer data), got: {key}\n"
-        )
-        sys.exit(1)
-
-    token = os.environ.get("JIRA_PAT")
-    if not token:
-        sys.stderr.write("Error: JIRA_PAT environment variable is not set.\n")
-        sys.exit(1)
-
-    try:
-        client = connect(token)
-    except Exception as e:
-        sys.stderr.write(f"Error: Failed to connect to Jira: {e}\n")
-        sys.exit(1)
+    This is the main entry point for programmatic use by other skills.
+    """
+    client = connect(token)
 
     try:
         issue = client.issue(key)
     except JIRAError as e:
         if e.status_code == 404:
-            sys.stderr.write(f"Error: Ticket {key} not found.\n")
-        else:
-            sys.stderr.write(f"Error: Failed to fetch {key}: {e.status_code} {e.text}\n")
-        sys.exit(1)
+            raise SystemExit(f"Error: Ticket {key} not found.")
+        raise SystemExit(f"Error: Failed to fetch {key}: {e.status_code} {e.text}")
 
     # Create temp directory for attachments (persists for Claude Code to read)
     attachment_dir = Path(tempfile.mkdtemp(prefix=f"jira_{key}_"))
@@ -430,7 +411,36 @@ def main() -> None:
                 parts.append(results[linked_key])
                 parts.append("")
 
-    sys.stdout.write("\n".join(parts) + "\n")
+    return "\n".join(parts) + "\n"
+
+
+def main() -> None:
+    if len(sys.argv) != 2:
+        sys.stderr.write("Usage: read_ticket.py <TICKET_KEY>\n")
+        sys.exit(1)
+
+    key = sys.argv[1].upper()
+    if not key.startswith(PROJECT_PREFIX):
+        sys.stderr.write(
+            f"Error: Only CMK- tickets are supported (limited to the CMK project"
+            f" to avoid interfering with sensitive customer data), got: {key}\n"
+        )
+        sys.exit(1)
+
+    token = os.environ.get("JIRA_PAT")
+    if not token:
+        sys.stderr.write("Error: JIRA_PAT environment variable is not set.\n")
+        sys.exit(1)
+
+    try:
+        output = fetch_ticket(key, token)
+    except SystemExit:
+        raise
+    except Exception as e:
+        sys.stderr.write(f"Error: {e}\n")
+        sys.exit(1)
+
+    sys.stdout.write(output)
 
 
 if __name__ == "__main__":

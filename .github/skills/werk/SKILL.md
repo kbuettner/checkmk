@@ -42,7 +42,7 @@ Ask the dev for these three inputs one after another. Start with further process
 Use the provided script to gather all commits for the given Jira keys in one shot:
 
 ```bash
-.claude/skills/werk/gather_commits.sh <jira_key1> [<jira_key2> ...] > /tmp/werk_commits.txt 2>&1
+.github/skills/werk/gather_commits.sh <jira_key1> [<jira_key2> ...] > /tmp/werk_commits.txt 2>&1
 wc -l /tmp/werk_commits.txt
 ```
 
@@ -96,7 +96,7 @@ Extract all valid field values from `.werks/config`:
 ```bash
 # Extract all valid Werk fields from .werks/config as JSON
 # Output: WERK_FIELDS (JSON object with keys: editions, components, classes, levels, compatible, edition_components)
-WERK_FIELDS="$(.claude/skills/werk/get_werk_fields.py .werks/config)"
+WERK_FIELDS="$(.github/skills/werk/get_werk_fields.py .werks/config)"
 echo "$WERK_FIELDS"
 ```
 
@@ -184,7 +184,7 @@ Pick a key from `echo "$WERK_FIELDS" | jq -r '.compatible'`.
 
 ### Step 3: Generate Werk Description
 
-Follow the style guide at `.claude/skills/werk/style-guide.md`.
+Follow the style guide at `.github/skills/werk/style-guide.md`.
 
 ### Step 4: Present to dev for Review
 
@@ -278,7 +278,7 @@ The werk tool will:
 Replace the Werk text with the relevant Jira issue keys in the commit msg using the provided script:
 
 ```bash
-.claude/skills/werk/amend_werk_commit.sh <jira_key1> [<jira_key2> ...]
+.github/skills/werk/amend_werk_commit.sh <jira_key1> [<jira_key2> ...]
 ```
 
 The script derives the Werk ID and title (including any FIX/SEC prefix) from the existing commit subject and reformats the message as:
