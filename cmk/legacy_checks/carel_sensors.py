@@ -3,17 +3,29 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
+from collections.abc import Mapping
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import all_of, any_of, contains, endswith, exists, OIDEnd, SNMPTree
-from cmk.legacy_includes.temperature import check_temperature
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    all_of,
+    any_of,
+    CheckPlugin,
+    CheckResult,
+    contains,
+    DiscoveryResult,
+    endswith,
+    exists,
+    get_value_store,
+    OIDEnd,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    StringTable,
+)
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
 
 # No factory default because of different defaultlevels
-carel_temp_defaultlevels = {
+carel_temp_defaultlevels: Mapping[str, tuple[float, float]] = {
     "Room": (30, 35),
     "Outdoor": (60, 70),
     "Delivery": (60, 70),
@@ -34,8 +46,10 @@ carel_temp_defaultlevels = {
     "Heating Prop. Band": (60, 70),
 }
 
+Section = Mapping[str, float]
 
-def carel_sensors_parse(string_table):
+
+def carel_sensors_parse(string_table: StringTable) -> Section:
     oid_parse = {
         "1.0": "Room",
         "2.0": "Outdoor",
@@ -57,7 +71,7 @@ def carel_sensors_parse(string_table):
         "25.0": "Heating Prop. Band",
     }
 
-    parsed = {}
+    parsed: dict[str, float] = {}
     for oidend, value in string_table:
         sensor_name = oid_parse.get(oidend)
         if sensor_name is not None and value not in {None, "0", "-9999"}:
@@ -66,20 +80,9 @@ def carel_sensors_parse(string_table):
     return parsed
 
 
-def discover_carel_sensors_temp(parsed):
-    for sensor in parsed:
-        levels = carel_temp_defaultlevels[sensor]
-        yield sensor, {"levels": levels}
-
-
-def check_carel_sensors_temp(item, params, parsed):
-    if item in parsed:
-        return check_temperature(parsed[item], params, "carel_sensors_temp_%s" % item)
-    return None
-
-
-check_info["carel_sensors"] = LegacyCheckDefinition(
+snmp_section_carel_sensors = SimpleSNMPSection(
     name="carel_sensors",
+    parse_function=carel_sensors_parse,
     detect=all_of(
         any_of(contains(".1.3.6.1.2.1.1.1.0", "pCO"), endswith(".1.3.6.1.2.1.1.1.0", "armv4l")),
         exists(".1.3.6.1.4.1.9839.1.1.0"),
@@ -88,9 +91,30 @@ check_info["carel_sensors"] = LegacyCheckDefinition(
         base=".1.3.6.1.4.1.9839.2.1",
         oids=[OIDEnd(), "2"],
     ),
-    parse_function=carel_sensors_parse,
+)
+
+
+def discover_carel_sensors_temp(section: Section) -> DiscoveryResult:
+    for sensor in section:
+        levels = carel_temp_defaultlevels[sensor]
+        yield Service(item=sensor, parameters={"levels": levels})
+
+
+def check_carel_sensors_temp(item: str, params: TempParamType, section: Section) -> CheckResult:
+    if item in section:
+        yield from check_temperature(
+            reading=section[item],
+            params=params,
+            unique_name=f"carel_sensors_temp_{item}",
+            value_store=get_value_store(),
+        )
+
+
+check_plugin_carel_sensors = CheckPlugin(
+    name="carel_sensors",
     service_name="Temperature %s",
     discovery_function=discover_carel_sensors_temp,
     check_function=check_carel_sensors_temp,
     check_ruleset_name="temperature",
+    check_default_parameters={},
 )
