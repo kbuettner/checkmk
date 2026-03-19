@@ -3,32 +3,58 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 
 from collections.abc import Sequence
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, StringTable
-from cmk.legacy_includes.dell_poweredge import check_dell_poweredge_cpu
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
 from cmk.plugins.dell.lib import DETECT_IDRAC_POWEREDGE
 
-check_info = {}
+_STATE_TABLE = {
+    "1": (State.WARN, "other"),
+    "2": (State.WARN, "unknown"),
+    "3": (State.OK, ""),
+    "4": (State.WARN, "non-critical"),
+    "5": (State.CRIT, "critical"),
+    "6": (State.CRIT, "non-recoverable"),
+}
 
 
-def discover_dell_poweredge_cpu(info):
-    for _chassisIndex, _Index, StateSettings, _Status, LocationName in info[0]:
+def discover_dell_poweredge_cpu(section: Sequence[StringTable]) -> DiscoveryResult:
+    for _chassisIndex, _Index, StateSettings, _Status, LocationName in section[0]:
         if LocationName != "" and StateSettings != "1":
-            yield LocationName, None
+            yield Service(item=LocationName)
+
+
+def check_dell_poweredge_cpu(item: str, section: Sequence[StringTable]) -> CheckResult:
+    for chassisIndex, Index, _StateSettings, Status, LocationName in section[0]:
+        if item == LocationName:
+            brand_name = None
+            for line in section[1]:
+                if line[0] == chassisIndex and line[1] == Index:
+                    brand_name = line[2]
+
+            state, status_txt = _STATE_TABLE.get(Status, (State.CRIT, "unknown state"))
+            summary = " ".join(p for p in [status_txt, brand_name] if p) or "OK"
+            yield Result(state=state, summary=summary)
+            return
 
 
 def parse_dell_poweredge_cpu(string_table: Sequence[StringTable]) -> Sequence[StringTable]:
     return string_table
 
 
-check_info["dell_poweredge_cpu"] = LegacyCheckDefinition(
+snmp_section_dell_poweredge_cpu = SNMPSection(
     name="dell_poweredge_cpu",
-    parse_function=parse_dell_poweredge_cpu,
     detect=DETECT_IDRAC_POWEREDGE,
     fetch=[
         SNMPTree(
@@ -40,6 +66,10 @@ check_info["dell_poweredge_cpu"] = LegacyCheckDefinition(
             oids=["1", "2", "23"],
         ),
     ],
+    parse_function=parse_dell_poweredge_cpu,
+)
+check_plugin_dell_poweredge_cpu = CheckPlugin(
+    name="dell_poweredge_cpu",
     service_name="%s",
     discovery_function=discover_dell_poweredge_cpu,
     check_function=check_dell_poweredge_cpu,

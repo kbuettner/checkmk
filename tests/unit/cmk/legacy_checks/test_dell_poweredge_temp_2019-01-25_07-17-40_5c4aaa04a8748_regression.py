@@ -50,13 +50,9 @@ def test_discover_dell_poweredge_temp(parsed: list[list[str]]) -> None:
     assert len(discovered) == 2
 
     # Check discovered items (names are trimmed of " Temp" suffix)
-    discovered_items = [item[0] for item in discovered]
+    discovered_items = [s.item for s in discovered]
     assert "System Board Inlet" in discovered_items
     assert "System Board Exhaust" in discovered_items
-
-    # Parameters should be empty
-    for item, params in discovered:
-        assert params == {}
 
 
 def test_discover_dell_poweredge_temp_filters_unknown_state() -> None:
@@ -81,7 +77,7 @@ def test_discover_dell_poweredge_temp_filters_unknown_state() -> None:
 
     # Should only discover the sensor with StateSettings = 2
     assert len(discovered) == 1
-    assert discovered[0][0] == "Good Sensor"
+    assert discovered[0].item == "Good Sensor"
 
 
 def test_check_dell_poweredge_temp_inlet_normal(parsed: list[list[str]]) -> None:
@@ -229,7 +225,7 @@ def test_check_dell_poweredge_temp_item_name_trimming() -> None:
 
     # Should discover 2 items with trimmed names
     assert len(discovered) == 2
-    discovered_items = [item[0] for item in discovered]
+    discovered_items = [s.item for s in discovered]
 
     # "Processor 1 Temp" should become "Processor 1"
     assert "Processor 1" in discovered_items
@@ -271,4 +267,4 @@ def test_check_dell_poweredge_temp_edge_case_fallback_naming() -> None:
 
     # Should use chassisIndex-Index format when LocationName is empty
     assert len(discovered) == 1
-    assert discovered[0][0] == "2-5"
+    assert discovered[0].item == "2-5"

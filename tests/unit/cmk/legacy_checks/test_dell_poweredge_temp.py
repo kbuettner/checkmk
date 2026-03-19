@@ -11,7 +11,7 @@ from typing import Any
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Service, StringTable
 from cmk.legacy_checks.dell_poweredge_temp import (
     discover_dell_poweredge_temp,
     parse_dell_poweredge_temp,
@@ -20,7 +20,7 @@ from cmk.legacy_includes.dell_poweredge import check_dell_poweredge_temp
 
 
 @pytest.mark.parametrize(
-    "string_table, expected_discoveries",
+    "string_table, expected_items",
     [
         (
             [
@@ -29,17 +29,16 @@ from cmk.legacy_includes.dell_poweredge import check_dell_poweredge_temp
                 ["1", "3", "1", "2", "", "CPU1 Temp", "", "", "", ""],
                 ["1", "4", "1", "2", "", "CPU2 Temp", "", "", "", ""],
             ],
-            [("System Board Exhaust", {}), ("System Board Inlet", {})],
+            {"System Board Exhaust", "System Board Inlet"},
         ),
     ],
 )
-def test_discover_dell_poweredge_temp(
-    string_table: StringTable, expected_discoveries: Sequence[tuple[str, Mapping[str, Any]]]
-) -> None:
+def test_discover_dell_poweredge_temp(string_table: StringTable, expected_items: set[str]) -> None:
     """Test discovery function for dell_poweredge_temp check."""
     parsed = parse_dell_poweredge_temp(string_table)
     result = list(discover_dell_poweredge_temp(parsed))
-    assert sorted(result) == sorted(expected_discoveries)
+    assert all(isinstance(s, Service) for s in result)
+    assert {s.item for s in result} == expected_items
 
 
 @pytest.mark.parametrize(
