@@ -10,7 +10,7 @@ py_library(
     ],
     deps = [
         "//cmk/checkengine:cmk_checkengine",
-        "//cmk/server_side_calls_backend:cmk_server_side_calls_backend",
+        "//cmk/server_side_calls_backend",
         "//cmk/utils",
         "//packages/cmk-ccc:hostaddress",
         "//packages/cmk-ccc:translations",

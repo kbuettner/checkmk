@@ -38,7 +38,7 @@ py_library(
         "//cmk/plugins:cmk_plugins",
         "//cmk/product_usage:cmk_product_usage",
         "//cmk/rrd:cmk_rrd",
-        "//cmk/server_side_calls_backend:cmk_server_side_calls_backend",
+        "//cmk/server_side_calls_backend",
         "//cmk/utils",
         "//packages/cmk-ccc:archive",
         "//packages/cmk-ccc:cleanup",

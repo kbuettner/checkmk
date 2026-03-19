@@ -43,7 +43,7 @@ py_library(
         "//cmk/checkengine:cmk_checkengine",
         "//cmk/inventory:cmk_inventory",
         "//cmk/piggyback:backend",
-        "//cmk/server_side_calls_backend:cmk_server_side_calls_backend",
+        "//cmk/server_side_calls_backend",
         "//cmk/utils",
         "//packages/cmk-ccc:cleanup",
         "//packages/cmk-ccc:config-path",

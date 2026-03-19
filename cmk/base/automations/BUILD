@@ -24,7 +24,7 @@ py_library(
         "//cmk/core_client:cmk_core_client",
         "//cmk/inventory:cmk_inventory",
         "//cmk/piggyback:backend",
-        "//cmk/server_side_calls_backend:cmk_server_side_calls_backend",
+        "//cmk/server_side_calls_backend",
         "//cmk/utils",
         "//packages/cmk-ccc:cleanup",
         "//packages/cmk-ccc:config-path",

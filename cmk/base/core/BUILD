@@ -47,7 +47,7 @@ py_library(
         "//cmk/base:config",
         "//cmk/base/modes",
         "//cmk/checkengine:cmk_checkengine",
-        "//cmk/server_side_calls_backend:cmk_server_side_calls_backend",
+        "//cmk/server_side_calls_backend",
         "//cmk/utils",
         "//packages/cmk-ccc:config-path",
         "//packages/cmk-ccc:debug",

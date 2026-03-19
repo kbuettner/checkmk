@@ -1,7 +1,7 @@
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 
 py_library(
-    name = "cmk_server_side_calls_backend",
+    name = "server_side_calls_backend",
     srcs = glob(["**/*.py"]),
     imports = ["../.."],
     visibility = ["//cmk:__subpackages__"],
