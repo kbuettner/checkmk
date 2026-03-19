@@ -3237,6 +3237,7 @@ pyyaml==6.0.3 \
     # via
     #   -c requirements.txt
     #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-bakery/requirements.in
     #   -r non-free/packages/cmk-otel-collector/requirements.in
     #   -r non-free/packages/cmk-robotmk/requirements.in
     #   datamodel-code-generator

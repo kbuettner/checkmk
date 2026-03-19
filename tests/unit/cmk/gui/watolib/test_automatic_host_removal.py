@@ -22,14 +22,14 @@ from cmk.base.automations.automations import AutomationContext
 from cmk.base.automations.check_mk import automation_analyze_host_rule_matches
 from cmk.ccc.hostaddress import HostName
 from cmk.ccc.site import SiteId
-from cmk.ccc.version import edition
+from cmk.ccc.version import Edition
 from cmk.gui.config import Config
 from cmk.gui.watolib import automatic_host_removal
 from cmk.gui.watolib.hosts_and_folders import folder_tree
 from cmk.gui.watolib.rulesets import FolderRulesets, Rule, RuleConditions, RuleOptions, Ruleset
 from cmk.livestatus_client import SiteConfiguration
 from cmk.livestatus_client.testing import MockLiveStatusConnection
-from cmk.utils.paths import default_config_dir, omd_root
+from cmk.utils.paths import default_config_dir
 from cmk.utils.rulesets.ruleset_matcher import RuleSpec
 from tests.testlib.unit.base_configuration_scenario import Scenario
 
@@ -225,7 +225,7 @@ def fixture_mock_analyze_host_rule_matches_automation(
         with mocker.patch("sys.stdin", StringIO(repr(r))):
             return automation_analyze_host_rule_matches(
                 AutomationContext(
-                    edition=(app := make_app(edition(omd_root))).edition,
+                    edition=(app := make_app(Edition.COMMUNITY)).edition,
                     make_bake_on_restart=app.make_bake_on_restart,
                     create_core=app.create_core,
                     make_fetcher_trigger=app.make_fetcher_trigger,

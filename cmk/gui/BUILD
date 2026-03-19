@@ -153,7 +153,7 @@ py_library(
     ] + select({
         "@//:gpl+nonfree_repo": [
             "//cmk/utils:pro",
-            "//non-free/packages/cmk-bakery",
+            "//non-free/packages/cmk-bakery:shared",
             "//non-free/packages/cmk-dcd:gui",
             "//non-free/packages/cmk-dcd:protocols",
             "//non-free/packages/cmk-liveproxyd:gui",

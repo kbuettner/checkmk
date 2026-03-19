@@ -22,12 +22,11 @@ from cmk.base.automations.check_mk import (
     automation_analyze_service_rule_matches,
 )
 from cmk.ccc.hostaddress import HostName
-from cmk.ccc.version import edition
+from cmk.ccc.version import Edition
 from cmk.gui.config import active_config
 from cmk.gui.watolib import rulesets
 from cmk.gui.watolib.hosts_and_folders import Folder, FolderTree, HostsAndFoldersConfig
 from cmk.gui.watolib.rulesets import FolderRulesets, Rule, RuleConditions, RuleOptions, Ruleset
-from cmk.utils import paths
 from cmk.utils.labels import Labels
 from cmk.utils.paths import default_config_dir
 from cmk.utils.rulesets.ruleset_matcher import RuleSpec
@@ -51,7 +50,7 @@ def fixture_mock_analyze_host_rule_matches_automation(monkeypatch: pytest.Monkey
             m.setattr(sys, "stdin", StringIO(repr(r)))
             return automation_analyze_host_rule_matches(
                 AutomationContext(
-                    edition=(app := make_app(edition(paths.omd_root))).edition,
+                    edition=(app := make_app(Edition.COMMUNITY)).edition,
                     make_bake_on_restart=app.make_bake_on_restart,
                     create_core=app.create_core,
                     make_fetcher_trigger=app.make_fetcher_trigger,
@@ -187,7 +186,7 @@ def fixture_mock_analyze_service_rule_matches_automation(monkeypatch: pytest.Mon
             m.setattr(sys, "stdin", StringIO(repr((rules, service_labels))))
             return automation_analyze_service_rule_matches(
                 AutomationContext(
-                    edition=(app := make_app(edition(paths.omd_root))).edition,
+                    edition=(app := make_app(Edition.COMMUNITY)).edition,
                     make_bake_on_restart=app.make_bake_on_restart,
                     create_core=app.create_core,
                     make_fetcher_trigger=app.make_fetcher_trigger,

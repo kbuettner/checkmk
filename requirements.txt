@@ -4351,6 +4351,7 @@ pyyaml==6.0.3 \
     --hash=sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0
     # via
     #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-bakery/requirements.in
     #   -r non-free/packages/cmk-otel-collector/requirements.in
     #   -r non-free/packages/cmk-robotmk/requirements.in
     #   bandit

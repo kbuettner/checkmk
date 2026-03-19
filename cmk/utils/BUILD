@@ -27,6 +27,7 @@ py_library(
     ],
     visibility = [
         "//cmk:__subpackages__",
+        "//non-free/packages/cmk-bakery:__pkg__",
         "//non-free/packages/cmk-dcd:__pkg__",
         "//non-free/packages/cmk-liveproxyd:__pkg__",
         "//non-free/packages/cmk-metric-backend:__pkg__",

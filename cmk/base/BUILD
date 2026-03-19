@@ -142,6 +142,7 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/base:__subpackages__",
+        "//non-free/packages/cmk-bakery:__pkg__",
     ],
     deps = [
         "//cmk/utils",
@@ -163,6 +164,7 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/base:__subpackages__",
+        "//non-free/packages/cmk-bakery:__pkg__",
     ],
     deps = [
         ":api",
@@ -180,6 +182,7 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/base:__subpackages__",
+        "//non-free/packages/cmk-bakery:__pkg__",
         "//tests:__subpackages__",
     ],
     deps = [
@@ -207,6 +210,7 @@ py_library(
         "//cmk/base:__subpackages__",
         "//cmk/product_usage:__pkg__",
         "//cmk/update_config:__pkg__",
+        "//non-free/packages/cmk-bakery:__pkg__",
         "//tests:__subpackages__",
     ],
     deps = [
@@ -331,6 +335,7 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/base:__subpackages__",
+        "//non-free/packages/cmk-bakery:__pkg__",
     ],
     deps = [
         ":checkers",
@@ -376,6 +381,7 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/base:__subpackages__",
+        "//non-free/packages/cmk-bakery:__pkg__",
     ],
     deps = [
         "//cmk/utils",
@@ -392,6 +398,7 @@ py_library(
     visibility = [
         "//cmk:__pkg__",
         "//cmk/base:__subpackages__",
+        "//non-free/packages/cmk-bakery:__pkg__",
     ],
     deps = [
         ":automations",

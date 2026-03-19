@@ -17,7 +17,6 @@ from io import StringIO
 from unittest.mock import patch
 
 import pytest
-from pytest import FixtureRequest
 
 import cmk.gui.utils
 from cmk.automations.results import (
@@ -44,7 +43,6 @@ from cmk.gui.watolib.configuration_bundle_store import BundleId
 from cmk.gui.watolib.configuration_bundles import create_config_bundle, CreateBundleEntities
 from cmk.gui.watolib.hosts_and_folders import Folder, folder_tree
 from cmk.gui.watolib.rulesets import Rule, RuleOptions, Ruleset, RuleValue
-from cmk.utils import paths
 from cmk.utils.global_ident_type import PROGRAM_ID_QUICK_SETUP
 from cmk.utils.redis import disable_redis
 from cmk.utils.rulesets.definition import RuleGroup
@@ -752,7 +750,7 @@ def fixture_mock_analyze_host_rule_matches_automation(monkeypatch: pytest.Monkey
             m.setattr(sys, "stdin", StringIO(repr(r)))
             return automation_analyze_host_rule_matches(
                 AutomationContext(
-                    edition=(app := make_app(version.edition(paths.omd_root))).edition,
+                    edition=(app := make_app(version.Edition.COMMUNITY)).edition,
                     make_bake_on_restart=app.make_bake_on_restart,
                     create_core=app.create_core,
                     make_fetcher_trigger=app.make_fetcher_trigger,
@@ -912,7 +910,7 @@ def fixture_inline_analyze_host_rule_effectiveness_automation(
             m.setattr(sys, "stdin", StringIO(repr(r)))
             return automation_analyze_host_rule_effectiveness(
                 AutomationContext(
-                    edition=(app := make_app(version.edition(paths.omd_root))).edition,
+                    edition=(app := make_app(version.Edition.COMMUNITY)).edition,
                     make_bake_on_restart=app.make_bake_on_restart,
                     create_core=app.create_core,
                     make_fetcher_trigger=app.make_fetcher_trigger,
@@ -1025,30 +1023,12 @@ class _RuleHelper:
             },
         )
 
-    @staticmethod
-    def ssh_rule() -> rulesets.Rule:
-        return _RuleHelper._make_rule(
-            RuleGroup.AgentConfig("lnx_remote_alert_handlers"),
-            {"handlers": {}, "runas": "old_value", "sshkey": ("private_key", "public_key")},
-        )
 
-
-@pytest.fixture(
-    params=[
-        _RuleHelper(
-            _RuleHelper.gcp_rule, "credentials", ("explicit_password", "uuid", "geheim"), "project"
-        ),
-        pytest.param(
-            _RuleHelper(_RuleHelper.ssh_rule, "sshkey", ("new_priv", "public_key"), "runas"),
-            marks=pytest.mark.skipif(
-                version.edition(paths.omd_root) is version.Edition.COMMUNITY,
-                reason="lnx_remote_alert_handlers is not available in raw edition",
-            ),
-        ),
-    ]
-)
-def rule_helper(request: FixtureRequest) -> _RuleHelper:
-    return request.param
+@pytest.fixture()
+def rule_helper() -> _RuleHelper:
+    return _RuleHelper(
+        _RuleHelper.gcp_rule, "credentials", ("explicit_password", "uuid", "geheim"), "project"
+    )
 
 
 def test_to_log_masks_secrets() -> None:

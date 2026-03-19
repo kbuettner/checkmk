@@ -13,6 +13,7 @@ py_library(
     ],
     visibility = [
         ":__subpackages__",
+        "//non-free/packages/cmk-bakery:__pkg__",
         "//non-free/packages/cmk-robotmk:__pkg__",
     ],
     deps = [
@@ -231,10 +232,9 @@ py_test(
     ] + select({
         "@//:gpl+nonfree_repo": [
             "//cmk/base/nonfree:pro",
-            "//cmk/base/nonfree/bakery:core",
-            "//cmk/base/nonfree/bakery:core_bakelets_ultimate",  # FIXME
-            "//cmk/base/nonfree/bakery:nonfree_bakery",
             "//non-free/packages/cmc-protocols:py_config_proto",
+            "//non-free/packages/cmk-bakery:core",
+            "//non-free/packages/cmk-bakery:core_bakelets_ultimate",
             "//non-free/packages/cmk-robotmk:plugins",  # see above
         ],
         "@//:gpl_repo": [],
