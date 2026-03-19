@@ -103,7 +103,7 @@ const {
 
 const activationPollStartTime = ref<number | null>(null)
 const restartInfoShown = ref(false)
-const siteRestartWaitTime = 30000
+const siteRestartWaitTime = 60000
 
 async function pollActivationStatusUntilComplete(activationId: string) {
   try {
@@ -138,7 +138,7 @@ async function pollActivationStatusUntilComplete(activationId: string) {
       const statusCode = cmkError.getStatusCode()
 
       if (
-        statusCode === 503 &&
+        (statusCode === 503 || statusCode === 502) &&
         activationPollStartTime.value &&
         Date.now() - activationPollStartTime.value <= siteRestartWaitTime
       ) {
@@ -159,6 +159,7 @@ async function pollActivationStatusUntilComplete(activationId: string) {
     activationPollStartTime.value = null
     restartInfoShown.value = false
     mainMenu.restartBadgeUpdate('changes')
+    void fetchPendingChangesAjax()
 
     throw new Error(`Polling of activation result failed: ${error}`)
   }
