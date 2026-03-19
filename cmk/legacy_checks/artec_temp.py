@@ -3,36 +3,32 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import all_of, contains, equals, SNMPTree, StringTable
-from cmk.legacy_includes.temperature import check_temperature, TempParamType
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    all_of,
+    CheckPlugin,
+    CheckResult,
+    contains,
+    DiscoveryResult,
+    equals,
+    get_value_store,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    StringTable,
+)
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
 
 # .1.3.6.1.4.1.31560.3.1.1.1.48 33 --> ARTEC-MIB::hddTemperature
 
 # suggested by customer
 
 
-def discover_artec_temp(info: StringTable) -> list[tuple[str, dict[str, Any]]]:
-    return [("Disk", {})]
-
-
-def check_artec_temp(
-    item: str, params: TempParamType, info: StringTable
-) -> tuple[
-    int, str, list[tuple[str, float, float | None, float | None, float | None, float | None]]
-]:
-    return check_temperature(int(info[0][0]), params, "artec_%s" % item)
-
-
 def parse_artec_temp(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["artec_temp"] = LegacyCheckDefinition(
+snmp_section_artec_temp = SimpleSNMPSection(
     name="artec_temp",
     parse_function=parse_artec_temp,
     detect=all_of(
@@ -44,6 +40,24 @@ check_info["artec_temp"] = LegacyCheckDefinition(
         base=".1.3.6.1.4.1.31560.3.1.1.1",
         oids=["48"],
     ),
+)
+
+
+def discover_artec_temp(section: StringTable) -> DiscoveryResult:
+    yield Service(item="Disk")
+
+
+def check_artec_temp(item: str, params: TempParamType, section: StringTable) -> CheckResult:
+    yield from check_temperature(
+        reading=int(section[0][0]),
+        params=params,
+        unique_name=f"artec_{item}",
+        value_store=get_value_store(),
+    )
+
+
+check_plugin_artec_temp = CheckPlugin(
+    name="artec_temp",
     service_name="Temperature %s",
     discovery_function=discover_artec_temp,
     check_function=check_artec_temp,
