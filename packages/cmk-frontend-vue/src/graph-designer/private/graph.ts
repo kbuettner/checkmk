@@ -51,10 +51,6 @@ interface GraphRenderConfig {
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type GraphRecipe = Record<string, any>
 
-type TimeRange = [number, number]
-
-type Seconds = number
-
 interface AjaxContext {
   graph_id: string
   graph_recipe: GraphRecipe
@@ -62,11 +58,9 @@ interface AjaxContext {
   display_id: string
 }
 
-type TimeSeriesValue = number | null
-
 interface LayoutedCurveArea {
   line_type: 'area' | '-area'
-  points: [TimeSeriesValue, TimeSeriesValue][]
+  points: [number | null, number | null][]
   //dynamic
   title?: string
   color: string
@@ -74,7 +68,7 @@ interface LayoutedCurveArea {
 
 interface LayoutedCurveStack {
   line_type: 'stack' | '-stack'
-  points: [TimeSeriesValue, TimeSeriesValue][]
+  points: [number | null, number | null][]
   //dynamic
   title?: string
   color: string
@@ -82,7 +76,7 @@ interface LayoutedCurveStack {
 
 interface LayoutedCurveLine {
   line_type: 'line' | '-line'
-  points: TimeSeriesValue[]
+  points: number | null[]
   //dynamic
   title?: string
   color: string
@@ -117,10 +111,8 @@ interface TimeAxisLabel {
 
 interface TimeAxis {
   labels: TimeAxisLabel[]
-  range: TimeRange
+  range: [number, number]
 }
-
-type Timestamp = number
 
 //this type is from cmk/gui/plugins/metrics/artwork.py:82
 interface GraphArtwork {
@@ -137,13 +129,13 @@ interface GraphArtwork {
   time_axis: TimeAxis
   mark_requested_end_time: boolean
   //Displayed range
-  start_time: Timestamp
-  end_time: Timestamp
-  step: Seconds
+  start_time: number
+  end_time: number
+  step: number
   requested_vrange: [number, number] | null
-  requested_start_time: Timestamp
-  requested_end_time: Timestamp
-  pin_time: Timestamp | null
+  requested_start_time: number
+  requested_end_time: number
+  pin_time: number | null
 }
 
 export interface AjaxGraph {
