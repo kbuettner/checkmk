@@ -3,21 +3,32 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
+
+from typing import Any
+
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
+
+Section = dict[str, Any]
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import SNMPTree, startswith
-from cmk.legacy_includes.temperature import check_temperature
-
-check_info = {}
-
-
-def parse_atto_fibrebridge_chassis(string_table):
+def parse_atto_fibrebridge_chassis(string_table: StringTable) -> Section | None:
     if not string_table:
         return None
 
-    parsed = {}
+    parsed: dict[str, Any] = {}
 
     min_operating_temp = int(string_table[0][0])
     max_operating_temp = int(string_table[0][1])
@@ -34,6 +45,17 @@ def parse_atto_fibrebridge_chassis(string_table):
     return parsed
 
 
+snmp_section_atto_fibrebridge_chassis = SimpleSNMPSection(
+    name="atto_fibrebridge_chassis",
+    parse_function=parse_atto_fibrebridge_chassis,
+    detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.4547"),
+    fetch=SNMPTree(
+        base=".1.3.6.1.4.1.4547.2.3.2",
+        oids=["4", "5", "8", "11"],
+    ),
+)
+
+
 # .
 #   .--Temperature---------------------------------------------------------.
 #   |     _____                                   _                        |
@@ -45,23 +67,29 @@ def parse_atto_fibrebridge_chassis(string_table):
 #   '----------------------------------------------------------------------'
 
 
-def discover_atto_fibrebridge_chassis_temp(parsed):
-    return [("Chassis", {})]
+def discover_atto_fibrebridge_chassis_temp(section: Section) -> DiscoveryResult:
+    yield Service(item="Chassis")
 
 
-def check_atto_fibrebridge_chassis_temp(item, params, parsed):
-    return check_temperature(
-        params=params, unique_name="atto_fibrebridge_chassis_temp", **parsed["temperature"]
+def check_atto_fibrebridge_chassis_temp(
+    item: str, params: TempParamType, section: Section
+) -> CheckResult:
+    yield from check_temperature(
+        params=params,
+        unique_name="atto_fibrebridge_chassis_temp",
+        value_store=get_value_store(),
+        **section["temperature"],
     )
 
 
-check_info["atto_fibrebridge_chassis.temp"] = LegacyCheckDefinition(
+check_plugin_atto_fibrebridge_chassis_temp = CheckPlugin(
     name="atto_fibrebridge_chassis_temp",
     service_name="Temperature %s",
     sections=["atto_fibrebridge_chassis"],
     discovery_function=discover_atto_fibrebridge_chassis_temp,
     check_function=check_atto_fibrebridge_chassis_temp,
     check_ruleset_name="temperature",
+    check_default_parameters={},
 )
 
 # .
@@ -75,27 +103,20 @@ check_info["atto_fibrebridge_chassis.temp"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_atto_fibrebridge_chassis(parsed):
-    return [(None, None)]
+def discover_atto_fibrebridge_chassis(section: Section) -> DiscoveryResult:
+    yield Service()
 
 
-def check_atto_fibrebridge_chassis(_no_item, _no_params, parsed):
-    throughput_status = parsed["throughput_status"]
+def check_atto_fibrebridge_chassis(section: Section) -> CheckResult:
+    throughput_status = section["throughput_status"]
     if throughput_status == "1":
-        return 0, "Normal"
-    if throughput_status == "2":
-        return 1, "Warning"
-    return None
+        yield Result(state=State.OK, summary="Normal")
+    elif throughput_status == "2":
+        yield Result(state=State.WARN, summary="Warning")
 
 
-check_info["atto_fibrebridge_chassis"] = LegacyCheckDefinition(
+check_plugin_atto_fibrebridge_chassis = CheckPlugin(
     name="atto_fibrebridge_chassis",
-    detect=startswith(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.4547"),
-    fetch=SNMPTree(
-        base=".1.3.6.1.4.1.4547.2.3.2",
-        oids=["4", "5", "8", "11"],
-    ),
-    parse_function=parse_atto_fibrebridge_chassis,
     service_name="Throughput Status",
     discovery_function=discover_atto_fibrebridge_chassis,
     check_function=check_atto_fibrebridge_chassis,
