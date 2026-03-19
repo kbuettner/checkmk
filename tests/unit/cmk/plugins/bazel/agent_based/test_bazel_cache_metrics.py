@@ -28,6 +28,10 @@ def _section() -> Section:
     payload = {
         "bazel_remote_azblob_cache_hits": "0",
         "bazel_remote_azblob_cache_misses": "0",
+        "bazel_remote_disk_cache_entry_bytes_quantile_0_5": "NaN",
+        "bazel_remote_disk_cache_entry_bytes_quantile_0_9": "NaN",
+        "bazel_remote_disk_cache_entry_bytes_quantile_0_99": "NaN",
+        "bazel_remote_disk_cache_entry_bytes_quantile_1": "NaN",
         "bazel_remote_disk_cache_evicted_bytes_total": "0",
         "bazel_remote_disk_cache_logical_bytes": "6.66901065728e+11",
         "bazel_remote_disk_cache_longest_item_idle_time_seconds": "5.574440756946148e+06",
