@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Checkmk user interface translation 0.1\n"
 "Report-Msgid-Bugs-To: feedback@checkmk.com\n"
 "POT-Creation-Date: 2011-05-13 09:42+0200\n"
-"PO-Revision-Date: 2026-03-17 18:46+0000\n"
+"PO-Revision-Date: 2026-03-18 18:46+0000\n"
 "Language-Team: Portuguese (Portugal) <https://translate.checkmk.com/projects/"
 "checkmk/dev/pt_PT/>\n"
 "Language: pt_PT\n"
@@ -12819,7 +12819,7 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"Check HTTP: Use HTTPS instead of HTTP for SSL/TLS connections (deprecated/"
+"Check HTTP: Use HTTPS instead of HTTP for SSL/TLS connections (Deprecated/"
 "ineffective)"
 msgstr "Verifique HTTP: Use HTTPS ao invés de HTTP para conexões SSL/TLS"
 
@@ -22695,6 +22695,13 @@ msgid "Dump file: %s"
 msgstr "Arquivo de despejo: %s"
 
 msgid "Duplex"
+msgstr ""
+
+#, python-format
+msgid ""
+"Duplicate service name <b>%(description)s</b> for host <b>%(host_name)s</b>. "
+"Only one of the following services can be monitored at a time:<ul>%(items)s</"
+"ul>"
 msgstr ""
 
 #, python-format
@@ -32756,6 +32763,10 @@ msgstr "Definições de estado do conjunto de aplicações do IIS"
 msgid "IMAP"
 msgstr "IMAP"
 
+#, fuzzy
+msgid "IMAP STARTTLS"
+msgstr "STARTTLS"
+
 msgid "INFO"
 msgstr ""
 
@@ -35387,25 +35398,6 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"In order to make Checkmk more consistent, the descriptions of several "
-"services have been renamed in newer Checkmk versions. One example is the "
-"file system services that have been renamed from <tt>fs_</tt> into <tt>File "
-"system</tt>. But since renaming of existing services has many implications - "
-"including existing rules, metrics and availability history - these renamings "
-"are disabled per default for existing installations. Here you can switch to "
-"the new descriptions for selected check types."
-msgstr ""
-"A fim de tornar o Checkmk mais consistente, as descrições de vários serviços "
-"foram renomeadas nas versões mais recentes do Check_MK. Um exemplo são os "
-"serviços do sistema de ficheiros que foram renomeados de <tt>fs_</tt> para "
-"<tt>Filesystem</tt>. Mas uma vez que a renomeação de serviços existentes tem "
-"muitas implicações - incluindo regras existentes, dados de desempenho e "
-"histórico de disponibilidade - estas renomeações são desactivadas por "
-"defeito para as instalações existentes. Aqui pode mudar para as novas "
-"descrições dos tipos de verificação seleccionados"
-
-#, fuzzy
-msgid ""
 "In order to monitor Docker containers the plug-in <tt>mk_docker.py</tt> "
 "collects the following information of each Docker container as piggyback "
 "data. The piggybacked host name is the container's host name configured "
@@ -37995,6 +37987,10 @@ msgstr "LDAP (Active Directory, OpenLDAP)"
 msgid "LDAP Connection"
 msgstr "Ligação LDAP"
 
+#, fuzzy
+msgid "LDAP STARTTLS"
+msgstr "STARTTLS"
+
 msgid "LDAP Server"
 msgstr "Servidor LDAP"
 
@@ -38079,7 +38075,7 @@ msgid "LRU nuked objects"
 msgstr "Objetos nucleares da LRU"
 
 #, fuzzy
-msgid "LSI MegaRAID: Battery backup unit"
+msgid "LSI MegaRAID: Battery Backup Unit"
 msgstr "LSI MegaRAID: Unidade de backup de bateria"
 
 msgid "LSI MegaRAID: Logical Disks"
@@ -41153,9 +41149,56 @@ msgstr "MSGAGE: A idade, em segundos, da mensagem mais antiga da fila."
 msgid "MSSQL"
 msgstr "MSSQL"
 
+msgid "MSSQL Backup"
+msgstr "MSSQL Backup"
+
+msgid "MSSQL Blocked Sessions"
+msgstr "Sessões Bloqueadas por MSSQL"
+
 #, fuzzy
-msgid "MSSQL SQL stats"
+msgid "MSSQL Cache Hits"
+msgstr "MSSQL Cache Hits"
+
+#, fuzzy
+msgid "MSSQL Database"
+msgstr "Base de dados MSSQL"
+
+#, fuzzy
+msgid "MSSQL Datafile"
+msgstr "Ficha de dados MSSQL"
+
+msgid "MSSQL File Sizes"
+msgstr "Tamanhos de arquivo MSSQL"
+
+msgid "MSSQL Locks"
+msgstr "Bloqueios MSSQL"
+
+#, fuzzy
+msgid "MSSQL Locks per Batch"
+msgstr "Bloqueios MSSQL por Lote"
+
+msgid "MSSQL Page Activity"
+msgstr "Atividade da página MSSQL"
+
+#, fuzzy
+msgid "MSSQL SQL Stats"
 msgstr "Estatísticas MSSQL SQL"
+
+#, fuzzy
+msgid "MSSQL Tablespace"
+msgstr "Espaço para tabelas MSSQL"
+
+#, fuzzy
+msgid "MSSQL Transactionlog"
+msgstr "Transactionlog MSSQL"
+
+#, fuzzy
+msgid "MSSQL Transactions"
+msgstr "Transações de MSSQL"
+
+#, fuzzy
+msgid "MSSQL Version"
+msgstr "Versão MSSQL"
 
 #, fuzzy
 msgid "MSSQL backup"
@@ -41173,10 +41216,6 @@ msgid "MSSQL blocked sessions"
 msgstr "Sessões Bloqueadas por MSSQL"
 
 #, fuzzy
-msgid "MSSQL cache hits"
-msgstr "MSSQL Cache Hits"
-
-#, fuzzy
 msgid "MSSQL connections"
 msgstr "Conexões MySQL"
 
@@ -41184,16 +41223,8 @@ msgid "MSSQL counter discovery"
 msgstr "Descoberta do contador MSSQL"
 
 #, fuzzy
-msgid "MSSQL database"
-msgstr "Base de dados MSSQL"
-
-#, fuzzy
 msgid "MSSQL databases properties"
 msgstr "Propriedades dos Bancos de Dados MSSQL"
-
-#, fuzzy
-msgid "MSSQL datafile"
-msgstr "Ficha de dados MSSQL"
 
 #, fuzzy
 msgid "MSSQL datafile and transaction log discovery"
@@ -41201,10 +41232,6 @@ msgstr "Descoberta do MSSQL datafile e do transactionlog"
 
 #, fuzzy
 msgid "MSSQL datafile sizes"
-msgstr "Tamanhos do Datafile MSSQL"
-
-#, fuzzy
-msgid "MSSQL file sizes"
 msgstr "Tamanhos do Datafile MSSQL"
 
 #, fuzzy
@@ -41218,10 +41245,6 @@ msgstr "Empregos MSSQL"
 #, fuzzy
 msgid "MSSQL locks"
 msgstr "Bloqueios MSSQL"
-
-#, fuzzy
-msgid "MSSQL locks per batch"
-msgstr "Bloqueios MSSQL por Lote"
 
 #, fuzzy
 msgid "MSSQL log and datafile sizes"
@@ -41248,24 +41271,8 @@ msgid "MSSQL statistics"
 msgstr "Estatísticas MSSQL"
 
 #, fuzzy
-msgid "MSSQL tablespace"
-msgstr "Espaço para tabelas MSSQL"
-
-#, fuzzy
-msgid "MSSQL transaction log"
-msgstr "Transactionlog MSSQL"
-
-#, fuzzy
 msgid "MSSQL transaction log sizes"
 msgstr "Tamanhos do MSSQL Transactionlog Sizes"
-
-#, fuzzy
-msgid "MSSQL transactions"
-msgstr "Transações de MSSQL"
-
-#, fuzzy
-msgid "MSSQL version"
-msgstr "Versão MSSQL"
 
 msgid "MTR (Matt's traceroute) (Linux)"
 msgstr "MTR (Matt's traceroute) (Linux)"
@@ -41397,6 +41404,9 @@ msgstr "Painel de instrumentos principal"
 
 msgid "Main folder"
 msgstr "Pasta principal"
+
+msgid "Main memory usage (UNIX / Other Devices)"
+msgstr "Utilização da memória principal (UNIX / Outros Dispositivos)"
 
 #, fuzzy
 msgid "Main memory usage (Unix / other devices)"
@@ -45506,14 +45516,14 @@ msgid "Net data traffic"
 msgstr "Tráfego líquido de dados"
 
 #, fuzzy
-msgid "NetApp Filers: Used space in file system using 32-bit counters"
+msgid "NetApp Filers: Used Space in Filesystems"
+msgstr "Filtros da NetApp: Espaço usado em sistemas de arquivos"
+
+#, fuzzy
+msgid "NetApp Filers: Used space in Filesystem Using 32-Bit Counters"
 msgstr ""
 "Filtros da NetApp: Espaço usado no sistema de arquivos usando contadores de "
 "32 bits"
-
-#, fuzzy
-msgid "NetApp Filers: Used space in file systems"
-msgstr "Filtros da NetApp: Espaço usado em sistemas de arquivos"
 
 msgid "NetApp LUNs"
 msgstr "LUNs da NetApp"
@@ -45522,6 +45532,10 @@ msgid "NetApp Qtree discovery"
 msgstr "Descoberta do NetApp Qtree"
 
 msgid "NetApp Snapshot Reserve"
+msgstr "Reserva de Instantâneos da NetApp"
+
+#, fuzzy
+msgid "NetApp Snapshot Volumes"
 msgstr "Reserva de Instantâneos da NetApp"
 
 msgid "NetApp Snapvaults / Snapmirror Lag Time"
@@ -45561,6 +45575,10 @@ msgstr "Máscara de rede"
 
 msgid "Netscaler VServer States"
 msgstr "Netscaler Estados VServer"
+
+#, fuzzy
+msgid "Netscaler memory Usage"
+msgstr "Uso de memória Netscaler"
 
 #, fuzzy
 msgid "Netscaler memory usage"
@@ -47137,6 +47155,14 @@ msgid "Notification Script"
 msgstr "Roteiro de Notificação"
 
 #, fuzzy
+msgid "Notification Spooler"
+msgstr "Notificação Spooler"
+
+#, fuzzy
+msgid "Notification Spooler Connection"
+msgstr "Conexão do Spooler de Notificação"
+
+#, fuzzy
 msgid "Notification author"
 msgstr "Autor da notificação"
 
@@ -47257,16 +47283,8 @@ msgid "Notification sort order for bulk notifications"
 msgstr "Ordem de ordenação de notificação para notificações em massa"
 
 #, fuzzy
-msgid "Notification spooler"
-msgstr "Notificação Spooler"
-
-#, fuzzy
 msgid "Notification spooler configuration"
 msgstr "Configuração do Spooler de Notificação"
-
-#, fuzzy
-msgid "Notification spooler connection"
-msgstr "Conexão do Spooler de Notificação"
 
 #, fuzzy
 msgid "Notification spooling"
@@ -47373,7 +47391,7 @@ msgid "Nr. of items"
 msgstr "N.º de itens"
 
 #, fuzzy
-msgid "Nullmailer: Mail queue"
+msgid "Nullmailer: Mail Queue"
 msgstr "Nullmailer: Fila de correio"
 
 msgid "Number"
@@ -53571,7 +53589,7 @@ msgid "Postfix"
 msgstr "Postfix"
 
 #, fuzzy
-msgid "Postfix: Mail queue"
+msgid "Postfix: Mail Queue"
 msgstr "Postfix: Fila de correio"
 
 msgid "PostgreSQL"
@@ -54546,7 +54564,7 @@ msgid "QPS"
 msgstr "PSU"
 
 #, fuzzy
-msgid "Qmail: Mail queue"
+msgid "Qmail: Mail Queue"
 msgstr "Qmail: Fila de correio"
 
 msgid "QoS class"
@@ -55487,6 +55505,12 @@ msgid "Red"
 msgstr "Vermelho"
 
 msgid "Red Hat Enterprise Linux (RHEL) 10"
+msgstr ""
+
+msgid "Red Hat Enterprise Linux (RHEL) 8.10+"
+msgstr ""
+
+msgid "Red Hat Enterprise Linux (RHEL) 9.7+"
 msgstr ""
 
 msgid "Redacted secrets changed."
@@ -59644,9 +59668,10 @@ msgstr "Adicionar conexão"
 
 msgid ""
 "Select the connection type for the SSL/TLS check. Direct TLS establishes an "
-"immediate encrypted connection. SMTP STARTTLS negotiates encryption after "
-"connecting in plain text.Proxy connections allow to connect via a proxy "
-"server, only global and manual proxy configurations are supported."
+"immediate encrypted connection. STARTTLS variants (SMTP, Postgres, IMAP, "
+"LDAP) negotiate encryption after connecting in plain text using the "
+"respective protocol. Proxy connections allow to connect via a proxy server, "
+"only global and manual proxy configurations are supported."
 msgstr ""
 
 #, fuzzy
@@ -68590,9 +68615,6 @@ msgid ""
 "The dashboard '%s' does not exist or you do not have permission to view it."
 msgstr "O %s só é visível para si porque não tem autorização para o partilhar."
 
-msgid "The dashboard element does not exist."
-msgstr "O elemento do painel de instrumentos não existe."
-
 msgid ""
 "The data for the background checks is recomputed at most in this interval."
 msgstr ""
@@ -70789,9 +70811,6 @@ msgstr "A conexão solicitada não existe."
 
 msgid "The requested connection does not exist."
 msgstr "A conexão solicitada não existe."
-
-msgid "The requested dashboard does not exist."
-msgstr "O painel de instrumentos solicitado não existe."
 
 msgid "The requested global setting does not exist."
 msgstr "O cenário global solicitado não existe."
@@ -83794,6 +83813,15 @@ msgid "Use the name specified in the ESX system"
 msgstr "Use o nome especificado no sistema ESX"
 
 #, fuzzy
+msgid "Use the new service name"
+msgstr "Nome do serviço"
+
+msgid ""
+"Use the new service name. Disabling this option does not work for services "
+"where the monitored SVM or volume names contain colons"
+msgstr ""
+
+#, fuzzy
 msgid "Use the ntopng username as configured in the user settings"
 msgstr ""
 "Utilizar o nome de utilizador ntopng conforme configurado nas definições do "
@@ -95183,9 +95211,6 @@ msgstr ""
 msgid "Everything is up to date"
 msgstr "Estado de sincronização atraente"
 
-msgid "No pending changes"
-msgstr "Sem alterações pendentes"
-
 msgid "Problems detected during activation"
 msgstr ""
 
@@ -95219,6 +95244,10 @@ msgid "Site problem(s)"
 msgstr "Problemas de serviço"
 
 #, fuzzy
+msgid "Changes on selected sites (0 of 0)"
+msgstr "Ativar em locais selecionados"
+
+#, fuzzy
 msgid "Changes: (%{n})"
 msgstr "Mudanças"
 
@@ -95246,8 +95275,8 @@ msgid "Site(s) with changes"
 msgstr "Começou a ativar as alterações: %s"
 
 #, fuzzy
-msgid "Sites with changes: %{n}"
-msgstr "Começou a ativar as alterações: %s"
+msgid "No pending changes on your site(s)."
+msgstr "Não há alterações pendentes."
 
 #, fuzzy
 msgid "Working with a complex environment?"
@@ -95489,13 +95518,13 @@ msgstr "Contacte também o agente Checkmk"
 msgid ""
 "Run this command on your Windows host to download and install the Checkmk "
 "agent. Please make sure to run this command with sufficient permissions "
-"(e.g. “Run as Administrator”)"
+"(e.g. \"Run as Administrator\")"
 msgstr ""
 
 msgid ""
 "After you have downloaded the agent, run this command on your Windows host "
 "to register the Checkmk agent controller. Please make sure to run this "
-"command with sufficient permissions (e.g. “Run as Administrator”)."
+"command with sufficient permissions (e.g. \"Run as Administrator\")."
 msgstr ""
 
 msgid ""
@@ -95573,6 +95602,12 @@ msgstr ""
 #, fuzzy
 msgid "This requires the generation of a registration token."
 msgstr "Esta permissão permite o registo de qualquer anfitrião existente."
+
+msgid ""
+"The agent receiver port could not be determined from the remote site. The "
+"command uses the default port (8000). Please adjust the --server port if "
+"your site uses a different agent receiver port."
+msgstr ""
 
 msgid "Run this command to register the Checkmk agent controller."
 msgstr ""
@@ -95886,7 +95921,19 @@ msgid "Configure title and site"
 msgstr "Configurar níveis no fumo"
 
 #, fuzzy
+msgid ""
+"Set the configuration name and select the site the OpenTelemetry Collector "
+"will run on."
+msgstr ""
+"Especifique um, vários ou todos os sítios em que esta ligação deve ser "
+"executada."
+
+#, fuzzy
 msgid "Configure OpenTelemetry collector"
+msgstr "Adicionar configuração do estado"
+
+#, fuzzy
+msgid "Configure at least one OpenTelemetry Collector receiver."
 msgstr "Adicionar configuração do estado"
 
 #, fuzzy
@@ -95897,11 +95944,16 @@ msgstr "Configure"
 msgid "Save & Go to Activate Changes"
 msgstr "Não ativar mudanças"
 
-#, fuzzy
-msgid "Select the site where the OpenTelemetry collector will run."
+msgid "GRPC"
 msgstr ""
-"Especifique um, vários ou todos os sítios em que esta ligação deve ser "
-"executada."
+
+msgid ""
+"Configure a GRPC-based OTLP receiver that will collect OpenTelemetry data."
+msgstr ""
+
+msgid ""
+"Configure an HTTP-based OTLP receiver that will collect OpenTelemetry data."
+msgstr ""
 
 #, fuzzy
 msgid "Failed to load sites. Please try again."
@@ -95924,14 +95976,6 @@ msgid "Site is required but not specified."
 msgstr "Credenciais JSON para a conta de serviço"
 
 #, fuzzy
-msgid ""
-"Set the configuration name and select the site the OpenTelemetry Collector "
-"will run on."
-msgstr ""
-"Especifique um, vários ou todos os sítios em que esta ligação deve ser "
-"executada."
-
-#, fuzzy
 msgid "opentelemetry_config_1"
 msgstr "Configuração do anfitrião"
 
@@ -95949,20 +95993,14 @@ msgid ""
 "execute "
 msgstr ""
 
-#, fuzzy
-msgid "Note that the installation requires root privileges."
-msgstr "Não foram processados pedidos de registo de agentes"
-
 msgid ""
 "If you do not want to run the script as the specified user — or 2FA is "
 "active for that user —, "
 msgstr ""
 
-msgid "You can only execute the following command as rootless."
-msgstr ""
-
-msgid "If you are logged in as root make sure to change the user using "
-msgstr ""
+#, fuzzy
+msgid "Note that the installation requires root privileges."
+msgstr "Não foram processados pedidos de registo de agentes"
 
 #, fuzzy
 msgid "Install Podman"
@@ -96953,6 +96991,48 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+#~ msgid ""
+#~ "In order to make Checkmk more consistent, the descriptions of several "
+#~ "services have been renamed in newer Checkmk versions. One example is the "
+#~ "file system services that have been renamed from <tt>fs_</tt> into "
+#~ "<tt>File system</tt>. But since renaming of existing services has many "
+#~ "implications - including existing rules, metrics and availability history "
+#~ "- these renamings are disabled per default for existing installations. "
+#~ "Here you can switch to the new descriptions for selected check types."
+#~ msgstr ""
+#~ "A fim de tornar o Checkmk mais consistente, as descrições de vários "
+#~ "serviços foram renomeadas nas versões mais recentes do Check_MK. Um "
+#~ "exemplo são os serviços do sistema de ficheiros que foram renomeados de "
+#~ "<tt>fs_</tt> para <tt>Filesystem</tt>. Mas uma vez que a renomeação de "
+#~ "serviços existentes tem muitas implicações - incluindo regras existentes, "
+#~ "dados de desempenho e histórico de disponibilidade - estas renomeações "
+#~ "são desactivadas por defeito para as instalações existentes. Aqui pode "
+#~ "mudar para as novas descrições dos tipos de verificação seleccionados"
+
+#, fuzzy
+#~ msgid "MSSQL file sizes"
+#~ msgstr "Tamanhos do Datafile MSSQL"
+
+#~ msgid "The dashboard element does not exist."
+#~ msgstr "O elemento do painel de instrumentos não existe."
+
+#~ msgid "The requested dashboard does not exist."
+#~ msgstr "O painel de instrumentos solicitado não existe."
+
+#~ msgid "No pending changes"
+#~ msgstr "Sem alterações pendentes"
+
+#, fuzzy
+#~ msgid "Sites with changes: %{n}"
+#~ msgstr "Começou a ativar as alterações: %s"
+
+#, fuzzy
+#~ msgid "Select the site where the OpenTelemetry collector will run."
+#~ msgstr ""
+#~ "Especifique um, vários ou todos os sítios em que esta ligação deve ser "
+#~ "executada."
+
+#, fuzzy
 #~ msgid "Appliance utilization"
 #~ msgstr "Utilização do codificador"
 
@@ -97015,9 +97095,6 @@ msgstr ""
 
 #~ msgid "Long - Use the full docker container ID"
 #~ msgstr "Longo - Use a identificação completa do contentor do cais"
-
-#~ msgid "MSSQL Backup"
-#~ msgstr "MSSQL Backup"
 
 #~ msgid "MSSQL Connections"
 #~ msgstr "Conexões MSSQL"
@@ -98377,25 +98454,10 @@ msgstr ""
 #~ msgid "Logfile pattern analyzer"
 #~ msgstr "Analisador de padrões Logfile"
 
-#~ msgid "MSSQL Blocked Sessions"
-#~ msgstr "Sessões Bloqueadas por MSSQL"
-
-#~ msgid "MSSQL File Sizes"
-#~ msgstr "Tamanhos de arquivo MSSQL"
-
-#~ msgid "MSSQL Locks"
-#~ msgstr "Bloqueios MSSQL"
-
-#~ msgid "MSSQL Page Activity"
-#~ msgstr "Atividade da página MSSQL"
-
 #~ msgid "Magic factor (automatic level adaptation for large filesystems)"
 #~ msgstr ""
 #~ "Fator mágico (adaptação automática de nível para grandes sistemas de "
 #~ "arquivos)"
-
-#~ msgid "Main memory usage (UNIX / Other Devices)"
-#~ msgstr "Utilização da memória principal (UNIX / Outros Dispositivos)"
 
 #~ msgid "Makes the icon appear in the column instead of the dropdown menu."
 #~ msgstr "Faz aparecer o ícone na coluna em vez do menu suspenso."
@@ -98439,10 +98501,6 @@ msgstr ""
 
 #~ msgid "Negative match (Exclude matching services from the set)"
 #~ msgstr "Combinação negativa (Excluir serviços combinados do conjunto)"
-
-#, fuzzy
-#~ msgid "Netscaler memory Usage"
-#~ msgstr "Uso de memória Netscaler"
 
 #~ msgid "Not a valid URL (Only http and https URLs are allowed)."
 #~ msgstr "Não é um URL válido (só são permitidos URLs http e https)."

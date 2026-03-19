@@ -11953,7 +11953,7 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"Check HTTP: Use HTTPS instead of HTTP for SSL/TLS connections (deprecated/"
+"Check HTTP: Use HTTPS instead of HTTP for SSL/TLS connections (Deprecated/"
 "ineffective)"
 msgstr ""
 "チェック HTTP:SSL/TLS接続にHTTPの代わりにHTTPSを使用する（非推奨/効果なし）"
@@ -21130,6 +21130,13 @@ msgstr "ダンプファイル:%s"
 
 msgid "Duplex"
 msgstr "Duplex"
+
+#, python-format
+msgid ""
+"Duplicate service name <b>%(description)s</b> for host <b>%(host_name)s</b>. "
+"Only one of the following services can be monitored at a time:<ul>%(items)s</"
+"ul>"
+msgstr ""
 
 #, python-format
 msgid "Duplicate tag ID \"%s\" in auxiliary tags"
@@ -30542,6 +30549,10 @@ msgstr "IISアプリケーションプールの状態設定"
 msgid "IMAP"
 msgstr "IMAP"
 
+#, fuzzy
+msgid "IMAP STARTTLS"
+msgstr "STARTTLS"
+
 msgid "INFO"
 msgstr "INFO"
 
@@ -33082,24 +33093,6 @@ msgstr ""
 
 #, fuzzy
 msgid ""
-"In order to make Checkmk more consistent, the descriptions of several "
-"services have been renamed in newer Checkmk versions. One example is the "
-"file system services that have been renamed from <tt>fs_</tt> into <tt>File "
-"system</tt>. But since renaming of existing services has many implications - "
-"including existing rules, metrics and availability history - these renamings "
-"are disabled per default for existing installations. Here you can switch to "
-"the new descriptions for selected check types."
-msgstr ""
-"Checkmkの一貫性を高めるために、いくつかのサービスの説明は、新しいCheck_MKバー"
-"ジョンで名前が変更されました。一例として、<tt>fs_</tt>から<tt>Filesystem</tt>"
-"に名前が変更されたファイルシステムサービスがあります。ただし、既存のサービス"
-"の名前変更には、既存のルール、パフォーマンスデータ、可用性履歴など、多くの影"
-"響があるため、これらの名前変更は、既存のインストールではデフォルトで無効に"
-"なっています。ここで、選択したチェックタイプの新しい説明に切り替えることがで"
-"きます"
-
-#, fuzzy
-msgid ""
 "In order to monitor Docker containers the plug-in <tt>mk_docker.py</tt> "
 "collects the following information of each Docker container as piggyback "
 "data. The piggybacked host name is the container's host name configured "
@@ -35574,6 +35567,10 @@ msgstr "LDAP(Active Directory、OpenLDAP)"
 msgid "LDAP Connection"
 msgstr "LDAP接続"
 
+#, fuzzy
+msgid "LDAP STARTTLS"
+msgstr "STARTTLS"
+
 msgid "LDAP Server"
 msgstr "LDAPサーバー"
 
@@ -35654,7 +35651,7 @@ msgid "LRU nuked objects"
 msgstr "LRUオブジェクト nuked"
 
 #, fuzzy
-msgid "LSI MegaRAID: Battery backup unit"
+msgid "LSI MegaRAID: Battery Backup Unit"
 msgstr "LSI MegaRAID:バッテリーバックアップユニット"
 
 msgid "LSI MegaRAID: Logical Disks"
@@ -38607,9 +38604,56 @@ msgstr "MSGAGE: キューにある最も古いメッセージの経過時間(秒
 msgid "MSSQL"
 msgstr "MSSQL"
 
+msgid "MSSQL Backup"
+msgstr "MSSQLバックアップ"
+
+msgid "MSSQL Blocked Sessions"
+msgstr "MSSQLブロックセッション"
+
 #, fuzzy
-msgid "MSSQL SQL stats"
+msgid "MSSQL Cache Hits"
+msgstr "MSSQLキャッシュヒット"
+
+#, fuzzy
+msgid "MSSQL Database"
+msgstr "MSSQLデータベース"
+
+#, fuzzy
+msgid "MSSQL Datafile"
+msgstr "MSSQLデータファイル"
+
+msgid "MSSQL File Sizes"
+msgstr "MSSQLファイルサイズ"
+
+msgid "MSSQL Locks"
+msgstr "MSSQLロック"
+
+#, fuzzy
+msgid "MSSQL Locks per Batch"
+msgstr "バッチごとのMSSQLロック"
+
+msgid "MSSQL Page Activity"
+msgstr "MSSQLページアクティビティ"
+
+#, fuzzy
+msgid "MSSQL SQL Stats"
 msgstr "MSSQL SQL統計"
+
+#, fuzzy
+msgid "MSSQL Tablespace"
+msgstr "MSSQLテーブルスペース"
+
+#, fuzzy
+msgid "MSSQL Transactionlog"
+msgstr "MSSQL トランザクションログ"
+
+#, fuzzy
+msgid "MSSQL Transactions"
+msgstr "MSSQLトランザクション"
+
+#, fuzzy
+msgid "MSSQL Version"
+msgstr "MSSQLバージョン"
 
 #, fuzzy
 msgid "MSSQL backup"
@@ -38627,10 +38671,6 @@ msgid "MSSQL blocked sessions"
 msgstr "MSSQLブロックセッション"
 
 #, fuzzy
-msgid "MSSQL cache hits"
-msgstr "MSSQLキャッシュヒット"
-
-#, fuzzy
 msgid "MSSQL connections"
 msgstr "MySQL接続"
 
@@ -38638,26 +38678,14 @@ msgid "MSSQL counter discovery"
 msgstr "MSSQLカウンターの検出"
 
 #, fuzzy
-msgid "MSSQL database"
-msgstr "MSSQLデータベース"
-
-#, fuzzy
 msgid "MSSQL databases properties"
 msgstr "MSSQLデータベースのプロパティ"
-
-#, fuzzy
-msgid "MSSQL datafile"
-msgstr "MSSQLデータファイル"
 
 #, fuzzy
 msgid "MSSQL datafile and transaction log discovery"
 msgstr "MSSQLデータファイルとトランザクションログの検出"
 
 msgid "MSSQL datafile sizes"
-msgstr "MSSQLデータファイルサイズ"
-
-#, fuzzy
-msgid "MSSQL file sizes"
 msgstr "MSSQLデータファイルサイズ"
 
 #, fuzzy
@@ -38671,10 +38699,6 @@ msgstr "MSSQLジョブ"
 #, fuzzy
 msgid "MSSQL locks"
 msgstr "MSSQLロック"
-
-#, fuzzy
-msgid "MSSQL locks per batch"
-msgstr "バッチごとのMSSQLロック"
 
 #, fuzzy
 msgid "MSSQL log and datafile sizes"
@@ -38701,24 +38725,8 @@ msgid "MSSQL statistics"
 msgstr "MSSQL統計"
 
 #, fuzzy
-msgid "MSSQL tablespace"
-msgstr "MSSQLテーブルスペース"
-
-#, fuzzy
-msgid "MSSQL transaction log"
-msgstr "MSSQL トランザクションログ"
-
-#, fuzzy
 msgid "MSSQL transaction log sizes"
 msgstr "MSSQLトランザクションログのサイズ"
-
-#, fuzzy
-msgid "MSSQL transactions"
-msgstr "MSSQLトランザクション"
-
-#, fuzzy
-msgid "MSSQL version"
-msgstr "MSSQLバージョン"
 
 msgid "MTR (Matt's traceroute) (Linux)"
 msgstr "MTR (Matt's traceroute) (Linux)"
@@ -38842,6 +38850,9 @@ msgstr "メインダッシュボード"
 
 msgid "Main folder"
 msgstr "メインフォルダ"
+
+msgid "Main memory usage (UNIX / Other Devices)"
+msgstr "メインメモリ使用量(UNIX /その他のデバイス)"
 
 #, fuzzy
 msgid "Main memory usage (Unix / other devices)"
@@ -42748,14 +42759,14 @@ msgid "Net data traffic"
 msgstr "ネットデータトラフィック"
 
 #, fuzzy
-msgid "NetApp Filers: Used space in file system using 32-bit counters"
+msgid "NetApp Filers: Used Space in Filesystems"
+msgstr "NetAppファイラー:ファイルシステムの使用済みスペース"
+
+#, fuzzy
+msgid "NetApp Filers: Used space in Filesystem Using 32-Bit Counters"
 msgstr ""
 "NetAppファイラー:32ビットカウンターを使用したファイルシステムの使用済みスペー"
 "ス"
-
-#, fuzzy
-msgid "NetApp Filers: Used space in file systems"
-msgstr "NetAppファイラー:ファイルシステムの使用済みスペース"
 
 msgid "NetApp LUNs"
 msgstr "NetApp LUN"
@@ -42764,6 +42775,10 @@ msgid "NetApp Qtree discovery"
 msgstr "NetApp Qtreeの検出"
 
 msgid "NetApp Snapshot Reserve"
+msgstr "NetAppスナップショットリザーブ"
+
+#, fuzzy
+msgid "NetApp Snapshot Volumes"
 msgstr "NetAppスナップショットリザーブ"
 
 msgid "NetApp Snapvaults / Snapmirror Lag Time"
@@ -42802,6 +42817,9 @@ msgstr "ネットマスク"
 
 msgid "Netscaler VServer States"
 msgstr "Netscaler VServerの状態"
+
+msgid "Netscaler memory Usage"
+msgstr "Netscalerメモリ使用量"
 
 msgid "Netscaler memory usage"
 msgstr "Netscalerのメモリ使用量"
@@ -44298,6 +44316,14 @@ msgstr "通知ルール"
 msgid "Notification Script"
 msgstr "通知スクリプト"
 
+#, fuzzy
+msgid "Notification Spooler"
+msgstr "通知スプーラー"
+
+#, fuzzy
+msgid "Notification Spooler Connection"
+msgstr "通知スプーラ接続"
+
 msgid "Notification author"
 msgstr "通知作成者"
 
@@ -44402,16 +44428,8 @@ msgid "Notification sort order for bulk notifications"
 msgstr "一括通知の通知の並べ替え順序"
 
 #, fuzzy
-msgid "Notification spooler"
-msgstr "通知スプーラー"
-
-#, fuzzy
 msgid "Notification spooler configuration"
 msgstr "通知スプーラーの構成"
-
-#, fuzzy
-msgid "Notification spooler connection"
-msgstr "通知スプーラ接続"
 
 #, fuzzy
 msgid "Notification spooling"
@@ -44525,7 +44543,7 @@ msgid "Nr. of items"
 msgstr "番号 アイテムの"
 
 #, fuzzy
-msgid "Nullmailer: Mail queue"
+msgid "Nullmailer: Mail Queue"
 msgstr "Nullmailer: メールキュー"
 
 msgid "Number"
@@ -50247,7 +50265,7 @@ msgid "Postfix"
 msgstr "Postfix"
 
 #, fuzzy
-msgid "Postfix: Mail queue"
+msgid "Postfix: Mail Queue"
 msgstr "Postfix: メールキュー"
 
 msgid "PostgreSQL"
@@ -51187,7 +51205,7 @@ msgid "QPS"
 msgstr "PSU"
 
 #, fuzzy
-msgid "Qmail: Mail queue"
+msgid "Qmail: Mail Queue"
 msgstr "Qmail:メールキュー"
 
 msgid "QoS class"
@@ -52066,6 +52084,14 @@ msgid "Red"
 msgstr "赤"
 
 msgid "Red Hat Enterprise Linux (RHEL) 10"
+msgstr "Red Hat Enterprise Linux (RHEL) 10"
+
+#, fuzzy
+msgid "Red Hat Enterprise Linux (RHEL) 8.10+"
+msgstr "Red Hat Enterprise Linux (RHEL) 10"
+
+#, fuzzy
+msgid "Red Hat Enterprise Linux (RHEL) 9.7+"
 msgstr "Red Hat Enterprise Linux (RHEL) 10"
 
 msgid "Redacted secrets changed."
@@ -56041,11 +56067,13 @@ msgstr ""
 msgid "Select the authority for the OAuth2 connection."
 msgstr "TCP接続を確立するサイトを選択してください。"
 
+#, fuzzy
 msgid ""
 "Select the connection type for the SSL/TLS check. Direct TLS establishes an "
-"immediate encrypted connection. SMTP STARTTLS negotiates encryption after "
-"connecting in plain text.Proxy connections allow to connect via a proxy "
-"server, only global and manual proxy configurations are supported."
+"immediate encrypted connection. STARTTLS variants (SMTP, Postgres, IMAP, "
+"LDAP) negotiate encryption after connecting in plain text using the "
+"respective protocol. Proxy connections allow to connect via a proxy server, "
+"only global and manual proxy configurations are supported."
 msgstr ""
 "SSL/TLSチェックの接続タイプを選択してください。ダイレクトTLSは即時暗号化接続"
 "を確立します。SMTP STARTTLSは平文接続後に暗号化をネゴシエートします。プロキシ"
@@ -64592,9 +64620,6 @@ msgid ""
 "The dashboard '%s' does not exist or you do not have permission to view it."
 msgstr "%sはあなただけに表示されます。共有する権限はありません。"
 
-msgid "The dashboard element does not exist."
-msgstr "ダッシュボード要素が存在しません。"
-
 msgid ""
 "The data for the background checks is recomputed at most in this interval."
 msgstr "バックグラウンドチェックのデータは、最大でこの間隔で再計算されます。"
@@ -66787,9 +66812,6 @@ msgstr "要求された接続%sは存在しません"
 
 msgid "The requested connection does not exist."
 msgstr "要求された接続は存在しません。"
-
-msgid "The requested dashboard does not exist."
-msgstr "要求されたダッシュボードは存在しません。"
 
 msgid "The requested global setting does not exist."
 msgstr "要求されたグローバル設定は存在しません。"
@@ -78923,6 +78945,15 @@ msgid "Use the name specified in the ESX system"
 msgstr "ESXシステムで指定された名前を使用します"
 
 #, fuzzy
+msgid "Use the new service name"
+msgstr "新しいサービス名を使用する"
+
+msgid ""
+"Use the new service name. Disabling this option does not work for services "
+"where the monitored SVM or volume names contain colons"
+msgstr ""
+
+#, fuzzy
 msgid "Use the ntopng username as configured in the user settings"
 msgstr "ユーザー設定で設定したntopngユーザー名を使用"
 
@@ -89989,9 +90020,6 @@ msgstr ""
 msgid "Everything is up to date"
 msgstr "同期状態の取得"
 
-msgid "No pending changes"
-msgstr "保留中の変更はありません"
-
 msgid "Problems detected during activation"
 msgstr ""
 
@@ -90025,6 +90053,10 @@ msgid "Site problem(s)"
 msgstr "サービスの問題"
 
 #, fuzzy
+msgid "Changes on selected sites (0 of 0)"
+msgstr "選択したサイトでアクティブ化"
+
+#, fuzzy
 msgid "Changes: (%{n})"
 msgstr "変更"
 
@@ -90051,8 +90083,8 @@ msgid "Site(s) with changes"
 msgstr "変更の有効化を開始しました: %s"
 
 #, fuzzy
-msgid "Sites with changes: %{n}"
-msgstr "変更の有効化を開始しました: %s"
+msgid "No pending changes on your site(s)."
+msgstr "保留中の変更はありません。"
 
 #, fuzzy
 msgid "Working with a complex environment?"
@@ -90290,13 +90322,13 @@ msgstr "Checkmkエージェントにも連絡してください"
 msgid ""
 "Run this command on your Windows host to download and install the Checkmk "
 "agent. Please make sure to run this command with sufficient permissions "
-"(e.g. “Run as Administrator”)"
+"(e.g. \"Run as Administrator\")"
 msgstr ""
 
 msgid ""
 "After you have downloaded the agent, run this command on your Windows host "
 "to register the Checkmk agent controller. Please make sure to run this "
-"command with sufficient permissions (e.g. “Run as Administrator”)."
+"command with sufficient permissions (e.g. \"Run as Administrator\")."
 msgstr ""
 
 msgid ""
@@ -90373,6 +90405,12 @@ msgstr ""
 #, fuzzy
 msgid "This requires the generation of a registration token."
 msgstr "この権限は、任意の既存ホストの登録を許可する。"
+
+msgid ""
+"The agent receiver port could not be determined from the remote site. The "
+"command uses the default port (8000). Please adjust the --server port if "
+"your site uses a different agent receiver port."
+msgstr ""
 
 msgid "Run this command to register the Checkmk agent controller."
 msgstr ""
@@ -90679,7 +90717,17 @@ msgid "Configure title and site"
 msgstr "煙のレベルを設定する"
 
 #, fuzzy
+msgid ""
+"Set the configuration name and select the site the OpenTelemetry Collector "
+"will run on."
+msgstr "統合 OpenTelemetry コレクタのすべての関連構成。"
+
+#, fuzzy
 msgid "Configure OpenTelemetry collector"
+msgstr "Opentelemetry コレクターデータ"
+
+#, fuzzy
+msgid "Configure at least one OpenTelemetry Collector receiver."
 msgstr "Opentelemetry コレクターデータ"
 
 #, fuzzy
@@ -90690,9 +90738,16 @@ msgstr "ホスト設定"
 msgid "Save & Go to Activate Changes"
 msgstr "保存し変更のアクティブ化へ"
 
-#, fuzzy
-msgid "Select the site where the OpenTelemetry collector will run."
-msgstr "OpenTelemetry コレクターを実行するサイトを指定します。"
+msgid "GRPC"
+msgstr ""
+
+msgid ""
+"Configure a GRPC-based OTLP receiver that will collect OpenTelemetry data."
+msgstr ""
+
+msgid ""
+"Configure an HTTP-based OTLP receiver that will collect OpenTelemetry data."
+msgstr ""
 
 #, fuzzy
 msgid "Failed to load sites. Please try again."
@@ -90715,12 +90770,6 @@ msgid "Site is required but not specified."
 msgstr "%s は必須だが指定はない。"
 
 #, fuzzy
-msgid ""
-"Set the configuration name and select the site the OpenTelemetry Collector "
-"will run on."
-msgstr "統合 OpenTelemetry コレクタのすべての関連構成。"
-
-#, fuzzy
 msgid "opentelemetry_config_1"
 msgstr "%sの設定はまだありません"
 
@@ -90736,20 +90785,14 @@ msgid ""
 "execute "
 msgstr ""
 
-#, fuzzy
-msgid "Note that the installation requires root privileges."
-msgstr "エージェント登録リクエストは処理なし"
-
 msgid ""
 "If you do not want to run the script as the specified user — or 2FA is "
 "active for that user —, "
 msgstr ""
 
-msgid "You can only execute the following command as rootless."
-msgstr ""
-
-msgid "If you are logged in as root make sure to change the user using "
-msgstr ""
+#, fuzzy
+msgid "Note that the installation requires root privileges."
+msgstr "エージェント登録リクエストは処理なし"
 
 #, fuzzy
 msgid "Install Podman"
@@ -91719,6 +91762,45 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+#~ msgid ""
+#~ "In order to make Checkmk more consistent, the descriptions of several "
+#~ "services have been renamed in newer Checkmk versions. One example is the "
+#~ "file system services that have been renamed from <tt>fs_</tt> into "
+#~ "<tt>File system</tt>. But since renaming of existing services has many "
+#~ "implications - including existing rules, metrics and availability history "
+#~ "- these renamings are disabled per default for existing installations. "
+#~ "Here you can switch to the new descriptions for selected check types."
+#~ msgstr ""
+#~ "Checkmkの一貫性を高めるために、いくつかのサービスの説明は、新しいCheck_MK"
+#~ "バージョンで名前が変更されました。一例として、<tt>fs_</tt>から"
+#~ "<tt>Filesystem</tt>に名前が変更されたファイルシステムサービスがあります。"
+#~ "ただし、既存のサービスの名前変更には、既存のルール、パフォーマンスデータ、"
+#~ "可用性履歴など、多くの影響があるため、これらの名前変更は、既存のインストー"
+#~ "ルではデフォルトで無効になっています。ここで、選択したチェックタイプの新し"
+#~ "い説明に切り替えることができます"
+
+#, fuzzy
+#~ msgid "MSSQL file sizes"
+#~ msgstr "MSSQLデータファイルサイズ"
+
+#~ msgid "The dashboard element does not exist."
+#~ msgstr "ダッシュボード要素が存在しません。"
+
+#~ msgid "The requested dashboard does not exist."
+#~ msgstr "要求されたダッシュボードは存在しません。"
+
+#~ msgid "No pending changes"
+#~ msgstr "保留中の変更はありません"
+
+#, fuzzy
+#~ msgid "Sites with changes: %{n}"
+#~ msgstr "変更の有効化を開始しました: %s"
+
+#, fuzzy
+#~ msgid "Select the site where the OpenTelemetry collector will run."
+#~ msgstr "OpenTelemetry コレクターを実行するサイトを指定します。"
+
+#, fuzzy
 #~ msgid "Appliance utilization"
 #~ msgstr "アプライアンス機器の利用状況"
 
@@ -91776,9 +91858,6 @@ msgstr ""
 
 #~ msgid "Long - Use the full docker container ID"
 #~ msgstr "長い - 完全なDockerコンテナIDを使用します"
-
-#~ msgid "MSSQL Backup"
-#~ msgstr "MSSQLバックアップ"
 
 #~ msgid "MSSQL Connections"
 #~ msgstr "MSSQL接続"
@@ -93759,23 +93838,8 @@ msgstr ""
 #~ msgid "Logfile pattern analyzer"
 #~ msgstr "ログファイルパターンアナライザー"
 
-#~ msgid "MSSQL Blocked Sessions"
-#~ msgstr "MSSQLブロックセッション"
-
-#~ msgid "MSSQL File Sizes"
-#~ msgstr "MSSQLファイルサイズ"
-
-#~ msgid "MSSQL Locks"
-#~ msgstr "MSSQLロック"
-
-#~ msgid "MSSQL Page Activity"
-#~ msgstr "MSSQLページアクティビティ"
-
 #~ msgid "Magic factor (automatic level adaptation for large filesystems)"
 #~ msgstr "マジックファクター(大規模なファイルシステムの自動レベル適応)"
-
-#~ msgid "Main memory usage (UNIX / Other Devices)"
-#~ msgstr "メインメモリ使用量(UNIX /その他のデバイス)"
 
 #~ msgid "Makes the icon appear in the column instead of the dropdown menu."
 #~ msgstr "ドロップダウンメニューの代わりにアイコンをカラムに表示します。"
@@ -93824,9 +93888,6 @@ msgstr ""
 
 #~ msgid "Negative match (Exclude matching services from the set)"
 #~ msgstr "ネガティブマッチ(セットからマッチングサービスを除外)"
-
-#~ msgid "Netscaler memory Usage"
-#~ msgstr "Netscalerメモリ使用量"
 
 #~ msgid "Not a valid URL (Only http and https URLs are allowed)."
 #~ msgstr "有効なURLでない（httpとhttpsのURLのみ使用可能）。"
