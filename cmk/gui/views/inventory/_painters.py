@@ -310,7 +310,6 @@ class AttributePainterFromHint(TypedDict):
     export_for_python: Callable[[Row, Cell], SDValue]
     export_for_csv: Callable[[Row, Cell], str | HTML]
     export_for_json: Callable[[Row, Cell], SDValue]
-    groupby: Callable[[Row, Cell], str | None]
 
 
 def _get_attributes(row: Row, path: SDPath) -> ImmutableAttributes | None:
@@ -382,9 +381,6 @@ def attribute_painter_from_hint(
             "" if (data := _compute_attribute_painter_data(row, path, key)) is None else str(data)
         ),
         export_for_json=lambda row, cell: _compute_attribute_painter_data(row, path, key),
-        groupby=lambda row, cell: (
-            None if (r := _compute_attribute_painter_data(row, path, key)) is None else str(r)
-        ),
     )
 
 
