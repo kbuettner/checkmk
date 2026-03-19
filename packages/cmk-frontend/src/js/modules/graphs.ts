@@ -49,6 +49,7 @@ interface GraphDataRange {
 interface AjaxContext {
   graph_id: string
   graph_recipe: GraphRecipe
+  data_range: GraphDataRange
   render_config: GraphRenderConfig
   display_id: string
 }
