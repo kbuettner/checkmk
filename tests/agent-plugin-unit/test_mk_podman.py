@@ -3,11 +3,33 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-from unittest.mock import patch
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from agents.plugins.mk_podman import get_piggyback_host, PiggybackNameMethod
+from agents.plugins.mk_podman import get_piggyback_host, get_socket_owner, PiggybackNameMethod
+
+
+def test_get_socket_owner_returns_username() -> None:
+    stat_result = MagicMock()
+    stat_result.st_uid = 1001
+    with patch("os.stat", return_value=stat_result):
+        with patch("pwd.getpwuid", return_value=MagicMock(pw_name="testuser")):
+            assert get_socket_owner(Path("/run/user/1001/podman/podman.sock")) == "testuser"
+
+
+def test_get_socket_owner_returns_none_on_oserror() -> None:
+    with patch("os.stat", side_effect=OSError("no such file")):
+        assert get_socket_owner(Path("/nonexistent/podman.sock")) is None
+
+
+def test_get_socket_owner_returns_none_on_keyerror() -> None:
+    stat_result = MagicMock()
+    stat_result.st_uid = 9999
+    with patch("os.stat", return_value=stat_result):
+        with patch("pwd.getpwuid", side_effect=KeyError(9999)):
+            assert get_socket_owner(Path("/run/podman/podman.sock")) is None
 
 
 @pytest.mark.parametrize(
