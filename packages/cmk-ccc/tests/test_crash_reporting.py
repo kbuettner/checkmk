@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# ruff: noqa: ARG001
-
 import base64
 import copy
 import itertools
@@ -210,7 +208,8 @@ def patch_uuid1(monkeypatch: pytest.MonkeyPatch) -> None:
     """Generate a uuid1 with known values."""
     c = itertools.count()
 
-    def uuid1(node: int | None = None, clock_seq: int | None = None) -> uuid.UUID:
+    # NOTE: We need the suppression to keep the exact same API.
+    def uuid1(node: int | None = None, clock_seq: int | None = None) -> uuid.UUID:  # noqa: ARG001
         return uuid.UUID(bytes=struct.pack(b">I", next(c)) + 12 * b"\0")
 
     monkeypatch.setattr("uuid.uuid1", uuid1)
