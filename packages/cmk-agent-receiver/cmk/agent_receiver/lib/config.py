@@ -105,7 +105,7 @@ class Config(BaseModel):
 
     @property
     def rest_api_url(self) -> str:
-        return f"{self.base_url}/check_mk/api/unstable"
+        return f"{self.base_url}/check_mk/api/1.0"
 
     @property
     def internal_rest_api_url(self) -> str:

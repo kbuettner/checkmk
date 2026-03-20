@@ -95,7 +95,7 @@ def test_user() -> SecretAuth:
 def site_api_client() -> Iterator[httpx.Client]:
     """Provides an httpx.Client configured for the site API."""
     client = httpx.Client(
-        base_url="http://test.com/test/check_mk/api/unstable",
+        base_url="http://test.com/test/check_mk/api/1.0",
         headers={"Content-Type": "application/json"},
         transport=create_relay_mock_transport(),
     )

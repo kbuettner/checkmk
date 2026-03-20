@@ -96,7 +96,7 @@ def test_site_api_error_returned_by_ar(
 
 def _get_site_api_auth_headers(wiremock: Wiremock, site: SiteMock) -> list[str]:
     requests = wiremock.get_all_url_path_requests(
-        f"/{site.site_name}/check_mk/api/unstable/domain-types/relay/collections/all",
+        f"{site.base_route}/domain-types/relay/collections/all",
         HTTPMethod.POST,
     )
     return [r.headers["Authorization"] for r in requests]

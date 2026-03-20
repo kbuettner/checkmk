@@ -3758,7 +3758,6 @@ class RelayClient(RestApiClient):
             "get",
             url=f"/objects/{self.domain}/{relay_id}",
             expect_ok=expect_ok,
-            api_version=APIVersion.UNSTABLE,
         )
 
     def get_all(self, expect_ok: bool = True) -> Response:
@@ -3766,7 +3765,6 @@ class RelayClient(RestApiClient):
             "get",
             url=f"/domain-types/{self.domain}/collections/all",
             expect_ok=expect_ok,
-            api_version=APIVersion.UNSTABLE,
         )
 
     def create(self, relay_data: dict[str, Any], expect_ok: bool = True) -> Response:
@@ -3775,7 +3773,6 @@ class RelayClient(RestApiClient):
             url=f"/domain-types/{self.domain}/collections/all",
             body=relay_data,
             expect_ok=expect_ok,
-            api_version=APIVersion.UNSTABLE,
         )
 
     def edit(
@@ -3798,7 +3795,6 @@ class RelayClient(RestApiClient):
             body=relay_data,
             headers=headers,
             expect_ok=expect_ok,
-            api_version=APIVersion.UNSTABLE,
         )
 
     def delete(self, relay_id: str, expect_ok: bool = True, with_etag: bool = True) -> Response:
@@ -3814,7 +3810,6 @@ class RelayClient(RestApiClient):
             url=f"/objects/{self.domain}/{relay_id}",
             headers=headers,
             expect_ok=expect_ok,
-            api_version=APIVersion.UNSTABLE,
         )
 
     def create_with_token(
@@ -3826,7 +3821,6 @@ class RelayClient(RestApiClient):
             body=relay_data,
             headers={"Authorization": f"CMK-TOKEN {token}"},
             expect_ok=expect_ok,
-            api_version=APIVersion.UNSTABLE,
         )
 
     def create_registration_token(
@@ -3837,7 +3831,6 @@ class RelayClient(RestApiClient):
             url="/domain-types/relay_registration_token/collections/all",
             body=body or {},
             expect_ok=expect_ok,
-            api_version=APIVersion.UNSTABLE,
         )
 
 

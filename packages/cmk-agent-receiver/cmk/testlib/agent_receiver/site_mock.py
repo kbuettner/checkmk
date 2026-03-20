@@ -82,7 +82,7 @@ class SiteMock:
 
     @property
     def base_route(self) -> str:
-        return f"/{self.site_name}/check_mk/api/unstable"
+        return f"/{self.site_name}/check_mk/api/1.0"
 
     @property
     def _auth_regex(self) -> str:
