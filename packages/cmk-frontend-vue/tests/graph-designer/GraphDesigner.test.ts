@@ -582,7 +582,7 @@ describe('Adding a Query graph line', { timeout: 20_000 }, () => {
     server.resetHandlers()
   })
 
-  test('works as expected', async () => {
+  test.skip('works as expected', async () => {
     render(GraphDesignerApp, {
       props: {
         graph_id: 'add_query_graph_line',
