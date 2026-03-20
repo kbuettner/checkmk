@@ -12,10 +12,13 @@ _TO_YAML: Final = {
     "logging_level": "debug",
     "max_log_file_count": "max_file_count",
     "max_log_file_size": "max_file_size",
+    "log_to_windbg": "windbg",
 }
 
 
-def get_logging_windows_config(conf: Mapping[str, str | int]) -> Iterator[WindowsConfigEntry]:
+def get_logging_windows_config(
+    conf: Mapping[str, str | int | bool],
+) -> Iterator[WindowsConfigEntry]:
     yield from (
         WindowsConfigEntry(path=["global", "logging", _TO_YAML[key]], content=value)
         for key, value in conf.items()
