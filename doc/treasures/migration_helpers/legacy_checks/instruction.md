@@ -118,6 +118,38 @@ Legacy check plugins use an older, less type-safe API. The migration:
    git commit -am "Legacy check migration: <plugin_name> II"
    ```
 
+## Moving a Plugin Family to `packages/cmk-plugins`
+
+Some families live in `packages/cmk-plugins/` rather than `cmk/plugins/`. When
+moving a family there (or creating a new one), the BUILD system requires several
+files that don't exist in `cmk/plugins/` and are easy to miss:
+
+1. **`py.typed` marker** — empty PEP 561 file in the family root:
+
+   ```bash
+   touch packages/cmk-plugins/cmk/plugins/<family>/py.typed
+   ```
+
+2. **`requirements.in-<family>`** — lists pip dependencies; empty for families
+   with no third-party requirements (most SNMP/agent-based families):
+
+   ```bash
+   touch packages/cmk-plugins/requirements.in-<family>
+   ```
+
+3. **`tests/cmk/plugins/<family>/OWNERS`** — mirrors the plugin's OWNERS file.
+   Copy from `cmk/plugins/<family>/OWNERS` and adjust paths as needed.
+
+4. **BUILD entry** — add `py_library` and `py_test` targets to
+   `packages/cmk-plugins/BUILD`. Use the `ipmi` entry as a template for
+   SNMP/agent-based families with no external pip deps.
+
+Verify the build succeeds after making these changes:
+
+```bash
+bazel build //packages/cmk-plugins/...
+```
+
 ## Common Issues and Solutions
 
 ### Type Issues
