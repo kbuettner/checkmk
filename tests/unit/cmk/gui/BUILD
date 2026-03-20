@@ -1,0 +1,90 @@
+load("@aspect_rules_py//py:defs.bzl", "py_library", "py_pytest_main", "py_test")
+load("@cmk_requirements//:requirements.bzl", "requirement")
+
+py_library(
+    name = "conftest",
+    testonly = True,
+    srcs = ["conftest.py"],
+    visibility = ["//tests/unit/cmk/gui:__subpackages__"],
+    deps = [
+        "//cmk/gui",
+        "//cmk/utils",
+        "//tests/testlib/unit:unit_free",
+        requirement("flask"),
+        requirement("pytest"),
+        requirement("pytest-mock"),
+    ],
+)
+
+py_pytest_main(
+    name = "__test__",
+    deps = [
+        requirement("pytest"),
+        # pytest-xdist for `--numprocesses=NPROC`
+        requirement("pytest-xdist"),
+    ],
+)
+
+py_test(
+    name = "gui",
+    # https://bazel.build/reference/be/common-definitions#test.size
+    size = "large",
+    srcs = ["__test__.py"] + glob(
+        include = ["**/*.py"],
+        exclude = ["conftest.py"],
+    ),
+    args = [
+        "--config-file=$(location @//:pyproject.toml)",
+        "--import-mode=importlib",
+        "--random-order-bucket=global",
+        "--dist=loadfile",
+        "--numprocesses=4",
+    ],
+    data = ["@//:pyproject.toml"],
+    main = ":__test__.py",
+    visibility = ["//visibility:private"],
+    deps = [
+        ":__test__",
+        ":conftest",
+        "//tests/unit:conftest",
+        requirement("apispec-oneofschema"),
+        requirement("beautifulsoup4"),
+        requirement("fakeredis"),
+        requirement("fastapi"),
+        requirement("flask"),
+        requirement("marshmallow"),
+        requirement("marshmallow-oneofschema"),
+        requirement("openapi-spec-validator"),
+        requirement("opentelemetry-sdk"),
+        requirement("polyfactory"),
+        requirement("pytest-mock"),
+        requirement("pytest-asyncio"),
+        requirement("pytest-random-order"),
+        requirement("python-dateutil"),
+        requirement("python-ldap"),
+        requirement("pyyaml"),
+        requirement("responses"),
+        requirement("time-machine"),
+        requirement("werkzeug"),
+        "//cmk:validate_config",
+        "//cmk/bi:cmk_bi",
+        "//cmk/gui",
+        "//omd/packages/omd:omdlib",
+        "//tests/testlib/common:empty_config",
+        "//tests/testlib/common:utils",
+        "//tests/testlib/unit:unit_free",
+    ] + select({
+        "@//:gpl+nonfree_repo": [
+            "//cmk/gui:pro",
+            "//non-free/packages/cmc-protocols:py_config_proto",
+            "//non-free/packages/cmc-protocols:py_state_proto",
+            "//non-free/packages/cmk-core-helpers:fetcher-helper",
+            "//non-free/packages/cmk-dcd:gui",  # FIXME
+            "//non-free/packages/cmk-metric-backend",  # FIXME
+            "//non-free/packages/cmk-notification-plugins-nonfree:rulesets",
+            "//non-free/packages/cmk-otel-collector",  # FIXME
+            "//packages/cmk-ccc:observer",
+        ],
+        "@//:gpl_repo": [],
+    }),
+)
