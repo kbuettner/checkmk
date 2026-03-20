@@ -136,9 +136,9 @@ class UnitTestCrashReport(ABCCrashReport[UnitTestDetails]):
 def crash(tmp_path: Path) -> UnitTestCrashReport:
     try:
         # We need some var so the local_vars are part of the crash report
-        some_local_var = [{"foo": {"deep": True, "password": "verysecret", "foo": "notsecret"}}]  # noqa: F841
-        password = "verysecret"  # noqa: F841
-        raise ValueError("XYZ")
+        some_local_var = [{"foo": {"deep": True, "password": "verysecret", "foo": "notsecret"}}]
+        password = "verysecret"
+        raise ValueError(f"XYZ {some_local_var} {password}")  # use local vars to make ruff happy
     except ValueError:
         return UnitTestCrashReport(
             crash_report_base_path=make_crash_report_base_path(tmp_path),

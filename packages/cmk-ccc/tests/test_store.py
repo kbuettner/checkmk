@@ -303,8 +303,9 @@ def test_try_locked_fails(
 ) -> None:
     path = path_type(test_file)
 
-    def _is_already_locked(path: Path, blocking: object) -> bool:  # noqa: ARG001
-        raise OSError(errno.EAGAIN, "%s is already locked" % path)
+    # NOTE: We need the suppression to keep the exact same API.
+    def _is_already_locked(path: Path | str, blocking: bool = True) -> bool:  # noqa: ARG001
+        raise OSError(errno.EAGAIN, f"{path} is already locked")
 
     monkeypatch.setattr(store._locks, "acquire_lock", _is_already_locked)  # noqa: SLF001
 
