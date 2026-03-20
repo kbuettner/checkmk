@@ -1,6 +1,12 @@
 load("@aspect_rules_py//py:defs.bzl", "py_pytest_main", "py_test")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 
+filegroup(
+    name = "bakery_test_files",
+    srcs = glob(["plugins/bakery/test_*.py"]),
+    visibility = ["//tests/unit/cmk/base/nonfree/pro:__pkg__"],
+)
+
 py_pytest_main(
     name = "__test__",
     deps = [
