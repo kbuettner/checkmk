@@ -18,8 +18,11 @@ import CmkHeading from '@/components/typography/CmkHeading.vue'
 import CmkParagraph from '@/components/typography/CmkParagraph.vue'
 
 import ConfigureCollector from './otel-configuration-steps/ConfigureCollector.vue'
+import type { AuthConfig } from './otel-configuration-steps/ConfigureCollector.vue'
 import ConfigureGeneralProperties from './otel-configuration-steps/ConfigureGeneralProperties.vue'
 import ConfigureHosts from './otel-configuration-steps/ConfigureHosts.vue'
+
+const props = defineProps<{ no_auth_allowed: boolean }>()
 
 const { _t } = usei18n()
 const currentMode = ref<'guided' | 'overview'>('guided')
@@ -35,8 +38,23 @@ async function validateGeneralProperties(): Promise<boolean> {
   return (await generalPropertiesRef.value?.validate()) ?? false
 }
 
+const collectorRef = useTemplateRef<InstanceType<typeof ConfigureCollector>>('collector')
+
+async function validateCollector(): Promise<boolean> {
+  return collectorRef.value?.validate() ?? false
+}
+
+const grpcAuth = ref<AuthConfig>({
+  method: props.no_auth_allowed ? 'none' : 'basicauth',
+  credential: null
+})
+const httpAuth = ref<AuthConfig>({
+  method: props.no_auth_allowed ? 'none' : 'basicauth',
+  credential: null
+})
+
 const close = () => {
-  console.log('Activate changes')
+  // TODO: trigger activate changes
 }
 </script>
 
@@ -82,10 +100,15 @@ const close = () => {
         }}</CmkParagraph>
       </template>
       <template #content>
-        <ConfigureCollector />
+        <ConfigureCollector
+          ref="collector"
+          v-model:grpc-auth="grpcAuth"
+          v-model:http-auth="httpAuth"
+          :no-auth-allowed="no_auth_allowed"
+        />
       </template>
       <template #actions>
-        <CmkWizardButton type="next" />
+        <CmkWizardButton type="next" :validation-cb="validateCollector" />
         <CmkWizardButton type="previous" />
       </template>
     </CmkWizardStep>
