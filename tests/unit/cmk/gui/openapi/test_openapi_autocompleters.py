@@ -5,9 +5,10 @@
 
 import pytest
 
+from cmk.ccc.version import Edition, edition
 from cmk.gui.valuespec import autocompleter_registry
 from cmk.livestatus_client.testing import MockLiveStatusConnection
-from tests.testlib.common.repo import is_pro_repo
+from cmk.utils import paths
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
 
@@ -15,7 +16,7 @@ from tests.testlib.unit.rest_api_client import ClientRegistry
 def fixture_expected_autocompleters() -> list[str]:
     # ATTENTION! The Checkmk Grafana plugin requires the following autocompletes!
     # Please contact the grafana component members before removing one from this list!
-    autocompleters = [
+    return [
         "sites",
         "available_graph_templates",
         "monitored_hostname",
@@ -26,14 +27,11 @@ def fixture_expected_autocompleters() -> list[str]:
         "monitored_service_description",
     ]
 
-    if is_pro_repo():
-        autocompleters.append("graph_template_for_combined_graph")
-        autocompleters.append("combined_graphs")
-        # Please read the comment above!
 
-    return autocompleters
-
-
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_openapi_autocompleter_functions_exist(expected_autocompleters: list[str]) -> None:
     registered_autocompleters = autocompleter_registry.keys()
     for autocomplete_name in expected_autocompleters:
@@ -117,39 +115,6 @@ def test_openapi_lenny_autocompleter(
 
     with mock_livestatus(expect_status_query=True):
         clients.AutoComplete.invoke("label", {"world": "core", "context": {}}, "")
-
-
-@pytest.mark.skipif(
-    not is_pro_repo(),
-    reason="graph_template_for_combined_graph is not available in CRE",
-)
-def test_openapi_graph_template_for_combined_graph_autocompleter(clients: ClientRegistry) -> None:
-    clients.AutoComplete.invoke(
-        "graph_template_for_combined_graph",
-        {"strict": True},
-        "",
-    )
-
-
-@pytest.mark.skipif(
-    not is_pro_repo(),
-    reason="combined_graphs is not available in CRE",
-)
-def test_openapi_combined_graphs_autocompleter(
-    clients: ClientRegistry, mock_livestatus: MockLiveStatusConnection
-) -> None:
-    # this is needed for the checkmk grafana plugin. please get in touch with the component members
-    # if you have to adapt this test.
-    clients.AutoComplete.invoke(
-        "combined_graphs",
-        {
-            "presentation": "lines",
-            "mode": "metric",
-            "datasource": "services",
-            "single_infos": ["host"],
-            "context": {},
-        },
-    )
 
 
 def test_openapi_available_graph_templates(clients: ClientRegistry) -> None:
