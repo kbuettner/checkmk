@@ -79,7 +79,7 @@ def test_site_api_error_returned_by_ar(
         WMapping(
             request=Request(
                 method="POST",
-                url=f"{site.base_route}/domain-types/relay/collections/all",
+                url=f"{site.internal_base_route}/domain-types/relay/collections/all",
             ),
             response=Response(status=HTTPStatus.UNAUTHORIZED, body="Invalid credentials"),
         )
@@ -96,7 +96,7 @@ def test_site_api_error_returned_by_ar(
 
 def _get_site_api_auth_headers(wiremock: Wiremock, site: SiteMock) -> list[str]:
     requests = wiremock.get_all_url_path_requests(
-        f"{site.base_route}/domain-types/relay/collections/all",
+        f"{site.internal_base_route}/domain-types/relay/collections/all",
         HTTPMethod.POST,
     )
     return [r.headers["Authorization"] for r in requests]

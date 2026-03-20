@@ -3773,6 +3773,7 @@ class RelayClient(RestApiClient):
             url=f"/domain-types/{self.domain}/collections/all",
             body=relay_data,
             expect_ok=expect_ok,
+            api_version=APIVersion.INTERNAL,
         )
 
     def edit(
@@ -3821,6 +3822,7 @@ class RelayClient(RestApiClient):
             body=relay_data,
             headers={"Authorization": f"CMK-TOKEN {token}"},
             expect_ok=expect_ok,
+            api_version=APIVersion.INTERNAL,
         )
 
     def create_registration_token(

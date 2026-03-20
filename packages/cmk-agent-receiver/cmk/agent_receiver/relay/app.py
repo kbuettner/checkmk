@@ -33,7 +33,10 @@ def _build_config_task_factory() -> ConfigTaskFactory:
         max_pending_tasks_per_relay=config.max_pending_tasks_per_relay,
     )
     relays_repository = RelaysRepository.from_site(
-        config.rest_api_url, config.site_name, config.helper_config_dir
+        site_url=config.rest_api_url,
+        internal_site_url=config.internal_rest_api_url,
+        site_name=config.site_name,
+        helper_config_dir=config.helper_config_dir,
     )
     return ConfigTaskFactory(
         relays_repository=relays_repository,

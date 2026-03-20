@@ -9,5 +9,8 @@ from cmk.agent_receiver.relay.lib.relays_repository import RelaysRepository
 def get_relays_repository() -> RelaysRepository:
     config = get_config()
     return RelaysRepository.from_site(
-        config.rest_api_url, config.site_name, config.helper_config_dir
+        site_url=config.rest_api_url,
+        internal_site_url=config.internal_rest_api_url,
+        site_name=config.site_name,
+        helper_config_dir=config.helper_config_dir,
     )

@@ -92,12 +92,30 @@ def test_user() -> SecretAuth:
 
 
 @pytest.fixture()
-def site_api_client() -> Iterator[httpx.Client]:
-    """Provides an httpx.Client configured for the site API."""
+def _relay_mock_transport() -> httpx.MockTransport:
+    """Shared mock transport so both clients see the same relay state."""
+    return create_relay_mock_transport()
+
+
+@pytest.fixture()
+def site_api_client(_relay_mock_transport: httpx.MockTransport) -> Iterator[httpx.Client]:
+    """Provides an httpx.Client configured for the site API (v1)."""
     client = httpx.Client(
         base_url="http://test.com/test/check_mk/api/1.0",
         headers={"Content-Type": "application/json"},
-        transport=create_relay_mock_transport(),
+        transport=_relay_mock_transport,
+    )
+    yield client
+    client.close()
+
+
+@pytest.fixture()
+def internal_api_client(_relay_mock_transport: httpx.MockTransport) -> Iterator[httpx.Client]:
+    """Provides an httpx.Client configured for the internal API."""
+    client = httpx.Client(
+        base_url="http://test.com/test/check_mk/api/internal",
+        headers={"Content-Type": "application/json"},
+        transport=_relay_mock_transport,
     )
     yield client
     client.close()
@@ -105,11 +123,14 @@ def site_api_client() -> Iterator[httpx.Client]:
 
 @pytest.fixture()
 def relays_repository(
-    site_api_client: httpx.Client, site_context: Config
+    site_api_client: httpx.Client, internal_api_client: httpx.Client, site_context: Config
 ) -> Iterator[RelaysRepository]:
     """Provides a RelaysRepository with mock transport for testing."""
     repository = RelaysRepository(
-        site_api_client, siteid="test-site", helper_config_dir=site_context.helper_config_dir
+        client=site_api_client,
+        internal_client=internal_api_client,
+        siteid="test-site",
+        helper_config_dir=site_context.helper_config_dir,
     )
     yield repository
 

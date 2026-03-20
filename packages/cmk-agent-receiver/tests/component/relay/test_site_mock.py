@@ -28,6 +28,17 @@ def client(site: SiteMock, user: User) -> httpx.Client:
     )
 
 
+@pytest.fixture
+def internal_client(site: SiteMock, user: User) -> httpx.Client:
+    return httpx.Client(
+        base_url=site.internal_base_url,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": user.bearer,
+        },
+    )
+
+
 def test_can_only_setup_one_scenario(site: SiteMock) -> None:
     relays = ["a", "b"]
     site.set_scenario(relays=relays)
@@ -62,13 +73,15 @@ def test_scenario_initial_conditions_match(
     assert reply_relay_ids == set(relays)
 
 
-def test_scenario_can_add_relay(site: SiteMock, client: httpx.Client) -> None:
+def test_scenario_can_add_relay(
+    site: SiteMock, client: httpx.Client, internal_client: httpx.Client
+) -> None:
     relays = ["a", "b"]
     new_relay = "relay2"
     site.set_scenario(relays=relays, changes=[(new_relay, OP.ADD)])
 
     # we add a relay
-    resp = client.post(
+    resp = internal_client.post(
         "/domain-types/relay/collections/all",
         json={
             "alias": new_relay,
@@ -112,7 +125,9 @@ def test_scenario_can_delete_relay(site: SiteMock, client: httpx.Client) -> None
     assert to_delete_relay not in {r.id for r in list_parsed.value}
 
 
-def test_scenario_start_empty_add_relay(site: SiteMock, client: httpx.Client) -> None:
+def test_scenario_start_empty_add_relay(
+    site: SiteMock, client: httpx.Client, internal_client: httpx.Client
+) -> None:
     new_relay = "relay_first"
     site.set_scenario(relays=[], changes=[(new_relay, OP.ADD)])
 
@@ -123,7 +138,7 @@ def test_scenario_start_empty_add_relay(site: SiteMock, client: httpx.Client) ->
     assert len(list_parsed.value) == 0
 
     # add the first relay
-    resp = client.post(
+    resp = internal_client.post(
         "/domain-types/relay/collections/all",
         json={
             "alias": new_relay,
@@ -150,7 +165,9 @@ def test_scenario_start_empty_add_relay(site: SiteMock, client: httpx.Client) ->
     assert list_parsed.value[0].id == new_relay
 
 
-def test_scenario_multiple_changes(site: SiteMock, client: httpx.Client) -> None:
+def test_scenario_multiple_changes(
+    site: SiteMock, client: httpx.Client, internal_client: httpx.Client
+) -> None:
     initial_relays = ["relay_a", "relay_b"]
     changes = [
         ("relay_new1", OP.ADD),
@@ -170,7 +187,7 @@ def test_scenario_multiple_changes(site: SiteMock, client: httpx.Client) -> None
     assert current_relay_ids == {"relay_a", "relay_b"}
 
     # step 1: add relay_new1
-    resp = client.post(
+    resp = internal_client.post(
         "/domain-types/relay/collections/all",
         json={
             "alias": "relay_new1",
@@ -205,7 +222,7 @@ def test_scenario_multiple_changes(site: SiteMock, client: httpx.Client) -> None
     assert current_relay_ids == {"relay_b", "relay_new1"}
 
     # step 3: add relay_new2
-    resp = client.post(
+    resp = internal_client.post(
         "/domain-types/relay/collections/all",
         json={
             "alias": "relay_new2",
@@ -240,7 +257,7 @@ def test_scenario_multiple_changes(site: SiteMock, client: httpx.Client) -> None
     assert current_relay_ids == {"relay_new1", "relay_new2"}
 
     # step 5: add relay_final
-    resp = client.post(
+    resp = internal_client.post(
         "/domain-types/relay/collections/all",
         json={
             "alias": "relay_final",

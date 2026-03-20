@@ -35,29 +35,47 @@ default_log_level = "INFO"
 
 @final
 class RelaysRepository:
-    def __init__(self, client: httpx.Client, siteid: str, helper_config_dir: Path) -> None:
+    def __init__(
+        self,
+        *,
+        client: httpx.Client,
+        internal_client: httpx.Client,
+        siteid: str,
+        helper_config_dir: Path,
+    ) -> None:
         self.client = client
+        self.internal_client = internal_client
         self.siteid = siteid
         self.helper_config_dir = helper_config_dir
 
     @classmethod
     def from_site(
-        cls, site_url: str, site_name: str, helper_config_dir: Path
+        cls,
+        *,
+        site_url: str,
+        internal_site_url: str,
+        site_name: str,
+        helper_config_dir: Path,
     ) -> "RelaysRepository":
         """Create RelaysRepository from site configuration."""
         # FIXME async client
-        client = httpx.Client(
-            base_url=site_url,
-            headers={
-                "Content-Type": "application/json",
-                "User-Agent": "Checkmk Agent Receiver",
-            },
-            timeout=20,  # FIXME: increased timeout due to flacky test test_tasks.py::test_max_tasks_per_relay
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Checkmk Agent Receiver",
+        }
+        # FIXME: increased timeout due to flacky test test_tasks.py::test_max_tasks_per_relay
+        timeout = 20
+        client = httpx.Client(base_url=site_url, headers=headers, timeout=timeout)
+        internal_client = httpx.Client(base_url=internal_site_url, headers=headers, timeout=timeout)
+        return cls(
+            client=client,
+            internal_client=internal_client,
+            siteid=site_name,
+            helper_config_dir=helper_config_dir,
         )
-        return cls(client, site_name, helper_config_dir)
 
     def add_relay(self, auth: SiteAuth, relay_id: RelayID, alias: str) -> RelayID:
-        resp = self.client.post(
+        resp = self.internal_client.post(
             "/domain-types/relay/collections/all",
             auth=auth,
             json={

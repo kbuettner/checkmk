@@ -85,6 +85,14 @@ class SiteMock:
         return f"/{self.site_name}/check_mk/api/1.0"
 
     @property
+    def internal_base_url(self) -> str:
+        return f"{self.wiremock.base_url}{self.internal_base_route}"
+
+    @property
+    def internal_base_route(self) -> str:
+        return f"/{self.site_name}/check_mk/api/internal"
+
+    @property
     def _auth_regex(self) -> str:
         return f"^(?:{self.user.bearer}|{self.internal_secret}|CMK-TOKEN .+)$"
 
@@ -157,7 +165,7 @@ class SiteMock:
             newScenarioState=next,
             request=Request(
                 method="POST",
-                url=f"{self.base_route}/domain-types/relay/collections/all",
+                url=f"{self.internal_base_route}/domain-types/relay/collections/all",
                 headers={
                     "Content-Type": {"matches": "application/json"},
                     "Authorization": {"matches": self._auth_regex},
