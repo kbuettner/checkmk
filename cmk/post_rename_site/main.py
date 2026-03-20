@@ -99,7 +99,7 @@ def _load_plugins() -> PluginFailures:
     yield from load_plugins_with_exceptions("cmk.post_rename_site.plugins.actions")
     if edition(paths.omd_root) is not Edition.COMMUNITY:
         yield from load_plugins_with_exceptions("cmk.post_rename_site.nonfree.pro.plugins.actions")
-    if edition(paths.omd_root) in (Edition.ULTIMATEMT, Edition.ULTIMATE):
+    if edition(paths.omd_root) in (Edition.ULTIMATEMT, Edition.ULTIMATE, Edition.CLOUD):
         yield from load_plugins_with_exceptions(
             "cmk.post_rename_site.nonfree.ultimate.plugins.actions"
         )

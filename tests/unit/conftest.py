@@ -88,7 +88,7 @@ def _fake_version_and_paths() -> None:
         "local_dashboards_dir",
         "local_views_dir",
         "local_reports_dir",
-        # This starts with /etc and will not be changed by the code below
+        # cse_config_dir is patched explicitly below (starts with /etc, not under omd_root)
         "cse_config_dir",
         # these start with /opt and will not be changed in the code below
         "rrd_multiple_dir",
@@ -132,6 +132,24 @@ def _fake_version_and_paths() -> None:
             if f.is_file() and not (notifications_tmp / f.stem).exists():
                 (notifications_tmp / f.stem).symlink_to(f)
     monkeypatch.setattr("cmk.utils.paths.notifications_dir", notifications_tmp)
+
+    # Patch cse_config_dir (starts with /etc, not under omd_root) so cloud edition
+    # registration can load its config in the test environment.
+    cse_tmp = Path(tmp_dir) / "etc" / "cse"
+    cse_tmp.mkdir(parents=True, exist_ok=True)
+    (cse_tmp / "edition_config.json").write_text(
+        json.dumps(
+            {
+                "uap_url": "https://test.example.com",
+                "bug_tracker_url": "https://test.example.com",
+                "download_agent_user": "test",
+                "tenant_id": "test-tenant",
+                "otel_collector_receiver_activation_script_path": "/dev/null",
+                "enable_ai": False,
+            }
+        )
+    )
+    monkeypatch.setattr("cmk.utils.paths.cse_config_dir", cse_tmp)
 
     monkeypatch.setattr("cmk.utils.paths.inventory_dir", repo_path() / "inventory")
     monkeypatch.setattr("cmk.utils.paths.legacy_check_manpages_dir", repo_path() / "checkman")

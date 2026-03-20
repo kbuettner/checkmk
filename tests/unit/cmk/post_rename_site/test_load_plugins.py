@@ -3,45 +3,30 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-from collections.abc import Sequence
-
 import pytest
 
+from cmk.ccc.version import Edition, edition
 from cmk.post_rename_site import main
 from cmk.post_rename_site.registry import rename_action_registry
-from tests.testlib.common.repo import is_pro_repo, is_ultimate_repo
+from cmk.utils import paths
 
 
-@pytest.fixture(name="expected_plugins")
-def fixture_expected_plugins() -> list[str]:
-    expected = [
-        "sites",
-        "messaging",
-        "hosts_and_folders",
-        "update_core_config",
-        "warn_remote_site",
-        "warn_about_network_ports",
-        "warn_about_configs_to_review",
-    ]
-
-    # ATTENTION. The edition related code below is confusing and incorrect. The reason we need it
-    # because our test environments do not reflect our Checkmk editions properly.
-    # We cannot fix that in the short (or even mid) term because the
-    # precondition is a more cleanly separated structure.
-    if is_pro_repo():
-        # The CEE plug-ins are loaded when the CEE plug-ins are available, i.e.
-        # when the "enterprise/" path is present.
-        expected.append("dcd_connections")
-
-    if is_ultimate_repo():
-        # The CCE plug-ins are loaded when the CCE plug-ins are available
-        expected.extend(["agent_controller_connections", "otel"])
-
-    return expected
-
-
-def test_load_plugins(expected_plugins: Sequence[str]) -> None:
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
+def test_load_plugins() -> None:
     """The test changes a global variable `rename_action_registry`.
     We can't reliably monkey patch this variable - must use separate module for testing"""
     main.load_plugins()
-    assert sorted(rename_action_registry.keys()) == sorted(expected_plugins)
+    assert sorted(rename_action_registry.keys()) == sorted(
+        [
+            "sites",
+            "messaging",
+            "hosts_and_folders",
+            "update_core_config",
+            "warn_remote_site",
+            "warn_about_network_ports",
+            "warn_about_configs_to_review",
+        ]
+    )
