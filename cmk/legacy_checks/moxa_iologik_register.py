@@ -3,40 +3,50 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 # "0=Off, 1=On in DI/DO mode or N=Count in DO counter mode"
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import all_of, SNMPTree, startswith, StringTable
+from cmk.agent_based.v2 import (
+    all_of,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
 
-check_info = {}
+_STATE_MAP = {0: State.OK, 1: State.WARN}
 
 
-def discover_iologik_register(info):
-    inventory = []
-    for line in info:
+def discover_iologik_register(section: StringTable) -> DiscoveryResult:
+    for line in section:
         if line[2]:
-            inventory.append((line[0], None))
-    return inventory
+            yield Service(item=line[0])
 
 
-def check_iologik_register(item, _no_params, info):
-    for line in info:
+def check_iologik_register(item: str, section: StringTable) -> CheckResult:
+    for line in section:
         if line[0] == item:
-            if int(line[2]) in range(0, 2):
-                return (int(line[2]), line[1])
-            return (3, "Invalid value %s for register" % line[2])
+            val = int(line[2])
+            if val in range(0, 2):
+                yield Result(state=_STATE_MAP.get(val, State.UNKNOWN), summary=line[1])
+            else:
+                yield Result(state=State.UNKNOWN, summary=f"Invalid value {line[2]} for register")
+            return
 
-    return (3, "Register not found")
+    yield Result(state=State.UNKNOWN, summary="Register not found")
 
 
 def parse_moxa_iologik_register(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["moxa_iologik_register"] = LegacyCheckDefinition(
+snmp_section_moxa_iologik_register = SimpleSNMPSection(
     name="moxa_iologik_register",
     parse_function=parse_moxa_iologik_register,
     detect=all_of(
@@ -47,7 +57,11 @@ check_info["moxa_iologik_register"] = LegacyCheckDefinition(
         base=".1.3.6.1.4.1.8691.10.2242.10.4.1.1",
         oids=["1", "2", "3"],
     ),
-    service_name="Moxa Register",
+)
+
+check_plugin_moxa_iologik_register = CheckPlugin(
+    name="moxa_iologik_register",
+    service_name="Moxa Register %s",
     discovery_function=discover_iologik_register,
     check_function=check_iologik_register,
 )
