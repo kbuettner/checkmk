@@ -147,18 +147,13 @@ def _expected_rulespec_group_choices() -> list[tuple[str, str]]:
         ("vm_cloud_container", "VM, cloud, container"),
     ]
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected += [
-            ("agents/agent_plugins", "&nbsp;&nbsp;\u2319 Agent plug-ins"),
-            ("agents/automatic_updates", "&nbsp;&nbsp;\u2319 Automatic Updates"),
-            ("agents/linux_agent", "&nbsp;&nbsp;\u2319 Linux/UNIX agent options"),
-            ("agents/windows_agent", "&nbsp;&nbsp;\u2319 Windows agent options"),
-            ("agents/windows_modules", "&nbsp;&nbsp;\u2319 Windows Modules"),
-        ]
-
     return expected
 
 
+@pytest.mark.skipif(
+    cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_rulespec_group_choices() -> None:
     actual_choices = [
         g
@@ -238,6 +233,10 @@ def test_rulespec_get_main_groups() -> None:
     )
 
 
+@pytest.mark.skipif(
+    cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_rulespec_get_all_groups() -> None:
     expected_rulespec_groups = [
         "activechecks",
@@ -281,14 +280,6 @@ def test_rulespec_get_all_groups() -> None:
         "eventconsole",
     ]
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_rulespec_groups += [
-            "agents/linux_agent",
-            "agents/windows_agent",
-            "agents/windows_modules",
-            "agents/agent_plugins",
-        ]
-
     actual_rulespec_groups = [
         g for g in rulespec_registry.get_all_groups() if not _is_dynamically_generated_group(g)
     ]
@@ -300,6 +291,10 @@ def _is_dynamically_generated_group(group_name: str) -> bool:
     return group_name.split("/")[-1].startswith(GENERATED_GROUP_PREFIX)
 
 
+@pytest.mark.skipif(
+    cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_rulespec_get_host_groups() -> None:
     expected_rulespec_host_groups = [
         "checkparams",
@@ -325,15 +320,6 @@ def test_rulespec_get_host_groups() -> None:
         "snmp",
         "vm_cloud_container",
     ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_rulespec_host_groups += [
-            "agents/agent_plugins",
-            "agents/automatic_updates",
-            "agents/linux_agent",
-            "agents/windows_agent",
-            "agents/windows_modules",
-        ]
 
     group_names = [
         g
