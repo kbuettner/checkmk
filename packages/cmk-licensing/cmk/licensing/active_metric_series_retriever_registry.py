@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from cmk.ccc.version import Edition, edition
-from cmk.utils.licensing.helper import init_logging
+from cmk.licensing.helper import init_logging
 
 
 def _get_logger(log_dir: Path) -> logging.Logger:

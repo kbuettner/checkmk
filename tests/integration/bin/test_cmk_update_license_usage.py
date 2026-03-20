@@ -8,8 +8,8 @@ import json
 import logging
 from datetime import datetime, timedelta
 
-from cmk.utils.licensing.export import RawLicenseUsageReport
-from cmk.utils.licensing.helper import rot47
+from cmk.licensing.export import RawLicenseUsageReport
+from cmk.licensing.helper import rot47
 from tests.testlib.site import Site
 
 LOGGER = logging.getLogger(__name__)

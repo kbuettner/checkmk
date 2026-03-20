@@ -337,7 +337,9 @@ def _parse_sample_v1_1(instance_id: UUID | None, site_hash: str, raw: object) ->
     )
 
 
-def _parse_sample_v2_0(instance_id: UUID | None, site_hash: str, raw: object) -> LicenseUsageSample:
+def _parse_sample_v2_0(
+    _instance_id: UUID | None, site_hash: str, raw: object
+) -> LicenseUsageSample:
     if not isinstance(raw, dict):
         raise TypeError("Parse sample 2.0/2.1: Wrong sample type: %r" % type(raw))
     if not (raw_instance_id := raw.get("instance_id")):
@@ -489,7 +491,7 @@ class ParserV1_5(Parser):
         return _parse_subscription_details(raw)
 
     def parse_sample(
-        self, instance_id: UUID | None, site_hash: str, raw: object
+        self, _instance_id: UUID | None, site_hash: str, raw: object
     ) -> LicenseUsageSample:
         if not isinstance(raw, dict):
             raise TypeError("Parse sample 1.5: Wrong sample type: %r" % type(raw))
@@ -548,7 +550,7 @@ class ParserV3_0(Parser):
         return _parse_subscription_details(raw)
 
     def parse_sample(
-        self, instance_id: UUID | None, site_hash: str, raw: object
+        self, _instance_id: UUID | None, site_hash: str, raw: object
     ) -> LicenseUsageSample:
         if not isinstance(raw, dict):
             raise TypeError("Parse sample 3.0: Wrong sample type: %r" % type(raw))
@@ -583,7 +585,9 @@ class ParserV3_0(Parser):
         )
 
 
-def _parse_sample_v3_1(instance_id: UUID | None, site_hash: str, raw: object) -> LicenseUsageSample:
+def _parse_sample_v3_1(
+    _instance_id: UUID | None, site_hash: str, raw: object
+) -> LicenseUsageSample:
     if not isinstance(raw, dict):
         raise TypeError("Parse sample 3.1: Wrong sample type: %r" % type(raw))
     if not (raw_instance_id := raw.get("instance_id")):
@@ -617,7 +621,9 @@ def _parse_sample_v3_1(instance_id: UUID | None, site_hash: str, raw: object) ->
     )
 
 
-def _parse_sample_v3_2(instance_id: UUID | None, site_hash: str, raw: object) -> LicenseUsageSample:
+def _parse_sample_v3_2(
+    _instance_id: UUID | None, site_hash: str, raw: object
+) -> LicenseUsageSample:
     if not isinstance(raw, dict):
         raise TypeError("Parse sample 3.2: Wrong sample type: %r" % type(raw))
     if not (raw_instance_id := raw.get("instance_id")):

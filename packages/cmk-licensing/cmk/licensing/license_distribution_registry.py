@@ -3,10 +3,14 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
+from __future__ import annotations
+
 from collections.abc import Callable, Collection
 from logging import Logger
+from typing import TYPE_CHECKING
 
-from cmk.utils.automation_config import RemoteAutomationConfig
+if TYPE_CHECKING:
+    from cmk.utils.automation_config import RemoteAutomationConfig  # type: ignore[import-not-found]
 
 
 class LicenseDistributionRegistry:

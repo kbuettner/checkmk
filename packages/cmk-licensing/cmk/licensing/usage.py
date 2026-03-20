@@ -23,10 +23,10 @@ import cmk.ccc.version as cmk_version
 from cmk.ccc import store
 from cmk.ccc.site import omd_site
 from cmk.ccc.version import Edition
-from cmk.utils.licensing.active_metric_series_retriever_registry import (
+from cmk.licensing.active_metric_series_retriever_registry import (
     get_average_active_metric_series,
 )
-from cmk.utils.licensing.export import (
+from cmk.licensing.export import (
     LicenseUsageExtensions,
     LicenseUsageSample,
     make_parser,
@@ -35,13 +35,13 @@ from cmk.utils.licensing.export import (
     RawLicenseUsageReport,
     RawLicenseUsageSample,
 )
-from cmk.utils.licensing.helper import (
+from cmk.licensing.helper import (
     get_instance_id_file_path,
     hash_site_id,
     load_instance_id,
     rot47,
 )
-from cmk.utils.licensing.protocol_version import get_licensing_protocol_version
+from cmk.licensing.protocol_version import get_licensing_protocol_version
 
 CLOUD_SERVICE_PREFIXES = {"aws", "azure", "gcp"}
 

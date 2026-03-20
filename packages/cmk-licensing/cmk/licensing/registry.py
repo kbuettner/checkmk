@@ -6,8 +6,8 @@
 from pathlib import Path
 
 from cmk.ccc.version import Edition, edition
-from cmk.utils.licensing.community_handler import CommunityLicensingHandler
-from cmk.utils.licensing.handler import (
+from cmk.licensing.community_handler import CommunityLicensingHandler
+from cmk.licensing.handler import (
     LicenseState,
     LicenseStateError,
     LicensingHandler,

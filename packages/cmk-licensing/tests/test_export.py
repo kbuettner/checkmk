@@ -11,7 +11,7 @@ from typing import Any, Literal
 
 import pytest
 
-from cmk.utils.licensing.export import (
+from cmk.licensing.export import (
     _parse_extensions,
     make_parser,
     RawSubscriptionDetailsForAggregation,

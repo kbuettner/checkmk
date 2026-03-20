@@ -80,9 +80,9 @@ from cmk.gui.watolib.config_sync import create_distributed_wato_files
 from cmk.gui.watolib.global_settings import load_configuration_settings
 from cmk.gui.watolib.mode import mode_registry
 from cmk.gui.watolib.simple_config_file import ConfigFileRegistry, WatoSingleConfigFile
+from cmk.licensing.handler import LicenseState
 from cmk.utils import paths
 from cmk.utils.automation_config import RemoteAutomationConfig
-from cmk.utils.licensing.handler import LicenseState
 
 STATIC_PERMISSIONS_SITES = ["sites"]
 

@@ -17,6 +17,7 @@ from cmk.gui.utils.html import HTML
 from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.utils.urls import doc_reference_url, DocReference, makeuri_contextless
 from cmk.gui.welcome.utils import WELCOME_PERMISSIONS
+from cmk.licensing.registry import get_license_message
 from cmk.shared_typing.main_menu import (
     ColorEnum,
     DefaultIcon,
@@ -31,7 +32,6 @@ from cmk.shared_typing.main_menu import (
     TopicItemMode,
 )
 from cmk.utils import paths
-from cmk.utils.licensing.registry import get_license_message
 
 
 def register(

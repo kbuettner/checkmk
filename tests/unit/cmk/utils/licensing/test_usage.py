@@ -18,14 +18,13 @@ import pytest
 import livestatus
 
 from cmk.discover_plugins import discover_families, PluginGroup
-from cmk.utils import man_pages
-from cmk.utils.licensing.export import (
+from cmk.licensing.export import (
     LicenseUsageExtensions,
     LicenseUsageSample,
     RawLicenseUsageReport,
 )
-from cmk.utils.licensing.protocol_version import get_licensing_protocol_version
-from cmk.utils.licensing.usage import (
+from cmk.licensing.protocol_version import get_licensing_protocol_version
+from cmk.licensing.usage import (
     _load_extensions,
     _parse_extensions,
     _serialize_dump,
@@ -38,6 +37,7 @@ from cmk.utils.licensing.usage import (
     save_extensions,
     try_update_license_usage,
 )
+from cmk.utils import man_pages
 
 
 @pytest.fixture(name="omd_root")
@@ -1083,7 +1083,7 @@ def test_history_add_sample() -> None:
     )
 
 
-# This is nowhere near being a unit test of cmk.utils.licensing.
+# This is nowhere near being a unit test of cmk.licensing.
 def test_cloud_service_prefixes_up_to_date():
     """Test if there are services that do not begin with the prefix indicating a cloud service based
     on the categorisation in their manpage. Either rename your service to conform to the given

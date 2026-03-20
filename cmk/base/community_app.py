@@ -8,8 +8,8 @@ from collections.abc import Sequence
 from cmk.base import notify
 from cmk.ccc.version import Edition
 from cmk.fetchers import PlainFetcherTrigger
+from cmk.licensing.community_handler import CommunityLicensingHandler
 from cmk.utils.labels import get_builtin_host_labels
-from cmk.utils.licensing.community_handler import CommunityLicensingHandler
 from cmk.utils.paths import omd_root
 
 from . import diagnostics, localize

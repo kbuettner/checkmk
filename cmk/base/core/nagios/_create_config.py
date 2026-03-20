@@ -56,12 +56,12 @@ from cmk.checkengine.plugins import (
 )
 from cmk.core_client import NagiosClient
 from cmk.fetchers import StoredSecrets
+from cmk.licensing.handler import LicensingHandler
 from cmk.password_store.v1_unstable import Secret
 from cmk.server_side_calls_backend import ActiveServiceData
 from cmk.utils import config_warnings, ip_lookup, password_store
 from cmk.utils.ip_lookup import IPStackConfig
 from cmk.utils.labels import LabelManager, Labels
-from cmk.utils.licensing.handler import LicensingHandler
 from cmk.utils.macros import replace_macros_in_str
 from cmk.utils.notify import (
     create_notify_host_files,

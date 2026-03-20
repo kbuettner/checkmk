@@ -52,8 +52,8 @@ from cmk.gui.utils.security_log_events import AuthenticationFailureEvent, Authen
 from cmk.gui.utils.transaction_manager import transactions
 from cmk.gui.utils.urls import makeuri, requested_file_name, urlencode
 from cmk.gui.utils.user_errors import user_errors
-from cmk.utils.licensing.handler import LicenseStateError, RemainingTrialTime
-from cmk.utils.licensing.registry import get_remaining_trial_time_rounded
+from cmk.licensing.handler import LicenseStateError, RemainingTrialTime
+from cmk.licensing.registry import get_remaining_trial_time_rounded
 from cmk.utils.security_event import log_security_event
 from cmk.utils.urls import is_allowed_url
 

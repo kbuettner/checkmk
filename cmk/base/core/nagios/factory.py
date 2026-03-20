@@ -12,9 +12,9 @@ from cmk.ccc.version import Edition
 from cmk.checkengine.plugins import AgentBasedPlugins
 from cmk.core_client import NagiosClient
 from cmk.fetchers.snmp import SNMPPluginStore
+from cmk.licensing.community_handler import CommunityLicensingHandler
 from cmk.utils import paths
 from cmk.utils.labels import LabelManager
-from cmk.utils.licensing.community_handler import CommunityLicensingHandler
 from cmk.utils.rulesets.ruleset_matcher import RulesetMatcher
 from cmk.utils.timeperiod import get_all_timeperiods
 

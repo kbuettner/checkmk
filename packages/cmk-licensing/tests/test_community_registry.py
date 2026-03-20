@@ -4,8 +4,8 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 from cmk.ccc.version import Edition
-from cmk.utils.licensing.handler import LicensingHandler
-from cmk.utils.licensing.registry import (
+from cmk.licensing.handler import LicensingHandler
+from cmk.licensing.registry import (
     licensing_handler_registry,
     register_community_licensing_handler,
 )

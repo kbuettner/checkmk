@@ -152,10 +152,10 @@ from cmk.gui.watolib.sites import (
     site_management_registry,
     STATIC_PERMISSIONS_SITES,
 )
+from cmk.licensing.license_distribution_registry import distribute_license_to_remotes
+from cmk.licensing.registry import is_free
 from cmk.messaging import check_remote_connection, ConnectionFailed, ConnectionOK, ConnectionRefused
 from cmk.utils.encryption import CertificateDetails, fetch_certificate_details
-from cmk.utils.licensing.license_distribution_registry import distribute_license_to_remotes
-from cmk.utils.licensing.registry import is_free
 from cmk.utils.paths import omd_root
 
 

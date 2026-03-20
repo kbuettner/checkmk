@@ -15,7 +15,7 @@ from cmk.gui.utils.compatibility import (
     LicensingCompatibility,
     LicensingCompatible,
 )
-from cmk.utils.licensing.handler import LicenseState
+from cmk.licensing.handler import LicenseState
 
 
 @pytest.mark.parametrize(

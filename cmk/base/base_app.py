@@ -15,8 +15,8 @@ from cmk.checkengine.plugins import AgentBasedPlugins
 from cmk.fetchers import Fetcher, FetcherTriggerFactory
 from cmk.fetchers.snmp import SNMPPluginStore
 from cmk.helper_interface import AgentRawData
+from cmk.licensing.handler import LicensingHandler
 from cmk.utils.labels import LabelManager, Labels
-from cmk.utils.licensing.handler import LicensingHandler
 from cmk.utils.rulesets.ruleset_matcher import RulesetMatcher
 
 from .automations.automations import Automations

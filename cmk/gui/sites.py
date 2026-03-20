@@ -42,9 +42,9 @@ from cmk.gui.utils.compatibility import (
     LicensingCompatible,
     make_incompatible_info,
 )
+from cmk.licensing.handler import LicenseState
+from cmk.licensing.registry import get_license_state
 from cmk.utils import paths
-from cmk.utils.licensing.handler import LicenseState
-from cmk.utils.licensing.registry import get_license_state
 from cmk.utils.paths import livestatus_unix_socket
 
 #   .--API-----------------------------------------------------------------.

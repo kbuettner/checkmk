@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from cmk.utils.licensing.handler import (
+from cmk.licensing.handler import (
     LicenseState,
     LicensingHandler,
     NotificationHandler,
@@ -31,10 +31,10 @@ class CommunityLicensingHandler(LicensingHandler):
     def message(self) -> str:
         return ""
 
-    def effect_core(self, num_services: int, num_hosts_shadow: int) -> UserEffect:
+    def effect_core(self, num_services: int, num_hosts_shadow: int) -> UserEffect:  # noqa: ARG002
         return UserEffect(header=None, email=None, block=None)
 
-    def effect(self, licensing_settings_link: str | None = None) -> UserEffect:
+    def effect(self, licensing_settings_link: str | None = None) -> UserEffect:  # noqa: ARG002
         return UserEffect(header=None, email=None, block=None)
 
     @property

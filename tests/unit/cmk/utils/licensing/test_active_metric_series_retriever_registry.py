@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cmk.ccc.version import Edition
-from cmk.utils.licensing import active_metric_series_retriever_registry as registry
+from cmk.licensing import active_metric_series_retriever_registry as registry
 
 
 @pytest.fixture
@@ -21,7 +21,7 @@ def retriever_function() -> MagicMock:
 @pytest.fixture
 def edition_mock() -> Iterator[MagicMock]:
     with patch(
-        "cmk.utils.licensing.active_metric_series_retriever_registry.edition",
+        "cmk.licensing.active_metric_series_retriever_registry.edition",
     ) as edition_mock:
         yield edition_mock
 
@@ -29,7 +29,7 @@ def edition_mock() -> Iterator[MagicMock]:
 @pytest.fixture
 def logger_mock() -> Iterator[MagicMock]:
     with patch(
-        "cmk.utils.licensing.active_metric_series_retriever_registry._get_logger",
+        "cmk.licensing.active_metric_series_retriever_registry._get_logger",
     ) as get_logger_mock:
         yield get_logger_mock.return_value.error
 

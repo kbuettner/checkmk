@@ -515,7 +515,7 @@ def fixture_monkeypatch_module() -> Iterator[pytest.MonkeyPatch]:
 @pytest.fixture(name="is_licensed", scope="module")
 def fixture_is_licensed(monkeypatch_module: pytest.MonkeyPatch) -> None:
     monkeypatch_module.setattr(
-        "cmk.utils.licensing.registry._get_licensing_handler",
+        "cmk.licensing.registry._get_licensing_handler",
         lambda omd_root: DummyLicensingHandler,
     )
 

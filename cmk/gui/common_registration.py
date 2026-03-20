@@ -106,9 +106,9 @@ from cmk.gui.watolib.notification_parameter import notification_parameter_regist
 from cmk.gui.watolib.rulespecs import RulespecGroupRegistry, RulespecRegistry
 from cmk.gui.watolib.simple_config_file import ConfigFileRegistry
 from cmk.gui.watolib.timeperiods import TimeperiodUsageFinderRegistry
+from cmk.licensing.registry import register_community_licensing_handler
 from cmk.shared_typing.main_menu import NavItemTopicEntry
 from cmk.utils import paths
-from cmk.utils.licensing.registry import register_community_licensing_handler
 
 
 def register(

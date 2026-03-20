@@ -16,8 +16,8 @@ from cmk.gui.page_state import PageState, PageStateRenderer
 from cmk.gui.type_defs import IconNames, StaticIcon
 from cmk.gui.utils.html import HTML
 from cmk.gui.utils.urls import makeuri_contextless
+from cmk.licensing.registry import get_licensing_user_effect
 from cmk.utils import paths
-from cmk.utils.licensing.registry import get_licensing_user_effect
 
 from .debug_vars import debug_vars
 from .generator import HTMLWriter

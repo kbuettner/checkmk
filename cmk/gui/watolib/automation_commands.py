@@ -15,8 +15,8 @@ import cmk.ccc.version as cmk_version
 from cmk.ccc.site import get_agent_receiver_port
 from cmk.gui.config import Config
 from cmk.gui.http import Request
+from cmk.licensing.registry import get_license_state
 from cmk.utils import paths
-from cmk.utils.licensing.registry import get_license_state
 
 OMDStatus = Mapping[str, int]
 

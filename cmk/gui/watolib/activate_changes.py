@@ -145,6 +145,10 @@ from cmk.gui.watolib.paths import wato_var_dir
 from cmk.gui.watolib.piggyback_hub import has_piggyback_hub_relevant_changes
 from cmk.gui.watolib.site_changes import ChangeSpec, SiteChanges
 from cmk.gui.watolib.snapshots import SnapshotManager
+from cmk.licensing.export import LicenseUsageExtensions
+from cmk.licensing.handler import ActivationBlock
+from cmk.licensing.registry import get_licensing_user_effect, is_free
+from cmk.licensing.usage import save_extensions
 from cmk.messaging import rabbitmq
 from cmk.shared_typing.changes import (
     OnlineStatus,
@@ -161,10 +165,6 @@ from cmk.shared_typing.changes import (
 )
 from cmk.utils import agent_registration, paths, render, setup_search_index
 from cmk.utils.automation_config import LocalAutomationConfig, RemoteAutomationConfig
-from cmk.utils.licensing.export import LicenseUsageExtensions
-from cmk.utils.licensing.handler import ActivationBlock
-from cmk.utils.licensing.registry import get_licensing_user_effect, is_free
-from cmk.utils.licensing.usage import save_extensions
 from cmk.utils.paths import configuration_lockfile
 from cmk.utils.visuals import invalidate_visuals_cache
 

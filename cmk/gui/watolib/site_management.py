@@ -27,7 +27,7 @@ from cmk.gui.watolib.changes import add_change
 from cmk.gui.watolib.config_domain_name import ABCConfigDomain
 from cmk.gui.watolib.config_domains import ConfigDomainGUI
 from cmk.gui.watolib.sites import site_management_registry
-from cmk.utils.licensing.license_distribution_registry import distribute_license_to_remotes
+from cmk.licensing.license_distribution_registry import distribute_license_to_remotes
 
 DEFAULT_MESSAGE_BROKER_PORT = 5672
 

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from cmk.utils.licensing.handler import (
+from cmk.licensing.handler import (
     LicenseState,
     LicensingHandler,
     NotificationHandler,

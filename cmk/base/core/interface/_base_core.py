@@ -17,11 +17,11 @@ from cmk.ccc.hostaddress import HostAddress, HostName, Hosts
 from cmk.checkengine.checkerplugin import ConfiguredService
 from cmk.checkengine.plugins import AgentBasedPlugins, ServiceID
 from cmk.core_client import CoreClient
+from cmk.licensing.handler import LicensingHandler
+from cmk.licensing.helper import get_licensed_state_file_path
 from cmk.password_store.v1_unstable import Secret
 from cmk.utils import ip_lookup, paths
 from cmk.utils.labels import Labels
-from cmk.utils.licensing.handler import LicensingHandler
-from cmk.utils.licensing.helper import get_licensed_state_file_path
 from cmk.utils.rulesets import RuleSetName
 from cmk.utils.rulesets.ruleset_matcher import RuleSpec
 from cmk.utils.servicename import ServiceName

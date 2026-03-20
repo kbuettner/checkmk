@@ -63,10 +63,10 @@ from cmk.gui.utils.compatibility import (
 from cmk.gui.utils.urls import urlencode_vars
 from cmk.gui.watolib.host_attributes import CollectedHostAttributes
 from cmk.gui.watolib.utils import mk_repr
+from cmk.licensing.handler import LicenseState
+from cmk.licensing.registry import get_license_state
 from cmk.utils import paths
 from cmk.utils.automation_config import LocalAutomationConfig, RemoteAutomationConfig
-from cmk.utils.licensing.handler import LicenseState
-from cmk.utils.licensing.registry import get_license_state
 
 auto_logger = logger.getChild("automations")
 tracer = trace.get_tracer()

@@ -6,8 +6,8 @@
 import logging
 from pathlib import Path
 
+from cmk.licensing.helper import get_instance_id_file_path, load_instance_id
 from cmk.update_config.plugins.actions.create_instance_id import UPDATE_INSTANCE_ID
-from cmk.utils.licensing.helper import get_instance_id_file_path, load_instance_id
 
 LOGGER = logging.getLogger(__name__)
 

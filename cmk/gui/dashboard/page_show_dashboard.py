@@ -27,8 +27,8 @@ from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.utils.urls import makeuri_contextless
 from cmk.gui.visuals import visual_page_breadcrumb
 from cmk.gui.visuals._filter_context import requested_context_from_request
+from cmk.licensing.registry import get_licensing_user_effect
 from cmk.utils import paths
-from cmk.utils.licensing.registry import get_licensing_user_effect
 
 from .breadcrumb import dashboard_breadcrumb, EvaluatedBreadcrumbItem
 from .metadata import DashboardMetadataObject
