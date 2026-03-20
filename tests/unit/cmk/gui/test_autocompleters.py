@@ -3,10 +3,17 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
+import pytest
+
+from cmk.ccc.version import Edition, edition
 from cmk.gui.valuespec import autocompleter_registry
-from tests.testlib.common.repo import is_pro_repo, is_ultimate_repo
+from cmk.utils import paths
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_builtin_autocompleters_registered() -> None:
     registered = autocompleter_registry.keys()
     expected = [
@@ -28,26 +35,5 @@ def test_builtin_autocompleters_registered() -> None:
         "tag_groups_opt",
         "wato_folder_choices",
     ]
-
-    if is_pro_repo():
-        expected += [
-            "add_to_report_choices",
-            "graph_template_for_combined_graph",
-            "combined_graphs",
-            "custom_graphs",
-            "monitored_metrics_backend",
-            "monitored_resource_attributes_keys_backend",
-            "monitored_resource_attributes_values_backend",
-            "monitored_scope_attributes_keys_backend",
-            "monitored_scope_attributes_values_backend",
-            "monitored_data_point_attributes_keys_backend",
-            "monitored_data_point_attributes_values_backend",
-        ]
-
-    if is_ultimate_repo():
-        expected += [
-            "otel_metric_name_autocompleter",
-            "azure_labels",
-        ]
 
     assert sorted(registered) == sorted(expected)
