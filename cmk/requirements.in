@@ -4,6 +4,7 @@ apispec
 apispec-oneofschema
 azure-identity
 azure-storage-blob
+boto3
 cryptography
 docstring-parser
 exchangelib
@@ -73,6 +74,7 @@ setproctitle
 setuptools
 setuptools-scm
 snmpsim
+starlette
 tenacity
 urllib3
 uvicorn
