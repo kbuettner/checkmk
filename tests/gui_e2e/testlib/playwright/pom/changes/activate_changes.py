@@ -75,7 +75,7 @@ class ActivateChangesSlideout(LocatorHelper):
 
     @property
     def no_pending_changes_text(self) -> Locator:
-        return self.slideout.get_by_role("heading", name="No pending changes")
+        return self.slideout.locator("span.mm-site-status-list__empty")
 
     @property
     def info_text(self) -> Locator:
