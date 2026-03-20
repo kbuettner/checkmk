@@ -14,7 +14,7 @@ from zoneinfo import ZoneInfo
 import time_machine
 
 from cmk.agent_based.v2 import Result, State
-from cmk.legacy_checks.cups_queues import (
+from cmk.plugins.cups.agent_based.cups_queues import (
     check_cups_queues,
     discover_cups_queues,
     parse_cups_queues,
