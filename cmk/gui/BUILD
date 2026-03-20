@@ -156,6 +156,7 @@ py_library(
             "//non-free/packages/cmk-bakery:shared",
             "//non-free/packages/cmk-dcd:gui",
             "//non-free/packages/cmk-dcd:protocols",
+            "//non-free/packages/cmk-licensing-nonfree",
             "//non-free/packages/cmk-liveproxyd:gui",
             "//non-free/packages/cmk-mknotifyd",
             "//non-free/packages/cmk-robotmk",

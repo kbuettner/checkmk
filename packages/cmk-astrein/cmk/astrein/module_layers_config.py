@@ -350,6 +350,19 @@ CMK_UTILS_DEPENDENCIES = {
         "cmk.ccc.site",
         "cmk.ccc.store",
     ),
+    Component("cmk.licensing.nonfree"): _allow(
+        "cmk.ccc.exceptions",
+        "cmk.ccc.i18n",
+        "cmk.ccc.site",
+        "cmk.ccc.store",
+        "cmk.ccc.version",
+        "cmk.crypto",
+        "cmk.licensing",
+        "cmk.utils.mail",
+        "cmk.cloud.config",  # ARGL
+        "cmk.utils.password_store",
+        "cmk.utils.paths",
+    ),
     Component("cmk.licensing"): _allow(
         "cmk.ccc.site",
         "cmk.ccc.store",
@@ -398,19 +411,6 @@ CMK_UTILS_DEPENDENCIES = {
         "cmk.plugins.piggyback",
         "cmk.shared_typing",
         "cmk.utils",
-    ),
-    Component("cmk.utils.nonfree.pro.licensing"): _allow(
-        "cmk.ccc.exceptions",
-        "cmk.ccc.i18n",
-        "cmk.ccc.site",
-        "cmk.ccc.store",
-        "cmk.ccc.version",
-        "cmk.crypto",
-        "cmk.licensing",
-        "cmk.utils.mail",
-        "cmk.cloud.config",  # ARGL
-        "cmk.utils.password_store",
-        "cmk.utils.paths",
     ),
     Component("cmk.multi_tenancy.shared.customer"): _allow(
         "cmk.ccc.store",
@@ -629,6 +629,7 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
         "cmk.fetcher_helper",
         "cmk.fetchers",
         "cmk.helper_interface",
+        "cmk.licensing.nonfree",
         "cmk.multi_tenancy.shared",
         "cmk.server_side_calls_backend",
         "cmk.utils",
@@ -1295,6 +1296,7 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
         "cmk.checkengine",
         "cmk.gui",
         "cmk.licensing",
+        "cmk.licensing.nonfree",
         "cmk.shared_typing",
         "cmk.utils",
     ),
@@ -1388,7 +1390,7 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
     Component("tests.gui_e2e"): _allow(
         *PACKAGE_CRYPTO,
         "cmk.licensing",
-        "cmk.utils.nonfree.pro.licensing",
+        "cmk.licensing.nonfree",
         "cmk.utils.paths",
         "cmk.utils.rulesets",
     ),
@@ -1565,6 +1567,7 @@ COMPONENTS: Mapping[Component, ImportCheckerProtocol] = {
         "cmk.helper_interface",
         "cmk.inventory",
         "cmk.licensing",
+        "cmk.licensing.nonfree",
         "cmk.logwatch",
         "cmk.legacy_checks",
         "cmk.legacy_includes",
@@ -1738,6 +1741,6 @@ EXPLICIT_FILE_TO_DEPENDENCIES = {
     ModulePath("omd/packages/check_mk/post-create/01_create-sample-config.py"): _allow(),
     ModulePath("omd/non-free/packages/licensing/cmk-license-email-notification.py"): _allow(
         "cmk.utils",
-        "cmk.utils.nonfree.pro.licensing",
+        "cmk.licensing.nonfree",
     ),
 }

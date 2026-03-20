@@ -61,6 +61,7 @@ py_library(
     ] + select({
         "@//:gpl+nonfree_repo": [
             "//non-free/packages/cmk-dcd",
+            "//non-free/packages/cmk-licensing-nonfree",
         ],
         "@//:gpl_repo": [],
     }),

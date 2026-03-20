@@ -935,6 +935,7 @@ py_test(
     ] + select({
         "@//:gpl+nonfree_repo": [
             "//cmk/utils:pro",
+            "//non-free/packages/cmk-licensing-nonfree",
             "//tests/testlib/unit:unit_nonfree",
         ],
         "@//:gpl_repo": [],

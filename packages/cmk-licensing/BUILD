@@ -15,7 +15,10 @@ py_library(
     srcs = glob(["cmk/licensing/**/*.py"]),
     data = ["cmk/licensing/py.typed"],
     imports = ["."],
-    visibility = ["//cmk:__subpackages__"],
+    visibility = [
+        "//cmk:__subpackages__",
+        "//non-free/packages/cmk-licensing-nonfree:__pkg__",
+    ],
     deps = [
         "//packages/cmk-ccc:site",
         "//packages/cmk-ccc:store",

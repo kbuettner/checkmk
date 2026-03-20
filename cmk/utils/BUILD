@@ -29,6 +29,7 @@ py_library(
         "//cmk:__subpackages__",
         "//non-free/packages/cmk-bakery:__pkg__",
         "//non-free/packages/cmk-dcd:__pkg__",
+        "//non-free/packages/cmk-licensing-nonfree:__pkg__",
         "//non-free/packages/cmk-liveproxyd:__pkg__",
         "//non-free/packages/cmk-metric-backend:__pkg__",
         "//non-free/packages/cmk-notification-plugins-nonfree:__pkg__",

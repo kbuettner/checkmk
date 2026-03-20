@@ -44,6 +44,7 @@ py_library(
     ] + select({
         "//:gpl+nonfree_repo": [
             "//cmk/editions/nonfree:cloud",
+            "//non-free/packages/cmk-licensing-nonfree",
             "//non-free/packages/cmk-metric-backend",
         ],
         "//:gpl_repo": [],
@@ -335,7 +336,12 @@ py_library(
         "//cmk/post_rename_site:cmk_post_rename_site",
         "//packages/cmk-agent-receiver",
         "//tests/testlib/common:utils",
-    ],
+    ] + select({
+        "//:gpl+nonfree_repo": [
+            "//non-free/packages/cmk-licensing-nonfree",
+        ],
+        "//:gpl_repo": [],
+    }),
 )
 
 py_library(
