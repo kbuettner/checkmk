@@ -3,9 +3,10 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
+import pytest
 from pytest import MonkeyPatch
 
-import cmk.ccc.version as cmk_version
+from cmk.ccc.version import Edition, edition
 from cmk.gui.valuespec import Dictionary
 from cmk.gui.watolib import rulespecs
 from cmk.gui.watolib.notification_parameter import (
@@ -14,10 +15,14 @@ from cmk.gui.watolib.notification_parameter import (
     NotificationParameter,
     register_notification_parameters,
 )
-from cmk.utils.paths import omd_root
+from cmk.utils import paths
 from cmk.utils.rulesets.definition import RuleGroup
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_notification_parameters() -> None:
     expected_plugins = [
         "asciimail",
@@ -34,13 +39,9 @@ def test_registered_notification_parameters() -> None:
         "sms_api",
         "spectrum",
         "victorops",
+        "jira_issues",
+        "servicenow",
     ]
-
-    if cmk_version.edition(omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_plugins += [
-            "jira_issues",
-            "servicenow",
-        ]
 
     registered_plugins = sorted(notification_parameter_registry.keys())
     assert registered_plugins == sorted(expected_plugins)
