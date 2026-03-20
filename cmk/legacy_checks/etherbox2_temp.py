@@ -3,33 +3,34 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
 
+from collections.abc import Sequence
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import all_of, contains, equals, OIDEnd, SNMPTree
-from cmk.legacy_includes.temperature import check_temperature
+from cmk.agent_based.v2 import (
+    all_of,
+    CheckPlugin,
+    CheckResult,
+    contains,
+    DiscoveryResult,
+    equals,
+    get_value_store,
+    OIDEnd,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    StringTable,
+)
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
 
-check_info = {}
-
-# .1.3.6.1.4.1.14848.2.1.7.1.2.1 -0.0008 Volt --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.7.1.2.1
-# .1.3.6.1.4.1.14848.2.1.7.1.2.2 -0.0008 Volt --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.7.1.2.2
-# .1.3.6.1.4.1.14848.2.1.7.1.2.3 5.0015 Volt  --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.7.1.2.3
-# .1.3.6.1.4.1.14848.2.1.7.1.2.4 2.0031 Volt  --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.7.1.2.4
-# .1.3.6.1.4.1.14848.2.1.7.1.2.5 -0.0005 Volt --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.7.1.2.5
-# .1.3.6.1.4.1.14848.2.1.7.1.2.6 -0.0004 Volt --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.7.1.2.6
-# .1.3.6.1.4.1.14848.2.1.7.1.2.7 5.0002 Volt  --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.7.1.2.7
-# .1.3.6.1.4.1.14848.2.1.7.1.2.8 2.0010 Volt  --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.7.1.2.8
-
-# .1.3.6.1.4.1.14848.2.1.9.1.2.1 -2472        --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.9.1.2.1
-# .1.3.6.1.4.1.14848.2.1.9.1.2.2 252          --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.9.1.2.2
-# .1.3.6.1.4.1.14848.2.1.9.1.2.3 0            --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.9.1.2.3
-# .1.3.6.1.4.1.14848.2.1.9.1.2.4 248          --> BETTER-NETWORKS-ETHERNETBOX-MIB::ethernetboxObjects.9.1.2.4
+# .1.3.6.1.4.1.14848.2.1.7.1.2.1 -0.0008 Volt --> ...
+# .1.3.6.1.4.1.14848.2.1.9.1.2.1 -2472        --> ...
 
 # suggested by customer
 
+Section = dict[str, float]
 
-def parse_etherbox2_temp(string_table):
+
+def parse_etherbox2_temp(string_table: Sequence[StringTable]) -> Section:
     # We have to use xxx.7.1.2.a to know if a temperature sensor
     # is connected:
     # - if oid(xxx.7.1.2.{a}) == 5.fff and oid(xxx.7.1.2.{a+1}) == 2.fff
@@ -38,7 +39,7 @@ def parse_etherbox2_temp(string_table):
     # - otherwise there's no sensor connected.
     # Furthermore we cannot only use xxx.9.1.2.{a} < 0 (or something like that)
     # because the temperature can drop below 0.
-    parsed = {}
+    parsed: Section = {}
     sensor_indicators, sensors = string_table
     for sensor_index, sensor in enumerate(sensors):
         indicator_index = 2 * sensor_index
@@ -46,22 +47,26 @@ def parse_etherbox2_temp(string_table):
             float((sensor_indicators[indicator_index][0].split("Volt")[0]).strip()) > 4
             and float((sensor_indicators[indicator_index + 1][0].split("Volt")[0]).strip()) > 1
         ):
-            parsed["Sensor %s" % sensor[0]] = float(sensor[1]) / 10
+            parsed[f"Sensor {sensor[0]}"] = float(sensor[1]) / 10
 
     return parsed
 
 
-def discover_etherbox2_temp(parsed):
-    return [(sensor, {}) for sensor in parsed]
+def discover_etherbox2_temp(section: Section) -> DiscoveryResult:
+    yield from (Service(item=sensor) for sensor in section)
 
 
-def check_etherbox2_temp(item, params, parsed):
-    if item in parsed:
-        return check_temperature(parsed[item], params, "etherbox2_%s" % item)
-    return None
+def check_etherbox2_temp(item: str, params: TempParamType, section: Section) -> CheckResult:
+    if item in section:
+        yield from check_temperature(
+            reading=section[item],
+            params=params,
+            unique_name=f"etherbox2_{item}",
+            value_store=get_value_store(),
+        )
 
 
-check_info["etherbox2_temp"] = LegacyCheckDefinition(
+snmp_section_etherbox2_temp = SNMPSection(
     name="etherbox2_temp",
     detect=all_of(
         equals(".1.3.6.1.2.1.1.1.0", ""), contains(".1.3.6.1.4.1.14848.2.1.1.1.0", "Version 1.2")
@@ -77,6 +82,10 @@ check_info["etherbox2_temp"] = LegacyCheckDefinition(
         ),
     ],
     parse_function=parse_etherbox2_temp,
+)
+
+check_plugin_etherbox2_temp = CheckPlugin(
+    name="etherbox2_temp",
     service_name="Temperature %s",
     discovery_function=discover_etherbox2_temp,
     check_function=check_etherbox2_temp,
