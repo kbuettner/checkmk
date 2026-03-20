@@ -3,95 +3,90 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-call"
-# mypy: disable-error-code="no-untyped-def"
-
 # Example output from agent:
 # <<<iptables>>>
 # -A INPUT -j RH-Firewall-1-INPUT
 # -A FORWARD -j RH-Firewall-1-INPUT
-# -A OUTPUT -d 10.139.7.11/32 -j REJECT --reject-with icmp-port-unreachable
-# -A RH-Firewall-1-INPUT -i lo -j ACCEPT
-# -A RH-Firewall-1-INPUT -p icmp -m icmp --icmp-type any -j ACCEPT
-# -A RH-Firewall-1-INPUT -p esp -j ACCEPT
-# -A RH-Firewall-1-INPUT -p ah -j ACCEPT
-# -A RH-Firewall-1-INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 4000 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 29543 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 29043 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 30001 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 30000 -j ACCEPT
-# -A RH-Firewall-1-INPUT -d 224.0.0.251/32 -p udp -m udp --dport 5353 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 58002 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p udp -m udp --dport 58001 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p udp -m udp --dport 631 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 631 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport 6556 -j ACCEPT
-# -A RH-Firewall-1-INPUT -p udp -m udp --dport 6556 -j ACCEPT
-# -A RH-Firewall-1-INPUT -s 89.254.0.0/16 -p tcp -m state --state NEW -m tcp --dport 252 -j ACCEPT
-# -A RH-Firewall-1-INPUT -s 89.254.0.0/16 -p tcp -m state --state NEW -m tcp --dport 7070 -j ACCEPT
-# -A RH-Firewall-1-INPUT -j REJECT --reject-with icmp-host-prohibited
+# ...
 # COMMIT
 
 
 import difflib
 import hashlib
+from collections.abc import Mapping
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import get_value_store, IgnoreResultsError
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    get_value_store,
+    IgnoreResultsError,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
-check_info = {}
 
-
-def iptables_hash(config):
+def iptables_hash(config: str) -> str:
     return hashlib.sha256(config.encode("utf-8")).hexdigest()
 
 
-def parse_iptables(string_table):
+def parse_iptables(string_table: StringTable) -> str:
     config_lines = [" ".join(sublist) for sublist in string_table]
-    config = "\n".join(config_lines)
-    return config
+    return "\n".join(config_lines)
 
 
-def discover_iptables(parsed):
-    return [(None, {"config_hash": iptables_hash(parsed)})]
+def discover_iptables(section: str) -> DiscoveryResult:
+    yield Service(parameters={"config_hash": iptables_hash(section)})
 
 
-def check_iptables(_no_item, params, parsed):
+def check_iptables(params: Mapping[str, Any], section: str) -> CheckResult:
     value_store = get_value_store()
     item_state = value_store.get("iptables.config")
 
     if not item_state:
-        value_store["iptables.config"] = {"config": parsed, "hash": iptables_hash(parsed)}
+        value_store["iptables.config"] = {"config": section, "hash": iptables_hash(section)}
         raise IgnoreResultsError(
             "Initial configuration has been saved. The next check interval will contain a valid state."
         )
 
     initial_config_hash = params["config_hash"]
-    new_config_hash = iptables_hash(parsed)
+    new_config_hash = iptables_hash(section)
 
     if initial_config_hash == new_config_hash:
         if initial_config_hash != item_state.get("hash"):
-            value_store["iptables.config"] = {"config": parsed, "hash": new_config_hash}
-            return 0, "accepted new filters after service rediscovery / reboot"
-        return 0, "no changes in filters table detected"
+            value_store["iptables.config"] = {"config": section, "hash": new_config_hash}
+            yield Result(
+                state=State.OK, summary="accepted new filters after service rediscovery / reboot"
+            )
+            return
+        yield Result(state=State.OK, summary="no changes in filters table detected")
+        return
 
     reference_config = item_state["config"].splitlines()
-    actual_config = parsed.splitlines()
+    actual_config = section.splitlines()
     diff = difflib.context_diff(
         reference_config, actual_config, fromfile="before", tofile="after", lineterm=""
     )
     diff_output = "\n".join(diff)
 
-    return 2, "\r\n".join(["changes in filters table detected", diff_output])
+    yield Result(
+        state=State.CRIT,
+        summary="changes in filters table detected",
+        details=f"changes in filters table detected\n{diff_output}",
+    )
 
 
-check_info["iptables"] = LegacyCheckDefinition(
+agent_section_iptables = AgentSection(
     name="iptables",
     parse_function=parse_iptables,
+)
+
+check_plugin_iptables = CheckPlugin(
+    name="iptables",
     service_name="Iptables",
     discovery_function=discover_iptables,
     check_function=check_iptables,
