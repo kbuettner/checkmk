@@ -1656,7 +1656,7 @@ function get_event_offset_y(event: MouseEvent) {
 
 interface GraphHover {
   rendered_hover_time: string
-  curve_values: CurveValues[]
+  curves: Curve[]
 }
 
 function update_graph_hover_popup(event: Event, graph: GraphArtwork): boolean | void {
@@ -1757,20 +1757,20 @@ function handle_graph_hover_popup_update(
   g_graph_backoff.report_success()
 }
 
-interface CurveValues {
+interface Curve {
   color: string
   rendered_value: [number, string]
   title: string
 }
 
 interface PopupData {
-  curve_values: CurveValues[]
+  curves: Curve[]
   rendered_hover_time: string
 }
 
 // Structure of popup_data:
 // {
-//    "curve_values": [
+//    "curves": [
 //        {
 //            "color": "#00d1ff",
 //            "rendered_value": [0.5985, "0.599"],
@@ -1800,7 +1800,7 @@ function render_graph_hover_popup(_graph: GraphArtwork, event: Event, popup_data
   add_class(entries, 'entries')
   popup_container.appendChild(entries)
 
-  popup_data.curve_values.forEach((curve) => {
+  popup_data.curves.forEach((curve) => {
     const row = entries.insertRow()
     const title = row.insertCell(0)
     const color = document.createElement('div')

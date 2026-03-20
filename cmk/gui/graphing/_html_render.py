@@ -1470,7 +1470,7 @@ def render_graph_hover_for_recipe(
             json.dumps(
                 {
                     "rendered_hover_time": cmk.utils.render.date_and_time(hover_time),
-                    "curve_values": list(
+                    "curves": list(
                         _order_graph_curves_for_legend_and_mouse_hover(
                             compute_curves_at_timestamp(
                                 [
