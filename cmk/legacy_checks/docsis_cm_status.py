@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 
 # docsIfCmStatusValue                         1.3.6.1.2.1.10.127.1.2.2.1.1
 # docsIfCmStatusT1Timeouts                    1.3.6.1.2.1.10.127.1.2.2.1.10
@@ -24,18 +22,36 @@
 # docsIfCmStatusInvalidRegistrationResponses  1.3.6.1.2.1.10.127.1.2.2.1.9
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import any_of, equals, OIDEnd, SNMPTree, StringTable
+from collections.abc import Mapping
+from typing import Any
 
-check_info = {}
+from cmk.agent_based.v2 import (
+    any_of,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    equals,
+    Metric,
+    OIDEnd,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
+
+_STATE_MAP = {0: State.OK, 1: State.WARN, 2: State.CRIT, 3: State.UNKNOWN}
 
 
-def discover_docsis_cm_status(info):
-    for line in info:
-        yield line[0], {}
+def discover_docsis_cm_status(section: StringTable) -> DiscoveryResult:
+    for line in section:
+        yield Service(item=line[0])
 
 
-def check_docsis_cm_status(item, params, info):
+def check_docsis_cm_status(
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
     status_table = {
         1: "other",
         2: "not ready",
@@ -52,39 +68,38 @@ def check_docsis_cm_status(item, params, info):
         13: "access denied",
     }
 
-    for sid, status, tx_power in info:
+    for sid, status, tx_power in section:
         if sid == item:
-            # Modem StatusD
-            status = int(status)
-            infotext = "Status: %s" % status_table[status]
-            state = 0
-            if status in params["error_states"]:
-                state = 2
-            yield state, infotext
+            # Modem Status
+            status_int = int(status)
+            infotext = f"Status: {status_table[status_int]}"
+            state = State.CRIT if status_int in params["error_states"] else State.OK
+            yield Result(state=state, summary=infotext)
 
             # TX Power
             tx_power_dbmv = float(tx_power) / 10
             warn, crit = params["tx_power"]
             levels = f" (warn/crit at {warn:.1f}/{crit:.1f} dBmV)"
-            state = 0
-            infotext = "TX Power is %.1f dBmV" % tx_power_dbmv
+            state = State.OK
+            infotext = f"TX Power is {tx_power_dbmv:.1f} dBmV"
             if tx_power_dbmv <= crit:
-                state = 2
+                state = State.CRIT
                 infotext += levels
             elif tx_power_dbmv <= warn:
-                state = 1
+                state = State.WARN
                 infotext += levels
-            yield state, infotext, [("tx_power", tx_power_dbmv, warn, crit)]
+            yield Result(state=state, summary=infotext)
+            yield Metric("tx_power", tx_power_dbmv, levels=(warn, crit))
             return
 
-        yield 3, "Status Entry not found"
+        yield Result(state=State.UNKNOWN, summary="Status Entry not found")
 
 
 def parse_docsis_cm_status(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["docsis_cm_status"] = LegacyCheckDefinition(
+snmp_section_docsis_cm_status = SimpleSNMPSection(
     name="docsis_cm_status",
     parse_function=parse_docsis_cm_status,
     detect=any_of(
@@ -95,6 +110,10 @@ check_info["docsis_cm_status"] = LegacyCheckDefinition(
         base=".1.3.6.1.2.1.10.127.1.2.2.1",
         oids=[OIDEnd(), "1", "3"],
     ),
+)
+
+check_plugin_docsis_cm_status = CheckPlugin(
+    name="docsis_cm_status",
     service_name="Cable Modem %s Status",
     discovery_function=discover_docsis_cm_status,
     check_function=check_docsis_cm_status,
