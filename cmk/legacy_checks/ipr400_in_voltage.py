@@ -4,41 +4,51 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Mapping
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition, LegacyResult
-from cmk.agent_based.v2 import SNMPTree, startswith, StringTable
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Metric,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
 
-check_info = {}
 
-
-def discover_ipr400_in_voltage(info: StringTable) -> Iterable[tuple[str, dict[str, Any]]]:
-    if len(info) > 0:
-        yield "1", {}
+def discover_ipr400_in_voltage(section: StringTable) -> DiscoveryResult:
+    if len(section) > 0:
+        yield Service(item="1")
 
 
 def check_ipr400_in_voltage(
-    item: str, params: Mapping[str, Any], info: StringTable
-) -> LegacyResult:
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
     warn, crit = params["levels_lower"]
-    power = int(info[0][0]) / 1000.0  # appears to be in mV
-    perfdata = [("in_voltage", power, warn, crit)]
-    infotext = "in voltage: %.1fV" % power
-    limitstext = "(warn/crit below %dV/%dV)" % (warn, crit)
+    power = int(section[0][0]) / 1000.0  # appears to be in mV
+    infotext = f"in voltage: {power:.1f}V"
+    limitstext = f"(warn/crit below {warn}V/{crit}V)"
 
     if power <= crit:
-        return 2, infotext + ", " + limitstext, perfdata
-    if power <= warn:
-        return 1, infotext + ", " + limitstext, perfdata
-    return 0, infotext, perfdata
+        yield Result(state=State.CRIT, summary=f"{infotext}, {limitstext}")
+    elif power <= warn:
+        yield Result(state=State.WARN, summary=f"{infotext}, {limitstext}")
+    else:
+        yield Result(state=State.OK, summary=infotext)
+    yield Metric("in_voltage", power, levels=(warn, crit))
 
 
 def parse_ipr400_in_voltage(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["ipr400_in_voltage"] = LegacyCheckDefinition(
+snmp_section_ipr400_in_voltage = SimpleSNMPSection(
     name="ipr400_in_voltage",
     parse_function=parse_ipr400_in_voltage,
     detect=startswith(".1.3.6.1.2.1.1.1.0", "ipr voip device ipr400"),
@@ -46,6 +56,10 @@ check_info["ipr400_in_voltage"] = LegacyCheckDefinition(
         base=".1.3.6.1.4.1.27053.1.4.5.10",
         oids=["0"],
     ),
+)
+
+check_plugin_ipr400_in_voltage = CheckPlugin(
+    name="ipr400_in_voltage",
     service_name="IN Voltage %s",
     discovery_function=discover_ipr400_in_voltage,
     check_function=check_ipr400_in_voltage,
