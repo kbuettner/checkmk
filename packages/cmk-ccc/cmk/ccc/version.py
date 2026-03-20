@@ -715,15 +715,13 @@ def general_version_infos_from_env() -> VersionInfo:
     """
     raw_version_infos = json.loads(subprocess.check_output(["cmk-general-version-infos"]))
     return VersionInfo(
-        {
-            "core": raw_version_infos["core"],
-            "python_version": raw_version_infos["python_version"],
-            "edition": raw_version_infos["edition"],
-            "python_paths": raw_version_infos["python_paths"],
-            "version": raw_version_infos["version"],
-            "time": raw_version_infos["time"],
-            "os": raw_version_infos["os"],
-        }
+        core=raw_version_infos["core"],
+        python_version=raw_version_infos["python_version"],
+        edition=raw_version_infos["edition"],
+        python_paths=raw_version_infos["python_paths"],
+        version=raw_version_infos["version"],
+        time=raw_version_infos["time"],
+        os=raw_version_infos["os"],
     )
 
 
