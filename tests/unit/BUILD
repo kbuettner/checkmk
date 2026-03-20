@@ -69,37 +69,6 @@ py_test(
 )
 
 py_test(
-    name = "testlib_cloud",
-    srcs = ["__test__.py"] + glob(
-        include = ["testlib/**/nonfree/**/cloud/**/*.py"],
-        allow_empty = True,
-    ),
-    args = [
-        "--config-file=$(location @//:pyproject.toml)",
-        "--import-mode=importlib",
-        "--random-order-bucket=global",
-        "--dist=loadfile",
-        "--numprocesses=4",
-    ],
-    data = ["@//:pyproject.toml"],
-    main = ":__test__.py",
-    target_compatible_with = select({
-        "@//:gpl+nonfree_repo": [],
-        "@//:gpl_repo": ["@platforms//:incompatible"],
-    }),
-    visibility = ["//tests:__subpackages__"],
-    deps = [
-        ":__test__",
-        "//tests:testlib",  # TODO: this needs to be split up
-        requirement("pytest"),
-        requirement("pytest-asyncio"),
-        requirement("pytest-random-order"),
-        requirement("pyjwt"),
-        requirement("fastapi"),
-    ],
-)
-
-py_test(
     name = "repo_community",
     # https://bazel.build/reference/be/common-definitions#test.size
     size = "large",
