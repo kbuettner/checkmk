@@ -22,6 +22,7 @@ const props = defineProps<{
   title?: TranslatedString
   code_txt: string
   width?: 'default' | 'fill'
+  copyButtonTestId?: string
 }>()
 
 const MAX_LINES = 10
@@ -70,7 +71,12 @@ const containerClasses = computed(() => ({
         </div>
       </div>
       <CmkCopy :text="code_txt">
-        <CmkIconButton name="copied" size="medium" class="copy_button" />
+        <CmkIconButton
+          name="copied"
+          size="medium"
+          class="copy_button"
+          :data-testId="copyButtonTestId"
+        />
       </CmkCopy>
     </div>
   </div>
