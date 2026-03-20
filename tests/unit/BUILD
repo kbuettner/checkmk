@@ -99,95 +99,6 @@ py_test(
 )
 
 py_test(
-    name = "plugins",
-    srcs = ["__test__.py"] + glob(
-        include = ["cmk/plugins/**/*.py"],
-        exclude = [
-            "**/nonfree/**",
-        ],
-    ),
-    args = [
-        "--config-file=$(location @//:pyproject.toml)",
-        "--import-mode=importlib",
-        "--random-order-bucket=global",
-        "--dist=loadfile",
-        "--numprocesses=4",
-    ],
-    data = ["@//:pyproject.toml"] + glob(
-        include = [
-            "**/_check_form_submit_response",
-            "**/*.json",
-            "**/*.yaml",
-        ],
-    ),
-    main = ":__test__.py",
-    visibility = ["//tests:__subpackages__"],
-    deps = [
-        ":__test__",
-        "//cmk/legacy_checks:cmk_legacy_checks",
-        "//cmk/plugins:cmk_plugins",
-        "//tests/testlib/common:repo",
-        "//tests/testlib/unit:unit_free",
-        requirement("exchangelib"),
-        requirement("feedparser"),
-        requirement("google-cloud-asset"),
-        requirement("google-cloud-monitoring"),
-        requirement("polyfactory"),
-        requirement("pysmb"),
-        requirement("pytest"),
-        requirement("pytest-mock"),
-        requirement("pytest-asyncio"),
-        requirement("pytest-random-order"),
-        requirement("python-snap7"),
-        requirement("requests"),
-        requirement("responses"),
-        requirement("time-machine"),
-        requirement("vcrpy"),
-    ],
-)
-
-py_test(
-    name = "plugins_ultimate",
-    srcs = ["__test__.py"] + glob(
-        include = ["cmk/plugins/**/nonfree/**/ultimate/**/*.py"],
-        allow_empty = True,
-    ),
-    args = [
-        "--config-file=$(location @//:pyproject.toml)",
-        "--import-mode=importlib",
-        "--random-order-bucket=global",
-        "--dist=loadfile",
-        "--numprocesses=4",
-    ],
-    data = ["@//:pyproject.toml"] + glob(
-        include = ["**/*.jsonl"],
-        allow_empty = True,
-    ),
-    main = ":__test__.py",
-    target_compatible_with = select({
-        "@//:gpl+nonfree_repo": [],
-        "@//:gpl_repo": ["@platforms//:incompatible"],
-    }),
-    visibility = ["//tests:__subpackages__"],
-    deps = [
-        ":__test__",
-        requirement("google-cloud-monitoring"),
-        requirement("polyfactory"),
-        requirement("opentelemetry-exporter-otlp"),
-        requirement("pytest"),
-        requirement("pytest-asyncio"),
-        requirement("pytest-random-order"),
-        requirement("time-machine"),
-    ] + select({
-        "@//:gpl+nonfree_repo": [
-            "//cmk/plugins:cmk_plugins_otel_nonfree_srcs",
-            "//cmk/plugins:cmk_plugins_ultimate",
-        ],
-        "@//:gpl_repo": [],
-    }),
-)
-
-py_test(
     name = "post_rename_site_community",
     srcs = ["__test__.py"] + glob(
         include = ["cmk/post_rename_site/**/*.py"],
@@ -509,10 +420,8 @@ py_test(
     data = ["@//:pyproject.toml"] + glob(
         include = [
             # canned data
-            "**/_check_form_submit_response",
             "**/tree_test_data/**",
             "**/*.json",
-            "**/*.yaml",
         ],
         exclude = ["**/*.py"],
     ),
