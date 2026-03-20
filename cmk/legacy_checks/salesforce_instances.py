@@ -3,67 +3,72 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
+import json
+from typing import Any
+
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
+
+Section = dict[str, Any]
+
+_STATUS_MAP = {
+    "OK": (State.OK, "OK"),
+    "MAJOR_INCIDENT_CORE": (State.CRIT, "major incident core"),
+    "MINOR_INCIDENT_CORE": (State.WARN, "minor incident core"),
+    "MAINTENANCE_CORE": (State.OK, "maintenance core"),
+    "INFORMATIONAL_CORE": (State.OK, "informational core"),
+    "MAJOR_INCIDENT_NONCORE": (State.CRIT, "major incident noncore"),
+    "MINOR_INCIDENT_NONCORE": (State.WARN, "minor incident noncore"),
+    "MAINTENANCE_NONCORE": (State.OK, "maintenance noncore"),
+    "INFORMATIONAL_NONCORE": (State.OK, "informational noncore"),
+}
 
 
-# mypy: disable-error-code="var-annotated"
-
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-
-check_info = {}
-
-
-def parse_salesforce(string_table):
-    import json
-
-    pre_parsed = []
+def parse_salesforce(string_table: StringTable) -> Section:
+    parsed: Section = {}
     for line in string_table:
-        pre_parsed.append(json.loads(" ".join(line)))
-
-    parsed = {}
-    for entry in pre_parsed:
+        entry = json.loads(" ".join(line))
         if entry.get("key"):
-            parsed.setdefault(entry.get("key"), entry)
+            parsed.setdefault(entry["key"], entry)
     return parsed
 
 
-def discover_salesforce_instances(parsed):
-    for instance, attrs in parsed.items():
+def discover_salesforce_instances(section: Section) -> DiscoveryResult:
+    for instance, attrs in section.items():
         if attrs.get("isActive"):
-            yield instance, {}
+            yield Service(item=instance)
 
 
-def check_salesforce_instances(item, params, parsed):
-    map_states = {
-        "OK": (0, "OK"),
-        "MAJOR_INCIDENT_CORE": (2, "major incident core"),
-        "MINOR_INCIDENT_CORE": (1, "minor incident core"),
-        "MAINTENANCE_CORE": (0, "maintenance core"),
-        "INFORMATIONAL_CORE": (0, "informational core"),
-        "MAJOR_INCIDENT_NONCORE": (2, "major incident noncore"),
-        "MINOR_INCIDENT_NONCORE": (1, "minor incident noncore"),
-        "MAINTENANCE_NONCORE": (0, "maintenance noncore"),
-        "INFORMATIONAL_NONCORE": (0, "informational noncore"),
-    }
-
-    if item in parsed:
-        data = parsed[item]
-        status = data.get("status")
-        state, state_readable = map_states.get(status, (3, "unknown[%s]" % status))
-        yield state, "Status: %s" % state_readable
-
-        for key, title in [
-            ("environment", "Environment"),
-            ("releaseNumber", "Release Number"),
-            ("releaseVersion", "Release Version"),
-        ]:
-            if data.get(key):
-                yield 0, f"{title}: {data[key]}"
+def check_salesforce_instances(item: str, section: Section) -> CheckResult:
+    if item not in section:
+        return
+    data = section[item]
+    status = data.get("status")
+    state, state_readable = _STATUS_MAP.get(status, (State.UNKNOWN, f"unknown[{status}]"))
+    yield Result(state=state, summary=f"Status: {state_readable}")
+    for key, title in [
+        ("environment", "Environment"),
+        ("releaseNumber", "Release Number"),
+        ("releaseVersion", "Release Version"),
+    ]:
+        if data.get(key):
+            yield Result(state=State.OK, summary=f"{title}: {data[key]}")
 
 
-check_info["salesforce_instances"] = LegacyCheckDefinition(
+agent_section_salesforce_instances = AgentSection(
     name="salesforce_instances",
     parse_function=parse_salesforce,
+)
+check_plugin_salesforce_instances = CheckPlugin(
+    name="salesforce_instances",
     service_name="Salesforce Instance %s",
     discovery_function=discover_salesforce_instances,
     check_function=check_salesforce_instances,
