@@ -3,16 +3,30 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-# mypy: disable-error-code="possibly-undefined"
-
 
 import time
+from collections.abc import Mapping, Sequence
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import any_of, equals, get_rate, get_value_store, OIDEnd, render, SNMPTree
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    any_of,
+    check_levels,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    equals,
+    get_rate,
+    get_value_store,
+    Metric,
+    OIDEnd,
+    render,
+    Result,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
 
 # Old comments:
 # Strange: Channel IDs seem to be not unique. But the second
@@ -21,51 +35,22 @@ check_info = {}
 # Info might look different: on the one hand the channel id is the connector
 # on the other hand the OID. In some cases the channel id is not unique:
 
-# [[[u'4', u'3', u'38000000']], [[u'3', u'541092', u'36', u'6', u'498']], []]
-
-# [[[u'1337', u'1', u'20000000'],
-#  [u'1338', u'2', u'32000000'],
-#  [u'1339', u'3', u'38000000'],
-#  [u'1361', u'1', u'0'],
-#  [u'1362', u'2', u'0'],
-#  [u'1363', u'3', u'0'],
-#  [u'1364', u'4', u'0']],
-# [[u'1337', u'2262114535', u'322661943', u'406110', u'293'],
-#  [u'1338', u'2567058620', u'5306417', u'78105', u'328'],
-#  [u'1339', u'4222307191', u'4132447', u'19600', u'339'],
-#  [u'1361', u'0', u'0', u'0', u'0'],
-#  [u'1362', u'0', u'0', u'0', u'0'],
-#  [u'1363', u'0', u'0', u'0', u'0'],
-#  [u'1364', u'0', u'0', u'0', u'0']],
-# [[u'1337', u'9', u'9', u'9', u'5'],
-#  [u'1338', u'10', u'10', u'10', u'61'],
-#  [u'1339', u'10', u'10', u'10', u'4'],
-#  [u'1361', u'0', u'0', u'0', u'0'],
-#  [u'1362', u'0', u'0', u'0', u'0'],
-#  [u'1363', u'0', u'0', u'0', u'0'],
-#  [u'1364', u'0', u'0', u'0', u'0']]]
-
-# [[[u'4', u'3', u'32400000'],
-#  [u'80', u'1', u'25200000'],
-#  [u'81', u'2', u'27600000'],
-#  [u'82', u'4', u'38800000']],
-# [[u'3', u'104052489', u'22364', u'23308', u'389']],
-# []]
+Section = dict[str, list[Any]]
 
 
-def parse_docsis_channels_upstream(string_table):
+def parse_docsis_channels_upstream(string_table: Sequence[StringTable]) -> Section:
     freq_info = string_table[0]
     freq_info_dict = {x[0]: x[1:] for x in freq_info}
     sig_info_dict = {x[0]: x[1:] for x in string_table[1]}
     cm_info_dict = {x[0]: x[1:] for x in string_table[2]}
 
-    parsed = {}
+    parsed: Section = {}
     for endoid, (cid, freq_str) in freq_info_dict.items():
         unique_name = (
             cid if len(freq_info) == len({x[1] for x in freq_info}) else (f"{endoid}.{cid}")
         )
 
-        data = []
+        data: list[str] = []
         if endoid in sig_info_dict:
             data = sig_info_dict[endoid] + cm_info_dict.get(endoid, [])
         elif cid in sig_info_dict:
@@ -77,88 +62,85 @@ def parse_docsis_channels_upstream(string_table):
     return parsed
 
 
-def discover_docsis_channels_upstream(parsed):
-    for unique_name, entry in parsed.items():
+def discover_docsis_channels_upstream(section: Section) -> DiscoveryResult:
+    for unique_name, entry in section.items():
         if entry[0] != "0" and entry[4] != "0":
-            yield unique_name, {}
+            yield Service(item=unique_name)
 
 
-def check_docsis_channels_upstream(item, params, parsed):
-    if item in parsed:
-        entry = parsed[item]
-        mhz, unerroreds, correcteds, uncorrectables, signal_noise = entry[:5]
+def check_docsis_channels_upstream(
+    item: str, params: Mapping[str, Any], section: Section
+) -> CheckResult:
+    if item not in section:
+        return
 
-        # Signal Noise
-        warn, crit = params["signal_noise"]
+    entry = section[item]
+    mhz, unerroreds, correcteds, uncorrectables, signal_noise = entry[:5]
 
-        yield check_levels(
-            float(signal_noise) / 10,  # [dB]
-            "signal_noise",
-            (None, None, warn, crit),  # No upper levels, lower levels
-            human_readable_func=lambda x: f"{x:.1f} dB",
-            infoname="Signal/Noise ratio",
-        )
+    # Signal Noise
+    sn_warn, sn_crit = params["signal_noise"]
 
-        fields = [("frequency", float(mhz) / 1000000, "Frequency", "%.2f", " MHz")]
-        if len(entry) >= 6:
-            total, active, registered, avg_util = entry[5:9]
-            fields += [
-                ("total", int(total), "Modems total", "%d", ""),
-                ("active", int(active), "Active", "%d", ""),
-                ("registered", int(registered), "Registered", "%d", ""),
-                ("util", int(avg_util), "Aaverage utilization", "%d", "%"),
-            ]
+    yield from check_levels(
+        float(signal_noise) / 10,  # [dB]
+        metric_name="signal_noise",
+        levels_lower=("fixed", (sn_warn, sn_crit)),
+        render_func=lambda x: f"{x:.1f} dB",
+        label="Signal/Noise ratio",
+    )
 
-        for varname, value, title, form, unit in fields:
-            yield 0, title + ": " + (form + "%s") % (value, unit), [(varname, value)]
+    fields: list[tuple[str, float, str, str, str]] = [
+        ("frequency", float(mhz) / 1000000, "Frequency", "%.2f", " MHz"),
+    ]
+    if len(entry) >= 6:
+        total, active, registered, avg_util = entry[5:9]
+        fields += [
+            ("total", int(total), "Modems total", "%d", ""),
+            ("active", int(active), "Active", "%d", ""),
+            ("registered", int(registered), "Registered", "%d", ""),
+            ("util", int(avg_util), "Aaverage utilization", "%d", "%"),
+        ]
 
-        # Handle codewords. These are counters.
-        now = time.time()
-        rates = {}
-        total_rate = 0.0
-        for what, counter in [
-            (
-                "unerrored",
-                int(unerroreds),
-            ),
-            (
-                "corrected",
-                int(correcteds),
-            ),
-            ("uncorrectable", int(uncorrectables)),
+    for varname, value, title, form, unit in fields:
+        yield Result(state=State.OK, summary=title + ": " + (form + "%s") % (value, unit))
+        yield Metric(varname, value)
+
+    # Handle codewords. These are counters.
+    now = time.time()
+    rates: dict[str, float] = {}
+    total_rate = 0.0
+    for what, counter in [
+        ("unerrored", int(unerroreds)),
+        ("corrected", int(correcteds)),
+        ("uncorrectable", int(uncorrectables)),
+    ]:
+        rate = get_rate(get_value_store(), what, now, counter, raise_overflow=True)
+        rates[what] = rate
+        total_rate += rate
+
+    if total_rate:
+        for what, title in [
+            ("corrected", "corrected errors"),
+            ("uncorrectable", "uncorrectable errors"),
         ]:
-            rate = get_rate(get_value_store(), what, now, counter, raise_overflow=True)
-            rates[what] = rate
-            total_rate += rate
+            ratio = rates[what] / total_rate
+            perc = 100.0 * ratio
+            warn, crit = params[what]
+            infotext = f"{render.percent(perc)} {title}"
 
-        if total_rate:
-            for what, title in [
-                (
-                    "corrected",
-                    "corrected errors",
-                ),
-                (
-                    "uncorrectable",
-                    "uncorrectable errors",
-                ),
-            ]:
-                ratio = rates[what] / total_rate  # fixed: true-division
-                perc = 100.0 * ratio
-                warn, crit = params[what]
-                infotext = f"{render.percent(perc)} {title}"
+            state = State.OK
+            if perc >= crit:
+                state = State.CRIT
+            elif perc >= warn:
+                state = State.WARN
 
-                if perc >= crit:
-                    state = 2
-                elif perc >= crit:
-                    state = 1
+            if state is not State.OK:
+                infotext += f" (warn/crit at {warn:.1f}/{crit:.1f}%)"
 
-                if state:
-                    infotext += f" (warn/crit at {warn:.1f}/{crit:.1f}%)"
-
-                yield state, infotext, [("codewords_" + what, ratio, warn / 100.0, crit / 100.0)]
+            yield Result(state=state, summary=infotext)
+            yield Metric(f"codewords_{what}", ratio, levels=(warn / 100.0, crit / 100.0))
 
 
-check_info["docsis_channels_upstream"] = LegacyCheckDefinition(
+snmp_section_docsis_channels_upstream = SNMPSection(
     name="docsis_channels_upstream",
     detect=any_of(
         equals(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.4115.820.1.0.0.0.0.0"),
@@ -182,6 +164,10 @@ check_info["docsis_channels_upstream"] = LegacyCheckDefinition(
         ),
     ],
     parse_function=parse_docsis_channels_upstream,
+)
+
+check_plugin_docsis_channels_upstream = CheckPlugin(
+    name="docsis_channels_upstream",
     service_name="Upstream Channel %s",
     discovery_function=discover_docsis_channels_upstream,
     check_function=check_docsis_channels_upstream,
