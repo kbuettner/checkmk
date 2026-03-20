@@ -7,14 +7,19 @@
 from collections.abc import Mapping
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import (
-    LegacyCheckDefinition,
-    LegacyDiscoveryResult,
-    LegacyResult,
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    contains,
+    DiscoveryResult,
+    Metric,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
 )
-from cmk.agent_based.v2 import contains, SNMPTree, StringTable
-
-check_info = {}
 
 
 def saveint(i: str) -> int:
@@ -30,15 +35,15 @@ def saveint(i: str) -> int:
         return 0
 
 
-def discover_mikrotik_signal(info: StringTable) -> LegacyDiscoveryResult:
-    yield from ((network, {}) for network, _strength, _mode in info)
+def discover_mikrotik_signal(section: StringTable) -> DiscoveryResult:
+    yield from (Service(item=network) for network, _strength, _mode in section)
 
 
 def check_mikrotik_signal(
-    item: str, params: Mapping[str, Any], info: StringTable
-) -> LegacyResult | None:
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
     warn, crit = params["levels_lower"]
-    for network, strength_str, mode in info:
+    for network, strength_str, mode in section:
         if network == item:
             strength = saveint(strength_str)
             quality = 0
@@ -46,22 +51,25 @@ def check_mikrotik_signal(
                 quality = 2 * (strength + 100)
             quality = min(quality, 100)
 
-            infotext = "Signal quality %d%% (%ddBm). Mode is: %s" % (quality, strength, mode)
-            perf = [("quality", float(quality), warn, crit)]
+            infotext = f"Signal quality {quality}% ({strength}dBm). Mode is: {mode}"
             if quality <= crit:
-                return 2, infotext, perf
-            if quality <= warn:
-                return 1, infotext, perf
-            return 0, infotext, perf
+                state = State.CRIT
+            elif quality <= warn:
+                state = State.WARN
+            else:
+                state = State.OK
+            yield Result(state=state, summary=infotext)
+            yield Metric("quality", float(quality), levels=(warn, crit))
+            return
 
-    return 3, "Network not found"
+    yield Result(state=State.UNKNOWN, summary="Network not found")
 
 
 def parse_mikrotik_signal(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["mikrotik_signal"] = LegacyCheckDefinition(
+snmp_section_mikrotik_signal = SimpleSNMPSection(
     name="mikrotik_signal",
     parse_function=parse_mikrotik_signal,
     detect=contains(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.14988.1"),
@@ -69,6 +77,10 @@ check_info["mikrotik_signal"] = LegacyCheckDefinition(
         base=".1.3.6.1.4.1.14988.1.1.1.1.1",
         oids=["5.2", "4.2", "8.2"],
     ),
+)
+
+check_plugin_mikrotik_signal = CheckPlugin(
+    name="mikrotik_signal",
     service_name="Signal %s",
     discovery_function=discover_mikrotik_signal,
     check_function=check_mikrotik_signal,
