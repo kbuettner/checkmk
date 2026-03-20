@@ -1543,7 +1543,7 @@ allows = [
 ]
 
 [components."tests.integration.cmk.post_rename_site"]
-allows = ["cmk.post_rename_site"]
+allows = ["@ccc", "cmk.utils.paths", "cmk.post_rename_site"]
 
 [components."tests.integration.cmk.snmplib"]
 allows = ["@ccc", "cmk.snmplib", "cmk.utils"]
@@ -1795,7 +1795,7 @@ allows = ["@ccc"]
 allows = ["@ccc"]
 
 [file_dependencies."omd/packages/check_mk/post-create/01_create-sample-config.py"]
-allows = ["cmk.gui", "cmk.utils.log"]
+allows = ["@ccc", "cmk.gui", "cmk.utils.log", "cmk.utils.paths"]
 
 [file_dependencies."omd/non-free/packages/licensing/cmk-license-email-notification.py"]
 allows = ["cmk.licensing.nonfree", "cmk.utils"]

@@ -128,6 +128,7 @@ def _import_endpoints_for_edition(edition: Edition) -> None:
 
 def process_version(args: argparse.Namespace) -> None:
     edition = Edition.from_long_edition(args.edition)
+    main_modules.register(edition)
     _import_endpoints_for_edition(edition)
 
     if errors := main_modules.get_failed_plugins():
