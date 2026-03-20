@@ -11,13 +11,14 @@ from livestatus import SiteConfiguration
 
 import cmk.ccc.version as cmk_version
 from cmk.ccc.site import SiteId
+from cmk.ccc.version import Edition, edition
 from cmk.gui.watolib import activate_changes
 from cmk.gui.watolib.config_sync import (
     replication_path_registry,
     ReplicationPath,
     ReplicationPathType,
 )
-from tests.testlib.common.repo import is_pro_repo, is_ultimatemt_repo
+from cmk.utils import paths
 from tests.testlib.unit.utils import reset_registries
 
 EDITION = cmk_version.Edition.COMMUNITY
@@ -144,84 +145,6 @@ def _expected_replication_paths() -> list[ReplicationPath]:
         ),
     ]
 
-    # The below lines are confusing and incorrect. The reason we need them is
-    # because our test environments do not reflect our Checkmk editions properly.
-    # We cannot fix that in the short (or even mid) term because the
-    # precondition is a more cleanly separated structure.
-
-    if is_pro_repo():
-        # CEE paths are added when the CEE plug-ins for WATO are available, i.e.
-        # when the "enterprise/" path is present.
-        expected += [
-            ReplicationPath.make(
-                ty=ReplicationPathType.DIR,
-                ident="dcd",
-                site_path="etc/check_mk/dcd.d/wato",
-            ),
-            ReplicationPath.make(
-                ty=ReplicationPathType.DIR,
-                ident="mknotify",
-                site_path="etc/check_mk/mknotifyd.d/wato",
-            ),
-            ReplicationPath.make(
-                ty=ReplicationPathType.DIR,
-                ident="liveproxyd",
-                site_path="etc/check_mk/liveproxyd.d/wato",
-            ),
-            # CMK-20769
-            ReplicationPath.make(
-                ty=ReplicationPathType.DIR,
-                ident="otel_collector",
-                site_path="etc/check_mk/otel_collector.d/wato",
-            ),
-            ReplicationPath.make(
-                ty=ReplicationPathType.DIR,
-                ident="metric_backend",
-                site_path="etc/check_mk/metric_backend.d/wato",
-            ),
-        ]
-
-    if is_ultimatemt_repo():
-        # CME paths are added when the CME plug-ins for WATO are available, i.e.
-        # when the "managed/" path is present.
-        expected += [
-            ReplicationPath.make(
-                ty=ReplicationPathType.FILE,
-                ident="customer_check_mk",
-                site_path="etc/check_mk/conf.d/customer.mk",
-            ),
-            ReplicationPath.make(
-                ty=ReplicationPathType.FILE,
-                ident="customer_gui_design",
-                site_path="etc/check_mk/multisite.d/zzz_customer_gui_design.mk",
-            ),
-            ReplicationPath.make(
-                ty=ReplicationPathType.FILE,
-                ident="customer_multisite",
-                site_path="etc/check_mk/multisite.d/customer.mk",
-            ),
-            ReplicationPath.make(
-                ty=ReplicationPathType.FILE,
-                ident="login_logo_dark",
-                site_path="local/share/check_mk/web/htdocs/themes/modern-dark/images/login_logo.png",
-            ),
-            ReplicationPath.make(
-                ty=ReplicationPathType.FILE,
-                ident="login_logo_facelift",
-                site_path="local/share/check_mk/web/htdocs/themes/facelift/images/login_logo.png",
-            ),
-            ReplicationPath.make(
-                ty=ReplicationPathType.FILE,
-                ident="navbar_logo_dark",
-                site_path="local/share/check_mk/web/htdocs/themes/modern-dark/images/navbar_logo.png",
-            ),
-            ReplicationPath.make(
-                ty=ReplicationPathType.FILE,
-                ident="navbar_logo_facelift",
-                site_path="local/share/check_mk/web/htdocs/themes/facelift/images/navbar_logo.png",
-            ),
-        ]
-
     return expected
 
 
@@ -249,6 +172,10 @@ def _default_site_config() -> SiteConfiguration:
     )
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_get_replication_paths_defaults(request_context: None) -> None:
     expected = _expected_replication_paths()
     assert sorted(
@@ -260,6 +187,10 @@ def test_get_replication_paths_defaults(request_context: None) -> None:
     )
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 @pytest.mark.parametrize("replicate_ec", [None, True, False])
 @pytest.mark.parametrize("replicate_mkps", [None, True, False])
 def test_get_replication_components(
