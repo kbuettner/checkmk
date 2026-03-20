@@ -87,7 +87,6 @@ py_test(
             "cmk/diskspace/**/*.py",
             "cmk/fields/**/*.py",
             "cmk/inventory/**/*.py",
-            "cmk/legacy_includes/**/*.py",
             "cmk/notifications/**/*.py",
             "cmk/piggyback_hub/**/*.py",
             "cmk/piggyback/**/*.py",
