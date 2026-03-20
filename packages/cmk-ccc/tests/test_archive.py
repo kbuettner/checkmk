@@ -6,6 +6,7 @@
 import io
 import tarfile
 from pathlib import Path
+from typing import Literal
 
 import pytest
 
@@ -21,9 +22,9 @@ def make_tarfile_io(
     files: dict[str, bytes],
     compress: bool = True,
 ) -> io.BytesIO:
-    mode = "w:gz" if compress else "w"
+    mode: Literal["w:gz", "w"] = "w:gz" if compress else "w"
     buf = io.BytesIO()
-    with tarfile.open(fileobj=buf, mode=mode) as tar:  # type: ignore[call-overload]
+    with tarfile.open(fileobj=buf, mode=mode) as tar:
         for name, content in files.items():
             tarinfo = tarfile.TarInfo(name)
             tarinfo.size = len(content)

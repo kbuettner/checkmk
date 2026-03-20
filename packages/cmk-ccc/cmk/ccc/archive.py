@@ -213,14 +213,18 @@ class CheckmkTarArchive:
         self.__file_limit = file_limit
         self.__per_file_limit = per_file_limit
         self.__raw_limit_bytes = raw_limit_bytes
+        self.__compression = compression
         self.__bypass_size_validation = bypass_size_validation
-
-        self.compression = compression
-        self.READ_MODE_STREAM = f"r|{compression}"  # streaming, safe extraction, validation
-        self.READ_MODE_INDEX = (
-            f"r:{compression}"  # full in memory, pre-scan, safe extraction, validation
-        )
         self.allow_symlinks = allow_symlinks
+
+    def _mode(self, *, streaming: bool) -> Literal["r|gz", "r|*", "r:gz", "r:*"]:
+        # NOTE: mypy currently doesn't narrow on tuples, so we have to use the
+        # slightly less readable if/else cascade below.
+        return (
+            ("r|gz" if self.__compression == "gz" else "r|*")
+            if streaming
+            else ("r:gz" if self.__compression == "gz" else "r:*")
+        )
 
     def validate_member(self, member: tarfile.TarInfo) -> None:
         """Validate a single tar member."""
@@ -240,11 +244,10 @@ class CheckmkTarArchive:
         buffer: IO[bytes],
         streaming: bool = True,
     ) -> Iterator[SafeStreamedTarFile | SafeIndexedTarFile]:
-        mode: str = self.READ_MODE_STREAM if streaming else self.READ_MODE_INDEX
         try:
             self._check_compressed_size(buffer)
             buffer.seek(0)
-            tar = tarfile.open(fileobj=buffer, mode=mode)  # type: ignore[call-overload]
+            tar = tarfile.open(fileobj=buffer, mode=self._mode(streaming=streaming))
             with tar:
                 if streaming:
                     yield SafeStreamedTarFile(tar, self)
@@ -260,10 +263,9 @@ class CheckmkTarArchive:
         path: Path,
         streaming: bool = True,
     ) -> Iterator[SafeIndexedTarFile | SafeStreamedTarFile]:
-        mode: str = self.READ_MODE_STREAM if streaming else self.READ_MODE_INDEX
         try:
             self._check_compressed_size(path)
-            tar = tarfile.open(name=path, mode=mode)  # type: ignore[call-overload]
+            tar = tarfile.open(name=path, mode=self._mode(streaming=streaming))
             with tar:
                 if streaming:
                     yield SafeStreamedTarFile(tar, self)
