@@ -1689,7 +1689,7 @@ function update_graph_hover_popup(event: Event, graph: GraphArtwork): boolean | 
     const cache_key = _hover_cache_key(display_id, Math.trunc(hover_timestamp))
     const cached = _hover_cache_get(cache_key)
     if (cached) {
-      render_graph_hover_popup(graph, event, cached)
+      render_graph_hover_popup(event, cached)
       return prevent_default_events(event)
     }
   }
@@ -1750,7 +1750,7 @@ function handle_graph_hover_popup_update(
     const cache_key = _hover_cache_key(display_id, handler_data.hover_timestamp)
     _hover_cache_set(cache_key, popup_data)
   }
-  render_graph_hover_popup(handler_data.graph, handler_data.event, popup_data)
+  render_graph_hover_popup(handler_data.event, popup_data)
 
   //render_graph_and_subgraphs(graph);
   g_graph_update_in_process = false
@@ -1784,7 +1784,7 @@ interface PopupData {
 //     ],
 //     "rendered_hover_time": "2018-09-26 16:34:54"
 // }
-function render_graph_hover_popup(_graph: GraphArtwork, event: Event, popup_data: PopupData) {
+function render_graph_hover_popup(event: Event, popup_data: PopupData) {
   const wrapper = document.createElement('div')
 
   const popup_container = document.createElement('div')
