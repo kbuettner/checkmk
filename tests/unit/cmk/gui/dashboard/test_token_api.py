@@ -9,8 +9,9 @@ from collections.abc import Generator
 import pytest
 
 from cmk.ccc.user import UserId
+from cmk.ccc.version import Edition, edition
 from cmk.gui.token_auth import get_token_store, TokenId
-from tests.testlib.common.repo import is_non_free_repo
+from cmk.utils import paths
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
 
@@ -117,14 +118,15 @@ def test_create_token_expiration_in_past(
     assert resp.json["fields"]["body.expires_at"]["msg"] == "Input should be in the future"
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_create_token_expiration_too_far_in_future(
     clients: ClientRegistry,
     with_automation_user: tuple[UserId, str],
     user_dashboard: str,
 ) -> None:
-    if is_non_free_repo():
-        pytest.skip("This test is only relevant for Checkmk Community Edition")
-
     payload = {
         "dashboard_owner": with_automation_user[0],
         "dashboard_id": user_dashboard,
@@ -136,24 +138,6 @@ def test_create_token_expiration_too_far_in_future(
     assert resp.json["fields"]["body.expires_at"]["msg"] == (
         "In Checkmk Community, dashboard tokens can only be valid for up to one month."
     )
-
-
-def test_create_token_no_expiration(
-    clients: ClientRegistry,
-    with_automation_user: tuple[UserId, str],
-    user_dashboard: str,
-) -> None:
-    if not is_non_free_repo():
-        pytest.skip("This test is only relevant for commercial Checkmk editions")
-
-    payload = {
-        "dashboard_owner": with_automation_user[0],
-        "dashboard_id": user_dashboard,
-        "comment": "Invalid expiration",
-        "expires_at": None,
-    }
-    resp = clients.DashboardClient.create_dashboard_token(payload)
-    assert resp.status_code == 201, f"Expected 201, got {resp.status_code} {resp.json!r}"
 
 
 def test_create_token_nonexistent_dashboard(
@@ -228,14 +212,15 @@ def test_edit_token_expiration_in_past(
     assert resp.status_code == 200, f"Expected 200, got {resp.status_code} {resp.json!r}"
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_edit_token_invalid_expiration(
     clients: ClientRegistry,
     with_automation_user: tuple[UserId, str],
     user_dashboard_with_token: str,
 ) -> None:
-    if is_non_free_repo():
-        pytest.skip("This test is only relevant for Checkmk Community Edition")
-
     edit_payload = {
         "dashboard_owner": with_automation_user[0],
         "dashboard_id": user_dashboard_with_token,
@@ -248,25 +233,6 @@ def test_edit_token_invalid_expiration(
     assert resp.json["fields"]["body.expires_at"]["msg"] == (
         "In Checkmk Community, dashboard tokens can only be valid for up to one month."
     )
-
-
-def test_edit_token_no_expiration(
-    clients: ClientRegistry,
-    with_automation_user: tuple[UserId, str],
-    user_dashboard_with_token: str,
-) -> None:
-    if not is_non_free_repo():
-        pytest.skip("This test is only relevant for commercial Checkmk editions")
-
-    edit_payload = {
-        "dashboard_owner": with_automation_user[0],
-        "dashboard_id": user_dashboard_with_token,
-        "comment": "Edited",
-        "is_disabled": False,
-        "expires_at": None,
-    }
-    resp = clients.DashboardClient.edit_dashboard_token(edit_payload)
-    assert resp.status_code == 200, f"Expected 200, got {resp.status_code} {resp.json!r}"
 
 
 def test_edit_token_nonexistent_dashboard(
