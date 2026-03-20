@@ -3,7 +3,7 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# ruff: noqa: ARG001,SLF001
+# ruff: noqa: ARG001
 
 import base64
 import copy
@@ -254,8 +254,8 @@ def test_crash_report_store_cleanup(tmp_path: Path, n_crashes: int) -> None:
         crash_ids.append(crash.ident_to_text())
 
     crash_dirs = {e for e in crashes.glob("*") if e.is_dir()}
-    assert len(crash_dirs) <= crash_store._keep_num_crashes
-    assert {e.name for e in crash_dirs} == set(crash_ids[-crash_store._keep_num_crashes :])
+    assert len(crash_dirs) <= crash_store.keep_num_crashes
+    assert {e.name for e in crash_dirs} == set(crash_ids[-crash_store.keep_num_crashes :])
 
 
 def test_crash_report_store_ignores_non_directories_in_base_dir(tmp_path: Path) -> None:

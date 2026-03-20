@@ -163,7 +163,7 @@ def _save_fingerprint_index(base_dir: Path, index: dict[str, str]) -> None:
 
 
 class CrashReportStore:
-    _keep_num_crashes = 200
+    keep_num_crashes: Final = 200
     """Caring about the persistance of crash reports in the local site"""
 
     def save(self, crash: ABCCrashReport[Any]) -> None:
@@ -314,7 +314,7 @@ class CrashReportStore:
 
         for crash_dir in islice(
             sorted(uuid_paths(base_dir), key=lambda p: uuid.UUID(str(p.name)).time, reverse=True),
-            self._keep_num_crashes,
+            self.keep_num_crashes,
             None,
         ):
             # Remove crash report contents
