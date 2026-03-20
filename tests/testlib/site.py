@@ -1665,7 +1665,7 @@ class Site:
         # Rename files to get better handling by the browser when opening a crash file
         for crash_info in self.crash_archive_dir.glob("**/crash.info"):
             crash_json = crash_info.parent / (crash_info.stem + ".json")
-            self.write_file(crash_json, self.read_file(crash_info))
+            crash_info.rename(crash_json)
 
     def crash_reports_dirs(self) -> list[Path]:
         return [
