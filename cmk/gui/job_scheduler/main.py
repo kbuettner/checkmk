@@ -24,7 +24,7 @@ from cmk.ccc import crash_reporting
 from cmk.ccc.crash_reporting import make_crash_report_base_path
 from cmk.ccc.daemon import daemonize, pid_file_lock
 from cmk.ccc.exceptions import MKGeneralException
-from cmk.ccc.site import get_omd_config, omd_site, resource_attributes_from_config
+from cmk.ccc.site import get_omd_config, omd_site
 from cmk.gui import log, single_global_setting
 from cmk.gui.background_job import job_registry, ThreadedJobExecutor
 from cmk.trace.export import exporter_from_config, init_span_processor
@@ -89,7 +89,7 @@ def main(crash_report_callback: Callable[[Exception], str]) -> int:
                     service_namespace="",
                     service_name="cmk-ui-job-scheduler",
                     service_instance_id=omd_site(),
-                    extra_resource_attributes=resource_attributes_from_config(omd_root),
+                    extra_resource_attributes=trace.resource_attributes_from_config(omd_root),
                 ),
                 exporter_from_config(
                     exporter_log_level=logging.ERROR,

@@ -314,21 +314,6 @@ py_test(
 )
 
 py_test(
-    name = "site-tests",
-    size = "small",
-    srcs = [
-        "__test__.py",
-        "tests/test_site.py",
-    ],
-    main = "__test__.py",
-    deps = [
-        "__test__",
-        "site",
-        requirement("pytest"),
-    ],
-)
-
-py_test(
     name = "regex-tests",
     size = "small",
     srcs = [

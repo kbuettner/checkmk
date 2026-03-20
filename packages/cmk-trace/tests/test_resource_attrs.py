@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from cmk.ccc.site import resource_attributes_from_config
+from cmk.trace import resource_attributes_from_config
 
 
 def test_resource_attributes_from_config_not_existing(tmp_path: Path) -> None:

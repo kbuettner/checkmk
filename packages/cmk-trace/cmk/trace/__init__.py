@@ -5,8 +5,10 @@
 
 """Provides functionality to enable tracing in the Python components of Checkmk"""
 
+import json
 import socket
 from collections.abc import Mapping
+from pathlib import Path
 
 from opentelemetry import trace
 from opentelemetry.context.context import Context as Context
@@ -68,6 +70,21 @@ def init_tracing(
         )
     )
     return provider
+
+
+def resource_attributes_from_config(omd_root: Path) -> dict[str, str]:
+    """Get site specific tracing resource attributes
+
+    Users can extend the builtin tracing resource attributes. This is useful
+    for example to add environment specific attributes to the tracing spans.
+    """
+    attributes_path = omd_root / "etc" / "omd" / "resource_attributes_from_config.json"
+    try:
+        # TODO: "Wishful typing" ahead! Some validation is needed...
+        attrs: dict[str, str] = json.loads(attributes_path.read_text())
+        return attrs
+    except OSError:
+        return {}
 
 
 def get_tracer(name: str | None = None) -> Tracer:
