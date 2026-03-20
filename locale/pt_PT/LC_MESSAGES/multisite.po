@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Checkmk user interface translation 0.1\n"
 "Report-Msgid-Bugs-To: feedback@checkmk.com\n"
 "POT-Creation-Date: 2011-05-13 09:42+0200\n"
-"PO-Revision-Date: 2026-03-18 18:46+0000\n"
+"PO-Revision-Date: 2026-03-19 18:46+0000\n"
 "Language-Team: Portuguese (Portugal) <https://translate.checkmk.com/projects/"
 "checkmk/dev/pt_PT/>\n"
 "Language: pt_PT\n"
@@ -20155,10 +20155,6 @@ msgid "Deploy plug-in for Citrix XenApp"
 msgstr "Implementar plugin para Citrix XenApp"
 
 #, fuzzy
-msgid "Deploy plug-in for Citrix licenses"
-msgstr "Implantar plugin para licenças Citrix"
-
-#, fuzzy
 msgid "Deploy plug-in for DAG"
 msgstr "Implantar plugin para DAG"
 
@@ -20217,10 +20213,6 @@ msgstr "Implementar plugin que atualiza automaticamente o agente"
 #, fuzzy
 msgid "Deploy powershell plug-in - recommended for Win2k8 upwards"
 msgstr "Implementar plugin powershell - recomendado para Win2k8 para cima"
-
-#, fuzzy
-msgid "Deploy remote desktop licenses plug-in"
-msgstr "Implementar o plugin Remote Desktop Licenses"
 
 #, fuzzy, python-format
 msgid "Deploy the %s plug-in and its configuration"
@@ -20304,6 +20296,11 @@ msgstr "Implantar o plugin Zypper"
 
 #, fuzzy
 msgid ""
+"Deploy the agent plug-in <tt>citrix_licenses</tt> on your target system."
+msgstr "Implante o plugin de agente <tt>zorp</tt> no seu sistema alvo."
+
+#, fuzzy
+msgid ""
 "Deploy the agent plug-in <tt>mk_postgres</tt>. This will create information "
 "necessary for all <tt>postgres_*</tt> checks"
 msgstr ""
@@ -20317,6 +20314,10 @@ msgstr "Implementar o plugin de agente <tt>mk_sshd_config</tt>."
 #, fuzzy
 msgid "Deploy the agent plug-in <tt>mk_suseconnect</tt>."
 msgstr "Implantar o plugin de agente <tt>mk_suseconnect</tt>."
+
+#, fuzzy
+msgid "Deploy the agent plug-in <tt>rds_licenses</tt> on your target system."
+msgstr "Implante o plugin de agente <tt>zorp</tt> no seu sistema alvo."
 
 #, fuzzy
 msgid "Deploy the agent plug-in <tt>zorp</tt> on your target system."
@@ -21858,10 +21859,6 @@ msgid "Do not deploy plug-in for Citrix XenApp"
 msgstr "Não implantar plugin para Citrix XenApp"
 
 #, fuzzy
-msgid "Do not deploy plug-in for Citrix licenses"
-msgstr "Não implantar plugin para licenças Citrix"
-
-#, fuzzy
 msgid "Do not deploy plug-in for DAG"
 msgstr "Não implantar plugin para DAG"
 
@@ -21920,10 +21917,6 @@ msgstr "Não implantar plugin para Windows System Info"
 #, fuzzy
 msgid "Do not deploy plug-in for Windows task scheduler"
 msgstr "Não implantar plugin para o Programador de Tarefas do Windows"
-
-#, fuzzy
-msgid "Do not deploy remote desktop licenses plug-in"
-msgstr "Não implante o plugin Remote Desktop Licenses"
 
 #, fuzzy, python-format
 msgid "Do not deploy the %s plug-in"
@@ -62365,6 +62358,10 @@ msgstr "Painel de controlo do sítio $SITE$"
 msgid "Site icon"
 msgstr "Ícone do local"
 
+#, fuzzy
+msgid "Site is dead"
+msgstr "Site %s está morto"
+
 msgid "Site is disabled"
 msgstr "O site está desativado"
 
@@ -68615,6 +68612,9 @@ msgid ""
 "The dashboard '%s' does not exist or you do not have permission to view it."
 msgstr "O %s só é visível para si porque não tem autorização para o partilhar."
 
+msgid "The dashboard element does not exist."
+msgstr "O elemento do painel de instrumentos não existe."
+
 msgid ""
 "The data for the background checks is recomputed at most in this interval."
 msgstr ""
@@ -70811,6 +70811,9 @@ msgstr "A conexão solicitada não existe."
 
 msgid "The requested connection does not exist."
 msgstr "A conexão solicitada não existe."
+
+msgid "The requested dashboard does not exist."
+msgstr "O painel de instrumentos solicitado não existe."
 
 msgid "The requested global setting does not exist."
 msgstr "O cenário global solicitado não existe."
@@ -74394,10 +74397,6 @@ msgstr ""
 "quando é executado de forma assíncrona."
 
 #, fuzzy
-msgid "This plug-in checks for Citrix Licenses on Window hosts."
-msgstr "Este plugin verifica as licenças Citrix nos hosts Window."
-
-#, fuzzy
 msgid "This plug-in checks for Windows License status."
 msgstr "Este plugin verifica o estado da licença do Windows."
 
@@ -74542,10 +74541,6 @@ msgid ""
 msgstr ""
 "Este plugin monitoriza o número de trabalhos de impressão nas filas de "
 "impressão e a impressora declara"
-
-#, fuzzy
-msgid "This plug-in monitors the number of uses remote desktop licenses."
-msgstr "Este plugin monitora o número de licenças de uso remoto do desktop."
 
 #, fuzzy
 msgid ""
@@ -96991,6 +96986,30 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+#~ msgid "Deploy plug-in for Citrix licenses"
+#~ msgstr "Implantar plugin para licenças Citrix"
+
+#, fuzzy
+#~ msgid "Deploy remote desktop licenses plug-in"
+#~ msgstr "Implementar o plugin Remote Desktop Licenses"
+
+#, fuzzy
+#~ msgid "Do not deploy plug-in for Citrix licenses"
+#~ msgstr "Não implantar plugin para licenças Citrix"
+
+#, fuzzy
+#~ msgid "Do not deploy remote desktop licenses plug-in"
+#~ msgstr "Não implante o plugin Remote Desktop Licenses"
+
+#, fuzzy
+#~ msgid "This plug-in checks for Citrix Licenses on Window hosts."
+#~ msgstr "Este plugin verifica as licenças Citrix nos hosts Window."
+
+#, fuzzy
+#~ msgid "This plug-in monitors the number of uses remote desktop licenses."
+#~ msgstr "Este plugin monitora o número de licenças de uso remoto do desktop."
+
+#, fuzzy
 #~ msgid ""
 #~ "In order to make Checkmk more consistent, the descriptions of several "
 #~ "services have been renamed in newer Checkmk versions. One example is the "
@@ -97012,12 +97031,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "MSSQL file sizes"
 #~ msgstr "Tamanhos do Datafile MSSQL"
-
-#~ msgid "The dashboard element does not exist."
-#~ msgstr "O elemento do painel de instrumentos não existe."
-
-#~ msgid "The requested dashboard does not exist."
-#~ msgstr "O painel de instrumentos solicitado não existe."
 
 #~ msgid "No pending changes"
 #~ msgstr "Sem alterações pendentes"

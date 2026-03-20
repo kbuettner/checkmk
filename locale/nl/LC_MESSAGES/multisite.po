@@ -20146,10 +20146,6 @@ msgid "Deploy plug-in for Citrix XenApp"
 msgstr "Inzet plugin voor Citrix XenApp"
 
 #, fuzzy
-msgid "Deploy plug-in for Citrix licenses"
-msgstr "Implementeer plugin voor Citrix licenties"
-
-#, fuzzy
 msgid "Deploy plug-in for DAG"
 msgstr "Invoegtoepassing voor DAG implementeren"
 
@@ -20208,10 +20204,6 @@ msgstr "Implementeer plugin die agent automatisch bijwerkt"
 #, fuzzy
 msgid "Deploy powershell plug-in - recommended for Win2k8 upwards"
 msgstr "Deploy powershell plugin - aanbevolen voor Win2k8 en hoger"
-
-#, fuzzy
-msgid "Deploy remote desktop licenses plug-in"
-msgstr "Deploy Remote Desktop Licenses plugin"
 
 #, fuzzy, python-format
 msgid "Deploy the %s plug-in and its configuration"
@@ -20295,6 +20287,11 @@ msgstr "Zet de Zypper plugin in"
 
 #, fuzzy
 msgid ""
+"Deploy the agent plug-in <tt>citrix_licenses</tt> on your target system."
+msgstr "Implementeer de agent plugin <tt>zorp</tt> op uw doelsysteem."
+
+#, fuzzy
+msgid ""
 "Deploy the agent plug-in <tt>mk_postgres</tt>. This will create information "
 "necessary for all <tt>postgres_*</tt> checks"
 msgstr ""
@@ -20308,6 +20305,10 @@ msgstr "Implementeer de agent plugin <tt>mk_sshd_config</tt>."
 #, fuzzy
 msgid "Deploy the agent plug-in <tt>mk_suseconnect</tt>."
 msgstr "Implementeer de agent plugin <tt>mk_suseconnect</tt>."
+
+#, fuzzy
+msgid "Deploy the agent plug-in <tt>rds_licenses</tt> on your target system."
+msgstr "Implementeer de agent plugin <tt>zorp</tt> op uw doelsysteem."
 
 #, fuzzy
 msgid "Deploy the agent plug-in <tt>zorp</tt> on your target system."
@@ -21847,10 +21848,6 @@ msgid "Do not deploy plug-in for Citrix XenApp"
 msgstr "Invoegtoepassing niet implementeren voor Citrix XenApp"
 
 #, fuzzy
-msgid "Do not deploy plug-in for Citrix licenses"
-msgstr "Implementeer geen plugin voor Citrix licenties"
-
-#, fuzzy
 msgid "Do not deploy plug-in for DAG"
 msgstr "Implementeer geen plugin voor DAG"
 
@@ -21909,10 +21906,6 @@ msgstr "Implementeer geen plugin voor Windows Systeeminfo"
 #, fuzzy
 msgid "Do not deploy plug-in for Windows task scheduler"
 msgstr "Invoegtoepassing voor Windows Taakplanner niet implementeren"
-
-#, fuzzy
-msgid "Do not deploy remote desktop licenses plug-in"
-msgstr "Implementeer geen Remote Desktop Licenses plugin"
 
 #, fuzzy, python-format
 msgid "Do not deploy the %s plug-in"
@@ -62363,6 +62356,10 @@ msgstr "Site dashboard $SITE$"
 msgid "Site icon"
 msgstr "Site-icoon"
 
+#, fuzzy
+msgid "Site is dead"
+msgstr "Site %s is dood"
+
 msgid "Site is disabled"
 msgstr "Site is uitgeschakeld"
 
@@ -68627,6 +68624,9 @@ msgstr ""
 "De %s is alleen voor jou zichtbaar omdat je'geen toestemming hebt om hem te "
 "delen."
 
+msgid "The dashboard element does not exist."
+msgstr "Het dashboard element bestaat niet."
+
 msgid ""
 "The data for the background checks is recomputed at most in this interval."
 msgstr ""
@@ -70843,6 +70843,9 @@ msgstr "De gevraagde verbinding bestaat niet."
 
 msgid "The requested connection does not exist."
 msgstr "De gevraagde verbinding bestaat niet."
+
+msgid "The requested dashboard does not exist."
+msgstr "Het gevraagde dashboard bestaat niet."
 
 msgid "The requested global setting does not exist."
 msgstr "De gevraagde globale instelling bestaat niet."
@@ -74451,10 +74454,6 @@ msgstr ""
 "als het asynchroon wordt uitgevoerd."
 
 #, fuzzy
-msgid "This plug-in checks for Citrix Licenses on Window hosts."
-msgstr "Deze plugin controleert op Citrix Licenties op Window hosts."
-
-#, fuzzy
 msgid "This plug-in checks for Windows License status."
 msgstr "Deze plugin controleert de Windows Licentie status."
 
@@ -74595,10 +74594,6 @@ msgid ""
 msgstr ""
 "Deze plugin controleert het aantal afdruktaken in de printerwachtrijen en de "
 "printerstatus"
-
-#, fuzzy
-msgid "This plug-in monitors the number of uses remote desktop licenses."
-msgstr "Deze plugin controleert het aantal gebruikte remote desktop licenties."
 
 #, fuzzy
 msgid ""
@@ -97091,6 +97086,31 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+#~ msgid "Deploy plug-in for Citrix licenses"
+#~ msgstr "Implementeer plugin voor Citrix licenties"
+
+#, fuzzy
+#~ msgid "Deploy remote desktop licenses plug-in"
+#~ msgstr "Deploy Remote Desktop Licenses plugin"
+
+#, fuzzy
+#~ msgid "Do not deploy plug-in for Citrix licenses"
+#~ msgstr "Implementeer geen plugin voor Citrix licenties"
+
+#, fuzzy
+#~ msgid "Do not deploy remote desktop licenses plug-in"
+#~ msgstr "Implementeer geen Remote Desktop Licenses plugin"
+
+#, fuzzy
+#~ msgid "This plug-in checks for Citrix Licenses on Window hosts."
+#~ msgstr "Deze plugin controleert op Citrix Licenties op Window hosts."
+
+#, fuzzy
+#~ msgid "This plug-in monitors the number of uses remote desktop licenses."
+#~ msgstr ""
+#~ "Deze plugin controleert het aantal gebruikte remote desktop licenties."
+
+#, fuzzy
 #~ msgid ""
 #~ "In order to make Checkmk more consistent, the descriptions of several "
 #~ "services have been renamed in newer Checkmk versions. One example is the "
@@ -97113,12 +97133,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "MSSQL file sizes"
 #~ msgstr "MSSQL Datafile Grootte"
-
-#~ msgid "The dashboard element does not exist."
-#~ msgstr "Het dashboard element bestaat niet."
-
-#~ msgid "The requested dashboard does not exist."
-#~ msgstr "Het gevraagde dashboard bestaat niet."
 
 #~ msgid "No pending changes"
 #~ msgstr "Geen hangende wijzigingen"
