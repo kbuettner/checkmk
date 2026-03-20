@@ -6,8 +6,6 @@
 to produce crash reports in a generic format which can then be sent to Check_MK
 developers for analyzing the crashes."""
 
-# mypy: disable-error-code="comparison-overlap"
-
 from __future__ import annotations
 
 import abc
@@ -185,7 +183,7 @@ class CrashReportStore:
             for key, value in crash.serialize().items():
                 fname = "crash.info" if key == "crash_info" else key
 
-                if value is None:
+                if value is None:  # type: ignore[comparison-overlap]
                     continue  # type: ignore[unreachable]
 
                 if fname == "crash.info":
@@ -379,7 +377,7 @@ class ABCCrashReport[TDetails](abc.ABC):
         Nested structures are allowed. Only objects that can be handled by
         ast.literal_eval() are allowed.
         """
-        if self.crash_info is None:
+        if self.crash_info is None:  # type: ignore[comparison-overlap]
             raise TypeError("No crash information available")
 
         return self._serialize_attributes()

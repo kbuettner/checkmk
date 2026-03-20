@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-any-return"
-
 import json
 import os
 from functools import cache
@@ -69,6 +67,8 @@ def resource_attributes_from_config(omd_root: Path) -> dict[str, str]:
     """
     attributes_path = omd_root / "etc" / "omd" / "resource_attributes_from_config.json"
     try:
-        return json.loads(attributes_path.read_text())
+        # TODO: "Wishful typing" ahead! Some validation is needed...
+        attrs: dict[str, str] = json.loads(attributes_path.read_text())
+        return attrs
     except OSError:
         return {}

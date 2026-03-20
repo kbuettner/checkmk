@@ -6,8 +6,6 @@
 functionality is the locked file opening realized with the File() context
 manager."""
 
-# mypy: disable-error-code="comparison-overlap"
-
 import errno
 import fcntl
 import logging
@@ -203,7 +201,7 @@ def _open_lock_file(path: os.PathLike[str]) -> Iterator[int]:
         fd = os.open(path, os.O_RDONLY | os.O_CREAT, 0o660)
         yield fd
     finally:
-        if fd is not None:
+        if isinstance(fd, int):
             os.close(fd)
 
 

@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="misc"
-# mypy: disable-error-code="type-arg"
 # ruff: noqa: ARG001,SLF001
 
 import base64
@@ -220,7 +218,7 @@ def patch_uuid1(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def _make_unique_crash(tmp_path: Path, num: int, timestamp: float = 0.0) -> UnitTestCrashReport:
     """Create a crash with a unique fingerprint by using a distinct exception type per num."""
-    UniqueExc = type(f"UniqueError{num}", (Exception,), {})
+    UniqueExc: type[Exception] = type(f"UniqueError{num}", (Exception,), {})
     try:
         raise UniqueExc("crash")
     except UniqueExc:
@@ -545,7 +543,11 @@ def test_crash_report_store_missing_crash_info_saves_new_crash(tmp_path: Path) -
         ),
     ],
 )
-def test_crash_report_json_dump(crash_info: CrashInfo, different_result: CrashInfo | None) -> None:
+def test_crash_report_json_dump(
+    # TODO: The CrashInfo types and the values passed to them are a lie! Fix this!
+    crash_info: CrashInfo[dict[str, object]],
+    different_result: CrashInfo[dict[str, object]] | None,
+) -> None:
     if different_result:
         assert json.loads(CrashReportStore.dump_crash_info(crash_info)) == different_result
         return

@@ -3,9 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="comparison-overlap"
-# mypy: disable-error-code="no-any-return"
-
 """This module cares about Check_MK's file storage accessing. Most important
 functionality is the locked file opening realized with the File() context
 manager."""
@@ -89,7 +86,7 @@ class LazyTracer:
                 from cmk.trace import get_tracer
 
                 self._tracer = get_tracer()
-        return self._tracer.span(name, attributes=attributes)
+        return self._tracer.span(name, attributes=attributes)  # type: ignore[no-any-return]
 
     def simple_span(self, name: str, path: Path) -> AbstractContextManager[object, bool | None]:
         return self.span(f"{name}[{path}]", attributes={"cmk.file.path": str(path)})
@@ -123,7 +120,8 @@ tracer = LazyTracer()
 # that are read with exec().
 def load_mk_file(path: Path, *, default: Mapping[str, object], lock: bool) -> Mapping[str, object]:
     with tracer.simple_span("load_mk_file", path):
-        if default is None:  # leave this for now, we still have a lot of `Any`s flying around
+        # leave this for now, we still have a lot of `Any`s flying around
+        if default is None:  # type: ignore[comparison-overlap]
             raise MKGeneralException(
                 _(
                     "You need to provide a config dictionary to merge with the "
