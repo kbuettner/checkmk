@@ -3,57 +3,70 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
+
+from collections.abc import Mapping
+from typing import Any
+
+from cmk.agent_based.v2 import (
+    any_of,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    equals,
+    Metric,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import any_of, equals, SNMPTree, StringTable
-
-check_info = {}
-
-
-def discover_docsis_channels_downstream(info):
-    for line in info:
+def discover_docsis_channels_downstream(section: StringTable) -> DiscoveryResult:
+    for line in section:
         if line[1] != "0":
-            yield line[0], {}
+            yield Service(item=line[0])
 
 
-def check_docsis_channels_downstream(item, params, info):
-    for channel_id, frequency, power in info:
+def check_docsis_channels_downstream(
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
+    for channel_id, frequency, power in section:
         if channel_id == item:
             # Power
             warn, crit = params["power"]
             power_dbmv = float(int(power)) / 10
-            infotext = "Power is %.1f dBmV" % power_dbmv
-            levels = " (Levels Warn/Crit at %d dBmV/ %d dBmV)" % (warn, crit)
-            state = 0
+            infotext = f"Power is {power_dbmv:.1f} dBmV"
+            levels = f" (Levels Warn/Crit at {warn} dBmV/ {crit} dBmV)"
+            state = State.OK
             if power_dbmv <= crit:
-                state = 2
+                state = State.CRIT
                 infotext += levels
             elif power_dbmv <= warn:
-                state = 1
+                state = State.WARN
                 infotext += levels
-            yield state, infotext, [("power", power_dbmv, warn, crit)]
+            yield Result(state=state, summary=infotext)
+            yield Metric("power", power_dbmv, levels=(warn, crit))
 
             # Check Frequency
             frequency_mhz = float(frequency) / 1000000
-            infotext = "Frequency is %.1f MHz" % frequency_mhz
-            perfdata = [("frequency", frequency_mhz, warn, crit)]
-            state = 0
+            infotext = f"Frequency is {frequency_mhz:.1f} MHz"
+            state = State.OK
             if "frequency" in params:
                 warn, crit = params["frequency"]
-                levels = " (warn/crit at %d MHz/ %d MHz)" % (warn, crit)
+                levels = f" (warn/crit at {warn} MHz/ {crit} MHz)"
                 if frequency_mhz >= crit:
-                    state = 2
+                    state = State.CRIT
                     infotext += levels
                 elif frequency_mhz >= warn:
-                    state = 1
+                    state = State.WARN
                     infotext += levels
-            # Change this to yield in case of future extension of the check
-            yield state, infotext, perfdata
+            yield Result(state=state, summary=infotext)
+            yield Metric("frequency", frequency_mhz)
             return
 
-    yield 3, "Channel information not found in SNMP data"
+    yield Result(state=State.UNKNOWN, summary="Channel information not found in SNMP data")
 
 
 # This Check is a subcheck because there is also a upstream version possible
@@ -61,7 +74,7 @@ def parse_docsis_channels_downstream(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["docsis_channels_downstream"] = LegacyCheckDefinition(
+snmp_section_docsis_channels_downstream = SimpleSNMPSection(
     name="docsis_channels_downstream",
     parse_function=parse_docsis_channels_downstream,
     detect=any_of(
@@ -75,6 +88,10 @@ check_info["docsis_channels_downstream"] = LegacyCheckDefinition(
         base=".1.3.6.1.2.1.10.127.1.1.1.1",
         oids=["1", "2", "6"],
     ),
+)
+
+check_plugin_docsis_channels_downstream = CheckPlugin(
+    name="docsis_channels_downstream",
     service_name="Downstream Channel %s",
     discovery_function=discover_docsis_channels_downstream,
     check_function=check_docsis_channels_downstream,
