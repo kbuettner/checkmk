@@ -2,10 +2,22 @@
 # Copyright (C) 2024 Checkmk GmbH - License: GNU General Public License v2
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
+from collections.abc import Iterator
+
+import pytest
+
+# mypy: disable-error-code="type-arg"
+from pytest_mock import MockerFixture
+
 from cmk.gui.ldap_integration.ldap_connector import LDAPUserConnector
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
-# mypy: disable-error-code="type-arg"
+
+# Mocking wato_audit.log as its contents are not used in these tests and accessing it causes flaky results.
+@pytest.fixture(autouse=True)
+def mock_log_audit_file(mocker: MockerFixture) -> Iterator[None]:
+    mocker.patch("cmk.gui.watolib.changes.log_audit")
+    yield
 
 
 # LDAP API Schema Example
@@ -48,7 +60,10 @@ def ldap_api_schema(ldap_id: str, include_mega_menu_icons: bool = False) -> dict
                 "filter": "(&(objectclass=user)(objectcategory=person))",
             },
             "filter_group": {"state": "enabled", "filter": "filtergroupexample"},
-            "user_id_attribute": {"state": "enabled", "attribute": "userattributeexample"},
+            "user_id_attribute": {
+                "state": "enabled",
+                "attribute": "userattributeexample",
+            },
             "user_id_case": "convert_to_lowercase",
             "umlauts_in_user_ids": "keep_umlauts",
             "create_users": "on_login",
@@ -61,16 +76,27 @@ def ldap_api_schema(ldap_id: str, include_mega_menu_icons: bool = False) -> dict
         },
         "sync_plugins": {
             "alias": {"state": "enabled", "attribute_to_sync": "cn"},
-            "authentication_expiration": {"state": "enabled", "attribute_to_sync": "pwdlastset"},
+            "authentication_expiration": {
+                "state": "enabled",
+                "attribute_to_sync": "pwdlastset",
+            },
             "disable_notifications": {
                 "state": "enabled",
                 "attribute_to_sync": "disable_notifications",
             },
             "email_address": {"state": "enabled", "attribute_to_sync": "mail"},
-            "main_menu_icons": {"state": "enabled", "attribute_to_sync": "icons_per_item"},
+            "main_menu_icons": {
+                "state": "enabled",
+                "attribute_to_sync": "icons_per_item",
+            },
             # TODO: DEPRECATED(18295) remove "mega_menu_icons"
             **(
-                {"mega_menu_icons": {"state": "enabled", "attribute_to_sync": "icons_per_item"}}
+                {
+                    "mega_menu_icons": {
+                        "state": "enabled",
+                        "attribute_to_sync": "icons_per_item",
+                    }
+                }
                 if include_mega_menu_icons
                 else {}
             ),
@@ -80,9 +106,15 @@ def ldap_api_schema(ldap_id: str, include_mega_menu_icons: bool = False) -> dict
             },
             "pager": {"state": "enabled", "attribute_to_sync": "mobile"},
             "show_mode": {"state": "enabled", "attribute_to_sync": "show_mode"},
-            "ui_sidebar_position": {"state": "enabled", "attribute_to_sync": "ui_sidebar_position"},
+            "ui_sidebar_position": {
+                "state": "enabled",
+                "attribute_to_sync": "ui_sidebar_position",
+            },
             "start_url": {"state": "enabled", "attribute_to_sync": "some_url"},
-            "temperature_unit": {"state": "enabled", "attribute_to_sync": "temperature_unit"},
+            "temperature_unit": {
+                "state": "enabled",
+                "attribute_to_sync": "temperature_unit",
+            },
             "ui_theme": {"state": "enabled", "attribute_to_sync": "ui_theme"},
             "visibility_of_hosts_or_services": {
                 "state": "enabled",
@@ -166,7 +198,10 @@ def ldap_api_schema(ldap_id: str, include_mega_menu_icons: bool = False) -> dict
                     }
                 ],
                 "user": [
-                    {"group_dn": "CN=cmk_AD_users,ou=Gruppen,dc=corp,dc=de", "search_in": "LDAP_1"}
+                    {
+                        "group_dn": "CN=cmk_AD_users,ou=Gruppen,dc=corp,dc=de",
+                        "search_in": "LDAP_1",
+                    }
                 ],
                 "handle_nested": True,
             },
@@ -280,7 +315,9 @@ def test_get_ldap_connections(clients: ClientRegistry) -> None:
 
 
 # TODO: DEPRECATED(18295) remove "mega_menu_icons"
-def test_create_ldap_connection_with_field_and_alias_in_request(clients: ClientRegistry) -> None:
+def test_create_ldap_connection_with_field_and_alias_in_request(
+    clients: ClientRegistry,
+) -> None:
     create_ldap_connections(clients)
     clients.LdapConnection.create(
         ldap_data=ldap_api_schema(ldap_id="LDAP_1", include_mega_menu_icons=True),
@@ -296,7 +333,9 @@ def test_create_ldap_connection_existing_id(clients: ClientRegistry) -> None:
     ).assert_status_code(400)
 
 
-def test_create_ldap_connection_existing_non_sync_connection(clients: ClientRegistry) -> None:
+def test_create_ldap_connection_existing_non_sync_connection(
+    clients: ClientRegistry,
+) -> None:
     clients.LdapConnection.create(
         ldap_data=ldap_api_schema(ldap_id="LDAP_1"),
         expect_ok=False,
@@ -342,7 +381,9 @@ def test_edit_ldap_connection(clients: ClientRegistry) -> None:
 
 
 # TODO: DEPRECATED(18295) remove "mega_menu_icons"
-def test_edit_ldap_connection_using_mega_menu_icons_alias(clients: ClientRegistry) -> None:
+def test_edit_ldap_connection_using_mega_menu_icons_alias(
+    clients: ClientRegistry,
+) -> None:
     create_ldap_connections(clients)
     request = ldap_api_schema(ldap_id="LDAP_3")
     # Use the alias "mega_menu_icons" instead of "main_menu_icons"
