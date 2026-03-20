@@ -100,6 +100,30 @@ py_test(
 )
 
 py_library(
+    name = "dell",
+    srcs = glob(["cmk/plugins/dell/**/*.py"]),
+    data = glob(["cmk/plugins/dell/checkman/*"]),
+    imports = ["."],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":lib",
+        "//packages/cmk-plugin-apis:agent_based",
+    ],
+)
+
+py_test(
+    name = "dell-test",
+    size = "small",
+    srcs = glob(["tests/cmk/plugins/dell/**/*.py"]) + [":__test__.py"],
+    main = ":__test__.py",
+    deps = [
+        ":__test__",
+        ":dell",
+        requirement("pytest"),
+    ],
+)
+
+py_library(
     name = "elasticsearch",
     srcs = glob(["cmk/plugins/elasticsearch/**/*.py"]),
     data = glob([
