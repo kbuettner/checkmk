@@ -13,13 +13,15 @@ import pytest
 
 import cmk.gui.config
 import cmk.utils.paths
+from cmk.ccc.version import Edition, edition
 from cmk.gui.config import active_config, Config
-from tests.testlib.common.repo import (
-    is_pro_repo,
-    is_ultimatemt_repo,
+from cmk.utils import paths
+
+
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
 )
-
-
 def test_default_config_from_plugins() -> None:
     expected = [
         "roles",
@@ -155,49 +157,6 @@ def test_default_config_from_plugins() -> None:
         "require_two_factor_all_users",
         "inventory_cleanup",
     ]
-
-    # The below lines are confusing and incorrect. The reason we need them is
-    # because our test environments do not reflect our Checkmk editions properly.
-    # We cannot fix that in the short (or even mid) term because the
-    # precondition is a more cleanly separated structure.
-
-    if is_pro_repo():
-        # CEE plug-ins are added when the CEE plug-ins for WATO are available, i.e.
-        # when the "enterprise/" path is present.
-        expected += [
-            "agent_deployment_enabled",
-            "agent_deployment_host_selection",
-            "agent_deployment_central",
-            "agent_deployment_remote",
-            "agent_signature_keys",
-            "have_combined_graphs",
-            "licensing_settings",
-            "reporting_use",
-            "reporting_rangespec",
-            "reporting_filename",
-            "reporting_view_limit",
-            "reporting_font_size",
-            "reporting_lineheight",
-            "reporting_font_family",
-            "reporting_pagesize",
-            "reporting_margins",
-            "reporting_mirror_margins",
-            "reporting_date_format",
-            "reporting_time_format",
-            "reporting_table_layout",
-            "reporting_graph_layout",
-            "reporting_email_options",
-            "subscription_settings",
-            "ntop_connection",
-        ]
-
-    if is_ultimatemt_repo():
-        # CME plug-ins are added when the CEE plug-ins for WATO are available, i.e.
-        # when the "managed/" path is present.
-        expected += [
-            "customers",
-            "current_customer",
-        ]
 
     default_config = cmk.gui.config.get_default_config()
     assert sorted(list(default_config.keys())) == sorted(expected)
