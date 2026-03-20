@@ -1,0 +1,78 @@
+load("@aspect_rules_py//py:defs.bzl", "py_pytest_main", "py_test")
+load("@cmk_requirements//:requirements.bzl", "requirement")
+
+py_library(
+    name = "conftest",
+    testonly = True,
+    srcs = [
+        "conftest.py",
+    ],
+    visibility = [":__subpackages__"],
+    deps = [
+        "//cmk/gui",
+        "//packages/cmk-ccc:user",
+        "//tests/testlib/unit:unit_free",
+        requirement("flask"),
+        requirement("pytest"),
+        requirement("pytest-mock"),
+    ],
+)
+
+py_pytest_main(
+    name = "__test__",
+    deps = [
+        requirement("pytest"),
+        # pytest-xdist for `--numprocesses=NPROC`
+        requirement("pytest-xdist"),
+    ],
+)
+
+py_test(
+    name = "post_rename_site",
+    srcs = ["__test__.py"] + glob(
+        include = ["**/*.py"],
+        exclude = [
+            "**/conftest.py",
+        ],
+    ),
+    args = [
+        "--config-file=$(location @//:pyproject.toml)",
+        "--import-mode=importlib",
+        "--random-order-bucket=global",
+        "--dist=loadfile",
+        "--numprocesses=4",
+    ],
+    data = ["@//:pyproject.toml"],
+    main = ":__test__.py",
+    visibility = ["//tests:__subpackages__"],
+    deps = [
+        ":__test__",
+        ":conftest",
+        "//cmk/post_rename_site:cmk_post_rename_site",
+        "//tests/testlib/unit:unit_free",
+        "//tests/unit:conftest",
+        requirement("pytest"),
+        requirement("pytest-asyncio"),
+        requirement("pytest-mock"),
+        requirement("werkzeug"),
+        requirement("flask"),
+        requirement("pytest-random-order"),
+    ] + select({
+        # FIXME
+        "@//:gpl+nonfree_repo": [
+            "//non-free/packages/cmk-bakery",
+            "//non-free/packages/cmk-dcd:gui",
+            "//non-free/packages/cmk-liveproxyd:gui",
+            "//non-free/packages/cmk-metric-backend",
+            "//non-free/packages/cmk-mknotifyd",
+            "//non-free/packages/cmk-otel-collector",
+            "//non-free/packages/cmk-robotmk",
+            "//non-free/packages/cmk-robotmk:gui",
+            requirement("numpy"),
+            requirement("pypdf"),
+            requirement("pysaml2"),
+            requirement("roman"),
+        ],
+        "@//:gpl_repo": [],
+    }),
+)

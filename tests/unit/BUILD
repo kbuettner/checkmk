@@ -29,22 +29,6 @@ py_library(
 )
 
 py_library(
-    name = "conftest_post_rename_site",
-    testonly = True,
-    srcs = [
-        "cmk/post_rename_site/plugins/actions/conftest.py",
-    ],
-    deps = [
-        "//cmk/gui",
-        "//packages/cmk-ccc:user",
-        "//tests/testlib/unit:unit_free",
-        requirement("flask"),
-        requirement("pytest"),
-        requirement("pytest-mock"),
-    ],
-)
-
-py_library(
     name = "conftest_update_config",
     testonly = True,
     srcs = [
@@ -96,101 +80,6 @@ py_test(
         ":conftest",
         "//tests:testlib",
     ],
-)
-
-py_test(
-    name = "post_rename_site_community",
-    srcs = ["__test__.py"] + glob(
-        include = ["cmk/post_rename_site/**/*.py"],
-        exclude = [
-            "**/nonfree/**",
-            "**/conftest.py",
-        ],
-    ),
-    args = [
-        "--config-file=$(location @//:pyproject.toml)",
-        "--import-mode=importlib",
-        "--random-order-bucket=global",
-        "--dist=loadfile",
-        "--numprocesses=4",
-    ],
-    data = ["@//:pyproject.toml"],
-    main = ":__test__.py",
-    visibility = ["//tests:__subpackages__"],
-    deps = [
-        ":__test__",
-        ":conftest",
-        ":conftest_post_rename_site",
-        "//cmk/post_rename_site:cmk_post_rename_site",
-        "//tests/testlib/unit:unit_free",
-        requirement("pytest"),
-        requirement("pytest-asyncio"),
-        requirement("pytest-mock"),
-        requirement("werkzeug"),
-        requirement("flask"),
-        requirement("pytest-random-order"),
-    ] + select({
-        "@//:gpl+nonfree_repo": [
-            "//non-free/packages/cmk-bakery",
-            "//non-free/packages/cmk-dcd:gui",
-            "//non-free/packages/cmk-liveproxyd:gui",
-            "//non-free/packages/cmk-metric-backend",
-            "//non-free/packages/cmk-mknotifyd",
-            "//non-free/packages/cmk-otel-collector",
-            "//non-free/packages/cmk-robotmk",
-            "//non-free/packages/cmk-robotmk:gui",
-            requirement("numpy"),
-            requirement("pypdf"),
-            requirement("pysaml2"),
-            requirement("roman"),
-        ],
-        "@//:gpl_repo": [],
-    }),
-)
-
-py_test(
-    name = "post_rename_site_pro",
-    srcs = ["__test__.py"] + glob(
-        include = ["cmk/post_rename_site/**/nonfree/**/pro/**/*.py"],
-        allow_empty = True,
-        exclude = ["**/conftest.py"],
-    ),
-    args = [
-        "--config-file=$(location @//:pyproject.toml)",
-        "--import-mode=importlib",
-        "--random-order-bucket=global",
-        "--dist=loadfile",
-        "--numprocesses=4",
-    ],
-    data = ["@//:pyproject.toml"],
-    main = ":__test__.py",
-    target_compatible_with = select({
-        "@//:gpl+nonfree_repo": [],
-        "@//:gpl_repo": ["@platforms//:incompatible"],
-    }),
-    visibility = ["//tests:__subpackages__"],
-    deps = [
-        ":__test__",
-        ":conftest",
-        ":conftest_post_rename_site",
-        "//cmk/utils",
-        "//cmk/gui",
-        requirement("pytest"),
-        requirement("pytest-asyncio"),
-        requirement("marshmallow"),
-        requirement("pytest-random-order"),
-        #requirement("time-machine"),
-    ] + select({
-        "@//:gpl+nonfree_repo": [
-            "//cmk/post_rename_site:cmk_post_rename_site_pro",
-            "//non-free/packages/cmk-dcd:gui",
-            "//non-free/packages/cmk-metric-backend",
-            "//non-free/packages/cmk-otel-collector",
-            requirement("pypdf"),
-            #"//tests/testlib/unit:unit_nonfree",
-        ],
-        "@//:gpl_repo": [],
-    }),
 )
 
 py_test(
