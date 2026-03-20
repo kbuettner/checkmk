@@ -3,23 +3,15 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 # Example output from agent:
 # <<<cups_queues>>>
 # printer lpr1 disabled since Wed Jun 16 14:21:14 2010 -
 #     reason unknown
 # printer lpr2 now printing lpr2-3.  enabled since Tue Jun 29 09:22:04 2010
-#     Wiederherstellbar: Der Netzwerk-Host „lpr2“ ist beschäftigt, erneuter Versuch in 30 Sekunden …
+#     Wiederherstellbar: Der Netzwerk-Host „lpr2" ist beschäftigt, erneuter Versuch in 30 Sekunden …
 # printer spr1 is idle.  enabled since Thu Mar 11 14:28:23 2010
-# printer spr2 is idle.  enabled since Thu Mar 11 14:28:23 2010
-# printer spr3 is idle.  enabled since Thu Mar 11 14:28:23 2010
-# printer spr4 is idle.  enabled since Thu Mar 11 14:28:23 2010
-# printer spr5 is idle.  enabled since Thu Mar 11 14:28:23 2010
 # printer spr6 disabled since Mon Jun 21 10:29:39 2010 -
 #     /usr/lib/cups/backend/lpd failed
-# printer spr7 is idle.  enabled since Thu Mar 11 14:28:23 2010
-# printer spr8 is idle.  enabled since Thu Mar 11 14:28:23 2010
 # ---
 # lpr2-2                  root              1024   Tue Jun 29 09:02:35 2010
 # lpr2-3                  root              1024   Tue Jun 29 09:05:54 2010
@@ -30,12 +22,21 @@
 
 import time
 from collections.abc import Mapping
-from typing import TypedDict
+from typing import Any, TypedDict
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import render
+from cmk.agent_based.v2 import (
+    AgentSection,
+    check_levels,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    render,
+    Result,
+    Service,
+    State,
+)
 
-check_info = {}
+_STATE_MAP = {0: State.OK, 1: State.WARN, 2: State.CRIT, 3: State.UNKNOWN}
 
 
 class _Data(TypedDict):
@@ -82,53 +83,52 @@ def parse_cups_queues(string_table: list[list[str]]) -> Section:
     return parsed
 
 
-def discover_cups_queues(parsed):
-    for item in parsed:
-        yield item, {}
+def discover_cups_queues(section: Section) -> DiscoveryResult:
+    yield from (Service(item=item) for item in section)
 
 
-def check_cups_queues(item, params, parsed):
-    if item in parsed:
-        data = parsed[item]
-        if isinstance(params, tuple) and len(params) == 4:
-            params = {
-                "job_count": (params[0], params[1]),
-                "job_age": (params[2], params[3]),
-                "is_idle": 0,
-                "now_printing": 0,
-                "disabled_since": 2,
-            }
+def check_cups_queues(item: str, params: Mapping[str, Any], section: Section) -> CheckResult:
+    if item in section:
+        data = section[item]
 
         if data["status_readable"] in params:
-            state = params[data["status_readable"]]
-            yield state, data["output"]
+            state = _STATE_MAP.get(params[data["status_readable"]], State.UNKNOWN)
+            yield Result(state=state, summary=data["output"])
         else:
-            yield 3, 'Undefinded status output in "lpr -p"'
+            yield Result(state=State.UNKNOWN, summary='Undefinded status output in "lpr -p"')
 
         now = time.time()
         jobs_count = len(data["jobs"])
         if jobs_count > 0:
-            yield check_levels(
-                jobs_count, "jobs", params["job_count"], human_readable_func=str, infoname="Jobs"
+            job_count_levels: tuple[int, int] | None = params["job_count"]
+            yield from check_levels(
+                jobs_count,
+                levels_upper=("fixed", job_count_levels) if job_count_levels else None,
+                render_func=str,
+                label="Jobs",
             )
 
             oldest = min(data["jobs"])
-            yield 0, f"Oldest job is from {render.datetime(oldest)}"
+            yield Result(state=State.OK, summary=f"Oldest job is from {render.datetime(oldest)}")
 
-            yield check_levels(
+            job_age_levels: tuple[int, int] | None = params["job_age"]
+            yield from check_levels(
                 now - oldest,
-                None,
-                params["job_age"],
-                human_readable_func=render.timespan,
-                infoname="Age of oldest job",
+                levels_upper=("fixed", job_age_levels) if job_age_levels else None,
+                render_func=render.timespan,
+                label="Age of oldest job",
             )
     else:
-        yield 3, "Queue not found"
+        yield Result(state=State.UNKNOWN, summary="Queue not found")
 
 
-check_info["cups_queues"] = LegacyCheckDefinition(
+agent_section_cups_queues = AgentSection(
     name="cups_queues",
     parse_function=parse_cups_queues,
+)
+
+check_plugin_cups_queues = CheckPlugin(
+    name="cups_queues",
     service_name="CUPS Queue %s",
     discovery_function=discover_cups_queues,
     check_function=check_cups_queues,
