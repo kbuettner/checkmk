@@ -7526,7 +7526,7 @@ msgid ""
 "As soon as you add your Checkmk server to the monitoring, a graph showing "
 "the history of your host problems will appear here.\n"
 " Please also be aware that this message might appear as a result of a "
-"filtered dashboard. This dashlet currently only supports filtering for sites."
+"filtered dashboard. This widget currently only supports filtering for sites."
 msgstr ""
 "Zodra u uw Checkmk server(s) toevoegt aan de monitoring, zal hier een "
 "grafiek verschijnen met de geschiedenis van uw host problemen. Momenteel "
@@ -7538,7 +7538,7 @@ msgid ""
 "the history of your host problems will appear here. Currently, the following "
 "Checkmk sites are not monitored: %s\n"
 " Please also be aware that this message might appear as a result of a "
-"filtered dashboard. This dashlet currently only supports filtering for sites."
+"filtered dashboard. This widget currently only supports filtering for sites."
 msgstr ""
 "Zodra u uw Checkmk server(s) toevoegt aan de monitoring, zal hier een "
 "grafiek verschijnen met de geschiedenis van uw host problemen. Momenteel "
@@ -46799,27 +46799,6 @@ msgstr ""
 "tot knooppunten eerst weggelaten worden en dat dan het slechtste van de "
 "overgebleven knooppunten de toestand bepaalt. "
 
-msgid ""
-"Normally, the Windows Time Service (being an NTP client) follows the NTP "
-"convention of maintaining a 'reachability' register, which remembers the "
-"result (success or failure) of the last (up to) 8 transactions with the "
-"peer. This setting looks into the reachability register and checks for "
-"consecutive, recent failures, alerting after too many consecutive failures "
-"have occurred. If reachability is 0, the 'resolve attempts' count reported "
-"by the Windows Time Service is used instead to determine how many attempts "
-"have been made."
-msgstr ""
-
-msgid ""
-"Normally, the Windows Time service (being an NTP client) follows the NTP "
-"convention of maintaining a 'reachability' register, which remembers the "
-"result (success or failure) of the last (up to) 8 transactions with the "
-"peer. This setting looks into the reachability register and counts the total "
-"number of failed attempts, alerting when there have been too many. If "
-"reachability is 0, the 'resolve attempts' count reported by the Windows Time "
-"service is used instead to determine how many attempts have been made."
-msgstr ""
-
 #, fuzzy
 msgid ""
 "Normally, the interface checks create a single service for each interface. "
@@ -61980,10 +61959,11 @@ msgstr ""
 msgid "Shows number of alerts grouped for each service."
 msgstr "Toont het aantal waarschuwingen gegroepeerd voor elke dienst."
 
+#, fuzzy
 msgid ""
 "Shows the percentage of services that are not OK in relation to the total "
-"number of services. This dashlet is not respecting the full fillter context "
-"of the dashboard, only the 'site' filter."
+"number of services. This widget is not respecting the full filter context of "
+"the dashboard, only the 'site' filter."
 msgstr ""
 "Toont het percentage diensten die niet OK zijn ten opzichte van het totale "
 "aantal diensten. Deze dashlet respecteert niet de volledige filtercontext "
@@ -73056,6 +73036,24 @@ msgid ""
 msgstr ""
 "Deze controle gebruikt <tt>check_smtp</tt> van de standaard Nagios plugins "
 "om het antwoord van een SMTP server te proberen."
+
+msgid ""
+"This checks consecutive sync failures within the last 8 attempts by "
+"monitoring the 8-bit 'Reachability' register within the Windows Time "
+"Service. It triggers a Warning or Critical alert when the <b>number of "
+"consecutive failed attempts</b> exceeds the defined threshold. For example, "
+"setting a threshold of 4 means that Checkmk will alert if the <b>last</b> 4 "
+"of 8 attempts have consecutively failed."
+msgstr ""
+
+msgid ""
+"This checks consecutive sync failures within the last 8 attempts by "
+"monitoring the 8-bit 'Reachability' register within the Windows Time "
+"Service. It triggers a Warning or Critical alert when the <b>number of total "
+"failed attempts</b> exceeds the defined threshold. For example, setting a "
+"threshold of 4 means that Checkmk will alert if <b>any</b> 4 of the last 8 "
+"attempts have failed."
+msgstr ""
 
 msgid "This collection"
 msgstr "Deze collectie"
@@ -93874,6 +93872,13 @@ msgstr "Zijbalk elementen"
 msgid "Display user messages, sidebar elements, text or embed a URL"
 msgstr ""
 
+msgid "Ntop"
+msgstr "Ntop"
+
+#, fuzzy
+msgid "Display ntop alerts, flows or top talkers"
+msgstr "Weergave Ntop bezet, verleden en stroom waarschuwingen"
+
 #, fuzzy
 msgid "Select custom graph"
 msgstr "Kloon aangepaste grafiek"
@@ -94890,6 +94895,30 @@ msgstr "De naam van de dienst"
 msgid "Show bar visualization"
 msgstr "BI-visualisatie"
 
+msgid ""
+"A preview of ntop widgets is not available due to the widget size limitation"
+msgstr ""
+
+#, fuzzy
+msgid "Ntop alerts"
+msgstr "Ntop: Waarschuwingen"
+
+#, fuzzy
+msgid "Ntop flows"
+msgstr "Alle stromen"
+
+#, fuzzy
+msgid "Ntop top talkers"
+msgstr "Ntop top peers"
+
+#, fuzzy
+msgid "Add ntop"
+msgstr "Toevoegen aan"
+
+#, fuzzy
+msgid "Choose what to display"
+msgstr "Geef geen datum weer"
+
 msgid "Enter URL to embed"
 msgstr ""
 
@@ -95676,6 +95705,33 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "%{n} second"
+msgid_plural "%{n} seconds"
+msgstr[0] "seconden"
+msgstr[1] "seconden"
+
+#, fuzzy
+msgid "%{n} minute"
+msgid_plural "%{n} minutes"
+msgstr[0] "minuut"
+msgstr[1] "minuut"
+
+#, fuzzy
+msgid "%{n} hour"
+msgid_plural "%{n} hours"
+msgstr[0] "uur"
+msgstr[1] "uur"
+
+#, fuzzy
+msgid "%{n} day"
+msgid_plural "%{n} days"
+msgstr[0] "%d dagen"
+msgstr[1] "%d dagen"
+
+msgid "This token remains valid for %{duration}."
+msgstr ""
+
+#, fuzzy
 msgid "Generate token"
 msgstr "Genereer"
 
@@ -96088,11 +96144,6 @@ msgstr ""
 msgid ""
 "On the machine on which the Relay will be running, run the command below to "
 "execute "
-msgstr ""
-
-msgid ""
-"If you do not want to run the script as the specified user — or 2FA is "
-"active for that user —, "
 msgstr ""
 
 #, fuzzy
@@ -100042,20 +100093,8 @@ msgstr ""
 #~ msgstr "Zoek index"
 
 #, fuzzy, python-format
-#~ msgid "%d day"
-#~ msgstr "%d dagen"
-
-#, fuzzy, python-format
-#~ msgid "%d minute"
-#~ msgstr "minuut"
-
-#, fuzzy, python-format
 #~ msgid "%d minutes"
 #~ msgstr "5 minuten"
-
-#, fuzzy, python-format
-#~ msgid "%d seconds"
-#~ msgstr "seconden"
 
 #, fuzzy
 #~ msgid "Active time series (last 24 h)"
@@ -101448,9 +101487,6 @@ msgstr ""
 
 #~ msgid "Leave layout mode"
 #~ msgstr "Verlaat opmaakmodus"
-
-#~ msgid "Ntop"
-#~ msgstr "Ntop"
 
 #~ msgid "Other dashboards"
 #~ msgstr "Andere dashboards"

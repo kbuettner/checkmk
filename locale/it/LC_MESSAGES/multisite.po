@@ -7448,7 +7448,7 @@ msgid ""
 "As soon as you add your Checkmk server to the monitoring, a graph showing "
 "the history of your host problems will appear here.\n"
 " Please also be aware that this message might appear as a result of a "
-"filtered dashboard. This dashlet currently only supports filtering for sites."
+"filtered dashboard. This widget currently only supports filtering for sites."
 msgstr ""
 "Non appena si aggiunge il server Checkmk al monitoraggio, viene visualizzato "
 "un grafico che mostra la cronologia dei problemi dell'host.\n"
@@ -7456,13 +7456,13 @@ msgstr ""
 "di una dashboard filtrata. Attualmente questa dashlet supporta solo il "
 "filtraggio dei siti."
 
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "As soon as you add your Checkmk server(s) to the monitoring, a graph showing "
 "the history of your host problems will appear here. Currently, the following "
 "Checkmk sites are not monitored: %s\n"
 " Please also be aware that this message might appear as a result of a "
-"filtered dashboard. This dashlet currently only supports filtering for sites."
+"filtered dashboard. This widget currently only supports filtering for sites."
 msgstr ""
 "Non appena si aggiungono i server Checkmk al monitoraggio, qui apparirà un "
 "grafico che mostra la cronologia dei problemi dell'host. Attualmente, i "
@@ -46602,27 +46602,6 @@ msgstr ""
 "nodi peggiori vengono prima eliminati e poi il peggiore dei nodi rimanenti "
 "definisce lo stato. "
 
-msgid ""
-"Normally, the Windows Time Service (being an NTP client) follows the NTP "
-"convention of maintaining a 'reachability' register, which remembers the "
-"result (success or failure) of the last (up to) 8 transactions with the "
-"peer. This setting looks into the reachability register and checks for "
-"consecutive, recent failures, alerting after too many consecutive failures "
-"have occurred. If reachability is 0, the 'resolve attempts' count reported "
-"by the Windows Time Service is used instead to determine how many attempts "
-"have been made."
-msgstr ""
-
-msgid ""
-"Normally, the Windows Time service (being an NTP client) follows the NTP "
-"convention of maintaining a 'reachability' register, which remembers the "
-"result (success or failure) of the last (up to) 8 transactions with the "
-"peer. This setting looks into the reachability register and counts the total "
-"number of failed attempts, alerting when there have been too many. If "
-"reachability is 0, the 'resolve attempts' count reported by the Windows Time "
-"service is used instead to determine how many attempts have been made."
-msgstr ""
-
 #, fuzzy
 msgid ""
 "Normally, the interface checks create a single service for each interface. "
@@ -61728,10 +61707,11 @@ msgstr ""
 msgid "Shows number of alerts grouped for each service."
 msgstr "Mostra il numero di avvisi raggruppati per ogni servizio."
 
+#, fuzzy
 msgid ""
 "Shows the percentage of services that are not OK in relation to the total "
-"number of services. This dashlet is not respecting the full fillter context "
-"of the dashboard, only the 'site' filter."
+"number of services. This widget is not respecting the full filter context of "
+"the dashboard, only the 'site' filter."
 msgstr ""
 "Mostra la percentuale di servizi che non sono OK rispetto al numero totale "
 "di servizi. Questo dashlet non rispetta il contesto completo del dashboard, "
@@ -72826,6 +72806,24 @@ msgid ""
 msgstr ""
 "Questo controllo usa <tt>check_smtp</tt> dai plugin standard di Nagios per "
 "provare la risposta di un server SMTP."
+
+msgid ""
+"This checks consecutive sync failures within the last 8 attempts by "
+"monitoring the 8-bit 'Reachability' register within the Windows Time "
+"Service. It triggers a Warning or Critical alert when the <b>number of "
+"consecutive failed attempts</b> exceeds the defined threshold. For example, "
+"setting a threshold of 4 means that Checkmk will alert if the <b>last</b> 4 "
+"of 8 attempts have consecutively failed."
+msgstr ""
+
+msgid ""
+"This checks consecutive sync failures within the last 8 attempts by "
+"monitoring the 8-bit 'Reachability' register within the Windows Time "
+"Service. It triggers a Warning or Critical alert when the <b>number of total "
+"failed attempts</b> exceeds the defined threshold. For example, setting a "
+"threshold of 4 means that Checkmk will alert if <b>any</b> 4 of the last 8 "
+"attempts have failed."
+msgstr ""
 
 msgid "This collection"
 msgstr "Questa collezione"
@@ -93578,6 +93576,13 @@ msgstr "Elementi della barra laterale"
 msgid "Display user messages, sidebar elements, text or embed a URL"
 msgstr ""
 
+msgid "Ntop"
+msgstr "Ntop"
+
+#, fuzzy
+msgid "Display ntop alerts, flows or top talkers"
+msgstr "Visualizza Ntop impegnato, passato e avvisi di flusso"
+
 #, fuzzy
 msgid "Select custom graph"
 msgstr "Clonare un grafico personalizzato"
@@ -94589,6 +94594,30 @@ msgstr "Il nome del servizio"
 msgid "Show bar visualization"
 msgstr "Mostra la visualizzazione delle barre"
 
+msgid ""
+"A preview of ntop widgets is not available due to the widget size limitation"
+msgstr ""
+
+#, fuzzy
+msgid "Ntop alerts"
+msgstr "Ntop: Avvisi"
+
+#, fuzzy
+msgid "Ntop flows"
+msgstr "Tutti i flussi"
+
+#, fuzzy
+msgid "Ntop top talkers"
+msgstr "Ntop top peers"
+
+#, fuzzy
+msgid "Add ntop"
+msgstr "Aggiungi a"
+
+#, fuzzy
+msgid "Choose what to display"
+msgstr "Non visualizzare una data"
+
 msgid "Enter URL to embed"
 msgstr ""
 
@@ -95375,6 +95404,33 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "%{n} second"
+msgid_plural "%{n} seconds"
+msgstr[0] "secondi"
+msgstr[1] "secondi"
+
+#, fuzzy
+msgid "%{n} minute"
+msgid_plural "%{n} minutes"
+msgstr[0] "minuto"
+msgstr[1] "minuto"
+
+#, fuzzy
+msgid "%{n} hour"
+msgid_plural "%{n} hours"
+msgstr[0] "%d ora"
+msgstr[1] "%d ora"
+
+#, fuzzy
+msgid "%{n} day"
+msgid_plural "%{n} days"
+msgstr[0] "%d giorni"
+msgstr[1] "%d giorni"
+
+msgid "This token remains valid for %{duration}."
+msgstr ""
+
+#, fuzzy
 msgid "Generate token"
 msgstr "Generare la chiave"
 
@@ -95790,11 +95846,6 @@ msgstr ""
 msgid ""
 "On the machine on which the Relay will be running, run the command below to "
 "execute "
-msgstr ""
-
-msgid ""
-"If you do not want to run the script as the specified user — or 2FA is "
-"active for that user —, "
 msgstr ""
 
 #, fuzzy
@@ -99983,20 +100034,8 @@ msgstr ""
 #~ msgstr "Indice di ricerca"
 
 #, fuzzy, python-format
-#~ msgid "%d day"
-#~ msgstr "%d giorni"
-
-#, fuzzy, python-format
-#~ msgid "%d minute"
-#~ msgstr "minuto"
-
-#, fuzzy, python-format
 #~ msgid "%d minutes"
 #~ msgstr "5 minuti"
-
-#, fuzzy, python-format
-#~ msgid "%d seconds"
-#~ msgstr "secondi"
 
 #, fuzzy
 #~ msgid "Active time series (last 24 h)"
@@ -101404,9 +101443,6 @@ msgstr ""
 
 #~ msgid "Leave layout mode"
 #~ msgstr "Lasciare la modalità di impaginazione"
-
-#~ msgid "Ntop"
-#~ msgstr "Ntop"
 
 #~ msgid "Other dashboards"
 #~ msgstr "Altri cruscotti"
