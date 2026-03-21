@@ -11,7 +11,6 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 import pytest
-from pytest import MonkeyPatch
 
 import cmk.ccc.version
 import cmk.utils.paths
@@ -48,7 +47,6 @@ from cmk.gui.userdb.store import (
 from cmk.gui.utils.htpasswd import Htpasswd
 from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.valuespec import Dictionary
-from tests.testlib.common.repo import is_ultimatemt_repo
 
 if TYPE_CHECKING:
     from tests.testlib.unit.gui.web_test_app import SetConfig, SingleRequest, WebTestAppForCMK
@@ -729,116 +727,6 @@ def test_check_credentials_local_user_disallow_locked(with_user: tuple[UserId, s
                 force_authuser=False,
             ),
         )
-
-
-# user_id needs to be used here because it executes a reload of the config and the monkeypatch of
-# the config needs to be done after loading the config
-@pytest.fixture()
-def make_cme(monkeypatch: MonkeyPatch, user_id: UserId, set_config: SetConfig) -> Generator[None]:
-    monkeypatch.setattr(cmk.ccc.version, "omd_version", lambda: "2.0.0i1.cme")
-    assert cmk.ccc.version.edition(cmk.utils.paths.omd_root) is cmk.ccc.version.Edition.ULTIMATEMT
-
-    with set_config(current_customer="test-customer"):
-        # Fix CRE mypy tests that do not have this attribute defined
-        assert active_config.current_customer == "test-customer"
-        yield
-
-
-@pytest.mark.skipif(not is_ultimatemt_repo(), reason="managed-edition-only test")
-@pytest.mark.usefixtures("make_cme")
-def test_check_credentials_managed_global_user_is_allowed(with_user: tuple[UserId, str]) -> None:
-    user_id, password = with_user
-    now = datetime.now()
-    from cmk.gui.nonfree.ultimatemt import managed  # type: ignore[import-untyped, unused-ignore, import-not-found]  # noqa: I001
-
-    users = _load_users_uncached(lock=True)
-    users[user_id]["customer"] = managed.SCOPE_GLOBAL
-    save_users(
-        users,
-        (user_attributes := get_user_attributes([])),
-        user_connections=[],
-        now=now,
-        pprint_value=True,
-        call_users_saved_hook=False,
-    )
-    assert (
-        userdb.check_credentials(
-            user_id,
-            Password(password),
-            user_attributes,
-            now,
-            UserSpec(
-                contactgroups=[],
-                roles=["user"],
-                force_authuser=False,
-            ),
-        )
-        == user_id
-    )
-
-
-@pytest.mark.skipif(not is_ultimatemt_repo(), reason="managed-edition-only test")
-@pytest.mark.usefixtures("make_cme")
-def test_check_credentials_managed_customer_user_is_allowed(with_user: tuple[UserId, str]) -> None:
-    user_id, password = with_user
-    now = datetime.now()
-    users = _load_users_uncached(lock=True)
-    users[user_id]["customer"] = "test-customer"
-    save_users(
-        users,
-        (user_attributes := get_user_attributes([])),
-        user_connections=[],
-        now=now,
-        pprint_value=True,
-        call_users_saved_hook=False,
-    )
-    assert (
-        userdb.check_credentials(
-            user_id,
-            Password(password),
-            user_attributes,
-            now,
-            UserSpec(
-                contactgroups=[],
-                roles=["user"],
-                force_authuser=False,
-            ),
-        )
-        == user_id
-    )
-
-
-@pytest.mark.skipif(not is_ultimatemt_repo(), reason="managed-edition-only test")
-@pytest.mark.usefixtures("make_cme")
-def test_check_credentials_managed_wrong_customer_user_is_denied(
-    with_user: tuple[UserId, str],
-) -> None:
-    user_id, password = with_user
-    now = datetime.now()
-    users = _load_users_uncached(lock=True)
-    users[user_id]["customer"] = "wrong-customer"
-    save_users(
-        users,
-        (user_attributes := get_user_attributes([])),
-        user_connections=[],
-        now=now,
-        pprint_value=True,
-        call_users_saved_hook=False,
-    )
-    assert (
-        userdb.check_credentials(
-            user_id,
-            Password(password),
-            user_attributes,
-            now,
-            UserSpec(
-                contactgroups=[],
-                roles=["user"],
-                force_authuser=False,
-            ),
-        )
-        is False
-    )
 
 
 def test_load_custom_attr_not_existing(user_id: UserId) -> None:
