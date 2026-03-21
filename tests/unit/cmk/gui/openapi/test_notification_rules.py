@@ -80,10 +80,6 @@ from cmk.utils.notify_types import CaseStateStr, CustomPluginName, IncidentState
 from cmk.utils.tags import TagID
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
-managedtest = pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT, reason="see #7213"
-)
-
 
 def test_get_notification_rule(clients: ClientRegistry) -> None:
     config = notification_rule_request_example()
@@ -108,15 +104,14 @@ def test_create_notification_rule(clients: ClientRegistry) -> None:
     assert r1.json["extensions"] == {"rule_config": config}
 
 
-@managedtest
 def test_update_rule_with_full_contact_selection_data(clients: ClientRegistry) -> None:
     config = notification_rule_request_example()
     r1 = clients.RuleNotification.create(config)
 
     clients.ContactGroup.bulk_create(
         groups=(
-            {"name": "cg1", "alias": "cg1", "customer": "provider"},
-            {"name": "cg2", "alias": "cg2", "customer": "provider"},
+            _group_entry("cg1", "cg1"),
+            _group_entry("cg2", "cg2"),
         )
     )
 
@@ -149,11 +144,18 @@ def test_create_rule_delete_rule(clients: ClientRegistry) -> None:
     ).assert_status_code(404)
 
 
+def _group_entry(name: str, alias: str) -> dict[str, str]:
+    entry: dict[str, str] = {"name": name, "alias": alias}
+    if version.edition(paths.omd_root) is version.Edition.ULTIMATEMT:
+        entry["customer"] = "provider"
+    return entry
+
+
 def setup_site_data(clients: ClientRegistry) -> None:
     clients.ContactGroup.bulk_create(
         groups=(
-            {"name": "cg1", "alias": "cg1", "customer": "provider"},
-            {"name": "cg2", "alias": "cg2", "customer": "provider"},
+            _group_entry("cg1", "cg1"),
+            _group_entry("cg2", "cg2"),
         )
     )
 
@@ -168,15 +170,15 @@ def setup_site_data(clients: ClientRegistry) -> None:
 
     clients.HostGroup.bulk_create(
         groups=(
-            {"name": "hg1", "alias": "hg1", "customer": "provider"},
-            {"name": "hg2", "alias": "hg2", "customer": "provider"},
+            _group_entry("hg1", "hg1"),
+            _group_entry("hg2", "hg2"),
         )
     )
 
     clients.ServiceGroup.bulk_create(
         groups=(
-            {"name": "sg1", "alias": "sg1", "customer": "provider"},
-            {"name": "sg2", "alias": "hs2", "customer": "provider"},
+            _group_entry("sg1", "sg1"),
+            _group_entry("sg2", "hs2"),
         )
     )
     clients.SiteManagement.create(site_config=_default_config())
@@ -187,7 +189,6 @@ def setup_site_data(clients: ClientRegistry) -> None:
         password="tt",
         shared=["all"],
         editable_by="admin",
-        customer="global",
     )
 
     clients.Folder.create(title="test_folder1", parent="~")
@@ -405,7 +406,6 @@ def conditions_set_3() -> APIConditions:
     return conditions
 
 
-@managedtest
 @pytest.mark.usefixtures("mock_password_file_regeneration")
 @pytest.mark.parametrize("testdata", [conditions_set_1(), conditions_set_2(), conditions_set_3()])
 def test_create_and_update_rule_with_conditions_data_200(
@@ -433,7 +433,6 @@ def invalid_conditions() -> Iterator:
         yield config
 
 
-@managedtest
 @pytest.mark.parametrize("testdata", invalid_conditions())
 @pytest.mark.usefixtures("mock_password_file_regeneration")
 def test_create_and_update_rule_with_conditions_data_400(
@@ -501,7 +500,6 @@ contact_selection_testdata: list[APIContactSelection] = [
 ]
 
 
-@managedtest
 @pytest.mark.parametrize("testdata", contact_selection_testdata)
 def test_create_and_update_rule_with_contact_selection_data(
     clients: ClientRegistry,
@@ -509,9 +507,9 @@ def test_create_and_update_rule_with_contact_selection_data(
 ) -> None:
     clients.ContactGroup.bulk_create(
         groups=(
-            {"name": "cg1", "alias": "cg1", "customer": "provider"},
-            {"name": "cg2", "alias": "cg2", "customer": "provider"},
-            {"name": "cg3", "alias": "cg3", "customer": "provider"},
+            _group_entry("cg1", "cg1"),
+            _group_entry("cg2", "cg2"),
+            _group_entry("cg3", "cg3"),
         )
     )
 
@@ -1423,7 +1421,6 @@ def test_update_notification_method_cancel_previous(
     assert r2.json["extensions"] == {"rule_config": config}
 
 
-@managedtest
 @pytest.mark.parametrize("plugin_data", plugin_test_data)
 @pytest.mark.usefixtures("mock_password_file_regeneration")
 def test_update_notification_method(
@@ -1464,7 +1461,6 @@ invalid_pushover_keys = [
 ]
 
 
-@managedtest
 @pytest.mark.parametrize("invalid_key", invalid_pushover_keys)
 def test_pushover_key_regex(
     clients: ClientRegistry,
@@ -1733,7 +1729,6 @@ def plugin_with_bulking(
                 plugins.append(plugin["plugin_name"])
 
 
-@managedtest
 @pytest.mark.parametrize("config", plugin_with_bulking(bulking="allowed"))
 @pytest.mark.usefixtures("mock_password_file_regeneration")
 def test_bulking_200(
@@ -1745,7 +1740,6 @@ def test_bulking_200(
     clients.RuleNotification.create(rule_config=config)
 
 
-@managedtest
 @pytest.mark.parametrize("config", plugin_with_bulking(bulking="not_allowed"))
 @pytest.mark.usefixtures("mock_password_file_regeneration")
 def test_bulking_400(
@@ -1818,7 +1812,6 @@ invalid_list_configs = [
 ]
 
 
-@managedtest
 @pytest.mark.parametrize("plugin_params, expected_error", invalid_list_configs)
 def test_create_notification_custom_plugin_invalid_list_config(
     clients: ClientRegistry,
@@ -1976,7 +1969,6 @@ valid_dict_configs = [
 ]
 
 
-@managedtest
 @pytest.mark.parametrize("plugin_params", valid_dict_configs)
 @pytest.mark.usefixtures("register_custom_plugin")
 def test_create_notification_custom_plugin_valid_dict_config(
@@ -2170,7 +2162,6 @@ auth_methods: list[
 ]
 
 
-@managedtest
 @pytest.mark.parametrize("plugin", [plugin_test_data[8], plugin_test_data[14]])
 @pytest.mark.parametrize("auth_method", auth_methods)
 @pytest.mark.usefixtures("mock_password_file_regeneration")

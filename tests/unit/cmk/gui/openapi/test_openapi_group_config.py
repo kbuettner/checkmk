@@ -10,6 +10,7 @@
 import json
 import random
 import string
+from typing import Any
 
 import pytest
 from pytest import FixtureRequest
@@ -20,11 +21,16 @@ from cmk.utils import paths
 from tests.testlib.unit.gui.web_test_app import WebTestAppForCMK
 from tests.testlib.unit.rest_api_client import ClientRegistry, GroupConfig
 
-managedtest = pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT, reason="see #7213"
-)
-
 ESCAPED_GROUP_NAME_PATTERN = "^(?!\\\\.\\\\.$|\\\\.$)[-a-zA-Z0-9_\\\\.]*\\\\Z"
+_is_managed_edition = version.edition(paths.omd_root) is version.Edition.ULTIMATEMT
+
+
+def _group_params(name: str, alias: str, customer: str = "provider") -> dict[str, Any]:
+    """Build group params dict, only including customer in managed edition."""
+    params: dict[str, Any] = {"name": name, "alias": alias}
+    if _is_managed_edition:
+        params["customer"] = customer
+    return params
 
 
 @pytest.fixture(name="group_type", params=["host", "contact", "service"])
@@ -37,12 +43,10 @@ def fixture_group_client(clients: ClientRegistry, group_type: str) -> GroupConfi
     return getattr(clients, f"{group_type.title()}Group")
 
 
-@managedtest
 def test_required_alias_field_create(group_client: GroupConfig) -> None:
     group_client.create(name="RandleMcMurphy", alias="", expect_ok=False).assert_status_code(400)
 
 
-@managedtest
 @pytest.mark.parametrize("group_type", ["host", "contact", "service"])
 def test_openapi_groups(
     base: str,
@@ -53,7 +57,7 @@ def test_openapi_groups(
     aut_user_auth_wsgi_app.call_method(
         "post",
         base + f"/domain-types/{group_type}_group_config/collections/all",
-        params=json.dumps({"name": "Invalid%&name", "alias": "Invalid", "customer": "provider"}),
+        params=json.dumps(_group_params("Invalid%&name", "Invalid")),
         status=400,
         headers={"Accept": "application/json"},
         content_type="application/json",
@@ -62,7 +66,7 @@ def test_openapi_groups(
     name = _random_string(10)
     alias = _random_string(10)
 
-    group = {"name": name, "alias": alias, "customer": "provider"}
+    group = _group_params(name, alias)
 
     base = "/NO_SITE/check_mk/api/1.0"
     resp = aut_user_auth_wsgi_app.call_method(
@@ -118,17 +122,13 @@ def test_openapi_groups(
     )
 
 
-@managedtest
 @pytest.mark.parametrize("group_type", ["host", "service", "contact"])
 def test_openapi_bulk_groups(
     monkeypatch: pytest.MonkeyPatch,
     group_type: str,
     aut_user_auth_wsgi_app: WebTestAppForCMK,
 ) -> None:
-    groups = [
-        {"name": _random_string(10), "alias": _random_string(10), "customer": "provider"}
-        for _i in range(2)
-    ]
+    groups = [_group_params(_random_string(10), _random_string(10)) for _i in range(2)]
 
     base = "/NO_SITE/check_mk/api/1.0"
     resp = aut_user_auth_wsgi_app.call_method(
@@ -147,7 +147,8 @@ def test_openapi_bulk_groups(
         status=200,
         headers={"Accept": "application/json"},
     )
-    assert resp.json_body["extensions"]["customer"] == "provider"
+    if _is_managed_edition:
+        assert resp.json_body["extensions"]["customer"] == "provider"
 
     _resp = aut_user_auth_wsgi_app.call_method(
         "post",
@@ -161,7 +162,10 @@ def test_openapi_bulk_groups(
     update_groups = [
         {
             "name": group["name"],
-            "attributes": {"alias": group["alias"], "customer": "global"},
+            "attributes": {
+                "alias": group["alias"],
+                **({"customer": "global"} if _is_managed_edition else {}),
+            },
         }
         for group in groups
     ]
@@ -181,7 +185,8 @@ def test_openapi_bulk_groups(
         status=200,
         headers={"Accept": "application/json"},
     )
-    assert resp.json_body["extensions"]["customer"] == "global"
+    if _is_managed_edition:
+        assert resp.json_body["extensions"]["customer"] == "global"
 
     partial_update_groups = [
         {
@@ -208,7 +213,8 @@ def test_openapi_bulk_groups(
         headers={"Accept": "application/json"},
         status=200,
     )
-    assert resp.json_body["extensions"]["customer"] == "global"
+    if _is_managed_edition:
+        assert resp.json_body["extensions"]["customer"] == "global"
 
     monkeypatch.setattr("cmk.gui.mkeventd.wato._get_rule_stats_from_ec", lambda: {})
     _resp = aut_user_auth_wsgi_app.call_method(
@@ -221,7 +227,7 @@ def test_openapi_bulk_groups(
     )
 
 
-@managedtest
+@pytest.mark.skipif(not _is_managed_edition, reason="customer field requires managed edition")
 @pytest.mark.parametrize("group_type", ["host", "contact", "service"])
 def test_openapi_groups_with_customer(
     monkeypatch: pytest.MonkeyPatch,
@@ -284,7 +290,6 @@ def test_openapi_groups_with_customer(
     )
 
 
-@managedtest
 def test_openapi_group_values_are_links(group_client: GroupConfig, group_type: str) -> None:
     response = group_client.list()
     assert len(response.json["value"]) == 0
@@ -292,7 +297,6 @@ def test_openapi_group_values_are_links(group_client: GroupConfig, group_type: s
     group_client.create(
         name=f"{group_type}_foo_bar",
         alias=f"{group_type} foo bar",
-        customer="global",
     )
 
     response = group_client.list()
@@ -305,7 +309,6 @@ def _random_string(size):
     return "".join(random.choice(string.ascii_letters + string.digits) for _ in range(size))
 
 
-@managedtest
 @pytest.mark.parametrize("group_type", ["host", "contact", "service"])
 def test_delete_non_existing_group_types(
     aut_user_auth_wsgi_app: WebTestAppForCMK,
@@ -320,21 +323,13 @@ def test_delete_non_existing_group_types(
     )
 
 
-@managedtest
 @pytest.mark.parametrize("group_type", ["host", "contact", "service"])
 def test_bulk_delete_non_existing_group_types(
     aut_user_auth_wsgi_app: WebTestAppForCMK,
     group_type: str,
     base: str,
 ) -> None:
-    groups = [
-        {
-            "name": _random_string(10),
-            "alias": _random_string(10),
-            "customer": "provider",
-        }
-        for _ in range(2)
-    ]
+    groups = [_group_params(_random_string(10), _random_string(10)) for _ in range(2)]
 
     aut_user_auth_wsgi_app.call_method(
         "post",
@@ -346,17 +341,13 @@ def test_bulk_delete_non_existing_group_types(
     )
 
 
-@managedtest
 @pytest.mark.parametrize("group_type", ["host", "service", "contact"])
 def test_openapi_bulk_group_schema(
     aut_user_auth_wsgi_app: WebTestAppForCMK,
     group_type: str,
     base: str,
 ) -> None:
-    groups = [
-        {"name": _random_string(10), "alias": _random_string(10), "customer": "provider"}
-        for _i in range(2)
-    ]
+    groups = [_group_params(_random_string(10), _random_string(10)) for _i in range(2)]
 
     # ------------------- bulk create -------------------
     resp = aut_user_auth_wsgi_app.call_method(
@@ -398,7 +389,10 @@ def test_openapi_bulk_group_schema(
     updated_groups = [
         {
             "name": group["name"],
-            "attributes": {"alias": group["alias"], "customer": "global"},
+            "attributes": {
+                "alias": group["alias"],
+                **({"customer": "global"} if _is_managed_edition else {}),
+            },
         }
         for group in groups
     ]
@@ -436,7 +430,6 @@ invalid_group_ids = (
 )
 
 
-@managedtest
 @pytest.mark.parametrize("group_id", invalid_group_ids)
 def test_host_group_id_with_newline(
     clients: ClientRegistry,
@@ -450,7 +443,6 @@ def test_host_group_id_with_newline(
     )
 
 
-@managedtest
 @pytest.mark.parametrize("group_id", invalid_group_ids)
 def test_contact_group_id_with_newline(
     clients: ClientRegistry,
@@ -464,7 +456,6 @@ def test_contact_group_id_with_newline(
     )
 
 
-@managedtest
 @pytest.mark.parametrize("group_id", invalid_group_ids)
 def test_service_group_id_with_newline(
     clients: ClientRegistry,
@@ -478,7 +469,6 @@ def test_service_group_id_with_newline(
     )
 
 
-@managedtest
 def test_group_attributes_required(
     group_client: GroupConfig,
 ) -> None:
@@ -494,7 +484,6 @@ def test_group_attributes_required(
     }
 
 
-@managedtest
 def test_contact_group_dot_names(
     clients: ClientRegistry,
 ) -> None:

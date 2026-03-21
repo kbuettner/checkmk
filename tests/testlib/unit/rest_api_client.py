@@ -650,7 +650,7 @@ class UserClient(RestApiClient):
         self,
         username: str,
         fullname: str | None = None,
-        customer: str = "provider",
+        customer: str | None = None,
         contactgroups: list[str] | None = None,
         authorized_sites: Sequence[str] | None = None,
         idle_timeout: dict[str, Any] | None = None,
@@ -1482,21 +1482,26 @@ class PasswordClient(RestApiClient):
         customer: str | None = None,
         expect_ok: bool = True,
     ) -> Response:
+        body: dict[str, Any] = _only_set_keys(
+            {
+                "ident": ident,
+                "title": title,
+                "password": password,
+                "shared": shared,
+                "editable_by": editable_by,
+                "owner": _owner,
+                "comment": comment,
+            }
+        )
+        if version.edition(paths.omd_root) is version.Edition.ULTIMATEMT:
+            body["customer"] = customer if customer is not None else "provider"
+        elif customer is not None:
+            body["customer"] = customer
+
         return self.request(
             "post",
             url=f"/domain-types/{self.domain}/collections/all",
-            body=_only_set_keys(
-                {
-                    "ident": ident,
-                    "title": title,
-                    "password": password,
-                    "shared": shared,
-                    "editable_by": editable_by,
-                    "owner": _owner,
-                    "comment": comment,
-                    "customer": "provider" if customer is None else customer,
-                }
-            ),
+            body=body,
             expect_ok=expect_ok,
         )
 
@@ -1530,19 +1535,22 @@ class PasswordClient(RestApiClient):
         expect_ok: bool = True,
         etag: IF_MATCH_HEADER_OPTIONS = "star",
     ) -> Response:
+        body = _only_set_keys(
+            {
+                "title": title,
+                "comment": comment,
+                "editable_by": editable_by,
+                "password": password,
+                "shared": shared,
+            }
+        )
+        if customer is not None:
+            body["customer"] = customer
+
         return self.request(
             "put",
             url=f"/objects/{self.domain}/{ident}",
-            body=_only_set_keys(
-                {
-                    "title": title,
-                    "comment": comment,
-                    "editable_by": editable_by,
-                    "password": password,
-                    "shared": shared,
-                    "customer": customer,
-                }
-            ),
+            body=body,
             expect_ok=expect_ok,
             headers=self._set_etag_header(ident, etag),
         )
@@ -1860,7 +1868,7 @@ class GroupConfig(RestApiClient):
         self,
         name: str,
         alias: str,
-        customer: str = "provider",
+        customer: str | None = None,
         inventory_paths: APIInventoryPaths | None = None,
         expect_ok: bool = True,
     ) -> Response:
@@ -1868,7 +1876,7 @@ class GroupConfig(RestApiClient):
         if inventory_paths:
             body["inventory_paths"] = inventory_paths
         if version.edition(paths.omd_root) is version.Edition.ULTIMATEMT:
-            body["customer"] = customer
+            body["customer"] = customer if customer is not None else "provider"
 
         return self.request(
             "post",

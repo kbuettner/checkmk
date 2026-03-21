@@ -50,11 +50,6 @@ EDITIONS_ULTIMATE_PLUS = {
 }
 
 
-managedtest = pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT, reason="see #7213"
-)
-
-
 ultamate_plus_test = pytest.mark.skipif(
     version.edition(paths.omd_root) not in EDITIONS_ULTIMATE_PLUS,
     reason="not available for other editions",
@@ -957,12 +952,10 @@ def test_openapi_host_update_invalid(clients: ClientRegistry) -> None:
     ).assert_status_code(400)
 
 
-@managedtest
 def test_openapi_create_host_with_contact_group(clients: ClientRegistry) -> None:
     clients.ContactGroup.create(
         name="code_monkeys",
         alias="banana_team",
-        customer="global",
     )
     clients.HostConfig.create(
         host_name="example.com",
@@ -980,7 +973,6 @@ def test_openapi_create_host_with_contact_group(clients: ClientRegistry) -> None
     )
 
 
-@managedtest
 def test_openapi_host_with_custom_attributes(
     clients: ClientRegistry,
     custom_host_attribute_basic_topic: None,
@@ -1003,7 +995,6 @@ def test_openapi_host_with_custom_attributes(
     assert "foo" not in resp.json["extensions"]["attributes"]
 
 
-@managedtest
 def test_openapi_host_with_inventory_failed(clients: ClientRegistry) -> None:
     resp = clients.HostConfig.create(
         host_name="example.com",
@@ -1016,7 +1007,6 @@ def test_openapi_host_with_inventory_failed(clients: ClientRegistry) -> None:
     assert resp.json["extensions"]["attributes"]["inventory_failed"] is True
 
 
-@managedtest
 def test_openapi_host_with_waiting_for_discovery(clients: ClientRegistry) -> None:
     resp = clients.HostConfig.create(
         host_name="example.com",
@@ -1137,7 +1127,7 @@ def test_openapi_host_config_attributes_as_string_crash_regression(
     )
     resp.assert_status_code(400)
 
-    resp.json["fields"]["attributes"] == [f"Data type is invalid: {attributes}"]
+    assert resp.json["fields"]["attributes"] == [f"Data type is invalid: {attributes}"]
 
 
 @pytest.mark.usefixtures("with_host")
@@ -1170,7 +1160,6 @@ def test_openapi_host_config_ipmi_credentials_empty(
     assert resp.json["extensions"]["attributes"]["management_snmp_community"] is None
 
 
-@managedtest
 @pytest.mark.usefixtures("with_host")
 def test_openapi_host_config_show_host_disregards_contact_groups(
     clients: ClientRegistry,
@@ -1182,7 +1171,7 @@ def test_openapi_host_config_show_host_disregards_contact_groups(
     clients.User.create(
         username="unable_to_see_host",
         fullname="unable_to_see_host",
-        customer="provider",
+        customer=None,
         contactgroups=["no_hosts_in_here"],
         auth_option={"auth_type": "password", "password": "supersecretish"},
     )
@@ -1201,7 +1190,6 @@ def test_openapi_host_config_show_host_disregards_contact_groups(
     assert "heute" in resp.json["detail"]
 
 
-@managedtest
 def test_openapi_list_hosts_does_not_show_inaccessible_hosts(
     clients: ClientRegistry,
 ) -> None:
@@ -1209,7 +1197,7 @@ def test_openapi_list_hosts_does_not_show_inaccessible_hosts(
     clients.User.create(
         username="unable_to_see_all_host",
         fullname="unable_to_see_all_host",
-        customer="provider",
+        customer=None,
         contactgroups=["does_not_see_everything"],
         auth_option={"auth_type": "password", "password": "supersecretish"},
     )
@@ -1277,7 +1265,6 @@ def test_openapi_effective_attributes_are_transformed_on_their_way_out_regressio
     )
 
 
-@managedtest
 def test_move_to_folder_with_different_contact_group(clients: ClientRegistry) -> None:
     clients.ContactGroup.create(
         name="test_contact_group",
@@ -1287,7 +1274,6 @@ def test_move_to_folder_with_different_contact_group(clients: ClientRegistry) ->
     clients.User.create(
         username="user1",
         fullname="user1_fullname",
-        customer="provider",
         contactgroups=["test_contact_group"],
         auth_option={
             "auth_type": "password",
@@ -1330,7 +1316,6 @@ def test_move_to_folder_with_different_contact_group(clients: ClientRegistry) ->
     assert resp.json["detail"] == "You lack the permissions to move host TestHost1 to ~Folder2."
 
 
-@managedtest
 def test_move_from_folder_with_different_contact_group(clients: ClientRegistry) -> None:
     # Create test contact group
     clients.ContactGroup.create(
@@ -1363,7 +1348,6 @@ def test_move_from_folder_with_different_contact_group(clients: ClientRegistry) 
     clients.User.create(
         username="user1",
         fullname="user1_fullname",
-        customer="provider",
         contactgroups=["test_contact_group"],
         auth_option={
             "auth_type": "password",
@@ -1390,7 +1374,6 @@ def test_move_from_folder_with_different_contact_group(clients: ClientRegistry) 
     assert resp.json["detail"] == "You lack the permissions to move host TestHost1 to ~Folder2."
 
 
-@managedtest
 def test_move_host_different_contact_group(clients: ClientRegistry) -> None:
     clients.ContactGroup.create(
         name="test_contact_group_1",
@@ -1417,7 +1400,6 @@ def test_move_host_different_contact_group(clients: ClientRegistry) -> None:
     clients.User.create(
         username="user1",
         fullname="user1_fullname",
-        customer="provider",
         contactgroups=["test_contact_group_1"],
         auth_option={
             "auth_type": "password",
@@ -1445,7 +1427,6 @@ def test_move_host_different_contact_group(clients: ClientRegistry) -> None:
     )
 
 
-@managedtest
 def test_move_host_to_the_same_folder(clients: ClientRegistry) -> None:
     clients.Folder.create(
         folder_name="Folder1",
@@ -1512,7 +1493,6 @@ def test_openapi_host_config_effective_attributes_labels_from_parent_folder(
     }
 
 
-@managedtest
 def test_openapi_host_config_correct_contactgroup_default(
     clients: ClientRegistry, with_admin: tuple[str, str]
 ) -> None:
@@ -1532,7 +1512,6 @@ def test_openapi_host_config_correct_contactgroup_default(
     }
 
 
-@managedtest
 @time_machine.travel(datetime.datetime.fromisoformat("2022-11-05T00:00:00+00:00"), tick=False)
 def test_openapi_host_config_effective_attributes_includes_all_host_attributes_regression(
     clients: ClientRegistry, with_admin: tuple[str, str]
@@ -1552,8 +1531,8 @@ def test_openapi_host_config_effective_attributes_includes_all_host_attributes_r
         "additional_ipv4addresses": [],
         "additional_ipv6addresses": [],
         "alias": "",
-        "bake_agent_package": False,
-        "cmk_agent_connection": "pull-agent",
+        **({"bake_agent_package": False} if is_ultimate_repo() else {}),
+        **({"cmk_agent_connection": "pull-agent"} if is_ultimate_repo() else {}),
         "contactgroups": {
             "groups": [],
             "recurse_perms": False,
@@ -1604,7 +1583,6 @@ def test_openapi_host_config_effective_attributes_includes_all_host_attributes_r
     assert resp.json["extensions"]["effective_attributes"] == expected, expected
 
 
-@managedtest
 def test_openapi_only_one_edit_action(clients: ClientRegistry) -> None:
     clients.HostConfig.create(
         host_name="test_host",
@@ -1666,7 +1644,6 @@ invalid_host_names = (
 )
 
 
-@managedtest
 @pytest.mark.parametrize("host_name", invalid_host_names)
 def test_create_host_with_newline_in_the_name(
     clients: ClientRegistry,
@@ -1696,14 +1673,12 @@ def test_create_host_with_too_long_of_a_name(
     assert resp.json["fields"]["host_name"][0] == f"host address too long: {16 * 'a' + '…'!r}"
 
 
-@managedtest
 def test_bulk_delete_no_entries(clients: ClientRegistry) -> None:
     r = clients.HostConfig.bulk_delete(entries=[], expect_ok=False)
     r.assert_status_code(400)
     assert r.json["fields"] == {"entries": ["At least one entry is required"]}
 
 
-@managedtest
 def test_move_host_between_nested_folders(clients: ClientRegistry) -> None:
     clients.Folder.create(
         folder_name="F1",
@@ -1739,7 +1714,6 @@ def test_move_host_between_nested_folders(clients: ClientRegistry) -> None:
     clients.HostConfig.move(host_name="host1", target_folder="~F1")
 
 
-@managedtest
 def test_update_host_parent_must_exist(clients: ClientRegistry) -> None:
     clients.HostConfig.create(host_name="test_host")
     clients.HostConfig.create(host_name="parent_host", attributes={"parents": ["test_host"]})
@@ -1756,7 +1730,6 @@ def test_update_host_parent_must_exist(clients: ClientRegistry) -> None:
     )
 
 
-@managedtest
 def test_update_host_parent_must_be_list_of_strings(clients: ClientRegistry) -> None:
     clients.HostConfig.create(host_name="test_host")
     resp = clients.HostConfig.edit(

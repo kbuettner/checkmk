@@ -16,9 +16,7 @@ from cmk.utils import paths
 from tests.testlib.unit.gui.web_test_app import SetConfig
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
-managedtest = pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT, reason="see #7213"
-)
+_is_managed_edition = version.edition(paths.omd_root) is version.Edition.ULTIMATEMT
 
 _DOWNTIME_COLUMNS = (
     "Columns: id host_name service_description is_service author start_time end_time recurring "
@@ -1068,7 +1066,6 @@ def test_openapi_downtime_invalid_single(
         ).assert_status_code(404)
 
 
-@managedtest
 @pytest.mark.usefixtures("with_host")
 @pytest.mark.usefixtures("suppress_remote_automation_calls")
 def test_openapi_user_in_service_but_not_in_host_contact_group_regression(
@@ -1083,20 +1080,15 @@ def test_openapi_user_in_service_but_not_in_host_contact_group_regression(
     doesn't regard permissions as of now."""
     username, password = with_user
 
-    clients.ContactGroup.bulk_create(
-        groups=(
-            {
-                "name": "host_contact_group",
-                "alias": "host_contact_group",
-                "customer": "provider",
-            },
-            {
-                "name": "service_contact_group",
-                "alias": "service_contact_group",
-                "customer": "provider",
-            },
-        )
-    )
+    host_group: dict[str, str] = {"name": "host_contact_group", "alias": "host_contact_group"}
+    service_group: dict[str, str] = {
+        "name": "service_contact_group",
+        "alias": "service_contact_group",
+    }
+    if _is_managed_edition:
+        host_group["customer"] = "provider"
+        service_group["customer"] = "provider"
+    clients.ContactGroup.bulk_create(groups=(host_group, service_group))
 
     clients.User.edit(username, contactgroups=["service_contact_group"])
     clients.HostConfig.edit(

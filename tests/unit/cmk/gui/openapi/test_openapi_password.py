@@ -11,12 +11,9 @@ from cmk.utils import password_store, paths
 from cmk.utils.password_store import PasswordConfig
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
-managedtest = pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT, reason="see #7213"
-)
+_is_managed_edition = version.edition(paths.omd_root) is version.Edition.ULTIMATEMT
 
 
-@managedtest
 @pytest.mark.usefixtures("suppress_remote_automation_calls", "mock_password_file_regeneration")
 def test_openapi_password(clients: ClientRegistry) -> None:
     clients.Password.create(
@@ -25,7 +22,6 @@ def test_openapi_password(clients: ClientRegistry) -> None:
         password="tt",
         shared=["all"],
         editable_by="admin",
-        customer="global",
         expect_ok=False,
     ).assert_status_code(400)
 
@@ -35,7 +31,6 @@ def test_openapi_password(clients: ClientRegistry) -> None:
         password="tt",
         shared=["all"],
         editable_by="admin",
-        customer="global",
         expect_ok=False,
     ).assert_status_code(400)
 
@@ -45,24 +40,20 @@ def test_openapi_password(clients: ClientRegistry) -> None:
         password="tt",
         shared=["all"],
         editable_by="admin",
-        customer="global",
     )
 
     clients.Password.edit("fooz", expect_ok=False).assert_status_code(404)
     clients.Password.edit("foo", title="foobu", comment="Something but nothing random")
 
     resp = clients.Password.get("foo")
-    assert resp.json["extensions"] == {
-        "comment": "Something but nothing random",
-        "documentation_url": "",
-        "owned_by": "admin",
-        "editable_by": "admin",
-        "shared": ["all"],
-        "customer": "global",
-    }
+    extensions = resp.json["extensions"]
+    assert extensions["comment"] == "Something but nothing random"
+    assert extensions["documentation_url"] == ""
+    assert extensions["owned_by"] == "admin"
+    assert extensions["editable_by"] == "admin"
+    assert extensions["shared"] == ["all"]
 
 
-@managedtest
 @pytest.mark.usefixtures("suppress_remote_automation_calls", "mock_password_file_regeneration")
 def test_openapi_password_editable_by(clients: ClientRegistry) -> None:
     clients.ContactGroup.create("group1", "group1")
@@ -112,7 +103,7 @@ def test_openapi_password_editable_by(clients: ClientRegistry) -> None:
     assert resp.json["extensions"]["owned_by"] == "group1"
 
 
-@managedtest
+@pytest.mark.skipif(not _is_managed_edition, reason="customer field requires managed edition")
 @pytest.mark.usefixtures("suppress_remote_automation_calls", "mock_password_file_regeneration")
 def test_openapi_password_customer(clients: ClientRegistry) -> None:
     resp = clients.Password.create(
@@ -129,7 +120,6 @@ def test_openapi_password_customer(clients: ClientRegistry) -> None:
     assert resp.json["extensions"]["customer"] == "global"
 
 
-@managedtest
 @pytest.mark.usefixtures("suppress_remote_automation_calls", "mock_password_file_regeneration")
 def test_openapi_password_delete(clients: ClientRegistry) -> None:
     clients.Password.create(
@@ -138,7 +128,6 @@ def test_openapi_password_delete(clients: ClientRegistry) -> None:
         password="tt",
         shared=[],
         editable_by="admin",
-        customer="provider",
     )
     resp = clients.Password.get_all()
     assert len(resp.json["value"]) == 1
@@ -151,7 +140,6 @@ def test_openapi_password_delete(clients: ClientRegistry) -> None:
     assert len(resp.json["value"]) == 0
 
 
-@managedtest
 @pytest.mark.usefixtures("suppress_remote_automation_calls", "mock_password_file_regeneration")
 def test_openapi_password_etag(clients: ClientRegistry) -> None:
     ident = "test_etag"
@@ -161,7 +149,6 @@ def test_openapi_password_etag(clients: ClientRegistry) -> None:
         password="tt",
         shared=[],
         editable_by="admin",
-        customer="provider",
     )
 
     clients.Password.edit(
@@ -173,7 +160,6 @@ def test_openapi_password_etag(clients: ClientRegistry) -> None:
     clients.Password.delete(ident, etag="valid_etag")
 
 
-@managedtest
 @pytest.mark.usefixtures("mock_password_file_regeneration")
 def test_password_with_newlines(clients: ClientRegistry) -> None:
     credentials_with_newlines = """{
@@ -195,14 +181,12 @@ def test_password_with_newlines(clients: ClientRegistry) -> None:
         password=credentials_with_newlines,
         shared=[],
         editable_by="admin",
-        customer="provider",
     )
 
     loaded = password_store.load(password_store.password_store_path())
     assert loaded["gcp"] == credentials_with_newlines.replace("\n", "")
 
 
-@managedtest
 @pytest.mark.usefixtures("mock_password_file_regeneration")
 def test_openapi_password_without_owner_regression(clients: ClientRegistry) -> None:
     clients.Password.create(
@@ -217,7 +201,6 @@ def test_openapi_password_without_owner_regression(clients: ClientRegistry) -> N
     assert resp.json["extensions"].get("owned_by") is not None
 
 
-@managedtest
 def test_password_min_length_create(clients: ClientRegistry) -> None:
     resp = clients.Password.create(
         ident="so_secret",
@@ -232,7 +215,6 @@ def test_password_min_length_create(clients: ClientRegistry) -> None:
     assert resp.json["fields"]["body.password"]["type"] == "string_too_short"
 
 
-@managedtest
 @pytest.mark.usefixtures("mock_password_file_regeneration")
 def test_password_min_length_update(clients: ClientRegistry) -> None:
     clients.Password.create(
@@ -255,7 +237,6 @@ def test_password_min_length_update(clients: ClientRegistry) -> None:
     assert resp.json["fields"]["body.password.constrained-str"]["type"] == "string_too_short"
 
 
-@managedtest
 def test_password_identifier_regex(clients: ClientRegistry) -> None:
     resp = clients.Password.create(
         ident="abcℕ",

@@ -3,9 +3,7 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-import pytest
 
-from cmk.ccc import version
 from cmk.ccc.user import UserId
 from cmk.crypto.password_hashing import PasswordHash
 from cmk.gui.config import active_config
@@ -18,15 +16,9 @@ from cmk.gui.user_connection_config_types import (
 )
 from cmk.gui.userdb import get_user_attributes, UserConnectionConfigFile
 from cmk.gui.watolib.users import create_user, default_sites
-from cmk.utils import paths
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
-managedtest = pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT, reason="see #7213"
-)
 
-
-@managedtest
 def test_edit_ldap_user_with_locked_attributes(clients: ClientRegistry) -> None:
     name = UserId("foo")
     ldap_config = LDAPUserConnectionConfig(
@@ -125,4 +117,5 @@ def test_edit_ldap_user_with_locked_attributes(clients: ClientRegistry) -> None:
         username=name,
         roles=["admin"],
         expect_ok=False,
+        customer=None,
     ).assert_status_code(403)

@@ -6,14 +6,8 @@
 
 import pytest
 
-from cmk.ccc import version
 from cmk.livestatus_client.testing import MockLiveStatusConnection
-from cmk.utils import paths
 from tests.testlib.unit.rest_api_client import ClientRegistry
-
-managedtest = pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT, reason="see #7213"
-)
 
 
 @pytest.mark.usefixtures("suppress_remote_automation_calls", "with_host")
@@ -361,7 +355,6 @@ def test_openapi_non_existing_service(
         clients.Host.get_service("heute", "CPU", expect_ok=False).assert_status_code(404)
 
 
-@managedtest
 def test_openapi_get_host_services_with_guest_user(
     mock_livestatus: MockLiveStatusConnection,
     clients: ClientRegistry,
@@ -386,7 +379,6 @@ def test_openapi_get_host_services_with_guest_user(
     clients.User.create(
         username="guest_user1",
         fullname="guest_user1_alias",
-        customer="provider",
         auth_option={"auth_type": "password", "password": "supersecretish"},
         roles=["guest"],
     )

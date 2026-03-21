@@ -44,14 +44,12 @@ from cmk.utils import paths
 from tests.testlib.unit.gui.web_test_app import SetConfig
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
-managedtest = pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT, reason="see #7213"
-)
-
 MOCK_SAML_CONNECTOR_NAME = "saml_connector"
 
+_is_managed_edition = version.edition(paths.omd_root) is version.Edition.ULTIMATEMT
 
-@managedtest
+
+@pytest.mark.skipif(not _is_managed_edition, reason="customer field requires managed edition")
 def test_nonexistant_customer(clients: ClientRegistry) -> None:
     username = "user"
     customer = "i_do_not_exist"
@@ -65,7 +63,6 @@ def test_nonexistant_customer(clients: ClientRegistry) -> None:
     clients.User.edit(username=username, customer=customer, expect_ok=False).assert_status_code(400)
 
 
-@managedtest
 def test_idle_timeout(clients: ClientRegistry) -> None:
     username = "user"
 
@@ -73,7 +70,6 @@ def test_idle_timeout(clients: ClientRegistry) -> None:
         resp = clients.User.create(
             username=username,
             fullname="User Name",
-            customer="global",
             idle_timeout={"option": "individual", "duration": 666},
         )
 
@@ -92,7 +88,7 @@ def test_idle_timeout(clients: ClientRegistry) -> None:
     assert resp.json["extensions"]["idle_timeout"]["option"] == "disable"
 
 
-@managedtest
+@pytest.mark.skipif(not _is_managed_edition, reason="customer field requires managed edition")
 def test_openapi_customer(clients: ClientRegistry, monkeypatch: MonkeyPatch) -> None:
     username = "user"
 
@@ -135,7 +131,6 @@ def test_openapi_customer(clients: ClientRegistry, monkeypatch: MonkeyPatch) -> 
     assert resp.json["extensions"]["customer"] == "provider"
 
 
-@managedtest
 def test_openapi_user_minimal_settings(
     monkeypatch: MonkeyPatch,
     request_context: None,
@@ -174,10 +169,9 @@ def test_openapi_user_minimal_settings(
     user_attributes = _load_internal_attributes(UserId("user"))
     user_attributes.pop("last_pw_change", None)
 
-    assert user_attributes == {
+    expected: dict[str, object] = {
         "user_id": "user",
         "alias": "User Name",
-        "customer": "provider",
         "contactgroups": [],
         "contextual_help_icon": None,
         "disable_notifications": {},
@@ -194,9 +188,11 @@ def test_openapi_user_minimal_settings(
         "store_automation_secret": False,
         "created_on_version": __version__,
     }
+    if _is_managed_edition:
+        expected["customer"] = "provider"
+    assert user_attributes == expected
 
 
-@managedtest
 def test_openapi_user_minimal_password_settings(
     clients: ClientRegistry,
     monkeypatch: MonkeyPatch,
@@ -207,7 +203,6 @@ def test_openapi_user_minimal_password_settings(
         resp = clients.User.create(
             username=username,
             fullname="User Name",
-            customer="provider",
             auth_option={
                 "auth_type": "password",
                 "password": "password1234",
@@ -216,7 +211,6 @@ def test_openapi_user_minimal_password_settings(
         )
 
     extensions = resp.json["extensions"]
-    assert extensions["customer"] == "provider"
     assert extensions["auth_option"]["enforce_password_change"] is True
     assert "last_pw_change" not in extensions
     assert "password" not in extensions
@@ -258,7 +252,6 @@ def test_openapi_all_users(clients: ClientRegistry) -> None:
     assert user.json == users[0]
 
 
-@managedtest
 def test_openapi_user_config(
     clients: ClientRegistry,
     with_automation_user: tuple[UserId, str],
@@ -271,7 +264,6 @@ def test_openapi_user_config(
         clients.User.create(
             username=name,
             fullname=alias,
-            customer="provider",
             disable_notifications={
                 "timerange": {
                     "start_time": "2020-01-01T00:00:00Z",
@@ -300,7 +292,6 @@ def test_openapi_user_config(
     assert len(collection_resp.json["value"]) == 1
 
 
-@managedtest
 def test_openapi_user_internal_with_notifications(
     monkeypatch: MonkeyPatch,
     request_context: None,
@@ -340,11 +331,10 @@ def test_openapi_user_internal_with_notifications(
         acting_user=LoggedInSuperUser(),
     )
 
-    assert _load_internal_attributes(name) == {
+    expected: dict[str, object] = {
         "alias": "KPECYCq79E",
         "contactgroups": [],
         "contextual_help_icon": None,
-        "customer": "provider",
         "disable_notifications": {"timerange": (1577836800.0, 1577923200.0)},
         "email": "",
         "enforce_pw_change": True,
@@ -362,6 +352,9 @@ def test_openapi_user_internal_with_notifications(
         "user_id": name,
         "user_scheme_serial": 1,
     }
+    if _is_managed_edition:
+        expected["customer"] = "provider"
+    assert _load_internal_attributes(name) == expected
 
 
 test_data_update_auth_options = (
@@ -372,7 +365,6 @@ test_data_update_auth_options = (
 )
 
 
-@managedtest
 @pytest.mark.parametrize("test_data, expected_serial_count", test_data_update_auth_options)
 def test_update_user_auth_options(
     clients: ClientRegistry,
@@ -382,7 +374,7 @@ def test_update_user_auth_options(
     expected_serial_count: int,
 ) -> None:
     name = _random_string(10)
-    resp = clients.User.create(username=name, fullname="KPECYCq79E", customer="provider")
+    resp = clients.User.create(username=name, fullname="KPECYCq79E")
 
     user_data = resp.json["extensions"]
     user_data.pop("auth_option", None)
@@ -400,7 +392,6 @@ def test_update_user_auth_options(
     assert serial_count_after == expected_serial_count
 
 
-@managedtest
 def test_openapi_user_edit_auth(clients: ClientRegistry, monkeypatch: MonkeyPatch) -> None:
     name = "foo"
     alias = "Foo Bar"
@@ -409,13 +400,11 @@ def test_openapi_user_edit_auth(clients: ClientRegistry, monkeypatch: MonkeyPatc
         resp = clients.User.create(
             username=name,
             fullname=alias,
-            customer="provider",
             roles=["user"],
             auth_option={"auth_type": "password", "password": "password1234"},
         )
 
     extensions = resp.json["extensions"]
-    assert extensions["customer"] == "provider"
     assert extensions["auth_option"]["enforce_password_change"] is False
 
     with time_machine.travel(datetime.datetime.fromisoformat("2010-02-01 08:30:00Z")):
@@ -506,7 +495,6 @@ def test_openapi_incomplete_auth_options(clients: ClientRegistry, auth_type: str
     clients.User.create(**user_detail, expect_ok=False).assert_status_code(400)
 
 
-@managedtest
 def test_openapi_user_internal_auth_handling(
     monkeypatch: MonkeyPatch,
     request_context: None,
@@ -618,7 +606,10 @@ def test_openapi_user_internal_auth_handling(
     assert loaded["store_automation_secret"] is False
 
 
-@managedtest
+@pytest.mark.skipif(
+    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT,
+    reason="Only relevant for UltimateMT edition",
+)
 def test_openapi_managed_global_edition(clients: ClientRegistry, monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr("cmk.ccc.version.edition", lambda *args, **kw: version.Edition.ULTIMATEMT)
 
@@ -630,7 +621,10 @@ def test_openapi_managed_global_edition(clients: ClientRegistry, monkeypatch: Mo
     assert extensions["idle_timeout"] == {"option": "global"}
 
 
-@managedtest
+@pytest.mark.skipif(
+    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT,
+    reason="Only relevant for UltimateMT edition",
+)
 def test_managed_global_internal(
     monkeypatch: MonkeyPatch,
     request_context: None,
@@ -669,7 +663,6 @@ def test_managed_global_internal(
     assert user_endpoint_attrs["customer"] == "global"
 
 
-@managedtest
 def test_global_full_configuration(clients: ClientRegistry) -> None:
     username = "cmkuser"
 
@@ -677,7 +670,6 @@ def test_global_full_configuration(clients: ClientRegistry) -> None:
         clients.User.create(
             username=username,
             fullname="Mathias Kettner",
-            customer="global",
             auth_option={"auth_type": "password", "password": "password1234"},
             disable_login=False,
             contact_options={"email": "user@example.com"},
@@ -691,31 +683,19 @@ def test_global_full_configuration(clients: ClientRegistry) -> None:
 
     resp = clients.User.get(username=username)
 
-    assert resp.json["extensions"] == {
-        "contact_options": {"email": "user@example.com", "fallback_contact": False},
-        "disable_login": False,
-        "fullname": "Mathias Kettner",
-        "pager_address": "",
-        "roles": ["user"],
-        "contactgroups": [],
-        "language": "en",
-        "customer": "global",
-        "idle_timeout": {"option": "global"},
-        "disable_notifications": {},
-        "auth_option": {"enforce_password_change": False, "auth_type": "password"},
-        "interface_options": {
-            "interface_theme": "default",
-            "main_menu_icons": "topic",
-            "mega_menu_icons": "topic",  # TODO: DEPRECATED(18295) remove "mega_menu_icons"
-            "navigation_bar_icons": "hide",
-            "show_mode": "default",
-            "sidebar_position": "right",
-            "contextual_help_icon": "show_icon",
-            "navbar_changes_action": "slideout",
-        },
-        "temperature_unit": "fahrenheit",
-        "start_url": "default_start_url",
-    }
+    extensions = resp.json["extensions"]
+    assert extensions["contact_options"] == {"email": "user@example.com", "fallback_contact": False}
+    assert extensions["disable_login"] is False
+    assert extensions["fullname"] == "Mathias Kettner"
+    assert extensions["pager_address"] == ""
+    assert extensions["roles"] == ["user"]
+    assert extensions["contactgroups"] == []
+    assert extensions["language"] == "en"
+    assert extensions["idle_timeout"] == {"option": "global"}
+    assert extensions["disable_notifications"] == {}
+    assert extensions["auth_option"] == {"enforce_password_change": False, "auth_type": "password"}
+    assert extensions["temperature_unit"] == "fahrenheit"
+    assert extensions["start_url"] == "default_start_url"
 
 
 def test_managed_idle_internal(
@@ -759,7 +739,6 @@ def test_managed_idle_internal(
     assert user_endpoint_attrs["idle_timeout"] == {"option": "global"}
 
 
-@managedtest
 def test_openapi_user_update_contact_options(clients: ClientRegistry) -> None:
     # this test uses the internal mechanics of the user endpoint
 
@@ -768,7 +747,6 @@ def test_openapi_user_update_contact_options(clients: ClientRegistry) -> None:
         clients.User.create(
             username=username,
             fullname="Mathias Kettner",
-            customer="global",
             auth_option={"auth_type": "password", "password": "password1234"},
             interface_options={
                 "mega_menu_icons": "entry"
@@ -787,34 +765,21 @@ def test_openapi_user_update_contact_options(clients: ClientRegistry) -> None:
 
     resp = clients.User.get(username=username)
 
-    assert resp.json["extensions"] == {
-        "contact_options": {"email": "", "fallback_contact": False},
-        "disable_login": False,
-        "fullname": "Mathias Kettner",
-        "idle_timeout": {"option": "global"},
-        "pager_address": "",
-        "roles": ["user"],
-        "contactgroups": [],
-        "language": "en",
-        "customer": "global",
-        "disable_notifications": {},
-        "auth_option": {"enforce_password_change": False, "auth_type": "password"},
-        "interface_options": {
-            "interface_theme": "default",
-            "main_menu_icons": "entry",  # TODO reset to "topic" (CMK-23667, Werk#18295)
-            "mega_menu_icons": "entry",  # TODO: DEPRECATED(18295) remove "mega_menu_icons"
-            "navigation_bar_icons": "hide",
-            "show_mode": "default",
-            "sidebar_position": "right",
-            "contextual_help_icon": "show_icon",
-            "navbar_changes_action": "slideout",
-        },
-        "start_url": "default_start_url",
-    }
+    extensions = resp.json["extensions"]
+    assert extensions["contact_options"] == {"email": "", "fallback_contact": False}
+    assert extensions["disable_login"] is False
+    assert extensions["fullname"] == "Mathias Kettner"
+    assert extensions["idle_timeout"] == {"option": "global"}
+    assert extensions["pager_address"] == ""
+    assert extensions["roles"] == ["user"]
+    assert extensions["contactgroups"] == []
+    assert extensions["language"] == "en"
+    assert extensions["disable_notifications"] == {}
+    assert extensions["auth_option"] == {"enforce_password_change": False, "auth_type": "password"}
+    assert extensions["start_url"] == "default_start_url"
 
 
 # TODO: DEPRECATED(18295) remove "mega_menu_icons"
-@managedtest
 def test_openapi_user_update_fails_because_alias_and_field_set(clients: ClientRegistry) -> None:
     # this test uses the internal mechanics of the user endpoint
     username = "cmkuser"
@@ -822,7 +787,6 @@ def test_openapi_user_update_fails_because_alias_and_field_set(clients: ClientRe
         clients.User.create(
             username=username,
             fullname="Mathias Kettner",
-            customer="global",
             auth_option={"auth_type": "password", "password": "password1234"},
             interface_options={"mega_menu_icons": "entry"},
             disable_login=False,
@@ -841,7 +805,6 @@ def test_openapi_user_update_fails_because_alias_and_field_set(clients: ClientRe
 
 
 # TODO: DEPRECATED(18295) remove "mega_menu_icons"
-@managedtest
 def test_openapi_user_create_fails_because_alias_and_field_set(
     clients: ClientRegistry,
 ) -> None:
@@ -851,7 +814,6 @@ def test_openapi_user_create_fails_because_alias_and_field_set(
         clients.User.create(
             username=username,
             fullname="Mathias Kettner",
-            customer="global",
             auth_option={"auth_type": "password", "password": "password1234"},
             interface_options={
                 "mega_menu_icons": "entry",
@@ -867,7 +829,6 @@ def test_openapi_user_create_fails_because_alias_and_field_set(
         ).assert_status_code(400)
 
 
-@managedtest
 def test_openapi_user_disable_notifications(
     clients: ClientRegistry, monkeypatch: MonkeyPatch
 ) -> None:
@@ -876,7 +837,6 @@ def test_openapi_user_disable_notifications(
     clients.User.create(
         username=username,
         fullname="Mathias Kettner",
-        customer="global",
         disable_notifications={"disable": True},
     )
 
@@ -890,9 +850,8 @@ def test_openapi_user_disable_notifications(
     assert resp.json["extensions"]["disable_notifications"] == {}
 
 
-@managedtest
 def test_show_all_users_with_no_email(clients: ClientRegistry, monkeypatch: MonkeyPatch) -> None:
-    clients.User.create(username="internal_user", fullname="Internal", customer="global")
+    clients.User.create(username="internal_user", fullname="Internal")
 
     # We remove all the contact information to mimic the no email case
     monkeypatch.setattr(
@@ -905,7 +864,6 @@ def test_show_all_users_with_no_email(clients: ClientRegistry, monkeypatch: Monk
     assert all("contact_options" not in user["extensions"] for user in resp.json["value"])
 
 
-@managedtest
 def test_user_enforce_password_change_option(
     clients: ClientRegistry, monkeypatch: MonkeyPatch
 ) -> None:
@@ -914,7 +872,6 @@ def test_user_enforce_password_change_option(
     resp = clients.User.create(
         username=username,
         fullname="Mathias Kettner",
-        customer="global",
         auth_option={
             "auth_type": "password",
             "password": "password1234",
@@ -935,7 +892,6 @@ def test_user_enforce_password_change_option(
     assert resp.json["extensions"]["auth_option"]["enforce_password_change"] is False
 
 
-@managedtest
 def test_response_schema_compatible_with_request_schema(
     clients: ClientRegistry, monkeypatch: MonkeyPatch
 ) -> None:
@@ -944,7 +900,6 @@ def test_response_schema_compatible_with_request_schema(
     res = clients.User.create(
         username=username,
         fullname="Mathias kettner",
-        customer="global",
         auth_option={
             "auth_type": "password",
             "password": "password1234",
@@ -955,7 +910,6 @@ def test_response_schema_compatible_with_request_schema(
     clients.User.edit(username=username, extra=res.json["extensions"])
 
 
-@managedtest
 @patch(
     "cmk.gui.userdb.user_attributes.theme_choices",
     return_value=[("modern-dark", "Dark"), ("facelift", "Light")],
@@ -966,7 +920,6 @@ def test_user_interface_settings(_mock: None, clients: ClientRegistry) -> None:
     resp = clients.User.create(
         username=username,
         fullname="Mathias Kettner",
-        customer="global",
         interface_options={
             "interface_theme": "dark",
             "sidebar_position": "left",
@@ -1013,7 +966,6 @@ def _load_internal_attributes(username: UserId) -> dict[str, Any]:
     return complement_customer(internal_attributes)
 
 
-@managedtest
 def test_openapi_new_user_with_cloned_role(
     clients: ClientRegistry, monkeypatch: MonkeyPatch
 ) -> None:
@@ -1021,28 +973,23 @@ def test_openapi_new_user_with_cloned_role(
     username = f"new_user_with_role_{cloned_role.name}"
     fullname = f"NewUser_{cloned_role.name}"
 
-    res1 = clients.User.create(
-        username=username, fullname=fullname, customer="provider", roles=[cloned_role.name]
-    )
+    res1 = clients.User.create(username=username, fullname=fullname, roles=[cloned_role.name])
     assert res1.json["extensions"]["roles"] == [cloned_role.name]
 
     res2 = clients.User.edit(
         username=username,
         fullname=fullname,
-        customer="provider",
         roles=["user", "guest"],
         etag="valid_etag",
     )
     assert res2.json["extensions"]["roles"] == ["user", "guest"]
 
 
-@managedtest
 def test_openapi_new_user_with_non_existing_role(clients: ClientRegistry) -> None:
     userrole = "non-existing-userole"
     clients.User.create(
         username=f"new_user_with_role_{userrole}",
         fullname=f"NewUser_{userrole}",
-        customer="provider",
         roles=[userrole],
         expect_ok=False,
     ).assert_status_code(400)
@@ -1058,12 +1005,6 @@ def custom_user_attributes_ctx(attrs: list[CustomUserAttrSpec]) -> Iterator:
         save_custom_attrs_to_mk_file({"user": attrs, "host": []})
 
 
-def add_default_customer_in_managed_edition(params: dict[str, Any]) -> None:
-    if version.edition(paths.omd_root) is version.Edition.ULTIMATEMT:
-        params["customer"] = "global"
-
-
-@managedtest
 @patch(
     "cmk.gui.userdb.user_attributes.theme_choices",
     return_value=[("modern-dark", "Dark")],
@@ -1093,7 +1034,6 @@ def test_openapi_custom_attributes_of_user(
         clients.User.create(
             username=username,
             fullname="Mathias Kettner",
-            customer="provider",
             interface_options={
                 "interface_theme": "dark",
                 "sidebar_position": "left",
@@ -1111,7 +1051,6 @@ def test_openapi_custom_attributes_of_user(
         assert result.json["extensions"]["judas"] == "priest"
 
 
-@managedtest
 @patch(
     "cmk.gui.userdb.user_attributes.theme_choices",
     return_value=[("modern-dark", "Dark")],
@@ -1136,7 +1075,6 @@ def test_edit_custom_attributes_of_user(_mock: None, clients: ClientRegistry) ->
         clients.User.create(
             username=username,
             fullname="Mathias Kettner",
-            customer="provider",
             interface_options={
                 "interface_theme": "dark",
                 "sidebar_position": "left",
@@ -1159,14 +1097,12 @@ def test_edit_custom_attributes_of_user(_mock: None, clients: ClientRegistry) ->
         assert resp2.json["extensions"]["judas"] == "Iscariot"
 
 
-@managedtest
 def test_create_user_with_non_existing_custom_attribute(
     clients: ClientRegistry, monkeypatch: MonkeyPatch
 ) -> None:
     result = clients.User.create(
         username="cmkuser",
         fullname="Matias Kettner",
-        customer="global",
         interface_options={
             "interface_theme": "dark",
             "sidebar_position": "left",
@@ -1206,21 +1142,18 @@ def test_openapi_edit_non_existing_user_regression(clients: ClientRegistry) -> N
     ).assert_status_code(404)
 
 
-@managedtest
 def test_openapi_all_authorized_sites(clients: ClientRegistry) -> None:
     clients.User.create(
         username="user1",
         fullname="User 1",
         authorized_sites=["all"],
         expect_ok=True,
-        customer="provider",
     )
     clients.User.create(
         username="user2",
         fullname="User 2",
         authorized_sites=["NO_SITE"],
         expect_ok=True,
-        customer="provider",
     )
     clients.User.edit(username="user2", fullname="User 2", authorized_sites=["all"], expect_ok=True)
 
@@ -1272,13 +1205,11 @@ def test_openapi_auth_type_of_saml_user(clients: ClientRegistry) -> None:
     assert resp.json["extensions"]["auth_option"] == {"auth_type": ConnectorType.SAML2}
 
 
-@managedtest
 def test_user_without_permission_cant_interrogate_if_user_exists(clients: ClientRegistry) -> None:
     # Create a guest user using default client credentials
     clients.User.create(
         username="user1",
         fullname="user1",
-        customer="provider",
         authorized_sites=["NO_SITE"],
         roles=["guest"],
         auth_option={"auth_type": "password", "password": "supersecretish1"},
@@ -1291,7 +1222,6 @@ def test_user_without_permission_cant_interrogate_if_user_exists(clients: Client
     resp1 = clients.User.create(
         username="user2",
         fullname="user2",
-        customer="provider",
         authorized_sites=["NO_SITE"],
         roles=["guest"],
         auth_option={"auth_type": "password", "password": "supersecretish2"},
@@ -1328,14 +1258,12 @@ def test_user_without_permission_cant_interrogate_if_user_exists(clients: Client
     )
 
 
-@managedtest
 def test_delete_and_edit_user_when_client_user_has_permission_to_do_so(
     clients: ClientRegistry,
 ) -> None:
     clients.User.create(
         username="user1",
         fullname="user1",
-        customer="provider",
         authorized_sites=["NO_SITE"],
         roles=["guest"],
         auth_option={"auth_type": "password", "password": "supersecretish1"},
@@ -1348,7 +1276,6 @@ def test_delete_and_edit_user_when_client_user_has_permission_to_do_so(
     clients.User.delete(username="user1")
 
 
-@managedtest
 def test_get_unknown_user(clients: ClientRegistry) -> None:
     clients.User.get(
         username="userA",
@@ -1356,7 +1283,6 @@ def test_get_unknown_user(clients: ClientRegistry) -> None:
     ).assert_status_code(404)
 
 
-@managedtest
 def test_create_user_with_contact_group(clients: ClientRegistry) -> None:
     clients.ContactGroup.create(name="group_one", alias="Group")
     resp = clients.User.create(
@@ -1370,7 +1296,6 @@ def test_create_user_with_contact_group(clients: ClientRegistry) -> None:
     resp = clients.User.create(
         username="user",
         fullname="user",
-        customer="provider",
         contactgroups=["group_one"],
     )
     assert resp.json["extensions"]["contactgroups"] == ["group_one"]
@@ -1411,7 +1336,6 @@ def test_openapi_user_dismiss_warning(clients: ClientRegistry) -> None:
     assert user.dismissed_warnings == {"notification_fallback"}
 
 
-@managedtest
 def test_openapi_edit_user_should_not_modify_start_url(clients: ClientRegistry) -> None:
     username = "user_1"
     clients.User.create(
@@ -1428,7 +1352,6 @@ def test_openapi_edit_user_should_not_modify_start_url(clients: ClientRegistry) 
     )
 
 
-@managedtest
 def test_openapi_create_user_edit_start_url(clients: ClientRegistry) -> None:
     username = "user_2"
     assert (
@@ -1458,7 +1381,6 @@ def test_openapi_create_user_edit_start_url(clients: ClientRegistry) -> None:
     )
 
 
-@managedtest
 @pytest.mark.parametrize(
     "field_value, expected_status_code",
     [
@@ -1475,7 +1397,6 @@ def test_user_navbar_changes_action_param(
     resp = clients.User.create(
         username=_random_string(10),
         fullname="KPECYCq79E",
-        customer="provider",
         interface_options={"navbar_changes_action": field_value},
         expect_ok=True if expected_status_code == 200 else False,
     )
