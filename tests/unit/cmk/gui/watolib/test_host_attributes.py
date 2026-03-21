@@ -7,414 +7,29 @@
 import pytest
 
 import cmk.gui.watolib.host_attributes as attrs
+from cmk.ccc.version import Edition, edition
 from cmk.gui.config import active_config, Config
 from cmk.gui.type_defs import CustomHostAttrSpec
 from cmk.gui.watolib.host_attributes import all_host_attributes
 from cmk.rulesets.v1 import Help, Title
-from tests.testlib.common.repo import (
-    is_pro_repo,
-    is_ultimate_repo,
+from cmk.utils import paths
+from tests.testlib.unit.gui.host_attributes_test_helper import BASE_EXPECTED_ATTRIBUTES
+
+
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
 )
-
-expected_attributes = {
-    "additional_ipv4addresses": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": ["ip-v4"],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Network address",
-    },
-    "additional_ipv6addresses": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": ["ip-v6"],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Network address",
-    },
-    "alias": {
-        "class_name": "NagiosTextAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": True,
-        "show_inherited_value": True,
-        "topic": "Basic settings",
-    },
-    "contactgroups": {
-        "class_name": "ContactGroupsAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Basic settings",
-    },
-    "ipaddress": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": ["ip-v4"],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": True,
-        "show_inherited_value": True,
-        "topic": "Network address",
-    },
-    "ipv6address": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": ["ip-v6"],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": True,
-        "show_inherited_value": True,
-        "topic": "Network address",
-    },
-    "locked_attributes": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": False,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": True,
-        "show_in_host_search": False,
-        "show_in_table": False,
-        "show_inherited_value": False,
-        "topic": "Creation / Locking",
-    },
-    "locked_by": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": False,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": False,
-        "topic": "Creation / Locking",
-    },
-    "management_address": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Management board",
-    },
-    "management_ipmi_credentials": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Management board",
-    },
-    "management_protocol": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Management board",
-    },
-    "management_snmp_community": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Management board",
-    },
-    "meta_data": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": False,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": False,
-        "show_in_table": False,
-        "show_inherited_value": False,
-        "topic": "Creation / Locking",
-    },
-    "network_scan": {
-        "class_name": "HostAttributeNetworkScan",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": False,
-        "show_in_host_search": False,
-        "show_in_table": False,
-        "show_inherited_value": False,
-        "topic": "Network scan",
-    },
-    "network_scan_result": {
-        "class_name": "NetworkScanResultAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": False,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": False,
-        "show_in_host_search": False,
-        "show_in_table": False,
-        "show_inherited_value": False,
-        "topic": "Network scan",
-    },
-    "parents": {
-        "class_name": "ParentsAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": True,
-        "show_inherited_value": True,
-        "topic": "Basic settings",
-    },
-    "site": {
-        "class_name": "SiteAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": True,
-        "show_inherited_value": True,
-        "topic": "Basic settings",
-    },
-    "snmp_community": {
-        "class_name": "ValueSpecAttribute",
-        "depends_on_roles": [],
-        "depends_on_tags": ["snmp"],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Monitoring agents",
-    },
-    "tag_address_family": {
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": True,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Network address",
-    },
-    "tag_agent": {
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": True,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Monitoring agents",
-    },
-    **(
-        {
-            "cmk_agent_connection": {
-                "depends_on_roles": [],
-                "depends_on_tags": ["checkmk-agent"],
-                "editable": True,
-                "from_config": False,
-                "show_in_folder": True,
-                "show_in_form": True,
-                "show_in_host_search": True,
-                "show_in_table": False,
-                "show_inherited_value": True,
-                "topic": "Monitoring agents",
-            },
-        }
-        if is_ultimate_repo()
-        else {}
-    ),
-    **(
-        {
-            "metrics_association": {
-                "depends_on_roles": [],
-                "depends_on_tags": [],
-                "editable": True,
-                "from_config": False,
-                "show_in_folder": True,
-                "show_in_form": True,
-                "show_in_host_search": True,
-                "show_in_table": False,
-                "show_inherited_value": True,
-                "topic": "Monitoring agents",
-            },
-        }
-        if is_ultimate_repo()
-        else {}
-    ),
-    **(
-        {
-            "bake_agent_package": {
-                "depends_on_roles": [],
-                "depends_on_tags": [],
-                "editable": True,
-                "from_config": False,
-                "show_in_folder": True,
-                "show_in_form": False,
-                "show_in_host_search": False,
-                "show_in_table": False,
-                "show_inherited_value": False,
-                "topic": "Monitoring agents",
-            },
-        }
-        if is_pro_repo()
-        else {}
-    ),
-    **(
-        {
-            "relay": {
-                "depends_on_roles": [],
-                "depends_on_tags": [],
-                "editable": True,
-                "from_config": False,
-                "show_in_folder": True,
-                "show_in_form": True,
-                "show_in_host_search": True,
-                "show_in_table": True,
-                "show_inherited_value": True,
-                "topic": "Basic settings",
-            },
-        }
-        if is_ultimate_repo()
-        else {}
-    ),
-    "tag_snmp_ds": {
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": True,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Monitoring agents",
-    },
-    "tag_piggyback": {
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": True,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Monitoring agents",
-    },
-    "labels": {
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": True,
-        "from_config": False,
-        "show_in_folder": True,
-        "show_in_form": True,
-        "show_in_host_search": True,
-        "show_in_table": False,
-        "show_inherited_value": True,
-        "topic": "Custom attributes",
-    },
-    "inventory_failed": {
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": False,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": False,
-        "show_in_host_search": False,
-        "show_in_table": False,
-        "show_inherited_value": False,
-        "topic": "Creation / Locking",
-    },
-    "waiting_for_discovery": {
-        "depends_on_roles": [],
-        "depends_on_tags": [],
-        "editable": False,
-        "from_config": False,
-        "show_in_folder": False,
-        "show_in_form": False,
-        "show_in_host_search": False,
-        "show_in_table": False,
-        "show_inherited_value": False,
-        "topic": "Custom attributes",
-    },
-}
-
-
 @pytest.mark.usefixtures("load_config")
 def test_registered_host_attributes() -> None:
     names = all_host_attributes(
         active_config.wato_host_attrs, active_config.tags.get_tag_groups_by_topic()
     ).keys()
+
+    expected_attributes = {
+        **BASE_EXPECTED_ATTRIBUTES,
+    }
+
     assert sorted(expected_attributes.keys()) == sorted(names)
 
     for attr in all_host_attributes(
@@ -567,6 +182,10 @@ def test_host_attribute_topics_for_folders() -> None:
     ]
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 @pytest.mark.usefixtures("load_config")
 @pytest.mark.parametrize(
     "for_what",
@@ -584,7 +203,6 @@ def test_host_attributes(for_what: str, new: bool) -> None:
         "basic": [
             "alias",
             "site",
-            *(["relay"] if is_ultimate_repo() else []),
             "contactgroups",
             "parents",
         ],
@@ -597,11 +215,9 @@ def test_host_attributes(for_what: str, new: bool) -> None:
         ],
         "monitoring_agents": [
             "tag_agent",
-            *(("cmk_agent_connection", "bake_agent_package") if is_pro_repo() else ()),
             "tag_snmp_ds",
             "snmp_community",
             "tag_piggyback",
-            *(("metrics_association",) if is_ultimate_repo() else ()),
         ],
         "management_board": [
             "management_protocol",
