@@ -37,6 +37,17 @@ You can retrigger the change validation without pushing the commit again.
 If you are sure that the CV failed due to reasons outside of your change,
 you may retrigger the CV by posting "start: test-gerrit" on the change.
 
+# When asked to submit a commit chain
+
+Do an rebase on top of the base branch. Select the first change and push it for
+review. Wait for the CV job to finish. In case it fails, gather the state from
+the jenkins job. Reproduce the issue locally, fix it, verify it locally, then
+push for review again. Do this until the CV job finishes successfully. Then
+follow the same procedure with the next change. Do this until all changes are
+verified by the CV job.
+At the end provide a list of changes and a summary of the necessary changes that
+each commit needed.
+
 # In case the command gerrit-change-log is missing
 
 Ask the user to clone the zeug_cmk git repository and add it to their PATH.
