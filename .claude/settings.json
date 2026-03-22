@@ -74,8 +74,7 @@
       "WebFetch(domain:*.tribe29.com)",
       "WebFetch(domain:*.checkmk.net)"
     ],
-    "deny": ["Bash(git remote *)", "Bash(git config *)"],
-    "ask": ["Bash(find *--exec*)"]
+    "ask": ["Bash(find *--exec*)", "Bash(git remote *)", "Bash(git config *)"]
   },
   "attribution": {
     "commit": "",
