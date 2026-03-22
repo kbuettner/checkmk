@@ -343,6 +343,10 @@ boto3==1.42.49 \
     --hash=sha256:99e1df4361c3f6ff6ade65803c043ea96314826134962dd3b385433b309eb819 \
     --hash=sha256:9cd252f640567b86e92b0a8ffdd4ade9a3018ee357c724bff6a21b8c8a41be0c
     # via -r packages/cmk-plugins/requirements.in
+boto3-stubs[logs]==1.42.73 \
+    --hash=sha256:36f625769b5505c4bc627f16244b98de9e10dae3ac36f1aa0f0ebe2f201dc138 \
+    --hash=sha256:bd658429069d8215247fc3abc003220cd875c24ab6eda7b3405090408afaacdf
+    # via -r packages/cmk-plugins/dev-requirements.in
 botocore==1.42.49 \
     --hash=sha256:1c33544f72101eed4ccf903ebb667a803e14e25b2af4e0836e4b871da1c0af37 \
     --hash=sha256:333115a64a507697b0c450ade7e2d82bc8b4e21c0051542514532b455712bdcc
@@ -350,6 +354,12 @@ botocore==1.42.49 \
     #   -r packages/cmk-plugins/requirements.in
     #   boto3
     #   s3transfer
+botocore-stubs==1.42.41 \
+    --hash=sha256:9423110fb0e391834bd2ed44ae5f879d8cb370a444703d966d30842ce2bcb5f0 \
+    --hash=sha256:dbeac2f744df6b814ce83ec3f3777b299a015cbea57a2efc41c33b8c38265825
+    # via
+    #   -r packages/cmk-plugins/dev-requirements.in
+    #   boto3-stubs
 bson==0.5.10 \
     --hash=sha256:d6511b2ab051139a9123c184de1a04227262173ad593429d21e443d6462d6590
     # via -r tests/dev-requirements.in
@@ -904,6 +914,7 @@ cryptography==46.0.5 \
     #   -r packages/cmk-agent-receiver/requirements.in
     #   -r packages/cmk-crypto/requirements.in
     #   -r packages/cmk-plugin-apis/requirements.in
+    #   -r packages/cmk-relay-protocols/requirements.in
     #   azure-identity
     #   azure-storage-blob
     #   fido2
@@ -1670,6 +1681,7 @@ jinja2==3.1.6 \
     # via
     #   -r cmk/requirements.in
     #   -r packages/cmk-livestatus-client/requirements.in
+    #   -r packages/cmk-notification-plugins/requirements.in
     #   datamodel-code-generator
     #   flask
     #   meraki
@@ -2471,6 +2483,7 @@ marshmallow==3.26.2 \
     # via
     #   -c constraints.txt
     #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-dcd/requirements.in
     #   apispec-oneofschema
     #   marshmallow-oneofschema
     #   netapp-ontap
@@ -2479,6 +2492,7 @@ marshmallow-oneofschema==3.2.0 \
     --hash=sha256:c06c8d9f14d51ffff152d66d85bd5f27d55cff10752a3b1f8c1f948bf5f597a0
     # via
     #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-dcd/requirements.in
     #   apispec-oneofschema
 matplotlib==3.10.8 \
     --hash=sha256:00270d217d6b20d14b584c521f810d60c5c78406dc289859776550df837dcda7 \
@@ -2767,7 +2781,9 @@ mypy==1.19.1 \
 mypy-boto3-logs==1.42.10 \
     --hash=sha256:3abe41d76fa533fe82254b4e00812372fd8f240dffd7c0ddd4be34503d1f783f \
     --hash=sha256:adbce9eb21b2f982fc7c8d20a4e1522120f117ff07e3cceb6c4ee1bf714ebba7
-    # via -r packages/cmk-plugins/requirements.in
+    # via
+    #   -r packages/cmk-plugins/requirements.in
+    #   boto3-stubs
 mypy-extensions==1.1.0 \
     --hash=sha256:1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505 \
     --hash=sha256:52e68efc3284861e772bbcd66823fde5ae21fd2fdb51c62a211403730b916558
@@ -3052,7 +3068,9 @@ opentelemetry-util-http==0.60b1 \
 opsgenie-sdk==2.1.5 \
     --hash=sha256:c38a2f0c7acbcbeb9202ced80ec857b5eda2d99919392fed4083bdfa7be32669 \
     --hash=sha256:fe0af399030a91ec5755ecfb899965bf18fcb46e17fd2d3a4d71fa68999947e9
-    # via -r cmk/requirements.in
+    # via
+    #   -r cmk/requirements.in
+    #   -r packages/cmk-notification-plugins/requirements.in
 oracledb==3.4.2 \
     --hash=sha256:00c79448017f367bb7ab6900efe0706658a53768abea2b4519a4c9b2d5743890 \
     --hash=sha256:0e16fe3d057e0c41a23ad2ae95bfa002401690773376d476be608f79ac74bf05 \
@@ -3281,6 +3299,7 @@ polyfactory==3.2.0 \
     --hash=sha256:879242f55208f023eee1de48522de5cb1f9fd2d09b2314e999a9592829d596d1
     # via
     #   -r non-free/packages/cmk-robotmk/requirements.in
+    #   -r packages/cmk-plugins/dev-requirements.in
     #   -r tests/dev-requirements.in
 pre-commit==4.5.1 \
     --hash=sha256:3b3afd891e97337708c1674210f8eba659b52a38ea5f822ff142d10786221f77 \
@@ -3475,6 +3494,7 @@ psutil==7.2.2 \
     --hash=sha256:fd04ef36b4a6d599bbdb225dd1d3f51e00105f6d48a28f006da7f9822f2606d8
     # via
     #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-liveproxyd/requirements.in
     #   -r non-free/packages/cmk-otel-collector/requirements.in
     #   -r non-free/packages/cmk-relay-engine/dev-requirements.in
     #   opentelemetry-resourcedetector-process
@@ -3609,6 +3629,8 @@ pydantic==2.12.5 \
     # via
     #   -r cmk/requirements.in
     #   -r non-free/packages/cmk-bakery/requirements.in
+    #   -r non-free/packages/cmk-dcd/requirements.in
+    #   -r non-free/packages/cmk-liveproxyd/requirements.in
     #   -r non-free/packages/cmk-metric-backend/requirements.in
     #   -r non-free/packages/cmk-otel-collector/requirements.in
     #   -r non-free/packages/cmk-relay-engine/requirements.in
@@ -3618,6 +3640,7 @@ pydantic==2.12.5 \
     #   -r packages/cmk-mkp-tool/requirements.in
     #   -r packages/cmk-plugin-apis/requirements.in
     #   -r packages/cmk-plugins/requirements.in
+    #   -r packages/cmk-relay-protocols/requirements.in
     #   -r packages/cmk-werks/requirements.in
     #   checkmk-dev-tools
     #   datamodel-code-generator
@@ -4006,8 +4029,12 @@ pytest==8.3.5 \
     #   -c constraints.txt
     #   -r non-free/packages/cmk-bakery/dev-requirements.in
     #   -r non-free/packages/cmk-core-helpers/dev-requirements.in
+    #   -r non-free/packages/cmk-dcd/dev-requirements.in
+    #   -r non-free/packages/cmk-licensing-nonfree/dev-requirements.in
+    #   -r non-free/packages/cmk-liveproxyd/dev-requirements.in
     #   -r non-free/packages/cmk-metric-backend/dev-requirements.in
     #   -r non-free/packages/cmk-mknotifyd/dev-requirements.in
+    #   -r non-free/packages/cmk-multi-tenancy/dev-requirements.in
     #   -r non-free/packages/cmk-otel-collector/dev-requirements.in
     #   -r non-free/packages/cmk-plugins-nonfree/dev-requirements.in
     #   -r non-free/packages/cmk-relay-engine/dev-requirements.in
@@ -4019,10 +4046,14 @@ pytest==8.3.5 \
     #   -r packages/cmk-crypto/dev-requirements.in
     #   -r packages/cmk-ec/dev-requirements.in
     #   -r packages/cmk-events/dev-requirements.in
+    #   -r packages/cmk-licensing/dev-requirements.in
     #   -r packages/cmk-livestatus-client/dev-requirements.in
+    #   -r packages/cmk-logwatch/dev-requirements.in
     #   -r packages/cmk-messaging/dev-requirements.in
     #   -r packages/cmk-mkp-tool/dev-requirements.in
+    #   -r packages/cmk-notification-plugins/dev-requirements.in
     #   -r packages/cmk-plugin-apis/dev-requirements.in
+    #   -r packages/cmk-plugins/dev-requirements.in
     #   -r packages/cmk-relay-protocols/dev-requirements.in
     #   -r packages/cmk-trace/dev-requirements.in
     #   -r packages/cmk-werks/dev-requirements.in
@@ -4078,10 +4109,14 @@ pytest-mock==3.15.1 \
     --hash=sha256:0a25e2eb88fe5168d535041d09a4529a188176ae608a6d249ee65abc0949630d \
     --hash=sha256:1849a238f6f396da19762269de72cb1814ab44416fa73a8686deac10b0d87a0f
     # via
+    #   -r non-free/packages/cmk-dcd/dev-requirements.in
+    #   -r non-free/packages/cmk-liveproxyd/dev-requirements.in
     #   -r non-free/packages/cmk-mknotifyd/dev-requirements.in
     #   -r non-free/packages/cmk-robotmk/dev-requirements.in
     #   -r non-free/packages/cmk-update-agent/dev-requirements.in
     #   -r packages/cmk-agent-receiver/dev-requirements.in
+    #   -r packages/cmk-logwatch/dev-requirements.in
+    #   -r packages/cmk-notification-plugins/dev-requirements.in
     #   -r tests/dev-requirements.in
 pytest-opentelemetry==1.1.0 \
     --hash=sha256:1fe96eea020bb0cdad3d590c8978908acd75a35d689659cc9b6600740de66812 \
@@ -4172,9 +4207,11 @@ python-dateutil==2.9.0.post0 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
     # via
     #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-licensing-nonfree/requirements.in
     #   -r packages/cmk-agent-receiver/requirements.in
     #   -r packages/cmk-crypto/requirements.in
     #   -r packages/cmk-ec/requirements.in
+    #   -r packages/cmk-licensing/requirements.in
     #   -r packages/cmk-plugins/requirements.in
     #   botocore
     #   bson
@@ -4559,8 +4596,10 @@ requests==2.32.5 \
     # via
     #   -r cmk/requirements.in
     #   -r non-free/packages/cmk-core-helpers/requirements.in
+    #   -r non-free/packages/cmk-dcd/requirements.in
     #   -r non-free/packages/cmk-metric-backend/requirements.in
     #   -r packages/cmk-agent-receiver/requirements.in
+    #   -r packages/cmk-notification-plugins/requirements.in
     #   -r packages/cmk-plugin-apis/requirements.in
     #   -r packages/cmk-plugins/requirements.in
     #   azure-core
@@ -4619,7 +4658,9 @@ requirements-parser==0.13.0 \
 responses==0.25.8 \
     --hash=sha256:0c710af92def29c8352ceadff0c3fe340ace27cf5af1bbe46fb71275bcd2831c \
     --hash=sha256:9374d047a575c8f781b94454db5cab590b6029505f488d12899ddb10a4af1cf4
-    # via -r tests/dev-requirements.in
+    # via
+    #   -r packages/cmk-plugins/dev-requirements.in
+    #   -r tests/dev-requirements.in
 rfc3339-validator==0.1.4 \
     --hash=sha256:138a2abdf93304ad60530167e51d2dfb9549521a836871b88d7f4695d0022f6b \
     --hash=sha256:24f6ec1eda14ef823da9e36ec7113124b39c04d50a4d3d3a3c2859577e7791fa
@@ -4921,6 +4962,8 @@ setproctitle==1.3.7 \
     --hash=sha256:ff3c1c32382fb71a200db8bab3df22f32e6ac7ec3170e92fa5b542cf42eed9a2
     # via
     #   -r cmk/requirements.in
+    #   -r non-free/packages/cmk-dcd/requirements.in
+    #   -r non-free/packages/cmk-liveproxyd/requirements.in
     #   -r packages/cmk-ec/requirements.in
 setuptools==78.1.1 \
     --hash=sha256:c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561 \
@@ -5067,6 +5110,7 @@ tenacity==9.1.4 \
     #   -r non-free/packages/cmk-metric-backend/requirements.in
     #   -r non-free/packages/cmk-relay-engine/dev-requirements.in
     #   -r packages/cmk-agent-receiver/requirements.in
+    #   -r packages/cmk-notification-plugins/requirements.in
     #   opsgenie-sdk
 text-unidecode==1.3 \
     --hash=sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8 \
@@ -5152,6 +5196,8 @@ time-machine==3.2.0 \
     --hash=sha256:e0d90bee170b219e1d15e6a58164aa808f5170090e4f090bd0670303e34181b1 \
     --hash=sha256:f09abeb8f03f044d72712207e0489a62098ad3ad16dac38927fcf80baca4d6a7
     # via
+    #   -r non-free/packages/cmk-dcd/dev-requirements.in
+    #   -r non-free/packages/cmk-liveproxyd/dev-requirements.in
     #   -r non-free/packages/cmk-mknotifyd/dev-requirements.in
     #   -r non-free/packages/cmk-otel-collector/dev-requirements.in
     #   -r non-free/packages/cmk-relay-engine/dev-requirements.in
@@ -5160,6 +5206,7 @@ time-machine==3.2.0 \
     #   -r packages/cmk-crypto/dev-requirements.in
     #   -r packages/cmk-ec/dev-requirements.in
     #   -r packages/cmk-events/dev-requirements.in
+    #   -r packages/cmk-plugins/dev-requirements.in
     #   -r tests/dev-requirements.in
 tinycss2==1.5.1 \
     --hash=sha256:3415ba0f5839c062696996998176c4a3751d18b7edaaeeb658c9ce21ec150661 \
@@ -5189,6 +5236,10 @@ typeguard==4.5.0 \
     --hash=sha256:749bea21cdb2553e12831bc29f1eae980b22c7de8331ab67ae7db9e85470b5a7 \
     --hash=sha256:cfda388fc88a9ce42a41890900d6f31ee124bea9b73bb84701a32438e92165c3
     # via inflect
+types-awscrt==0.31.3 \
+    --hash=sha256:09d3eaf00231e0f47e101bd9867e430873bc57040050e2a3bd8305cb4fc30865 \
+    --hash=sha256:e5ce65a00a2ab4f35eacc1e3d700d792338d56e4823ee7b4dbe017f94cfc4458
+    # via botocore-stubs
 types-docker==7.1.0.20260109 \
     --hash=sha256:001a5a377d3fb287b7279cf4265b8ba3857e7d4203a16ab03e6e512f68f2f3d4 \
     --hash=sha256:b36ef355ec9ba8bf29bcc4e32cc61dd9138ce4d8352c599c8fbc65f1a3e87b57
@@ -5284,6 +5335,10 @@ types-requests==2.32.4.20260107 \
     # via
     #   -r tests/dev-requirements.in
     #   types-docker
+types-s3transfer==0.16.0 \
+    --hash=sha256:1c0cd111ecf6e21437cb410f5cddb631bfb2263b77ad973e79b9c6d0cb24e0ef \
+    --hash=sha256:b4636472024c5e2b62278c5b759661efeb52a81851cde5f092f24100b1ecb443
+    # via boto3-stubs
 types-setuptools==82.0.0.20260210 \
     --hash=sha256:5124a7daf67f195c6054e0f00f1d97c69caad12fdcf9113eba33eff0bce8cd2b \
     --hash=sha256:d9719fbbeb185254480ade1f25327c4654f8c00efda3fec36823379cebcdee58
@@ -5440,6 +5495,7 @@ urllib3==2.6.3 \
     #   -r agents/plugins/dev-requirements.in
     #   -r cmk/requirements.in
     #   -r non-free/packages/cmk-core-helpers/requirements.in
+    #   -r packages/cmk-notification-plugins/requirements.in
     #   -r packages/cmk-plugin-apis/requirements.in
     #   -r packages/cmk-plugins/requirements.in
     #   botocore

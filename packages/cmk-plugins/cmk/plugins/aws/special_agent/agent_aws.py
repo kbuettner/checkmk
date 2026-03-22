@@ -14,10 +14,11 @@ Checkmk special agent for monitoring Amazon Web Services (AWS).
 # mypy: disable-error-code="unreachable"
 # mypy: disable-error-code="no-untyped-call"
 # mypy: disable-error-code="no-untyped-def"
+# mypy: disable-error-code="attr-defined"
 
-# TODO: Using BaseClient all over the place is wrong and leads to the tons of ignore[attr-defined]
-# suppressions below. The code and types have to be restructured to use the right subclass of
-# BaseClient for the client in question.
+# TODO: Using BaseClient all over the place is wrong and leads to the tons of attr-defined errors.
+# The code and types have to be restructured to use the right subclass of BaseClient for the client
+# in question.
 
 import abc
 import argparse
@@ -466,7 +467,7 @@ def _describe_dynamodb_tables(
                 get_response_content(client.describe_table(TableName=table_name), "Table")
             )
         # NOTE: The suppression below is needed because of BaseClientExceptions.__getattr__ magic.
-        except client.exceptions.ResourceNotFoundException:
+        except client.exceptions.ResourceNotFoundException:  # type: ignore[misc]
             # we raise the exception if we fetched the table names from the API, since in that case
             # all tables should exist, otherwise something went really wrong
             if fetched_table_names is None:
@@ -1202,7 +1203,7 @@ class ReservationUtilization(AWSSection):
         try:
             response = self._client.get_reservation_utilization(**params)
         # NOTE: The suppression below is needed because of BaseClientExceptions.__getattr__ magic.
-        except self._client.exceptions.DataUnavailableException:
+        except self._client.exceptions.DataUnavailableException:  # type: ignore[misc]
             logging.warning("ReservationUtilization: No data available")
             return []
         return self._get_response_content(response, "UtilizationsByTime")
@@ -3790,7 +3791,7 @@ class RDSSummary(AWSSection):
                 ):
                     instances.extend(self._get_response_content(page, "DBInstances"))
             # NOTE: The suppression below is needed because of BaseClientExceptions.__getattr__ magic.
-            except self._client.exceptions.DBInstanceNotFoundFault:
+            except self._client.exceptions.DBInstanceNotFoundFault:  # type: ignore[misc]
                 pass
 
         return instances

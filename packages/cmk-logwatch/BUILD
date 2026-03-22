@@ -6,6 +6,11 @@ load("@rules_shell//shell:sh_library.bzl", "sh_library")
 load("//bazel/rules:doctest.bzl", "py_doc_test")
 load("//bazel/rules:package_wheel.bzl", "package_wheel")
 
+exports_files([
+    "dev-requirements.in",
+    "requirements.in",
+])
+
 py_library(
     name = "config",
     srcs = ["cmk/logwatch/config.py"],
