@@ -7,13 +7,18 @@ import json
 
 import pytest
 
-import cmk.plugins.jenkins.agent_based.jenkins_system_metrics as agent_module
 from cmk.agent_based.v2 import Metric, Result, Service, State
+from cmk.plugins.jenkins.agent_based.jenkins_system_metrics import (
+    check_jenkins_metrics,
+    discover_jenkins_metrics_service,
+    parse_jenkins_system_metrics,
+    Section,
+)
 
 
 @pytest.fixture(scope="module", name="section")
-def _section() -> agent_module.Section:
-    return agent_module.parse_jenkins_system_metrics(
+def _section() -> Section:
+    return parse_jenkins_system_metrics(
         [
             [
                 json.dumps(
@@ -490,30 +495,28 @@ def _section() -> agent_module.Section:
     )
 
 
-def test_parsing_section_data(section: agent_module.Section) -> None:
+def test_parsing_section_data(section: Section) -> None:
     assert "gauges" in section
     assert "counters" in section
 
 
-def test_discovery(section: agent_module.Section) -> None:
-    assert list(agent_module.discover_jenkins_metrics_service(section)) == [
+def test_discovery(section: Section) -> None:
+    assert list(discover_jenkins_metrics_service(section)) == [
         Service(item="HTTP Requests"),
         Service(item="Memory"),
         Service(item="Threads"),
     ]
 
 
-def test_jenkins_system_metrics_http_requests(section: agent_module.Section) -> None:
+def test_jenkins_system_metrics_http_requests(section: Section) -> None:
     expected_results = [
         Result(state=State.OK, summary="HTTP requests: active: 1"),
         Metric("jenkins_metrics_counter_http_activerequests", 1.0),
     ]
-    assert (
-        list(agent_module.check_jenkins_metrics("HTTP Requests", {}, section)) == expected_results
-    )
+    assert list(check_jenkins_metrics("HTTP Requests", {}, section)) == expected_results
 
 
-def test_jenkins_system_metrics_memory(section: agent_module.Section) -> None:
+def test_jenkins_system_metrics_memory(section: Section) -> None:
     expected_results = [
         Result(state=State.OK, notice="JVM memory: heap: available by OS: 400 MiB"),
         Metric("jenkins_memory_vm_memory_heap_committed", 419430400.0),
@@ -586,10 +589,10 @@ def test_jenkins_system_metrics_memory(section: agent_module.Section) -> None:
         Result(state=State.OK, summary="JVM memory: used: 401 MiB"),
         Metric("jenkins_memory_vm_memory_total_used", 419967872.0),
     ]
-    assert list(agent_module.check_jenkins_metrics("Memory", {}, section)) == expected_results
+    assert list(check_jenkins_metrics("Memory", {}, section)) == expected_results
 
 
-def test_jenkins_system_metrics_threads(section: agent_module.Section) -> None:
+def test_jenkins_system_metrics_threads(section: Section) -> None:
     expected_results = [
         Result(state=State.OK, summary="Total threads: 38"),
         Metric("jenkins_threads_vm_count", 38.0),
@@ -610,4 +613,4 @@ def test_jenkins_system_metrics_threads(section: agent_module.Section) -> None:
         Result(state=State.OK, summary="Terminated threads: 0"),
         Metric("jenkins_threads_vm_terminated_count", 0.0),
     ]
-    assert list(agent_module.check_jenkins_metrics("Threads", {}, section)) == expected_results
+    assert list(check_jenkins_metrics("Threads", {}, section)) == expected_results

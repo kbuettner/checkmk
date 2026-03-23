@@ -10,13 +10,19 @@ import json
 
 import pytest
 
-import cmk.plugins.jenkins.agent_based.jenkins_nodes as jn
 from cmk.agent_based.v2 import Metric, Result, Service, State
+from cmk.plugins.jenkins.agent_based.jenkins_nodes import (
+    CHECK_DEFAULT_PARAMETERS,
+    check_jenkins_nodes,
+    discover_jenkins_nodes,
+    parse_jenkins_nodes,
+    Section,
+)
 
 
 @pytest.fixture(scope="module", name="section")
-def _section() -> jn.Section:
-    return jn.parse_jenkins_nodes(
+def _section() -> Section:
+    return parse_jenkins_nodes(
         [
             [
                 json.dumps(
@@ -184,16 +190,16 @@ def _section() -> jn.Section:
     )
 
 
-def test_discovery(section: jn.Section) -> None:
-    assert list(jn.discover_jenkins_nodes(section)) == [
+def test_discovery(section: Section) -> None:
+    assert list(discover_jenkins_nodes(section)) == [
         Service(item="master"),
         Service(item="Windows"),
         Service(item="foo"),
     ]
 
 
-def test_check_windows_item(section: jn.Section) -> None:
-    assert list(jn.check_jenkins_nodes("Windows", jn.CHECK_DEFAULT_PARAMETERS, section)) == [
+def test_check_windows_item(section: Section) -> None:
+    assert list(check_jenkins_nodes("Windows", CHECK_DEFAULT_PARAMETERS, section)) == [
         Result(state=State.OK, summary="Description: Name: Myname, Ip-Address: 1.1.1.1"),
         Result(state=State.OK, summary="Is JNLP agent: yes"),
         Result(state=State.OK, summary="Is idle: yes"),
@@ -214,8 +220,8 @@ def test_check_windows_item(section: jn.Section) -> None:
     ]
 
 
-def test_check_master_item(section: jn.Section) -> None:
-    assert list(jn.check_jenkins_nodes("master", jn.CHECK_DEFAULT_PARAMETERS, section)) == [
+def test_check_master_item(section: Section) -> None:
+    assert list(check_jenkins_nodes("master", CHECK_DEFAULT_PARAMETERS, section)) == [
         Result(state=State.OK, summary="Description: The Master Jenkins Node"),
         Result(state=State.OK, summary="Is JNLP agent: no"),
         Result(state=State.OK, summary="Is idle: no"),
@@ -236,12 +242,12 @@ def test_check_master_item(section: jn.Section) -> None:
     ]
 
 
-def test_check_foo_item(section: jn.Section) -> None:
+def test_check_foo_item(section: Section) -> None:
     assert list(
-        jn.check_jenkins_nodes(
+        check_jenkins_nodes(
             "foo",
             {
-                **jn.CHECK_DEFAULT_PARAMETERS,
+                **CHECK_DEFAULT_PARAMETERS,
                 "avg_response_time": ("fixed", (1.0, 2.0)),
                 "jenkins_clock": ("fixed", (3.0, 4.0)),
             },
@@ -275,11 +281,11 @@ def test_check_foo_item(section: jn.Section) -> None:
 
 
 @pytest.fixture(scope="module", name="multi_label_section")
-def _multi_label_section() -> jn.Section:
+def _multi_label_section() -> Section:
     """
     Example output containing a node with multiple assigned labels
     """
-    return jn.parse_jenkins_nodes(
+    return parse_jenkins_nodes(
         [
             [
                 json.dumps(
@@ -343,9 +349,9 @@ def test_showing_correct_executor_amount(multi_label_section):
     """
     executor_metrics = [
         metric
-        for metric in jn.check_jenkins_nodes(
+        for metric in check_jenkins_nodes(
             "build-fra-002.lan.corpo.net",
-            jn.CHECK_DEFAULT_PARAMETERS,
+            CHECK_DEFAULT_PARAMETERS,
             multi_label_section,
         )
         if isinstance(metric, Metric) and metric[0].endswith("_executors")
@@ -363,9 +369,9 @@ def test_showing_correct_executor_amount(multi_label_section):
 
 def test_showing_correct_executor_mode(multi_label_section):
     check_results = list(
-        jn.check_jenkins_nodes(
+        check_jenkins_nodes(
             "build-fra-002.lan.corpo.net",
-            jn.CHECK_DEFAULT_PARAMETERS,
+            CHECK_DEFAULT_PARAMETERS,
             multi_label_section,
         )
     )

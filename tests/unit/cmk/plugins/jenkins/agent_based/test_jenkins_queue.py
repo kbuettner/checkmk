@@ -10,8 +10,14 @@ from zoneinfo import ZoneInfo
 import pytest
 import time_machine
 
-import cmk.plugins.jenkins.agent_based.jenkins_queue as jq
 from cmk.agent_based.v2 import Metric, Result, Service, State
+from cmk.plugins.jenkins.agent_based.jenkins_queue import (
+    check_jenkins_queue,
+    discover_jenkins_queue,
+    JenkinsQueue,
+    ParamsDict,
+    parse_jenkins_queue,
+)
 
 TEST_TIMEZONE = ZoneInfo("CET")
 TEST_TIME_2019 = datetime.datetime(2019, 8, 27, 13, 15, tzinfo=TEST_TIMEZONE)
@@ -19,8 +25,8 @@ TEST_TIME_2024 = datetime.datetime(2024, 3, 5, 19, 22, 25, tzinfo=TEST_TIMEZONE)
 
 
 @pytest.fixture(scope="module", name="section")
-def _section() -> jq.JenkinsQueue:
-    return jq.parse_jenkins_queue(
+def _section() -> JenkinsQueue:
+    return parse_jenkins_queue(
         [
             [
                 json.dumps(
@@ -47,12 +53,12 @@ def _section() -> jq.JenkinsQueue:
     )
 
 
-def test_discovery(section: jq.JenkinsQueue) -> None:
-    assert list(jq.discover_jenkins_queue(section)) == [Service()]
+def test_discovery(section: JenkinsQueue) -> None:
+    assert list(discover_jenkins_queue(section)) == [Service()]
 
 
-def test_check_jenkins_queue(section: jq.JenkinsQueue) -> None:
-    params: jq.ParamsDict = {
+def test_check_jenkins_queue(section: JenkinsQueue) -> None:
+    params: ParamsDict = {
         "blocked": State.OK,
         "in_queue_since": ("fixed", (3600, 7200)),
         "jenkins_stuck_tasks": ("fixed", (1, 2)),
@@ -61,7 +67,7 @@ def test_check_jenkins_queue(section: jq.JenkinsQueue) -> None:
     }
 
     with time_machine.travel(TEST_TIME_2019):
-        assert list(jq.check_jenkins_queue(params, section)) == [
+        assert list(check_jenkins_queue(params, section)) == [
             Result(state=State.OK, summary="Queue length: 1 Tasks"),
             Metric("queue", 1),
             Result(state=State.OK, summary="Stuck: 0"),
@@ -82,8 +88,8 @@ def test_check_jenkins_queue(section: jq.JenkinsQueue) -> None:
 
 
 @pytest.fixture(scope="module", name="multi_task_section")
-def _multi_task_section() -> jq.JenkinsQueue:
-    return jq.parse_jenkins_queue(
+def _multi_task_section() -> JenkinsQueue:
+    return parse_jenkins_queue(
         [
             [
                 json.dumps(
@@ -125,8 +131,8 @@ def _multi_task_section() -> jq.JenkinsQueue:
     )
 
 
-def test_check_jenkins_queue_with_multiple_tasks(multi_task_section: jq.JenkinsQueue) -> None:
-    params: jq.ParamsDict = {
+def test_check_jenkins_queue_with_multiple_tasks(multi_task_section: JenkinsQueue) -> None:
+    params: ParamsDict = {
         "blocked": State.OK,
         "in_queue_since": ("fixed", (3600, 7200)),
         "jenkins_stuck_tasks": ("fixed", (1, 2)),
@@ -135,7 +141,7 @@ def test_check_jenkins_queue_with_multiple_tasks(multi_task_section: jq.JenkinsQ
     }
 
     with time_machine.travel(TEST_TIME_2024):
-        assert list(jq.check_jenkins_queue(params, multi_task_section)) == [
+        assert list(check_jenkins_queue(params, multi_task_section)) == [
             Result(state=State.OK, summary="Queue length: 2 Tasks"),
             Metric("queue", 2),
             Result(state=State.WARN, summary="Stuck: 1 (warn/crit at 1/2)"),

@@ -7,13 +7,18 @@ import json
 
 import pytest
 
-import cmk.plugins.jenkins.agent_based.jenkins_instance as ji
 from cmk.agent_based.v2 import Result, Service, State
+from cmk.plugins.jenkins.agent_based.jenkins_instance import (
+    check_jenkins_instance,
+    discover_jenkins_instance,
+    JenkinsInstance,
+    parse_jenkins_instance,
+)
 
 
 @pytest.fixture(scope="module", name="section")
-def _section() -> ji.JenkinsInstance:
-    return ji.parse_jenkins_instance(
+def _section() -> JenkinsInstance:
+    return parse_jenkins_instance(
         [
             [
                 json.dumps(
@@ -31,12 +36,12 @@ def _section() -> ji.JenkinsInstance:
     )
 
 
-def test_discovery(section: ji.JenkinsInstance) -> None:
-    assert list(ji.discover_jenkins_instance(section)) == [Service()]
+def test_discovery(section: JenkinsInstance) -> None:
+    assert list(discover_jenkins_instance(section)) == [Service()]
 
 
-def test_check_jenkins_instance(section: ji.JenkinsInstance) -> None:
-    assert list(ji.check_jenkins_instance({}, section)) == [
+def test_check_jenkins_instance(section: JenkinsInstance) -> None:
+    assert list(check_jenkins_instance({}, section)) == [
         Result(state=State.OK, summary="Description: The Master Jenkins Node"),
         Result(state=State.OK, summary="Quieting Down: no"),
         Result(state=State.OK, summary="Security used: yes"),
