@@ -183,7 +183,7 @@ class MinimalVerticalRange(BaseModel, frozen=True):
     max: float | None
 
 
-class GraphDataRange(BaseModel, frozen=True):
+class GraphTimeRange(BaseModel, frozen=True):
     time_range: tuple[int, int]
     # Forecast graphs represent step as str (see forecasts.py and fetch_rrd_data)
     # colon separated [step length]:[rrd point count]
@@ -208,7 +208,7 @@ class GraphRecipe(BaseModel, frozen=True):
     metrics: Sequence[GraphMetric]
     additional_html: AdditionalGraphHTML | None = None
     render_options: GraphRenderOptions = GraphRenderOptions()
-    data_range: GraphDataRange | None = None
+    time_range: GraphTimeRange | None = None
     mark_requested_end_time: bool = False
     # https://docs.pydantic.dev/2.4/concepts/serialization/#subclass-instances-for-fields-of-basemodel-dataclasses-typeddict
     # https://docs.pydantic.dev/2.4/concepts/serialization/#serializing-with-duck-typing

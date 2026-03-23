@@ -44,7 +44,7 @@ from ._fetch_time_series import fetch_augmented_time_series
 from ._from_api import graphs_from_api, metrics_from_api, RegisteredMetric
 from ._graph_metric_expressions import LineType
 from ._graph_pdf import (
-    compute_pdf_graph_data_range,
+    compute_pdf_graph_time_range,
     get_mm_per_ex,
     graph_legend_height,
     render_graph_pdf,
@@ -56,8 +56,8 @@ from ._graph_render_config import (
 )
 from ._graph_specification import (
     AugmentedTimeSeriesOfGraphMetric,
-    GraphDataRange,
     GraphRecipe,
+    GraphTimeRange,
     parse_raw_graph_specification,
 )
 from ._graph_templates import (
@@ -147,7 +147,7 @@ def _answer_graph_image_request(
             graph_image_render_options(),
         )
 
-        graph_data_range = graph_image_data_range(graph_render_config, start_time, end_time)
+        graph_time_range = graph_image_time_range(graph_render_config, start_time, end_time)
         graph_recipes = get_template_graph_specification(
             site_id=SiteId(site) if site else None,
             host_name=host_name,
@@ -168,7 +168,7 @@ def _answer_graph_image_request(
         for graph_recipe in graph_recipes[:num_graphs]:
             graph_artwork = compute_graph_artwork(
                 graph_recipe,
-                graph_data_range,
+                graph_time_range,
                 graph_render_config.size,
                 registered_metrics,
                 temperature_unit=temperature_unit,
@@ -188,12 +188,12 @@ def _answer_graph_image_request(
             raise
 
 
-def graph_image_data_range(
+def graph_image_time_range(
     graph_render_config: GraphRenderConfigImage, start_time: int, end_time: int
-) -> GraphDataRange:
+) -> GraphTimeRange:
     mm_per_ex = get_mm_per_ex(graph_render_config.font_size)
     width_mm = graph_render_config.size[0] * mm_per_ex
-    return compute_pdf_graph_data_range(width_mm, start_time, end_time)
+    return compute_pdf_graph_time_range(width_mm, start_time, end_time)
 
 
 def graph_image_render_options(api_request: dict[str, Any] | None = None) -> GraphRenderOptions:
@@ -265,7 +265,7 @@ def graph_recipes_for_api_request(
     *,
     debug: bool,
     temperature_unit: TemperatureUnit,
-) -> tuple[GraphDataRange, Sequence[GraphRecipe]]:
+) -> tuple[GraphTimeRange, Sequence[GraphRecipe]]:
     # Get and validate the specification
     if not (raw_graph_spec := api_request.get("specification")):
         raise MKUserError(None, _("The graph specification is missing"))
@@ -276,10 +276,10 @@ def graph_recipes_for_api_request(
     default_time_range = ((now := int(time.time())) - (25 * 3600), now)
 
     # Get and validate the data range
-    raw_graph_data_range = api_request.get("data_range", {})
-    raw_graph_data_range.setdefault("time_range", default_time_range)
+    raw_graph_time_range = api_request.get("data_range", {})
+    raw_graph_time_range.setdefault("time_range", default_time_range)
 
-    time_range = raw_graph_data_range.setdefault("time_range", default_time_range)
+    time_range = raw_graph_time_range.setdefault("time_range", default_time_range)
     if not time_range or len(time_range) != 2:
         raise MKUserError(None, _("The graph data range is wrong or missing"))
 
@@ -293,7 +293,7 @@ def graph_recipes_for_api_request(
     except ValueError:
         raise MKUserError(None, _("Invalid end time given"))
 
-    raw_graph_data_range["step"] = 60
+    raw_graph_time_range["step"] = 60
 
     try:
         graph_recipes = graph_specification.recipes(
@@ -311,7 +311,7 @@ def graph_recipes_for_api_request(
     except livestatus.MKLivestatusNotFoundError as e:
         raise MKUserError(None, _("Cannot calculate graph recipes: %s") % e)
 
-    return GraphDataRange.model_validate(raw_graph_data_range), graph_recipes
+    return GraphTimeRange.model_validate(raw_graph_time_range), graph_recipes
 
 
 class Curves(TypedDict):
@@ -330,11 +330,11 @@ class GraphSpec(TypedDict):
 
 
 def _compute_graph_spec(
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     augmented_time_series_of_graph_metrics: Sequence[AugmentedTimeSeriesOfGraphMetric],
 ) -> GraphSpec:
     api_curves = []
-    (start, end), step = graph_data_range.time_range, 60  # empty graph
+    (start, end), step = graph_time_range.time_range, 60  # empty graph
     for augmented_time_series_of_graph_metric in augmented_time_series_of_graph_metrics:
         for augmented_time_series in augmented_time_series_of_graph_metric.time_series:
             if (
@@ -370,7 +370,7 @@ def graph_spec_from_request(  # type: ignore[misc]
     backend_time_series_fetcher: FetchTimeSeries | None,
 ) -> GraphSpec:
     try:
-        graph_data_range, graph_recipes = graph_recipes_for_api_request(
+        graph_time_range, graph_recipes = graph_recipes_for_api_request(
             api_request,
             registered_metrics,
             registered_graphs,
@@ -390,13 +390,13 @@ def graph_spec_from_request(  # type: ignore[misc]
         raise MKUserError(None, _("The requested graph does not exist"))
 
     return _compute_graph_spec(
-        graph_data_range,
+        graph_time_range,
         [
             result.ok
             for result in fetch_augmented_time_series(
                 registered_metrics,
                 graph_recipe,
-                graph_data_range,
+                graph_time_range,
                 temperature_unit=temperature_unit,
                 backend_time_series_fetcher=backend_time_series_fetcher,
             )

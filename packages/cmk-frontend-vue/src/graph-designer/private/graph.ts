@@ -34,14 +34,14 @@ interface GraphRenderConfig {
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type GraphRecipe = Record<string, any>
 
-interface GraphDataRange {
+interface GraphTimeRange {
   time_range: [number, number]
 }
 
 interface AjaxContext {
   graph_id: string
   graph_recipe: GraphRecipe
-  data_range: GraphDataRange
+  time_range: GraphTimeRange
   render_config: GraphRenderConfig
   display_id: string
 }

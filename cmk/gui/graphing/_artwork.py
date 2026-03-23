@@ -42,9 +42,9 @@ from ._graph_metric_expressions import (
 from ._graph_specification import (
     AugmentedTimeSeriesOfGraphMetric,
     FixedVerticalRange,
-    GraphDataRange,
     GraphMetricLimit,
     GraphRecipe,
+    GraphTimeRange,
     HorizontalRule,
     MinimalVerticalRange,
 )
@@ -297,7 +297,7 @@ class GraphArtworkOrErrors:
 @tracer.instrument("graphing.compute_graph_artwork")
 def compute_graph_artwork(
     graph_recipe: GraphRecipe,
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     size: tuple[float, float],
     registered_metrics: Mapping[str, RegisteredMetric],
     *,
@@ -313,7 +313,7 @@ def compute_graph_artwork(
     for result in fetch_augmented_time_series(
         registered_metrics,
         graph_recipe,
-        graph_data_range,
+        graph_time_range,
         temperature_unit=temperature_unit,
         backend_time_series_fetcher=backend_time_series_fetcher,
     ):
@@ -334,7 +334,7 @@ def compute_graph_artwork(
         time_series = augmented_time_series_of_graph_metrics[0].time_series[0].time_series
         start_time, end_time, step = time_series.start, time_series.end, time_series.step
     except IndexError:  # Empty graph
-        (start_time, end_time), step = graph_data_range.time_range, 60
+        (start_time, end_time), step = graph_time_range.time_range, 60
 
     return GraphArtworkOrErrors(
         GraphArtwork(
@@ -346,7 +346,7 @@ def compute_graph_artwork(
             y_axis=_compute_graph_v_axis(
                 unit_spec,
                 graph_recipe.explicit_vertical_range,
-                graph_data_range,
+                graph_time_range,
                 SizeEx(height),
                 layouted_curves,
                 mirrored,
@@ -356,10 +356,10 @@ def compute_graph_artwork(
             # Displayed range
             actual_time=ActualTimeRange(start=int(start_time), end=int(end_time), step=int(step)),
             requested_time=RequestedTimeRange(
-                start=graph_data_range.time_range[0],
-                end=graph_data_range.time_range[1],
+                start=graph_time_range.time_range[0],
+                end=graph_time_range.time_range[1],
             ),
-            requested_y_range=graph_data_range.vertical_range,
+            requested_y_range=graph_time_range.vertical_range,
             pin_time=pin_time,
         ),
         errors,
@@ -556,7 +556,7 @@ def _compute_labels_from_api(
 def _compute_graph_v_axis(
     unit_spec: UserSpecificUnit,
     explicit_vertical_range: FixedVerticalRange | MinimalVerticalRange | None,
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     height_ex: SizeEx,
     layouted_curves: Sequence[LayoutedCurve],
     mirrored: bool,
@@ -568,7 +568,7 @@ def _compute_graph_v_axis(
     v_axis_min, v_axis_max = _compute_v_axis_min_max(
         explicit_vertical_range,
         layouted_curves,
-        graph_data_range.vertical_range,
+        graph_time_range.vertical_range,
         mirrored,
         height_ex,
     )

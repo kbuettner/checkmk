@@ -23,7 +23,7 @@ from cmk.gui.graphing import (
     GraphRenderConfig,
     GraphRenderOptions,
     graphs_from_api,
-    make_graph_data_range,
+    make_graph_time_range,
     metric_backend_registry,
     metrics_from_api,
     RegisteredMetric,
@@ -228,7 +228,7 @@ def _paint_time_graph_cmk(
     if painter_option_pnp_timerange is not None:
         time_range = get_graph_timerange_from_painter_options()
 
-    graph_data_range = make_graph_data_range(
+    graph_time_range = make_graph_time_range(
         time_range,
         graph_render_config.size[1],
     )
@@ -268,7 +268,7 @@ def _paint_time_graph_cmk(
             host_name=row["host_name"],
             service_name=row.get("service_description", "_HOST_"),
         ),
-        graph_data_range,
+        graph_time_range,
         graph_render_config,
         registered_metrics,
         registered_graphs,

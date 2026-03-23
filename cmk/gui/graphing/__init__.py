@@ -21,7 +21,7 @@ from ._graph_metric_expressions import (
     LineType,
 )
 from ._graph_pdf import (
-    compute_pdf_graph_data_range,
+    compute_pdf_graph_time_range,
     get_mm_per_ex,
     render_graph_pdf,
 )
@@ -31,10 +31,10 @@ from ._graph_render_config import (
     GraphRenderOptions,
 )
 from ._graph_specification import (
-    GraphDataRange,
     GraphMetric,
     GraphRecipe,
     GraphSpecification,
+    GraphTimeRange,
     parse_raw_graph_specification,
 )
 from ._graph_templates import (
@@ -48,7 +48,7 @@ from ._html_render import (
     GraphDestinations,
     host_service_graph_dashlet_cmk,
     host_service_graph_popup_cmk,
-    make_graph_data_range,
+    make_graph_time_range,
     render_graphs_from_specification_html,
     render_plain_graph_title,
 )
@@ -103,7 +103,7 @@ __all__ = [
     "FetchTimeSeries",
     "GraphArtwork",
     "GraphConsolidationFunction",
-    "GraphDataRange",
+    "GraphTimeRange",
     "GraphDestinations",
     "GraphMetric",
     "GraphMetricConstant",
@@ -132,7 +132,7 @@ __all__ = [
     "check_metrics",
     "check_metrics",
     "compute_graph_artwork",
-    "compute_pdf_graph_data_range",
+    "compute_pdf_graph_time_range",
     "get_first_matching_perfometer",
     "get_graph_data_from_livestatus",
     "get_graph_plugin_and_single_metric_choices",
@@ -147,7 +147,7 @@ __all__ = [
     "host_service_graph_popup_cmk",
     "id_from_unit_spec",
     "lookup_metric_translations_for_check_command",
-    "make_graph_data_range",
+    "make_graph_time_range",
     "metric_backend_registry",
     "metrics_from_api",
     "metrics_of_query",

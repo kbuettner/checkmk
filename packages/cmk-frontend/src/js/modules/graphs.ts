@@ -42,14 +42,14 @@ interface GraphRenderConfig {
   vertical_axis_width: 'fixed' | ['explicit', SizePT]
 }
 
-interface GraphDataRange {
+interface GraphTimeRange {
   time_range: [number, number]
 }
 
 interface AjaxContext {
   graph_id: string
   graph_recipe: GraphRecipe
-  data_range: GraphDataRange
+  time_range: GraphTimeRange
   render_config: GraphRenderConfig
   display_id: string
 }
@@ -208,7 +208,7 @@ function _hover_cache_set(key: string, data: GraphHover): void {
 interface DelayedGraph {
   graph_load_container: HTMLElement | Node | null
   graph_recipe: GraphRecipe
-  graph_data_range: GraphDataRange
+  graph_time_range: GraphTimeRange
   graph_render_config: GraphRenderConfig
   script_object: HTMLScriptElement
   graph_display_id: string
@@ -386,7 +386,7 @@ function get_current_script(): HTMLScriptElement {
 //    faster by parallelizing the graph loading processes.
 export function load_graph_content(
   graph_recipe: GraphRecipe,
-  graph_data_range: GraphDataRange,
+  graph_time_range: GraphTimeRange,
   graph_render_config: GraphRenderConfig,
   graph_display_id: string
 ) {
@@ -399,7 +399,7 @@ export function load_graph_content(
     g_delayed_graphs.push({
       graph_load_container: graph_load_container,
       graph_recipe: graph_recipe,
-      graph_data_range: graph_data_range,
+      graph_time_range: graph_time_range,
       graph_render_config: graph_render_config,
       script_object: script_object,
       graph_display_id: graph_display_id
@@ -408,7 +408,7 @@ export function load_graph_content(
   } else {
     do_load_graph_content(
       graph_recipe,
-      graph_data_range,
+      graph_time_range,
       graph_render_config,
       script_object,
       graph_display_id
@@ -439,7 +439,7 @@ export function register_delayed_graph_listener() {
 
 function do_load_graph_content(
   graph_recipe: GraphRecipe,
-  graph_data_range: GraphDataRange,
+  graph_time_range: GraphTimeRange,
   graph_render_config: GraphRenderConfig,
   script_object: HTMLScriptElement,
   graph_display_id: string
@@ -456,7 +456,7 @@ function do_load_graph_content(
     encodeURIComponent(
       JSON.stringify({
         graph_recipe: graph_recipe,
-        graph_data_range: graph_data_range,
+        graph_time_range: graph_time_range,
         graph_render_config: graph_render_config,
         graph_display_id: graph_display_id
       })
@@ -532,7 +532,7 @@ function delayed_graph_renderer() {
     if (is_in_viewport(entry.graph_load_container as HTMLElement)) {
       do_load_graph_content(
         entry.graph_recipe,
-        entry.graph_data_range,
+        entry.graph_time_range,
         entry.graph_render_config,
         entry.script_object,
         entry.graph_display_id
@@ -546,7 +546,7 @@ function delayed_graph_renderer() {
 function update_delayed_graphs_timerange(start_time: number, end_time: number) {
   for (let i = 0, len = g_delayed_graphs.length; i < len; i++) {
     const entry = g_delayed_graphs[i]
-    entry.graph_data_range.time_range = [start_time, end_time]
+    entry.graph_time_range.time_range = [start_time, end_time]
   }
 }
 
@@ -2028,7 +2028,7 @@ function handle_graph_update(graph_container: HTMLElement, ajax_response: string
   //     "context" : {
   //         "graph_id"       : context["graph_id"],
   //         "graph_recipe"   : graph_recipe,
-  //         "data_range"     : graph_data_range,
+  //         "data_range"     : graph_time_range,
   //         "render_config"  : graph_render_config,
   // }
   if (!response.context) {

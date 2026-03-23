@@ -83,7 +83,7 @@ UserFileName = Literal[
 _RowSelection = NewType("_RowSelection", str)
 
 # a str that is supposed to be "path safe"
-UserGraphDataRangeFileName = NewType("UserGraphDataRangeFileName", str)
+UserGraphTimeRangeFileName = NewType("UserGraphTimeRangeFileName", str)
 
 
 class UserUIConfig(TypedDict, total=False):
@@ -482,7 +482,7 @@ class LoggedInUser:
 
     def load_file(
         self,
-        name: UserFileName | _RowSelection | UserGraphDataRangeFileName,
+        name: UserFileName | _RowSelection | UserGraphTimeRangeFileName,
         deflt: Any,
         lock: bool = False,
     ) -> Any:
@@ -493,7 +493,7 @@ class LoggedInUser:
         return load_user_file(name, self.id, deflt, lock=lock)
 
     def save_file(
-        self, name: UserFileName | _RowSelection | UserGraphDataRangeFileName, content: object
+        self, name: UserFileName | _RowSelection | UserGraphTimeRangeFileName, content: object
     ) -> None:
         assert self.id is not None
         save_user_file(name, content, self.id)
@@ -596,7 +596,7 @@ def _confdir_for_user_id(user_id: UserId | None) -> Path | None:
 
 
 def load_user_file(
-    name: UserFileName | _RowSelection | UserGraphDataRangeFileName,
+    name: UserFileName | _RowSelection | UserGraphTimeRangeFileName,
     user_id: UserId,
     deflt: object,
     *,

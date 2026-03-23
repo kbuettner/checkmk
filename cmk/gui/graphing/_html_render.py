@@ -36,7 +36,7 @@ from cmk.gui.logged_in import (
     load_user_file,
     save_user_file,
     user,
-    UserGraphDataRangeFileName,
+    UserGraphTimeRangeFileName,
 )
 from cmk.gui.pages import AjaxPage, Page, PageContext, PageResult
 from cmk.gui.sites import get_alias_of_host
@@ -73,7 +73,7 @@ from ._graph_render_config import (
     GraphRenderOptions,
     GraphTitleFormat,
 )
-from ._graph_specification import GraphDataRange, GraphRecipe, GraphSpecification
+from ._graph_specification import GraphRecipe, GraphSpecification, GraphTimeRange
 from ._graph_templates import (
     get_template_graph_specification,
     TemplateGraphSpecification,
@@ -107,7 +107,7 @@ class AjaxContext(BaseModel):
 
     graph_id: str = ""
     graph_recipe: GraphRecipe
-    data_range: GraphDataRange
+    time_range: GraphTimeRange
     render_config: GraphRenderConfig
     display_id: str = ""
 
@@ -268,7 +268,7 @@ def host_service_graph_popup_cmk(
         ),
     )
 
-    graph_data_range = make_graph_data_range(
+    graph_time_range = make_graph_time_range(
         ((end_time := int(time.time())) - 8 * 3600, end_time),
         graph_render_config.size[1],
     )
@@ -280,7 +280,7 @@ def host_service_graph_popup_cmk(
                 host_name=host_name,
                 service_name=service_description,
             ),
-            graph_data_range,
+            graph_time_range,
             graph_render_config,
             registered_metrics,
             registered_graphs,
@@ -318,7 +318,7 @@ def _render_graph_html(
     graph_recipe: GraphRecipe,
     display_id: str,
     graph_artwork: GraphArtwork,
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     graph_render_config: GraphRenderConfig,
     expandable_legend_appearance: ExpandableLegendAppearance,
 ) -> HTML:
@@ -328,7 +328,7 @@ def _render_graph_html(
             graph_recipe,
             display_id,
             graph_artwork,
-            graph_data_range,
+            graph_time_range,
             graph_render_config,
             expandable_legend_appearance,
         )
@@ -342,7 +342,7 @@ def _render_graph_html(
             json.dumps(
                 AjaxContext(
                     graph_recipe=graph_recipe,
-                    data_range=graph_data_range,
+                    time_range=graph_time_range,
                     render_config=graph_render_config,
                     display_id=display_id,
                 ).model_dump()
@@ -440,7 +440,7 @@ def _show_graph_html_content(
     graph_recipe: GraphRecipe,
     display_id: str,
     graph_artwork: GraphArtwork,
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     graph_render_config: GraphRenderConfig,
     expandable_legend_appearance: ExpandableLegendAppearance,
 ) -> None:
@@ -470,7 +470,7 @@ def _show_graph_html_content(
                 None,
                 AjaxContext(
                     graph_recipe=graph_recipe,
-                    data_range=graph_data_range,
+                    time_range=graph_time_range,
                     render_config=graph_render_config,
                     display_id=display_id,
                 ).model_dump(),
@@ -880,7 +880,7 @@ def render_ajax_graph(
     show_titles_if_limit_reached: bool,
     converter: Callable[[GraphMetricExpression], JsonSerializable] | None,
 ) -> JsonSerializable:
-    graph_data_range = context.data_range
+    graph_time_range = context.time_range
     graph_render_config = context.render_config
     graph_recipe = context.graph_recipe
 
@@ -893,8 +893,8 @@ def render_ajax_graph(
         # since step can be relatively small, we round
         step: int | str = int(round(float(step_var)))
     else:
-        start_time, end_time = graph_data_range.time_range
-        step = graph_data_range.step
+        start_time, end_time = graph_time_range.time_range
+        step = graph_time_range.step
 
     resize_x_var = request.var("resize_x")
     resize_y_var = request.var("resize_y")
@@ -921,7 +921,7 @@ def render_ajax_graph(
             update={"consolidation_function": request.var("consolidation_function")}
         )
 
-    graph_data_range = GraphDataRange(
+    graph_time_range = GraphTimeRange(
         time_range=(start_time, end_time),
         vertical_range=vertical_range,
         step=step,
@@ -930,15 +930,15 @@ def render_ajax_graph(
     # Persist the current data range for the graph editor.
     if graph_render_config.editing and (context.graph_recipe.specification.id):
         assert user.id is not None
-        UserGraphDataRangeStore(user.id).save(
-            context.graph_recipe.specification.id, graph_data_range
+        UserGraphTimeRangeStore(user.id).save(
+            context.graph_recipe.specification.id, graph_time_range
         )
 
     graph_display_id = context.display_id
 
     graph_artwork_or_errors = compute_graph_artwork(
         graph_recipe,
-        graph_data_range,
+        graph_time_range,
         graph_render_config.size,
         registered_metrics,
         temperature_unit=temperature_unit,
@@ -990,7 +990,7 @@ def render_ajax_graph(
             graph_recipe,
             graph_display_id,
             graph_artwork_or_errors.artwork,
-            graph_data_range,
+            graph_time_range,
             graph_render_config,
             ExpandableLegendAppearance.FOLDABLE,
         )
@@ -1002,7 +1002,7 @@ def render_ajax_graph(
         "context": AjaxContext(
             graph_id=context.graph_id,
             graph_recipe=graph_recipe,
-            data_range=graph_data_range,
+            time_range=graph_time_range,
             render_config=graph_render_config,
             display_id=graph_display_id,
         ).model_dump(),
@@ -1020,29 +1020,29 @@ def render_ajax_graph(
     }
 
 
-def _user_graph_data_range_file_name(custom_graph_id: str) -> UserGraphDataRangeFileName:
+def _user_graph_time_range_file_name(custom_graph_id: str) -> UserGraphTimeRangeFileName:
     if "../" in custom_graph_id:
         raise ValueError("../ in graph id")
-    return UserGraphDataRangeFileName(f"graph_range_{custom_graph_id}")
+    return UserGraphTimeRangeFileName(f"graph_range_{custom_graph_id}")
 
 
-class UserGraphDataRangeStore:
+class UserGraphTimeRangeStore:
     def __init__(self, user_id: UserId) -> None:
         self.user_id = user_id
 
-    def save(self, custom_graph_id: str, graph_data_range: GraphDataRange) -> None:
+    def save(self, custom_graph_id: str, graph_time_range: GraphTimeRange) -> None:
         save_user_file(
-            _user_graph_data_range_file_name(custom_graph_id),
-            graph_data_range.model_dump(),
+            _user_graph_time_range_file_name(custom_graph_id),
+            graph_time_range.model_dump(),
             self.user_id,
         )
 
-    def load(self, custom_graph_id: str) -> GraphDataRange | None:
+    def load(self, custom_graph_id: str) -> GraphTimeRange | None:
         return (
-            GraphDataRange.model_validate(raw_range)
+            GraphTimeRange.model_validate(raw_range)
             if (
                 raw_range := load_user_file(
-                    _user_graph_data_range_file_name(custom_graph_id),
+                    _user_graph_time_range_file_name(custom_graph_id),
                     self.user_id,
                     deflt=None,
                     lock=False,
@@ -1053,7 +1053,7 @@ class UserGraphDataRangeStore:
 
     def remove(self, custom_graph_id: str) -> None:
         (
-            profile_dir / self.user_id / f"{_user_graph_data_range_file_name(custom_graph_id)}.mk"
+            profile_dir / self.user_id / f"{_user_graph_time_range_file_name(custom_graph_id)}.mk"
         ).unlink(missing_ok=True)
 
 
@@ -1061,7 +1061,7 @@ class UserGraphDataRangeStore:
 @tracer.instrument("graphing.render_graphs_from_specification_html")
 def render_graphs_from_specification_html(
     graph_specification: GraphSpecification,
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     graph_render_config: GraphRenderConfig,
     registered_metrics: Mapping[str, RegisteredMetric],
     registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],
@@ -1108,7 +1108,7 @@ def render_graphs_from_specification_html(
         if render_async:
             output += _render_graph_container_html(
                 graph_recipe,
-                graph_data_range.model_copy(update=dict(graph_recipe.data_range or {})),
+                graph_time_range.model_copy(update=dict(graph_recipe.time_range or {})),
                 graph_render_config.update_from_options(graph_recipe.render_options),
                 graph_display_id=graph_display_id,
             )
@@ -1116,12 +1116,12 @@ def render_graphs_from_specification_html(
             output += _render_graph_content_html(
                 request,
                 graph_recipe,
-                graph_data_range.model_copy(update=dict(graph_recipe.data_range or {})),
+                graph_time_range.model_copy(update=dict(graph_recipe.time_range or {})),
                 graph_render_config.update_from_options(graph_recipe.render_options),
                 registered_metrics,
                 compute_graph_artwork(
                     graph_recipe,
-                    graph_data_range,
+                    graph_time_range,
                     graph_render_config.size,
                     metrics_from_api,
                     temperature_unit=temperature_unit,
@@ -1142,7 +1142,7 @@ def render_graphs_from_specification_html(
 # cmk.graphs.load_graph_content will call ajax_render_graph_content() via JSON to finally load the graph
 def _render_graph_container_html(
     graph_recipe: GraphRecipe,
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     graph_render_config: GraphRenderConfig,
     *,
     graph_display_id: str,
@@ -1166,7 +1166,7 @@ def _render_graph_container_html(
         "cmk.graphs.load_graph_content(%s, %s, %s, %s)"
         % (
             json.dumps(graph_recipe.model_dump()),
-            json.dumps(graph_data_range.model_dump()),
+            json.dumps(graph_time_range.model_dump()),
             json.dumps(graph_render_config.model_dump()),
             json.dumps(graph_display_id),
         )
@@ -1185,7 +1185,7 @@ class AjaxRenderGraphContent(AjaxPage):
         """Registered as `ajax_render_graph_content`."""
         api_request = ctx.request.get_request()
         graph_recipe = GraphRecipe.model_validate(api_request["graph_recipe"])
-        graph_data_range = GraphDataRange.model_validate(api_request["graph_data_range"])
+        graph_time_range = GraphTimeRange.model_validate(api_request["graph_time_range"])
         graph_render_config = GraphRenderConfig.model_validate(api_request["graph_render_config"])
         temperature_unit = get_temperature_unit(user, ctx.config.default_temperature_unit)
         backend_time_series_fetcher = metric_backend_registry[
@@ -1195,12 +1195,12 @@ class AjaxRenderGraphContent(AjaxPage):
         return _render_graph_content_html(
             ctx.request,
             graph_recipe,
-            graph_data_range,
+            graph_time_range,
             graph_render_config,
             metrics_from_api,
             compute_graph_artwork(
                 graph_recipe,
-                graph_data_range,
+                graph_time_range,
                 graph_render_config.size,
                 metrics_from_api,
                 temperature_unit=temperature_unit,
@@ -1220,7 +1220,7 @@ class AjaxRenderGraphContent(AjaxPage):
 def _render_graph_content_html(
     request: Request,
     graph_recipe: GraphRecipe,
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     graph_render_config: GraphRenderConfig,
     registered_metrics: Mapping[str, RegisteredMetric],
     graph_artwork_or_errors: GraphArtworkOrErrors,
@@ -1289,7 +1289,7 @@ def _render_graph_content_html(
             graph_recipe,
             graph_display_id,
             graph_artwork_or_errors.artwork,
-            graph_data_range,
+            graph_time_range,
             graph_render_config,
             expandable_legend_appearance,
         )
@@ -1362,14 +1362,14 @@ def _render_time_range_selection(
         graph_render_config.interaction = False
 
         timerange = now - duration, now
-        graph_data_range = GraphDataRange(
+        graph_time_range = GraphTimeRange(
             time_range=timerange,
             step=2 * estimate_graph_step_for_html(timerange, graph_render_config.size[1]),
         )
 
         graph_artwork = compute_graph_artwork(
             graph_recipe,
-            graph_data_range,
+            graph_time_range,
             graph_render_config.size,
             registered_metrics,
             temperature_unit=temperature_unit,
@@ -1383,7 +1383,7 @@ def _render_time_range_selection(
                     graph_recipe,
                     graph_display_id,
                     graph_artwork,
-                    graph_data_range,
+                    graph_time_range,
                     graph_render_config,
                     expandable_legend_appearance,
                 ),
@@ -1395,11 +1395,11 @@ def _render_time_range_selection(
     )
 
 
-def make_graph_data_range(
+def make_graph_time_range(
     time_range: tuple[int, int],
     height_in_ex: float,
-) -> GraphDataRange:
-    return GraphDataRange(
+) -> GraphTimeRange:
+    return GraphTimeRange(
         time_range=time_range,
         step=estimate_graph_step_for_html(time_range, height_in_ex),
     )
@@ -1441,7 +1441,7 @@ class AjaxGraphHover(Page):
         )
         render_graph_hover_for_recipe(
             context.graph_recipe,
-            context.data_range,
+            context.time_range,
             metrics_from_api,
             debug=ctx.config.debug,
             hover_time=ctx.request.get_integer_input_mandatory("hover_time"),
@@ -1456,7 +1456,7 @@ class AjaxGraphHover(Page):
 @tracer.instrument("graphing.render_graph_hover_for_recipe")
 def render_graph_hover_for_recipe(
     graph_recipe: GraphRecipe,
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     registered_metrics: Mapping[str, RegisteredMetric],
     *,
     debug: bool,
@@ -1479,7 +1479,7 @@ def render_graph_hover_for_recipe(
                                     for result in fetch_augmented_time_series(
                                         registered_metrics,
                                         graph_recipe,
-                                        graph_data_range,
+                                        graph_time_range,
                                         temperature_unit=temperature_unit,
                                         backend_time_series_fetcher=backend_time_series_fetcher,
                                     )
@@ -1582,7 +1582,7 @@ def host_service_graph_dashlet_cmk(
         start_time, end_time = Timerange.compute_range(time_range).range
 
     try:
-        graph_data_range = make_graph_data_range(
+        graph_time_range = make_graph_time_range(
             (start_time, end_time), graph_render_config.size[1]
         )
     except ZeroDivisionError:
@@ -1590,7 +1590,7 @@ def host_service_graph_dashlet_cmk(
 
     graph_artwork_or_errors = compute_graph_artwork(
         graph_recipe,
-        graph_data_range,
+        graph_time_range,
         graph_render_config.size,
         registered_metrics,
         temperature_unit=temperature_unit,
@@ -1637,7 +1637,7 @@ def host_service_graph_dashlet_cmk(
     return _render_graph_content_html(
         request,
         graph_recipe,
-        graph_data_range.model_copy(update=dict(graph_recipe.data_range or {})),
+        graph_time_range.model_copy(update=dict(graph_recipe.time_range or {})),
         graph_render_config.update_from_options(graph_recipe.render_options),
         registered_metrics,
         graph_artwork_or_errors,

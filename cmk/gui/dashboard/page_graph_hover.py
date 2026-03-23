@@ -33,7 +33,7 @@ from cmk.gui.graphing._from_api import metrics_from_api
 from cmk.gui.graphing._graph_render_config import GraphRenderConfigBase
 from cmk.gui.graphing._graph_specification import GraphSpecification
 from cmk.gui.graphing._html_render import (
-    make_graph_data_range,
+    make_graph_time_range,
     render_graph_hover_for_recipe,
 )
 from cmk.gui.logged_in import user
@@ -116,11 +116,11 @@ class GraphHoverTokenAuthPage(DashboardTokenAuthenticatedPage):
             height_in_ex = graph_dashlet_config.get("graph_render_options", {}).get(
                 "size", GraphRenderConfigBase.model_fields["size"].default
             )[1]
-            graph_data_range = make_graph_data_range((start_time, end_time), height_in_ex)
+            graph_time_range = make_graph_time_range((start_time, end_time), height_in_ex)
 
             render_graph_hover_for_recipe(
                 recipes[0],
-                graph_data_range,
+                graph_time_range,
                 metrics_from_api,
                 debug=ctx.config.debug,
                 hover_time=ctx.request.get_integer_input_mandatory("hover_time"),

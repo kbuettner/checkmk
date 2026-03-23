@@ -2226,7 +2226,7 @@ def test_template_recipes_fs() -> None:
                 ),
             ],
             additional_html=None,
-            data_range=None,
+            time_range=None,
             mark_requested_end_time=False,
             specification=_FakeTemplateGraphSpecificationFS(
                 site=SiteId("site_id"),
@@ -2267,7 +2267,7 @@ def test_template_recipes_fs() -> None:
                 )
             ],
             additional_html=None,
-            data_range=None,
+            time_range=None,
             mark_requested_end_time=False,
             specification=_FakeTemplateGraphSpecificationFS(
                 site=SiteId("site_id"),

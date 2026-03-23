@@ -22,9 +22,9 @@ from cmk.gui.graphing._graph_metric_expressions import (
     RRDDataKey,
 )
 from cmk.gui.graphing._graph_specification import (
-    GraphDataRange,
     GraphMetric,
     GraphRecipe,
+    GraphTimeRange,
 )
 from cmk.gui.graphing._graph_templates import TemplateGraphSpecification
 from cmk.gui.graphing._legacy import CheckMetricEntry
@@ -108,7 +108,7 @@ _GRAPH_RECIPE = GraphRecipe(
     ),
 )
 
-_GRAPH_DATA_RANGE = GraphDataRange(time_range=(1681985455, 1681999855), step=20)
+_GRAPH_TIME_RANGE = GraphTimeRange(time_range=(1681985455, 1681999855), step=20)
 
 
 def _fetch() -> Iterator[Result[QueryData, QueryDataError]]:
@@ -124,7 +124,7 @@ def test_fetch_augmented_time_series(
             for r in fetch_augmented_time_series(
                 {},
                 _GRAPH_RECIPE,
-                _GRAPH_DATA_RANGE,
+                _GRAPH_TIME_RANGE,
                 temperature_unit=TemperatureUnit.CELSIUS,
                 backend_time_series_fetcher=lambda *args, **kwargs: _fetch(),
             )
@@ -149,7 +149,7 @@ def test_fetch_augmented_time_series_with_conversion(
             for r in fetch_augmented_time_series(
                 {},
                 _GRAPH_RECIPE,
-                _GRAPH_DATA_RANGE,
+                _GRAPH_TIME_RANGE,
                 temperature_unit=TemperatureUnit.FAHRENHEIT,
                 backend_time_series_fetcher=lambda *args, **kwargs: _fetch(),
             )

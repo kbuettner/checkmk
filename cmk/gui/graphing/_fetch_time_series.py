@@ -24,9 +24,9 @@ from ._graph_metric_expressions import (
 )
 from ._graph_specification import (
     AugmentedTimeSeriesOfGraphMetric,
-    GraphDataRange,
     GraphMetricLimit,
     GraphRecipe,
+    GraphTimeRange,
 )
 from ._metric_backend_registry import FetchTimeSeries
 from ._rrd import fetch_time_series_rrd
@@ -39,16 +39,16 @@ tracer = trace.get_tracer()
 def fetch_augmented_time_series(
     registered_metrics: Mapping[str, RegisteredMetric],
     graph_recipe: GraphRecipe,
-    graph_data_range: GraphDataRange,
+    graph_time_range: GraphTimeRange,
     *,
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
 ) -> Iterator[Result[AugmentedTimeSeriesOfGraphMetric, QueryDataError]]:
     consolidation_function = graph_recipe.consolidation_function
     conversion = user_specific_unit(graph_recipe.unit_spec, temperature_unit).conversion
-    start_time = graph_data_range.time_range[0]
-    end_time = graph_data_range.time_range[1]
-    step = graph_data_range.step
+    start_time = graph_time_range.time_range[0]
+    end_time = graph_time_range.time_range[1]
+    step = graph_time_range.step
 
     rrd_keys = set()
     query_keys = set()
@@ -100,11 +100,11 @@ def fetch_augmented_time_series(
                 yield Error(result.error)
 
     fallback_time_range = FallbackTimeRange(
-        start=graph_data_range.time_range[0],
-        end=graph_data_range.time_range[1],
+        start=graph_time_range.time_range[0],
+        end=graph_time_range.time_range[1],
         # We only encounter `str`` here for forecast graphs, where the fallback range should be
         # irrelevant.
-        step=max(graph_data_range.step, 60) if isinstance(graph_data_range.step, int) else 60,
+        step=max(graph_time_range.step, 60) if isinstance(graph_time_range.step, int) else 60,
     )
 
     for graph_metric in graph_recipe.metrics:
