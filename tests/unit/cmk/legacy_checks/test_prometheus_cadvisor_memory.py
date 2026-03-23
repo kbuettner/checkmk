@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="misc"
-
 # NOTE: This file has been created by an LLM (from something that was worse).
 # It mostly serves as test to ensure we don't accidentally break anything.
 # If you encounter something weird in here, do not hesitate to replace this
@@ -14,6 +12,7 @@ from collections.abc import Mapping
 
 import pytest
 
+from cmk.agent_based.v2 import Metric, Result, Service, State
 from cmk.legacy_checks.cadvisor_memory import (
     check_cadvisor_memory,
     discover_cadvisor_memory,
@@ -38,48 +37,49 @@ def test_cadvisor_memory_discovery(parsed: Mapping[str, float]) -> None:
 
     # Should discover exactly one service
     assert len(result) == 1
-    assert result[0] == (None, {})
+    assert result[0] == Service()
 
 
 def test_cadvisor_memory_check_container(parsed: Mapping[str, float]) -> None:
     """Test cAdvisor memory check function for container memory."""
-    result = list(check_cadvisor_memory(None, {}, parsed))
+    result = list(check_cadvisor_memory(parsed))
 
-    # Should have exactly 4 results (usage, rss, cache, swap)
-    assert len(result) == 4
+    # Should have exactly 7 results (Result + Metric pairs)
+    assert len(result) == 7
 
     # Check usage result (container vs pod memory)
-    state, summary, metrics = result[0]
-    assert state == 0
-    assert "Usage: 91.41%" in summary
-    assert "15.4 MiB of 16.9 MiB" in summary
-    assert "(Parent pod memory usage)" in summary
-    assert len(metrics) == 1
-    assert metrics[0][0] == "mem_used"
-    assert metrics[0][1] == 16162816.0  # memory_usage_container
-    assert metrics[0][5] == 17682432.0  # memory_usage_pod (total)
+    assert isinstance(result[0], Result)
+    assert result[0].state == State.OK
+    assert "Usage: 91.41%" in result[0].summary
+    assert "15.4 MiB of 16.9 MiB" in result[0].summary
+    assert "(Parent pod memory usage)" in result[0].summary
+
+    assert isinstance(result[1], Metric)
+    assert result[1].name == "mem_used"
+    assert result[1].value == 16162816.0
 
     # Check RSS result
-    state, summary, metrics = result[1]
-    assert state == 0
-    assert "Resident size: 8812.0 kB" in summary
-    assert len(metrics) == 0  # No metrics for RSS
+    assert isinstance(result[2], Result)
+    assert result[2].state == State.OK
+    assert "Resident size: 8812.0 kB" in result[2].summary
 
     # Check cache result
-    state, summary, metrics = result[2]
-    assert state == 0
-    assert "Cache: 6160.0 kB" in summary
-    assert len(metrics) == 1
-    assert metrics[0][0] == "mem_lnx_cached"
-    assert metrics[0][1] == 6307840.0
+    assert isinstance(result[3], Result)
+    assert result[3].state == State.OK
+    assert "Cache: 6160.0 kB" in result[3].summary
+
+    assert isinstance(result[4], Metric)
+    assert result[4].name == "mem_lnx_cached"
+    assert result[4].value == 6307840.0
 
     # Check swap result
-    state, summary, metrics = result[3]
-    assert state == 0
-    assert "Swap: 0.0 kB" in summary
-    assert len(metrics) == 1
-    assert metrics[0][0] == "swap_used"
-    assert metrics[0][1] == 0.0
+    assert isinstance(result[5], Result)
+    assert result[5].state == State.OK
+    assert "Swap: 0.0 kB" in result[5].summary
+
+    assert isinstance(result[6], Metric)
+    assert result[6].name == "swap_used"
+    assert result[6].value == 0.0
 
 
 def test_cadvisor_memory_check_pod_with_limit(parsed: Mapping[str, float]) -> None:
@@ -89,21 +89,18 @@ def test_cadvisor_memory_check_pod_with_limit(parsed: Mapping[str, float]) -> No
     del pod_parsed["memory_usage_container"]  # Remove container usage
     pod_parsed["memory_limit"] = 33554432.0  # Add 32MB limit
 
-    result = list(check_cadvisor_memory(None, {}, pod_parsed))
-
-    # Should have exactly 4 results
-    assert len(result) == 4
+    result = list(check_cadvisor_memory(pod_parsed))
 
     # Check usage result (pod vs limit)
-    state, summary, metrics = result[0]
-    assert state == 0
-    assert "Usage:" in summary
+    assert isinstance(result[0], Result)
+    assert result[0].state == State.OK
+    assert "Usage:" in result[0].summary
     # Should not have "(Parent pod memory usage)" suffix
-    assert "(Parent pod memory usage)" not in summary
-    assert len(metrics) == 1
-    assert metrics[0][0] == "mem_used"
-    assert metrics[0][1] == 17682432.0  # memory_usage_pod
-    assert metrics[0][5] == 33554432.0  # memory_limit (total)
+    assert "(Parent pod memory usage)" not in result[0].summary
+
+    assert isinstance(result[1], Metric)
+    assert result[1].name == "mem_used"
+    assert result[1].value == 17682432.0
 
 
 def test_cadvisor_memory_check_pod_with_machine_memory(parsed: Mapping[str, float]) -> None:
@@ -113,20 +110,17 @@ def test_cadvisor_memory_check_pod_with_machine_memory(parsed: Mapping[str, floa
     del pod_parsed["memory_usage_container"]  # Remove container usage
     pod_parsed["memory_machine"] = 8589934592.0  # Add 8GB machine memory
 
-    result = list(check_cadvisor_memory(None, {}, pod_parsed))
-
-    # Should have exactly 4 results
-    assert len(result) == 4
+    result = list(check_cadvisor_memory(pod_parsed))
 
     # Check usage result (pod vs machine memory)
-    state, summary, metrics = result[0]
-    assert state == 0
-    assert "Usage:" in summary
-    assert "(Available Machine Memory)" in summary
-    assert len(metrics) == 1
-    assert metrics[0][0] == "mem_used"
-    assert metrics[0][1] == 17682432.0  # memory_usage_pod
-    assert metrics[0][5] == 8589934592.0  # memory_machine (total)
+    assert isinstance(result[0], Result)
+    assert result[0].state == State.OK
+    assert "Usage:" in result[0].summary
+    assert "(Available Machine Memory)" in result[0].summary
+
+    assert isinstance(result[1], Metric)
+    assert result[1].name == "mem_used"
+    assert result[1].value == 17682432.0
 
 
 def test_cadvisor_memory_discovery_empty_section() -> None:
