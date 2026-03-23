@@ -56,13 +56,7 @@ from ._utils import Linear, SizeEx
 tracer = trace.get_tracer()
 
 
-class VerticalAxisLabel(BaseModel, frozen=True):
-    position: float
-    text: str
-    line_width: int
-
-
-class TimeAxisLabel(BaseModel, frozen=True):
+class AxisTick(BaseModel, frozen=True):
     position: float
     text: str | None
     line_width: int
@@ -105,11 +99,11 @@ LayoutedCurve = LayoutedCurveLine | LayoutedCurveArea | LayoutedCurveStack
 class VerticalAxis(TypedDict):
     range: tuple[float, float]
     axis_label: str | None
-    labels: Sequence[VerticalAxisLabel]
+    labels: Sequence[AxisTick]
 
 
 class TimeAxis(TypedDict):
-    labels: Sequence[TimeAxisLabel]
+    labels: Sequence[AxisTick]
     range: tuple[int, int]
     title: str
 
@@ -583,8 +577,7 @@ def _compute_graph_v_axis(
         max([v_axis_max, *label_positions]),
     )
     rendered_labels = [
-        VerticalAxisLabel(position=label.position, text=label.text, line_width=2)
-        for label in labels
+        AxisTick(position=label.position, text=label.text, line_width=2) for label in labels
     ]
     return VerticalAxis(
         range=label_range,
@@ -774,7 +767,7 @@ def _compute_graph_t_axis(start_time: int, end_time: int, width: float, step: in
 
     # Now iterate over all label points and compute the labels.
     # TODO: could we run into any problems with daylight saving time here?
-    labels: list[TimeAxisLabel] = []
+    labels: list[AxisTick] = []
     seconds_per_char = time_range / (width - 7)
     for pos in dist_function(start_time, end_time):
         line_width = 2  # thick
@@ -787,7 +780,7 @@ def _compute_graph_t_axis(start_time: int, end_time: int, width: float, step: in
         # the line and shift the label with "no line" into the future
         if label_shift:
             labels.append(
-                TimeAxisLabel(
+                AxisTick(
                     position=pos,
                     text=None,
                     line_width=line_width,
@@ -800,7 +793,7 @@ def _compute_graph_t_axis(start_time: int, end_time: int, width: float, step: in
         if label is not None and len(label) / 3.5 * seconds_per_char > end_time - pos:
             label = None
         labels.append(
-            TimeAxisLabel(
+            AxisTick(
                 position=pos,
                 text=label,
                 line_width=line_width,

@@ -78,27 +78,21 @@ interface HorizontalRule {
   title: string
 }
 
-interface VerticalAxisLabel {
-  position: number
-  text: string
-  line_width: number
-}
-
-interface VerticalAxis {
-  range: [number, number]
-  labels: VerticalAxisLabel[]
-  //dynamic
-  pixels_per_unit: number
-}
-
-interface TimeAxisLabel {
+interface AxisTick {
   position: number
   text: string | null
   line_width: number
 }
 
+interface VerticalAxis {
+  range: [number, number]
+  labels: AxisTick[]
+  //dynamic
+  pixels_per_unit: number
+}
+
 interface TimeAxis {
-  labels: TimeAxisLabel[]
+  labels: AxisTick[]
   range: [number, number]
 }
 

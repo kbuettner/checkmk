@@ -281,7 +281,7 @@ def render_graph_pdf(
                 dashes=v_line_dash[v_axis_label.line_width],
             )
 
-        if graph_render_config.show_vertical_axis:
+        if graph_render_config.show_vertical_axis and v_axis_label.text is not None:
             pdf_document.render_aligned_text(
                 t_orig - v_label_margin - left_border,
                 trans_v(v_axis_label.position),

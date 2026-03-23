@@ -89,14 +89,14 @@ interface LayoutedCurveLine {
 
 export type LayoutedCurve = LayoutedCurveLine | LayoutedCurveArea | LayoutedCurveStack
 
-interface TimeAxisLabel {
+interface AxisTick {
   position: number
   text: string | null
   line_width: number
 }
 
 interface TimeAxis {
-  labels: TimeAxisLabel[]
+  labels: AxisTick[]
   range: [number, number]
   //dynamic
   pixels_per_second: number
@@ -104,15 +104,9 @@ interface TimeAxis {
 
 type GraphRecipe = Record<string, any>
 
-interface VerticalAxisLabel {
-  position: number
-  text: string
-  line_width: number
-}
-
 interface VerticalAxis {
   range: [number, number]
-  labels: VerticalAxisLabel[]
+  labels: AxisTick[]
   //dynamic
   pixels_per_unit: number
 }
@@ -611,7 +605,7 @@ function render_graph(graph: GraphArtwork) {
   if (graph.render_config.show_vertical_axis) {
     const labels = graph.vertical_axis.labels
     if (labels.length > 0) {
-      const max_text_width = Math.max(...labels.map((l) => ctx!.measureText(l.text).width))
+      const max_text_width = Math.max(...labels.map((l) => ctx!.measureText(l.text ?? '').width))
       const needed = Math.ceil(max_text_width) + v_label_margin
       if (needed > v_axis_width) {
         const extra = needed - v_axis_width
@@ -693,7 +687,7 @@ function render_graph(graph: GraphArtwork) {
         )
       }
 
-      if (graph.render_config.show_vertical_axis)
+      if (graph.render_config.show_vertical_axis && vertical_axis_label.text !== null)
         ctx.fillText(
           vertical_axis_label.text,
           t_orig - v_label_margin,
