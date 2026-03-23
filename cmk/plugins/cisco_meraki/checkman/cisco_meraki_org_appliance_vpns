@@ -10,5 +10,8 @@ description:
  the special agent {{Cisco Meraki}} to include the "Appliance VPN statuses"
  section.
 
+ The check plug-in itself can be configured via the corresponding rule
+ {{Cisco Meraki appliance VPNs}}.
+
 discovery:
  One service per organisation ID is created.

@@ -10,5 +10,8 @@ description:
  the special agent {{Cisco Meraki}} to include the "Wireless device statuses"
  section.
 
+ The check plug-in itself can be configured via the corresponding rule
+ {{Cisco Meraki wireless SSID statuses}}.
+
 discovery:
  One service per organisation ID and device serial is created.
