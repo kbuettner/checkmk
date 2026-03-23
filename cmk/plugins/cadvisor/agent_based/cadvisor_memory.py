@@ -12,12 +12,12 @@ from cmk.agent_based.v2 import (
     CheckResult,
     DiscoveryResult,
     Metric,
+    render,
     Result,
     Service,
     State,
     StringTable,
 )
-from cmk.legacy_includes.mem import check_memory_element
 
 Section = Mapping[str, float]
 
@@ -66,12 +66,12 @@ def check_cadvisor_memory(section: Section) -> CheckResult:
             memory_total = section["memory_machine"]
             infotext_extra = " (Available Machine Memory)"
 
-    status, infotext, perfdata = check_memory_element(
-        "Usage", memory_used, memory_total, None, metric_name="mem_used"
+    summary = (
+        f"Usage: {render.percent(100.0 * memory_used / memory_total)}"
+        f" - {render.bytes(memory_used)} of {render.bytes(memory_total)}{infotext_extra}"
     )
-    yield Result(state=State(status), summary=f"{infotext}{infotext_extra}")
-    for metric_tuple in perfdata:
-        yield Metric(metric_tuple[0], metric_tuple[1])
+    yield Result(state=State.OK, summary=summary)
+    yield Metric("mem_used", memory_used)
 
     # the cAdvisor does not provide available (total) memory of the following
     yield from _output_single_memory_stat(section["memory_rss"], "Resident size: %s kB")

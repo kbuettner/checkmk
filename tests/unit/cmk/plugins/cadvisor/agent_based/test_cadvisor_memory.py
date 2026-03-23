@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import pytest
 
 from cmk.agent_based.v2 import Metric, Result, Service, State, StringTable
-from cmk.legacy_checks.cadvisor_memory import (
+from cmk.plugins.cadvisor.agent_based.cadvisor_memory import (
     check_cadvisor_memory,
     discover_cadvisor_memory,
     parse_cadvisor_memory,
