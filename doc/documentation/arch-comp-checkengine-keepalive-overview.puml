@@ -1,0 +1,22 @@
+@startuml
+component "CMC\n(C++ microcore)" as cmc
+component "do_keepalive()\nmain loop" as loop
+component "CheckerExecutor" as checker
+component "RTCExecutor" as rtc
+component "Loader\n(config hot-reload)" as loader
+component "CompositeObserver\n(memory, FDs, globals)" as observer
+component "KeepaliveSubmitter" as submitter
+interface "stdin / FD" as fd
+
+cmc -r-> fd : commands &\nfetched data
+fd -r-> loop
+loop --> checker : cmk --checker
+loop --> rtc : cmk --real-time-checks
+loop --> loader : config reload
+loop --> observer : after each cycle
+checker --> submitter : check results
+rtc --> submitter : check results
+submitter -l-> fd : formatted output
+fd -l-> cmc
+@enduml
+

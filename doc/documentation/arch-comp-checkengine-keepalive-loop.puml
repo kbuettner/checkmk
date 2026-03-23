@@ -1,0 +1,19 @@
+@startuml
+participant CMC
+participant "do_keepalive()" as loop
+participant Executor
+participant Observer
+
+loop Check cycle
+   CMC -> loop : command line
+   CMC -> loop : timeout
+   loop -> Executor : from_cmdline() + __call__()
+   Executor --> loop : status + output
+   loop -> CMC : formatted result
+   loop -> Observer : check_resources()
+   alt memory exceeded
+      Observer -> Observer : os.execvp() restart
+   end
+end
+@enduml
+
