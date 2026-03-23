@@ -59,6 +59,6 @@ def _get_rule_form_spec(params: Mapping[str, Any]) -> Response:
     return serve_configuration_entity(ConfigEntityType.rule_form_spec, params, user)
 
 
-def register(endpoint_registry: EndpointRegistry, *, ignore_duplicates: bool) -> None:
-    endpoint_registry.register(_list_rule_form_specs, ignore_duplicates=ignore_duplicates)
-    endpoint_registry.register(_get_rule_form_spec, ignore_duplicates=ignore_duplicates)
+def register(endpoint_registry: EndpointRegistry) -> None:
+    endpoint_registry.register(_list_rule_form_specs)
+    endpoint_registry.register(_get_rule_form_spec)

@@ -12,11 +12,7 @@ from .list_data_sources import ENDPOINT_LIST_DATA_SOURCES
 def register_endpoints(
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool = False,
 ) -> None:
-    endpoint_family_registry.register(DATA_SOURCE_FAMILY, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(DATA_SOURCE_FAMILY)
 
-    versioned_endpoint_registry.register(
-        ENDPOINT_LIST_DATA_SOURCES, ignore_duplicates=ignore_duplicates
-    )
+    versioned_endpoint_registry.register(ENDPOINT_LIST_DATA_SOURCES)

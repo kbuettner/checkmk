@@ -48,5 +48,5 @@ def _list_folder(params: Mapping[str, Any]) -> Response:
     return serve_configuration_entity_list(ConfigEntityType.folder, params, user)
 
 
-def register(endpoint_registry: EndpointRegistry, *, ignore_duplicates: bool) -> None:
-    endpoint_registry.register(_list_folder, ignore_duplicates=ignore_duplicates)
+def register(endpoint_registry: EndpointRegistry) -> None:
+    endpoint_registry.register(_list_folder)

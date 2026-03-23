@@ -14,13 +14,7 @@ from .token_create import ENDPOINT_CREATE_AGENT_REGISTRATION_TOKEN
 def register_endpoints(
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool = False,
 ) -> None:
-    endpoint_family_registry.register(
-        AGENT_REGISTRATION_FAMILY, ignore_duplicates=ignore_duplicates
-    )
+    endpoint_family_registry.register(AGENT_REGISTRATION_FAMILY)
 
-    versioned_endpoint_registry.register(
-        ENDPOINT_CREATE_AGENT_REGISTRATION_TOKEN, ignore_duplicates=ignore_duplicates
-    )
+    versioned_endpoint_registry.register(ENDPOINT_CREATE_AGENT_REGISTRATION_TOKEN)

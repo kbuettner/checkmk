@@ -55,87 +55,70 @@ def register(
     versioned_endpoint_registry: VersionedEndpointRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
     job_registry: BackgroundJobRegistry,
-    *,
-    ignore_duplicate_endpoints: bool = False,
 ) -> None:
     # TODO: once all legacy endpoints have been migrated the family registry should happen inside
     #  respective endpoint module
-    endpoint_family_registry.register(
-        HOST_CONFIG_FAMILY, ignore_duplicates=ignore_duplicate_endpoints
-    )
-    endpoint_family_registry.register(AGENTS_FAMILY, ignore_duplicates=ignore_duplicate_endpoints)
+    endpoint_family_registry.register(HOST_CONFIG_FAMILY)
+    endpoint_family_registry.register(AGENTS_FAMILY)
 
-    acknowledgement.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    activate_changes.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    agent.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    audit_log.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    aux_tags.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    background_job.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    cert.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    comment.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    contact_group_config.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    downtime.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    folder_config.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    configuration_entity.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    host.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    host_config.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    host_group_config.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    host_internal.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    host_tag_group.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    notification_rules.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    parent_scan.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    rule.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    ruleset.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    service.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    service_discovery.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    service_group_config.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    time_periods.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    user_config.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    version.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    quick_setup.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
-    broker_connection.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
+    acknowledgement.register(endpoint_registry)
+    activate_changes.register(endpoint_registry)
+    agent.register(endpoint_registry)
+    audit_log.register(endpoint_registry)
+    aux_tags.register(endpoint_registry)
+    background_job.register(endpoint_registry)
+    cert.register(endpoint_registry)
+    comment.register(endpoint_registry)
+    contact_group_config.register(endpoint_registry)
+    downtime.register(endpoint_registry)
+    folder_config.register(endpoint_registry)
+    configuration_entity.register(endpoint_registry)
+    host.register(endpoint_registry)
+    host_config.register(endpoint_registry)
+    host_group_config.register(endpoint_registry)
+    host_internal.register(endpoint_registry)
+    host_tag_group.register(endpoint_registry)
+    notification_rules.register(endpoint_registry)
+    parent_scan.register(endpoint_registry)
+    rule.register(endpoint_registry)
+    ruleset.register(endpoint_registry)
+    service.register(endpoint_registry)
+    service_discovery.register(endpoint_registry)
+    service_group_config.register(endpoint_registry)
+    time_periods.register(endpoint_registry)
+    user_config.register(endpoint_registry)
+    version.register(endpoint_registry)
+    quick_setup.register(endpoint_registry)
+    broker_connection.register(endpoint_registry)
 
-    agent_download.register(
-        versioned_endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints
-    )
-    api_host_config.register(
-        versioned_endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints
-    )
-    api_host_config_internal.register(
-        versioned_endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints
-    )
+    agent_download.register(versioned_endpoint_registry)
+    api_host_config.register(versioned_endpoint_registry)
+    api_host_config_internal.register(versioned_endpoint_registry)
     api_user_role.register(
         versioned_endpoint_registry=versioned_endpoint_registry,
         endpoint_family_registry=endpoint_family_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     api_password.register(
         versioned_endpoint_registry=versioned_endpoint_registry,
         endpoint_family_registry=endpoint_family_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     api_graph_timerange.register(
         versioned_endpoint_registry=versioned_endpoint_registry,
         endpoint_family_registry=endpoint_family_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     pagetype_topic.register(
         versioned_endpoint_registry=versioned_endpoint_registry,
         endpoint_family_registry=endpoint_family_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     sidebar_element.register(
         versioned_endpoint_registry=versioned_endpoint_registry,
         endpoint_family_registry=endpoint_family_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     site_management.register(
         versioned_endpoint_registry=versioned_endpoint_registry,
         endpoint_family_registry=endpoint_family_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     icon.register(
         versioned_endpoint_registry=versioned_endpoint_registry,
         endpoint_family_registry=endpoint_family_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )

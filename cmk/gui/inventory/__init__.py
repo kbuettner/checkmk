@@ -70,8 +70,6 @@ def register(
     cron_job_registry: CronJobRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicate_endpoints: bool = False,
 ) -> None:
     config_variable_registry.register(ConfigVariableInventoryCleanup)
     page_registry.register(PageEndpoint("host_inv_api", page_host_inv_api))
@@ -91,5 +89,4 @@ def register(
     openapi_register(
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )

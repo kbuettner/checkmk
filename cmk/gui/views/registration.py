@@ -52,8 +52,6 @@ def register(
     data_source_registry: DataSourceRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool = False,
 ) -> None:
     multisite_builtin_views.update(builtin_views)
 
@@ -89,7 +87,6 @@ def register(
         data_source_registry,
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicates=ignore_duplicates,
     )
     perfometer.register(sorter_registry, painter_registry)
     icon.register(
@@ -107,6 +104,4 @@ def register(
     )
     graph.register(painter_option_registry, multisite_builtin_views)
     row_post_processor_registry.register(join_service_row_post_processor)
-    register_endpoints(
-        endpoint_family_registry, versioned_endpoint_registry, ignore_duplicates=ignore_duplicates
-    )
+    register_endpoints(endpoint_family_registry, versioned_endpoint_registry)

@@ -14,12 +14,8 @@ from .list_filters import ENDPOINT_LIST_FILTERS
 def register(
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool,
 ) -> None:
-    endpoint_family_registry.register(VISUAL_FILTER_FAMILY, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(VISUAL_FILTER_FAMILY)
 
-    versioned_endpoint_registry.register(ENDPOINT_LIST_FILTERS, ignore_duplicates=ignore_duplicates)
-    versioned_endpoint_registry.register(
-        ENDPOINT_LIST_FILTER_GROUPS, ignore_duplicates=ignore_duplicates
-    )
+    versioned_endpoint_registry.register(ENDPOINT_LIST_FILTERS)
+    versioned_endpoint_registry.register(ENDPOINT_LIST_FILTER_GROUPS)

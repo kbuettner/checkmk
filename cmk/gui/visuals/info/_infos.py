@@ -29,8 +29,6 @@ def register(
     visual_info_registry: VisualInfoRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicate_endpoints: bool = False,
 ) -> None:
     visual_info_registry.register(VisualInfoHost)
     visual_info_registry.register(VisualInfoService)
@@ -56,7 +54,6 @@ def register(
     register_endpoints(
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
 
 

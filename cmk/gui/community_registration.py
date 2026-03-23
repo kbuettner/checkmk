@@ -130,7 +130,7 @@ def register_painters() -> None:
     painter_registry.register(graph.PainterHostPnpgraph)
 
 
-def register(edition: Edition, *, ignore_duplicate_endpoints: bool = False) -> None:
+def register(edition: Edition) -> None:
     sample_config_generator_registry.register(SampleConfigGeneratorGroups)
     network_scan.register(host_attribute_registry, automation_command_registry, cron_job_registry)
     nagvis.register(permission_section_registry, permission_registry, snapin_registry)
@@ -190,7 +190,6 @@ def register(edition: Edition, *, ignore_duplicate_endpoints: bool = False) -> N
         default_about_checkmk_entries,
         token_authenticated_page_registry,
         builtin_pagetype_topic_registry,
-        ignore_duplicate_endpoints=ignore_duplicate_endpoints,
     )
 
     ldap_registration(
@@ -198,7 +197,6 @@ def register(edition: Edition, *, ignore_duplicate_endpoints: bool = False) -> N
         endpoint_registry,
         ac_test_registry,
         user_connector_registry,
-        ignore_duplicate_endpoints,
     )
 
     features_registry.register(
@@ -217,7 +215,6 @@ def register(edition: Edition, *, ignore_duplicate_endpoints: bool = False) -> N
         default_site_filter_heading_info,
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicate_endpoints=ignore_duplicate_endpoints,
     )
     sidebar.register(
         page_registry,
@@ -312,14 +309,13 @@ def register(edition: Edition, *, ignore_duplicate_endpoints: bool = False) -> N
         replication_path_registry,
         builtin_pagetype_topic_registry,
         save_active_config,
-        ignore_duplicate_endpoints=ignore_duplicate_endpoints,
     )
     custom_icons_register(
         mode_registry,
         main_module_registry,
         permission_registry,
     )
-    _openapi_registration(ignore_duplicates=ignore_duplicate_endpoints)
+    _openapi_registration()
     builtin_dashboard_extender_registry.register(
         BuiltinDashboardExtender(str(edition), noop_builtin_dashboard_extender)
     )
@@ -344,6 +340,6 @@ def register(edition: Edition, *, ignore_duplicate_endpoints: bool = False) -> N
     )
 
 
-def _openapi_registration(*, ignore_duplicates: bool) -> None:
-    autocomplete.register(endpoint_registry, ignore_duplicates=ignore_duplicates)
-    metric_endpoint.register(endpoint_registry, ignore_duplicates=ignore_duplicates)
+def _openapi_registration() -> None:
+    autocomplete.register(endpoint_registry)
+    metric_endpoint.register(endpoint_registry)

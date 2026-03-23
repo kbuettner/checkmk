@@ -164,8 +164,6 @@ def register(
     help_about_checkmk_entries: Callable[[], list[NavItemTopicEntry]],
     token_authenticated_page_registry: TokenAuthenticatedPageRegistry,
     builtin_pagetype_topic_registry: pagetypes.BuiltinPagetypeTopicRegistry,
-    *,
-    ignore_duplicate_endpoints: bool = False,
 ) -> None:
     hooks.register_thread_cache_cleanup()
     pagetypes.register(main_menu_registry, builtin_pagetype_topic_registry)
@@ -197,7 +195,6 @@ def register(
         data_source_registry,
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     inventory.register(
         config_variable_registry,
@@ -210,7 +207,6 @@ def register(
         cron_job_registry,
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicate_endpoints=ignore_duplicate_endpoints,
     )
     dashboard_registration.register(
         permission_section_registry,
@@ -222,7 +218,6 @@ def register(
         autocompleter_registry,
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicate_endpoints=ignore_duplicate_endpoints,
     )
     crash_reporting.register(
         page_registry,
@@ -281,7 +276,6 @@ def register(
         endpoint_registry,
         command_registry,
         command_group_registry,
-        ignore_duplicate_endpoints=ignore_duplicate_endpoints,
     )
     nodevis.register(page_registry, filter_registry, icon_and_action_registry, cron_job_registry)
     notifications.register(page_registry, permission_section_registry)
@@ -290,7 +284,6 @@ def register(
         token_authenticated_page_registry,
         versioned_endpoint_registry,
         endpoint_family_registry,
-        ignore_duplicate_endpoints=ignore_duplicate_endpoints,
     )
     valuespec.register(page_registry)
     autocompleters.register(page_registry, autocompleter_registry)
@@ -328,7 +321,6 @@ def register(
         permission_section_registry,
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     weblib.register(page_registry)
     openapi_registration.register(
@@ -336,7 +328,6 @@ def register(
         versioned_endpoint_registry,
         endpoint_family_registry,
         job_registry,
-        ignore_duplicate_endpoints=ignore_duplicate_endpoints,
     )
 
     register_userroles(config_file_registry)

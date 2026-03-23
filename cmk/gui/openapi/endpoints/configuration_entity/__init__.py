@@ -189,18 +189,12 @@ def _get_configuration_entity_form_spec_schema(params: Mapping[str, Any]) -> Res
     )
 
 
-def register(endpoint_registry: EndpointRegistry, *, ignore_duplicates: bool) -> None:
-    endpoint_registry.register(_create_configuration_entity, ignore_duplicates=ignore_duplicates)
-    endpoint_registry.register(_update_configuration_entity, ignore_duplicates=ignore_duplicates)
-    endpoint_registry.register(
-        _get_configuration_entity_form_spec_schema, ignore_duplicates=ignore_duplicates
-    )
-    notification_parameter_endpoints.register(
-        endpoint_registry, ignore_duplicates=ignore_duplicates
-    )
-    folder_endpoints.register(endpoint_registry, ignore_duplicates=ignore_duplicates)
-    passwordstore_password_endpoints.register(
-        endpoint_registry, ignore_duplicates=ignore_duplicates
-    )
-    oauth2_connection_endpoints.register(endpoint_registry, ignore_duplicates=ignore_duplicates)
-    rule_form_spec_endpoints.register(endpoint_registry, ignore_duplicates=ignore_duplicates)
+def register(endpoint_registry: EndpointRegistry) -> None:
+    endpoint_registry.register(_create_configuration_entity)
+    endpoint_registry.register(_update_configuration_entity)
+    endpoint_registry.register(_get_configuration_entity_form_spec_schema)
+    notification_parameter_endpoints.register(endpoint_registry)
+    folder_endpoints.register(endpoint_registry)
+    passwordstore_password_endpoints.register(endpoint_registry)
+    oauth2_connection_endpoints.register(endpoint_registry)
+    rule_form_spec_endpoints.register(endpoint_registry)

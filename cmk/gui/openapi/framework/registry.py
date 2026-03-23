@@ -161,7 +161,7 @@ class VersionedEndpointRegistry:
         return family_name, link_relation
 
     # TODO: potentially have to introduce a lookup function
-    def register(self, endpoint: VersionedEndpoint, *, ignore_duplicates: bool) -> None:
+    def register(self, endpoint: VersionedEndpoint) -> None:
         """Register a versioned endpoint
 
         Registers the endpoint with all its handlers for different API versions.
@@ -175,9 +175,6 @@ class VersionedEndpointRegistry:
             version_endpoints = self._versions.setdefault(version, dict())
 
             if endpoint_key_ in version_endpoints:
-                if ignore_duplicates:
-                    continue
-
                 raise RuntimeError(
                     f"Endpoint with key {endpoint_key_}, already has handlers for version {version}"
                 )

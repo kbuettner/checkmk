@@ -53,5 +53,5 @@ def _list_passwordstore_passwords(params: Mapping[str, Any]) -> Response:
     )
 
 
-def register(endpoint_registry: EndpointRegistry, *, ignore_duplicates: bool) -> None:
-    endpoint_registry.register(_list_passwordstore_passwords, ignore_duplicates=ignore_duplicates)
+def register(endpoint_registry: EndpointRegistry) -> None:
+    endpoint_registry.register(_list_passwordstore_passwords)

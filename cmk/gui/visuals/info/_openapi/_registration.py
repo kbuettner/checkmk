@@ -12,9 +12,7 @@ from .list_infos import ENDPOINT_LIST_INFOS
 def register_endpoints(
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool = False,
 ) -> None:
-    endpoint_family_registry.register(VISUAL_INFO_FAMILY, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(VISUAL_INFO_FAMILY)
 
-    versioned_endpoint_registry.register(ENDPOINT_LIST_INFOS, ignore_duplicates=ignore_duplicates)
+    versioned_endpoint_registry.register(ENDPOINT_LIST_INFOS)

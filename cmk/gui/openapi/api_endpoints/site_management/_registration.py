@@ -18,38 +18,28 @@ from .site_logout import ENDPOINT_SITE_CONNECTION_LOGOUT
 def register(
     versioned_endpoint_registry: VersionedEndpointRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
-    *,
-    ignore_duplicates: bool,
 ) -> None:
     endpoint_family_registry.register(
         SITE_MANAGEMENT_FAMILY,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_LIST_SITE_CONNECTIONS,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_SHOW_SITE_CONNECTION,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_DELETE_SITE_CONNECTION,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_SITE_CONNECTION_LOGIN,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_SITE_CONNECTION_LOGOUT,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_CREATE_SITE_CONNECTION,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_EDIT_SITE_CONNECTION,
-        ignore_duplicates=ignore_duplicates,
     )

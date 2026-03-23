@@ -12,9 +12,7 @@ from .list_topics import ENDPOINT_LIST_TOPICS
 def register(
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool,
 ) -> None:
-    endpoint_family_registry.register(PAGETYPE_TOPIC_FAMILY, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(PAGETYPE_TOPIC_FAMILY)
 
-    versioned_endpoint_registry.register(ENDPOINT_LIST_TOPICS, ignore_duplicates=ignore_duplicates)
+    versioned_endpoint_registry.register(ENDPOINT_LIST_TOPICS)

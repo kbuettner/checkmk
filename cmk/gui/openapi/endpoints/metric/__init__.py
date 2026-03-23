@@ -101,5 +101,5 @@ def get_graph(params: Mapping[str, Any]) -> Response:
     return serve_json(response)
 
 
-def register(endpoint_registry: EndpointRegistry, *, ignore_duplicates: bool) -> None:
-    endpoint_registry.register(get_graph, ignore_duplicates=ignore_duplicates)
+def register(endpoint_registry: EndpointRegistry) -> None:
+    endpoint_registry.register(get_graph)

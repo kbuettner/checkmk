@@ -18,12 +18,10 @@ def register(
     endpoint_registry: EndpointRegistry,
     ac_test_registry: ACTestRegistry,
     user_connector_registry: UserConnectorRegistry,
-    ignore_duplicate_endpoints: bool,
 ) -> None:
     ldap_register(mode_registry)
     openapi_register(
         endpoint_registry=endpoint_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     ac_test_registry.register(ACTestLDAPSecured)
     ldap_connector.register(user_connector_registry)

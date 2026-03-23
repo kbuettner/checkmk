@@ -68,8 +68,6 @@ def register(
     endpoint_registry: EndpointRegistry,
     command_registry: CommandRegistry,
     command_group_registry: CommandGroupRegistry,
-    *,
-    ignore_duplicate_endpoints: bool = False,
 ) -> None:
     data_source_registry.register(DataSourceBIAggregations)
     data_source_registry.register(DataSourceBIHostAggregations)
@@ -123,4 +121,4 @@ def register(
     rename_host_hook_registry.register(
         RenameHostHook(RenamePhase.SETUP, "BI aggregations", rename_host_in_bi)
     )
-    _openapi.register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
+    _openapi.register(endpoint_registry)

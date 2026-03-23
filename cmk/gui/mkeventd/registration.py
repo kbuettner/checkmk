@@ -73,8 +73,6 @@ def register(
     replication_path_registry: ReplicationPathRegistry,
     builtin_pagetype_topic_registry: BuiltinPagetypeTopicRegistry,
     save_active_config: Callable[[], None],
-    *,
-    ignore_duplicate_endpoints: bool = False,
 ) -> None:
     views.register(
         data_source_registry,
@@ -117,4 +115,4 @@ def register(
         )
     )
     timeperiod_usage_finder_registry.register(find_timeperiod_usage_in_ec_rules)
-    openapi_register(endpoint_registry, ignore_duplicates=ignore_duplicate_endpoints)
+    openapi_register(endpoint_registry)

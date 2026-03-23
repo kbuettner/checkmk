@@ -24,47 +24,19 @@ from .token_edit import ENDPOINT_EDIT_DASHBOARD_TOKEN
 def register_endpoints(
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool = False,
 ) -> None:
-    endpoint_family_registry.register(DASHBOARD_FAMILY, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(DASHBOARD_FAMILY)
 
-    versioned_endpoint_registry.register(
-        ENDPOINT_CREATE_RELATIVE_GRID_DASHBOARD, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_DELETE_DASHBOARD, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_EDIT_RELATIVE_GRID_DASHBOARD, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_SHOW_DASHBOARD_CONSTANTS, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_SHOW_DASHBOARD_METADATA, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_SHOW_RELATIVE_GRID_DASHBOARD, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_COMPUTE_WIDGET_ATTRIBUTES, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_COMPUTE_WIDGET_TITLES, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_LIST_DASHBOARD_METADATA, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_CLONE_AS_RELATIVE_GRID_DASHBOARD, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_CREATE_DASHBOARD_TOKEN, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_DELETE_DASHBOARD_TOKEN, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_EDIT_DASHBOARD_TOKEN, ignore_duplicates=ignore_duplicates
-    )
+    versioned_endpoint_registry.register(ENDPOINT_CREATE_RELATIVE_GRID_DASHBOARD)
+    versioned_endpoint_registry.register(ENDPOINT_DELETE_DASHBOARD)
+    versioned_endpoint_registry.register(ENDPOINT_EDIT_RELATIVE_GRID_DASHBOARD)
+    versioned_endpoint_registry.register(ENDPOINT_SHOW_DASHBOARD_CONSTANTS)
+    versioned_endpoint_registry.register(ENDPOINT_SHOW_DASHBOARD_METADATA)
+    versioned_endpoint_registry.register(ENDPOINT_SHOW_RELATIVE_GRID_DASHBOARD)
+    versioned_endpoint_registry.register(ENDPOINT_COMPUTE_WIDGET_ATTRIBUTES)
+    versioned_endpoint_registry.register(ENDPOINT_COMPUTE_WIDGET_TITLES)
+    versioned_endpoint_registry.register(ENDPOINT_LIST_DASHBOARD_METADATA)
+    versioned_endpoint_registry.register(ENDPOINT_CLONE_AS_RELATIVE_GRID_DASHBOARD)
+    versioned_endpoint_registry.register(ENDPOINT_CREATE_DASHBOARD_TOKEN)
+    versioned_endpoint_registry.register(ENDPOINT_DELETE_DASHBOARD_TOKEN)
+    versioned_endpoint_registry.register(ENDPOINT_EDIT_DASHBOARD_TOKEN)

@@ -15,13 +15,9 @@ def register(
     permission_section_registry: PermissionSectionRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool = False,
 ) -> None:
     permission_section_registry.register(PERMISSION_SECTION_AGENT_REGISTRATION)
-    register_endpoints(
-        endpoint_family_registry, versioned_endpoint_registry, ignore_duplicates=ignore_duplicates
-    )
+    register_endpoints(endpoint_family_registry, versioned_endpoint_registry)
 
 
 PERMISSION_SECTION_AGENT_REGISTRATION = PermissionSection(

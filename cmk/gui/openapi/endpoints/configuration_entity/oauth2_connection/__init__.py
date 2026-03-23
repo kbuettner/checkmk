@@ -59,6 +59,6 @@ def _get_oauth2_connection(params: Mapping[str, Any]) -> Response:
     return serve_configuration_entity(ConfigEntityType.oauth2_connection, params, user)
 
 
-def register(endpoint_registry: EndpointRegistry, *, ignore_duplicates: bool) -> None:
-    endpoint_registry.register(_list_oauth2_connections, ignore_duplicates=ignore_duplicates)
-    endpoint_registry.register(_get_oauth2_connection, ignore_duplicates=ignore_duplicates)
+def register(endpoint_registry: EndpointRegistry) -> None:
+    endpoint_registry.register(_list_oauth2_connections)
+    endpoint_registry.register(_get_oauth2_connection)

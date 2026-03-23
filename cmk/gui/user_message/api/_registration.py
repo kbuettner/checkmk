@@ -13,14 +13,8 @@ from .delete_user_message import ENDPOINT_DELETE_MESSAGE
 def register_endpoints(
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool = False,
 ) -> None:
-    endpoint_family_registry.register(USER_MESSAGE_FAMILY, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(USER_MESSAGE_FAMILY)
 
-    versioned_endpoint_registry.register(
-        ENDPOINT_ACKNOWLEDGE_MESSAGE, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_DELETE_MESSAGE, ignore_duplicates=ignore_duplicates
-    )
+    versioned_endpoint_registry.register(ENDPOINT_ACKNOWLEDGE_MESSAGE)
+    versioned_endpoint_registry.register(ENDPOINT_DELETE_MESSAGE)

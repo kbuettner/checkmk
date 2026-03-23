@@ -102,8 +102,6 @@ def register(
     site_filter_heading_info: Callable[[FilterHTTPVariables], str | None],
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicate_endpoints: bool = False,
 ) -> None:
     page_registry.register(
         PageEndpoint("ajax_visual_filter_list_get_choice", PageAjaxVisualFilterListGetChoice())
@@ -114,7 +112,6 @@ def register(
         _visual_info_registry,
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicate_endpoints=ignore_duplicate_endpoints,
     )
     _filters.register(page_registry, filter_registry)
     _site_filters.register(
@@ -133,7 +130,6 @@ def register(
     api.register(
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
 
     _register_pre_21_plugin_api()

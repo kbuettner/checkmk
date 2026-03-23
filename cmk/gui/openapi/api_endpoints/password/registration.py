@@ -16,27 +16,20 @@ from .update_password import ENDPOINT_UPDATE_PASSWORD
 def register(
     versioned_endpoint_registry: VersionedEndpointRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
-    *,
-    ignore_duplicates: bool,
 ) -> None:
-    endpoint_family_registry.register(PASSWORD_FAMILY, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(PASSWORD_FAMILY)
     versioned_endpoint_registry.register(
         ENDPOINT_LIST_PASSWORDS,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_SHOW_PASSWORD,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_DELETE_PASSWORD,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_CREATE_PASSWORD,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_UPDATE_PASSWORD,
-        ignore_duplicates=ignore_duplicates,
     )

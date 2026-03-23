@@ -14,14 +14,8 @@ from .list_icons import ENDPOINT_LIST_ICONS
 def register(
     versioned_endpoint_registry: VersionedEndpointRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
-    *,
-    ignore_duplicates: bool,
 ) -> None:
-    endpoint_family_registry.register(ICON_FAMILY, ignore_duplicates=ignore_duplicates)
-    versioned_endpoint_registry.register(
-        ENDPOINT_LIST_ICON_CATEGORIES, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_LIST_ICON_EMBLEMS, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(ENDPOINT_LIST_ICONS, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(ICON_FAMILY)
+    versioned_endpoint_registry.register(ENDPOINT_LIST_ICON_CATEGORIES)
+    versioned_endpoint_registry.register(ENDPOINT_LIST_ICON_EMBLEMS)
+    versioned_endpoint_registry.register(ENDPOINT_LIST_ICONS)

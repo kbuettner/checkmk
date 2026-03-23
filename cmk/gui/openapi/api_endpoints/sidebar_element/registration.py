@@ -13,11 +13,8 @@ from .list_sidebar_element import ENDPOINT_LIST_SIDEBAR_ELEMENT
 def register(
     versioned_endpoint_registry: VersionedEndpointRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
-    *,
-    ignore_duplicates: bool,
 ) -> None:
-    endpoint_family_registry.register(SIDEBAR_ELEMENT_FAMILY, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(SIDEBAR_ELEMENT_FAMILY)
     versioned_endpoint_registry.register(
         ENDPOINT_LIST_SIDEBAR_ELEMENT,
-        ignore_duplicates=ignore_duplicates,
     )

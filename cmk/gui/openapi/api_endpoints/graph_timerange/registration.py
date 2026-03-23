@@ -13,15 +13,11 @@ from .show_graph_timerange import ENDPOINT_SHOW_GRAPH_TIMERANGE
 def register(
     versioned_endpoint_registry: VersionedEndpointRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
-    *,
-    ignore_duplicates: bool,
 ) -> None:
-    endpoint_family_registry.register(GRAPH_TIMERANGE_FAMILY, ignore_duplicates=ignore_duplicates)
+    endpoint_family_registry.register(GRAPH_TIMERANGE_FAMILY)
     versioned_endpoint_registry.register(
         ENDPOINT_LIST_GRAPH_TIMERANGE,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_SHOW_GRAPH_TIMERANGE,
-        ignore_duplicates=ignore_duplicates,
     )

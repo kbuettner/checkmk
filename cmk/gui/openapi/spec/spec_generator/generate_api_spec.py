@@ -82,54 +82,9 @@ def list_versions(args: argparse.Namespace) -> None:
     sys.stdout.write(f"{separator.join(released_versions)}\n")
 
 
-def _import_endpoints_for_edition(edition: Edition) -> None:
-    from cmk.gui.community_registration import (
-        register as community_registration,
-    )
-
-    community_registration(Edition.COMMUNITY, ignore_duplicate_endpoints=True)
-
-    if edition in (Edition.PRO, Edition.ULTIMATE, Edition.ULTIMATEMT, Edition.CLOUD):
-        from cmk.gui.nonfree.pro.registration import (  # type: ignore[import-not-found, import-untyped, unused-ignore]
-            register as pro_registration,
-        )
-
-        pro_registration(Edition.PRO, ignore_duplicate_endpoints=True)
-
-    if edition in (Edition.ULTIMATE, Edition.ULTIMATEMT, Edition.CLOUD):
-        from cmk.gui.nonfree.ultimate.registration import (  # type: ignore[import-not-found, import-untyped, unused-ignore]
-            register as ultimate_registration,
-        )
-
-        ultimate_registration(Edition.ULTIMATE, ignore_duplicate_endpoints=True)
-
-    if edition is Edition.ULTIMATEMT:
-        from cmk.gui.nonfree.ultimatemt.registration import (  # type: ignore[import-not-found, import-untyped, unused-ignore]
-            register as ultimatemt_registration,
-        )
-
-        ultimatemt_registration(Edition.ULTIMATEMT, ignore_duplicate_endpoints=True)
-
-    if edition is Edition.CLOUD:
-        from cmk.gui.nonfree.cloud.registration import (  # type: ignore[import-not-found, import-untyped, unused-ignore]
-            register as cloud_registration,
-        )
-
-        try:
-            cloud_registration(Edition.CLOUD, ignore_duplicate_endpoints=True)
-        except RuntimeError:
-            # load_cloud_edition_config is called during registration, assuming it is always there
-            # and static during site runtime. In the CI hoewever, it is not always present, leading
-            # to failed cloud edition builds. This actually needs to be fixed somehow to guaranee
-            # we have a correct spec. For now, we catch the error - in line with the previous error
-            # handling.
-            pass
-
-
 def process_version(args: argparse.Namespace) -> None:
     edition = Edition.from_long_edition(args.edition)
     main_modules.register(edition)
-    _import_endpoints_for_edition(edition)
 
     if errors := main_modules.get_failed_plugins():
         sys.exit(f"The following errors occurred during plug-in loading: {errors!r}")

@@ -14,22 +14,12 @@ from .update_cluster_nodes import ENDPOINT_UPDATE_CLUSTER_NODES
 from .update_host import ENDPOINT_UPDATE_HOST
 
 
-def register(
-    versioned_endpoint_registry: VersionedEndpointRegistry, *, ignore_duplicates: bool
-) -> None:
-    versioned_endpoint_registry.register(
-        ENDPOINT_BULK_CREATE_HOST, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(
-        ENDPOINT_CREATE_CLUSTER_HOST, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(ENDPOINT_CREATE_HOST, ignore_duplicates=ignore_duplicates)
-    versioned_endpoint_registry.register(ENDPOINT_LIST_HOSTS, ignore_duplicates=ignore_duplicates)
-    versioned_endpoint_registry.register(ENDPOINT_SHOW_HOST, ignore_duplicates=ignore_duplicates)
-    versioned_endpoint_registry.register(
-        ENDPOINT_UPDATE_CLUSTER_NODES, ignore_duplicates=ignore_duplicates
-    )
-    versioned_endpoint_registry.register(ENDPOINT_UPDATE_HOST, ignore_duplicates=ignore_duplicates)
-    versioned_endpoint_registry.register(
-        ENDPOINT_BULK_UPDATE_HOST, ignore_duplicates=ignore_duplicates
-    )
+def register(versioned_endpoint_registry: VersionedEndpointRegistry) -> None:
+    versioned_endpoint_registry.register(ENDPOINT_BULK_CREATE_HOST)
+    versioned_endpoint_registry.register(ENDPOINT_CREATE_CLUSTER_HOST)
+    versioned_endpoint_registry.register(ENDPOINT_CREATE_HOST)
+    versioned_endpoint_registry.register(ENDPOINT_LIST_HOSTS)
+    versioned_endpoint_registry.register(ENDPOINT_SHOW_HOST)
+    versioned_endpoint_registry.register(ENDPOINT_UPDATE_CLUSTER_NODES)
+    versioned_endpoint_registry.register(ENDPOINT_UPDATE_HOST)
+    versioned_endpoint_registry.register(ENDPOINT_BULK_UPDATE_HOST)

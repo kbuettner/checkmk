@@ -16,30 +16,22 @@ from .show_user_role import ENDPOINT_SHOW_USER_ROLE
 def register(
     versioned_endpoint_registry: VersionedEndpointRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
-    *,
-    ignore_duplicates: bool,
 ) -> None:
     endpoint_family_registry.register(
         USER_ROLE_FAMILY,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_LIST_USER_ROLES,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_SHOW_USER_ROLE,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_DELETE_USER_ROLE,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_CREATE_USER_ROLE,
-        ignore_duplicates=ignore_duplicates,
     )
     versioned_endpoint_registry.register(
         ENDPOINT_EDIT_USER_ROLE,
-        ignore_duplicates=ignore_duplicates,
     )

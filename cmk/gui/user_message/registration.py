@@ -27,8 +27,6 @@ def register(
     token_authenticated_page_registry: TokenAuthenticatedPageRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
-    *,
-    ignore_duplicate_endpoints: bool = False,
 ) -> None:
     page_registry.register(PageEndpoint("user_message", PageUserMessage()))
     page_registry.register(PageEndpoint("ajax_delete_user_message", ajax_delete_user_message))
@@ -40,7 +38,6 @@ def register(
     register_endpoints(
         endpoint_family_registry,
         versioned_endpoint_registry,
-        ignore_duplicates=ignore_duplicate_endpoints,
     )
     token_authenticated_page_registry.register(
         TokenAuthenticatedEndpoint(

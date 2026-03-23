@@ -26,8 +26,6 @@ def register_data_sources(
     registry: DataSourceRegistry,
     endpoint_family_registry: EndpointFamilyRegistry,
     versioned_endpoint_registry: VersionedEndpointRegistry,
-    *,
-    ignore_duplicates: bool = False,
 ) -> None:
     registry.register(DataSourceHosts)
     registry.register(DataSourceHostsByGroup)
@@ -46,9 +44,7 @@ def register_data_sources(
     registry.register(DataSourceLogAlertStatistics)
     registry.register(DataSourceServiceDiscovery)
 
-    register_endpoints(
-        endpoint_family_registry, versioned_endpoint_registry, ignore_duplicates=ignore_duplicates
-    )
+    register_endpoints(endpoint_family_registry, versioned_endpoint_registry)
 
 
 class DataSourceHosts(DataSourceLivestatus):

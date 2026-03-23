@@ -8,9 +8,5 @@ from cmk.gui.openapi.framework.registry import VersionedEndpointRegistry
 from .register_host_via_token import ENDPOINT_REGISTER_HOST_VIA_TOKEN
 
 
-def register(
-    versioned_endpoint_registry: VersionedEndpointRegistry, *, ignore_duplicates: bool
-) -> None:
-    versioned_endpoint_registry.register(
-        ENDPOINT_REGISTER_HOST_VIA_TOKEN, ignore_duplicates=ignore_duplicates
-    )
+def register(versioned_endpoint_registry: VersionedEndpointRegistry) -> None:
+    versioned_endpoint_registry.register(ENDPOINT_REGISTER_HOST_VIA_TOKEN)
