@@ -114,6 +114,7 @@ interface YAxis {
 
 export interface HorizontalRule {
   value: number
+  rendered_value: string
   color: string
   title: string
 }

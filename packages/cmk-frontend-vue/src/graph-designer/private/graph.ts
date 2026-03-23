@@ -74,6 +74,7 @@ type LayoutedCurve = LayoutedCurveLine | LayoutedCurveArea | LayoutedCurveStack
 
 interface HorizontalRule {
   value: number
+  rendered_value: string
   color: string
   title: string
 }
