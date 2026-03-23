@@ -478,14 +478,14 @@ def _show_graph_html_content(
             style="z-index:2",
         )  # Ensures that graph canvas does not cover it
 
-    v_axis_label = graph_artwork.vertical_axis["axis_label"]
+    v_axis_label = graph_artwork.y_axis["unit_label"]
     if v_axis_label:
         html.div(v_axis_label, class_="v_axis_label")
 
     # Add the floating elements
     if graph_render_config.show_graph_time and not graph_render_config.preview:
         html.div(
-            graph_artwork.time_axis["title"] or "",
+            graph_artwork.x_axis["title"] or "",
             css=["time"] + (["inline"] if graph_render_config.show_title == "inline" else []),
         )
 

@@ -22,7 +22,7 @@ from cmk.gui.graphing._artwork import (
     LayoutedCurve,
     LayoutedCurveLine,
     Scalars,
-    TimeAxis,
+    XAxis,
 )
 from cmk.gui.graphing._graph_specification import (
     FixedVerticalRange,
@@ -742,7 +742,7 @@ def test_compute_graph_t_axis(
     end_time: int,
     width: int,
     step: int,
-    expected_result: TimeAxis,
+    expected_result: XAxis,
 ) -> None:
     with time_machine.travel(datetime(2024, 1, 1, tzinfo=ZoneInfo("Europe/Berlin"))):
         assert (

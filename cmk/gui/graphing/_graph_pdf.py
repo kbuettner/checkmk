@@ -110,7 +110,7 @@ def render_graph_pdf(
     # Regular title (above graph area)
     if graph_render_config.show_title is True:
         title_left_margin = left + right_margin
-        if vertical_axis_label := graph_artwork.vertical_axis.get("axis_label"):
+        if vertical_axis_label := graph_artwork.y_axis.get("unit_label"):
             title_left_margin = left + left_border + left_margin
 
         pdf_document.render_aligned_text(
@@ -130,14 +130,14 @@ def render_graph_pdf(
     bottom_border = _graph_bottom_border(graph_render_config)
 
     # Prepare position and translation of origin
-    t_range_from = graph_artwork.time_axis["range"][0]
-    t_range_to = graph_artwork.time_axis["range"][1]
+    t_range_from = graph_artwork.x_axis["range"][0]
+    t_range_to = graph_artwork.x_axis["range"][1]
     t_range = t_range_to - t_range_from
     t_mm = width - left_border - left_margin - right_margin
     t_mm_per_second = 1.0 * t_mm / t_range
 
-    v_range_from = graph_artwork.vertical_axis["range"][0]
-    v_range_to = graph_artwork.vertical_axis["range"][1]
+    v_range_from = graph_artwork.y_axis["range"][0]
+    v_range_to = graph_artwork.y_axis["range"][1]
     v_range = v_range_to - v_range_from
     v_mm = height - top_margin - bottom_border - bottom_margin
     v_mm_per_unit = 1.0 * v_mm / v_range
@@ -247,7 +247,7 @@ def render_graph_pdf(
             title_top,
             width,
             _mm_per_ex_by_render_options(graph_render_config) * 2,
-            graph_artwork.time_axis["title"],
+            graph_artwork.x_axis["title"],
             align="right",
             bold=True,
             color=foreground_color,
@@ -256,7 +256,7 @@ def render_graph_pdf(
     # Paint the vertical axis
     if graph_render_config.show_vertical_axis:
         # Render optional vertical axis label
-        vertical_axis_label = graph_artwork.vertical_axis["axis_label"]
+        vertical_axis_label = graph_artwork.y_axis["unit_label"]
         if vertical_axis_label:
             pdf_document.render_aligned_text(
                 left + left_margin,
@@ -269,7 +269,7 @@ def render_graph_pdf(
                 color=foreground_color,
             )
 
-    for v_axis_label in graph_artwork.vertical_axis["labels"]:
+    for v_axis_label in graph_artwork.y_axis["labels"]:
         if v_axis_label.line_width > 0:
             pdf_document.render_line(
                 t_orig,
@@ -294,7 +294,7 @@ def render_graph_pdf(
             )
 
     # Paint time axis
-    for t_axis_label in graph_artwork.time_axis["labels"]:
+    for t_axis_label in graph_artwork.x_axis["labels"]:
         t_pos_mm = trans_t(t_axis_label.position)
         if t_axis_label.line_width > 0 and t_pos_mm > t_orig:
             pdf_document.render_line(

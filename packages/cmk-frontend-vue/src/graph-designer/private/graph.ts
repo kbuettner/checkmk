@@ -84,14 +84,15 @@ interface AxisTick {
   line_width: number
 }
 
-interface VerticalAxis {
+interface YAxis {
   range: [number, number]
+  unit_label: string | null
   labels: AxisTick[]
   //dynamic
   pixels_per_unit: number
 }
 
-interface TimeAxis {
+interface XAxis {
   labels: AxisTick[]
   range: [number, number]
 }
@@ -107,8 +108,8 @@ interface GraphArtwork {
   // Actual data and axes
   curves: LayoutedCurve[]
   horizontal_rules: HorizontalRule[]
-  vertical_axis: VerticalAxis
-  time_axis: TimeAxis
+  y_axis: YAxis
+  x_axis: XAxis
   mark_requested_end_time: boolean
   //Displayed range
   start_time: number

@@ -96,13 +96,13 @@ class LayoutedCurveStack(_LayoutedCurveBase):
 LayoutedCurve = LayoutedCurveLine | LayoutedCurveArea | LayoutedCurveStack
 
 
-class VerticalAxis(TypedDict):
+class YAxis(TypedDict):
     range: tuple[float, float]
-    axis_label: str | None
+    unit_label: str | None
     labels: Sequence[AxisTick]
 
 
-class TimeAxis(TypedDict):
+class XAxis(TypedDict):
     labels: Sequence[AxisTick]
     range: tuple[int, int]
     title: str
@@ -121,8 +121,8 @@ class GraphArtwork(BaseModel):
     # Actual data and axes
     curves: list[LayoutedCurve]
     horizontal_rules: Sequence[HorizontalRule]
-    vertical_axis: VerticalAxis
-    time_axis: TimeAxis
+    y_axis: YAxis
+    x_axis: XAxis
     mark_requested_end_time: bool
     # Displayed range
     start_time: int
@@ -335,7 +335,7 @@ def compute_graph_artwork(
             # Actual data and axes
             curves=layouted_curves,
             horizontal_rules=graph_recipe.horizontal_rules,
-            vertical_axis=_compute_graph_v_axis(
+            y_axis=_compute_graph_v_axis(
                 unit_spec,
                 graph_recipe.explicit_vertical_range,
                 graph_data_range,
@@ -343,7 +343,7 @@ def compute_graph_artwork(
                 layouted_curves,
                 mirrored,
             ),
-            time_axis=_compute_graph_t_axis(start_time, end_time, width, step),
+            x_axis=_compute_graph_t_axis(start_time, end_time, width, step),
             mark_requested_end_time=graph_recipe.mark_requested_end_time,
             # Displayed range
             start_time=int(start_time),
@@ -552,7 +552,7 @@ def _compute_graph_v_axis(
     height_ex: SizeEx,
     layouted_curves: Sequence[LayoutedCurve],
     mirrored: bool,
-) -> VerticalAxis:
+) -> YAxis:
     # Calculate the the value range
     # distance   -> amount of values visible in vaxis (max_value - min_value)
     # min_value  -> value of lowest v axis label (taking extra margin and zooming into account)
@@ -579,9 +579,9 @@ def _compute_graph_v_axis(
     rendered_labels = [
         AxisTick(position=label.position, text=label.text, line_width=2) for label in labels
     ]
-    return VerticalAxis(
+    return YAxis(
         range=label_range,
-        axis_label=None,
+        unit_label=None,
         labels=rendered_labels,
     )
 
@@ -708,7 +708,7 @@ def _remove_useless_zeroes(label: str) -> str:
 #   '----------------------------------------------------------------------'
 
 
-def _compute_graph_t_axis(start_time: int, end_time: int, width: float, step: int) -> TimeAxis:
+def _compute_graph_t_axis(start_time: int, end_time: int, width: float, step: int) -> XAxis:
     # Depending on which time range is being shown we have different
     # steps of granularity
 
@@ -800,7 +800,7 @@ def _compute_graph_t_axis(start_time: int, end_time: int, width: float, step: in
             )
         )
 
-    return TimeAxis(
+    return XAxis(
         labels=labels,
         range=(start_time, end_time),
         title=_add_step_to_title(title_label, step),

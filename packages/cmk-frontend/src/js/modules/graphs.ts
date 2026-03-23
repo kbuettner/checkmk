@@ -95,7 +95,7 @@ interface AxisTick {
   line_width: number
 }
 
-interface TimeAxis {
+interface XAxis {
   labels: AxisTick[]
   range: [number, number]
   //dynamic
@@ -104,8 +104,9 @@ interface TimeAxis {
 
 type GraphRecipe = Record<string, any>
 
-interface VerticalAxis {
+interface YAxis {
   range: [number, number]
+  unit_label: string | null
   labels: AxisTick[]
   //dynamic
   pixels_per_unit: number
@@ -128,8 +129,8 @@ export interface GraphArtwork {
   // Actual data and axes
   curves: LayoutedCurve[]
   horizontal_rules: HorizontalRule[]
-  vertical_axis: VerticalAxis
-  time_axis: TimeAxis
+  y_axis: YAxis
+  x_axis: XAxis
   mark_requested_end_time: boolean
   //Displayed range
   start_time: number
@@ -603,7 +604,7 @@ function render_graph(graph: GraphArtwork) {
   const configured_v_axis_width = graph_vertical_axis_width(graph)
   let v_axis_width = configured_v_axis_width
   if (graph.render_config.show_vertical_axis) {
-    const labels = graph.vertical_axis.labels
+    const labels = graph.y_axis.labels
     if (labels.length > 0) {
       const max_text_width = Math.max(...labels.map((l) => ctx!.measureText(l.text ?? '').width))
       const needed = Math.ceil(max_text_width) + v_label_margin
@@ -634,19 +635,19 @@ function render_graph(graph: GraphArtwork) {
   const v_line_color = [graph.render_config.foreground_color, '#8097b19c', '#8097b19c']
 
   // Prepare position and translation of origin
-  const t_range_from = graph['time_axis']['range'][0]
-  const t_range_to = graph['time_axis']['range'][1]
+  const t_range_from = graph['x_axis']['range'][0]
+  const t_range_to = graph['x_axis']['range'][1]
   const t_range = t_range_to - t_range_from
   const t_pixels = width - v_axis_width
   const t_pixels_per_second = t_pixels / t_range
-  graph['time_axis']['pixels_per_second'] = t_pixels_per_second // store for dragging
+  graph['x_axis']['pixels_per_second'] = t_pixels_per_second // store for dragging
 
-  const v_range_from = graph['vertical_axis']['range'][0]
-  const v_range_to = graph['vertical_axis']['range'][1]
+  const v_range_from = graph['y_axis']['range'][0]
+  const v_range_to = graph['y_axis']['range'][1]
   const v_range = v_range_to - v_range_from
   const v_pixels = height - bottom_border - top_border
   const v_pixels_per_unit = v_pixels / v_range
-  graph['vertical_axis']['pixels_per_unit'] = v_pixels_per_unit // store for dragging
+  graph['y_axis']['pixels_per_unit'] = v_pixels_per_unit // store for dragging
 
   const t_orig = v_axis_width
   graph['time_origin'] = t_orig // for dragging
@@ -672,7 +673,7 @@ function render_graph(graph: GraphArtwork) {
   if (!graph.render_config.preview) {
     // Paint the vertical axis
     let vertical_axis_label
-    const vertical_axis_labels = graph['vertical_axis']['labels']
+    const vertical_axis_labels = graph['y_axis']['labels']
     ctx.save()
     ctx.textAlign = 'end'
     ctx.textBaseline = 'middle'
@@ -698,7 +699,7 @@ function render_graph(graph: GraphArtwork) {
 
     // Paint time axis
     let time_axis_label
-    const time_axis_labels = graph['time_axis']['labels']
+    const time_axis_labels = graph['x_axis']['labels']
     ctx.save()
     ctx.fillStyle = graph.render_config.foreground_color
     for (let i = 0; i < time_axis_labels.length; i++) {
@@ -782,7 +783,7 @@ function render_graph(graph: GraphArtwork) {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'
     ctx.fillStyle = graph.render_config.foreground_color
-    const labels = graph['time_axis']['labels']
+    const labels = graph['x_axis']['labels']
     labels.forEach((time_axis_label) => {
       if (time_axis_label.text != null) {
         // @ts-ignore
@@ -1347,11 +1348,10 @@ function graph_mouse_resize(event: Event) {
 // lie outside.
 function graph_get_mouse_position(event: MouseEvent, graph: GraphArtwork): null | [number, number] {
   const time = graph_get_click_time(event, graph)
-  if (time < graph['time_axis']['range'][0] || time > graph['time_axis']['range'][1]) return null // out of range
+  if (time < graph['x_axis']['range'][0] || time > graph['x_axis']['range'][1]) return null // out of range
 
   const value = graph_get_click_value(event, graph)
-  if (value < graph['vertical_axis']['range'][0] || value > graph['vertical_axis']['range'][1])
-    return null // out of range
+  if (value < graph['y_axis']['range'][0] || value > graph['y_axis']['range'][1]) return null // out of range
 
   return [time, value]
 }
@@ -1612,8 +1612,8 @@ function graph_get_click_time(event: MouseEvent, graph: GraphArtwork) {
   const x = (get_event_offset_x(event) * canvas.width) / canvas.clientWidth
 
   // Convert this to a time value and check if its within the visible range
-  const t_offset = (x - graph['time_origin']!) / graph['time_axis']['pixels_per_second']
-  return graph['time_axis']['range'][0] + t_offset
+  const t_offset = (x - graph['time_origin']!) / graph['x_axis']['pixels_per_second']
+  return graph['x_axis']['range'][0] + t_offset
 }
 
 function graph_get_click_value(event: MouseEvent, graph: GraphArtwork) {
@@ -1623,8 +1623,8 @@ function graph_get_click_value(event: MouseEvent, graph: GraphArtwork) {
   const y = (get_event_offset_y(event) * canvas.height) / canvas.clientHeight
 
   // Convert this to a vertical value and check if its within the visible range
-  const v_offset = -(y - graph['vertical_origin']!) / graph['vertical_axis']['pixels_per_unit']
-  return graph['vertical_axis']['range'][0] + v_offset
+  const v_offset = -(y - graph['vertical_origin']!) / graph['y_axis']['pixels_per_unit']
+  return graph['y_axis']['range'][0] + v_offset
 }
 
 function get_event_offset_x(event: MouseEvent) {
@@ -1665,8 +1665,8 @@ function update_graph_hover_popup(event: Event, graph: GraphArtwork): boolean | 
   }
 
   if (
-    hover_timestamp < graph['time_axis']['range'][0] ||
-    hover_timestamp > graph['time_axis']['range'][1]
+    hover_timestamp < graph['x_axis']['range'][0] ||
+    hover_timestamp > graph['x_axis']['range'][1]
   ) {
     return prevent_default_events(event)
   }
@@ -1898,8 +1898,8 @@ function update_graph(
   let range_from: null | number = null
   let range_to: null | number = null
   if (vertical_zoom != null) {
-    const old_range_from = graph['vertical_axis']['range'][0]
-    const old_range_to = graph['vertical_axis']['range'][1]
+    const old_range_from = graph['y_axis']['range'][0]
+    const old_range_to = graph['y_axis']['range'][1]
     range_from = old_range_from / vertical_zoom
     range_to = old_range_to / vertical_zoom
   } else if (graph['requested_vrange'] != null) {
