@@ -61,7 +61,7 @@ const { iconName, title, subtitle, bulletPoints = [] } = defineProps<UclInfoCard
 
 .ucl-info-card__header-icon {
   flex-shrink: 0;
-  color: var(--font-color-base);
+  color: var(--ucl-body-text-color);
 }
 
 .ucl-info-card__subtitle {
@@ -76,7 +76,7 @@ const { iconName, title, subtitle, bulletPoints = [] } = defineProps<UclInfoCard
 }
 
 .ucl-info-card__list-item {
-  color: var(--font-color-base);
+  color: var(--ucl-body-text-color);
   line-height: 1.6;
   margin-bottom: var(--dimension-3);
 }

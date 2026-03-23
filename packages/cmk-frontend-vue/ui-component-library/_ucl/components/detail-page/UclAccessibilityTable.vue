@@ -93,6 +93,7 @@ const normalizedData = computed(() =>
   display: flex;
   align-items: center;
   gap: var(--spacing-half);
+  color: var(--ucl-body-text-color);
 }
 
 .ucl-accessibility-table__key-group {
@@ -102,7 +103,7 @@ const normalizedData = computed(() =>
 
 .ucl-accessibility-table__key-separator {
   margin: 0 6px;
-  color: var(--ucl-elements-text-color);
+  color: var(--ucl-body-text-color);
 }
 
 .ucl-accessibility-table__key-pill {
@@ -115,7 +116,7 @@ const normalizedData = computed(() =>
 
 .ucl-accessibility-table__empty-message {
   padding: 12px 16px;
-  color: var(--ucl-elements-text-color);
+  color: var(--ucl-body-text-color);
   text-align: center;
   font-style: italic;
 }

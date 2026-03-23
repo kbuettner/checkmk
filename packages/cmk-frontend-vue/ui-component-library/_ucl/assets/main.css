@@ -24,6 +24,11 @@ h4 {
   font-weight: 700;
 }
 
+p,
+li {
+  color: var(--ucl-body-text-color);
+}
+
 button {
   color: inherit;
 }

@@ -26,12 +26,12 @@ const { page } = defineProps<{
 </template>
 
 <style scoped>
-.ucl-nav-page {
+:root a.ucl-nav-page {
   display: block;
   padding: 6px 0 6px 20px;
   text-decoration: none;
   cursor: pointer;
-  color: var(--ucl-headings-font-color);
+  color: var(--ucl-body-text-color);
 }
 
 .ucl-nav-page.ucl-nav-page--active {
