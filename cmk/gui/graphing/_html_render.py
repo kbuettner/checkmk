@@ -1250,7 +1250,7 @@ def _render_graph_content_html(
 
     if show_limits_if_reached and graph_artwork_or_errors.graph_metric_limits_reached:
         if url := graph_recipe.specification.url():
-            output = HTMLWriter.render_div(
+            output += HTMLWriter.render_div(
                 _(
                     "The result of your query hit the maximum number of %s time series."
                     " Please narrow down your query."
@@ -1267,7 +1267,7 @@ def _render_graph_content_html(
                 class_="warning",
             )
         else:
-            output = HTMLWriter.render_div(
+            output += HTMLWriter.render_div(
                 _(
                     "The result of your query hit the maximum number of %s time series."
                     " Please narrow down your query."
@@ -1279,8 +1279,6 @@ def _render_graph_content_html(
                 class_="warning",
             )
         graph_render_config.size = (graph_render_config.size[0], graph_render_config.size[1] - 8)
-    else:
-        output = HTML.empty()
 
     try:
         output += _render_graph_html(
