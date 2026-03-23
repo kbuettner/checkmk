@@ -53,7 +53,7 @@ from cmk.gui.visuals import livestatus_query_bare
 from cmk.utils.metrics import MetricName as MetricName_
 
 from ._from_api import metrics_from_api, RegisteredMetric
-from ._graph_render_config import GraphRenderConfigBase
+from ._graph_display_config import GraphDisplayConfigBase
 from ._legacy import check_metrics
 from ._metrics import get_metric_spec, registered_metric_ids_and_titles
 from ._translated_metrics import (
@@ -144,7 +144,7 @@ def _vs_title_infos() -> ListChoice:
 def vs_graph_render_option_elements(default_values=None, exclude=None):
     # Allow custom default values to be specified by the caller. This is, for example,
     # needed by the dashlets which should add the host/service by default.
-    default_values = GraphRenderConfigBase.model_validate(default_values or {})
+    default_values = GraphDisplayConfigBase.model_validate(default_values or {})
 
     elements = [
         (

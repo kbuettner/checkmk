@@ -8,7 +8,10 @@ from cmk.gui.openapi.framework import VersionedEndpointRegistry
 from cmk.gui.openapi.restful_objects.endpoint_family import EndpointFamilyRegistry
 from cmk.gui.pages import PageEndpoint, PageRegistry
 from cmk.gui.permissions import PermissionSection, PermissionSectionRegistry
-from cmk.gui.token_auth import TokenAuthenticatedEndpoint, TokenAuthenticatedPageRegistry
+from cmk.gui.token_auth import (
+    TokenAuthenticatedEndpoint,
+    TokenAuthenticatedPageRegistry,
+)
 from cmk.gui.valuespec import AutocompleterRegistry
 from cmk.gui.visuals.type import VisualTypeRegistry
 from cmk.gui.watolib.groups import ContactGroupUsageFinderRegistry

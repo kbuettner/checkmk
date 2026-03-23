@@ -18,7 +18,7 @@ from cmk.gui.pdf import Document
 from cmk.gui.type_defs import RGBColor, SizeMM
 
 from ._artwork import GraphArtwork, LayoutedCurve, LayoutedCurveArea, LayoutedCurveStack
-from ._graph_render_config import GraphRenderConfigImage
+from ._graph_display_config import GraphDisplayConfigImage
 from ._graph_specification import GraphTimeRange
 
 tracer = trace.get_tracer()
@@ -28,7 +28,7 @@ tracer = trace.get_tracer()
 def render_graph_pdf(
     pdf_document: Document,
     graph_artwork: GraphArtwork,
-    graph_render_config: GraphRenderConfigImage,
+    graph_display_config: GraphDisplayConfigImage,
     pos_left: SizeMM | None = None,
     pos_top: SizeMM | None = None,
     total_width: SizeMM | None = None,
@@ -41,30 +41,30 @@ def render_graph_pdf(
 
     # Styling for PDF graphs. Note: We could make some of these
     # configurable
-    font_size = graph_render_config.font_size
-    mm_per_ex = _mm_per_ex_by_render_options(graph_render_config)
+    font_size = graph_display_config.font_size
+    mm_per_ex = _mm_per_ex_by_render_options(graph_display_config)
     v_label_margin = 1.0  # mm
     t_label_margin = _graph_time_label_margin()
-    left_border = _graph_vertical_axis_width(graph_render_config)
-    left_margin = _graph_left_margin(graph_render_config)
-    top_margin = _graph_top_margin(graph_render_config)
-    right_margin = _graph_right_margin(graph_render_config)
-    bottom_margin = _graph_bottom_margin(graph_render_config)
-    axis_color = parse_color(graph_render_config.foreground_color)
-    zero_rule_color = parse_color(graph_render_config.foreground_color)
-    canvas_color = parse_color(graph_render_config.canvas_color)
-    background_color = parse_color(graph_render_config.background_color)
-    foreground_color = parse_color(graph_render_config.foreground_color)
-    axis_over_width = _graph_axis_over_width(graph_render_config)
+    left_border = _graph_vertical_axis_width(graph_display_config)
+    left_margin = _graph_left_margin(graph_display_config)
+    top_margin = _graph_top_margin(graph_display_config)
+    right_margin = _graph_right_margin(graph_display_config)
+    bottom_margin = _graph_bottom_margin(graph_display_config)
+    axis_color = parse_color(graph_display_config.foreground_color)
+    zero_rule_color = parse_color(graph_display_config.foreground_color)
+    canvas_color = parse_color(graph_display_config.canvas_color)
+    background_color = parse_color(graph_display_config.background_color)
+    foreground_color = parse_color(graph_display_config.foreground_color)
+    axis_over_width = _graph_axis_over_width(graph_display_config)
     curve_line_width = 0.1  # mm
     rule_line_width = 0.1  # mm
     label_line_width = 0.04  # mm
     v_line_color = tuple(
-        map(parse_color, [graph_render_config.foreground_color, "#a0a0a0", "#a0a0a0"])
+        map(parse_color, [graph_display_config.foreground_color, "#a0a0a0", "#a0a0a0"])
     )
     v_line_dash = [None, [0.2, 0.4], None]
     t_line_color = tuple(
-        map(parse_color, [graph_render_config.foreground_color, "#a0a0a0", "#666666"])
+        map(parse_color, [graph_display_config.foreground_color, "#a0a0a0", "#666666"])
     )
     t_line_dash = [None, [0.2, 0.2], None]
     legend_box_line_width = 0.1
@@ -74,8 +74,8 @@ def render_graph_pdf(
 
     legend_box_size = mm_per_ex
 
-    title_height = graph_title_height(graph_render_config)
-    legend_height = graph_legend_height(graph_artwork, graph_render_config)
+    title_height = graph_title_height(graph_display_config)
+    legend_height = graph_legend_height(graph_artwork, graph_display_config)
 
     if pos_left is not None:
         # Absolute placement of graph
@@ -87,14 +87,14 @@ def render_graph_pdf(
 
     else:
         # Place graph in page flow
-        width_ex, height_ex = graph_render_config.size
+        width_ex, height_ex = graph_display_config.size
         width = width_ex * mm_per_ex
         height = height_ex * mm_per_ex
 
     left, top, width, total_height = pdf_document.add_canvas(
         width,
         height + title_height + legend_height,
-        border_width=graph_render_config.border_width,
+        border_width=graph_display_config.border_width,
         left_mm=pos_left,
     )
 
@@ -108,7 +108,7 @@ def render_graph_pdf(
     pdf_document.render_rect(left, total_bottom, width, total_height, fill_color=background_color)
 
     # Regular title (above graph area)
-    if graph_render_config.show_title is True:
+    if graph_display_config.show_title is True:
         title_left_margin = left + right_margin
         if vertical_axis_label := graph_artwork.y_axis.get("unit_label"):
             title_left_margin = left + left_border + left_margin
@@ -127,7 +127,7 @@ def render_graph_pdf(
     # The following code is inspired by htdocs/js/graphs.js:render_graph(). Whenever
     # you change something there, the change should also be reflected here!
 
-    bottom_border = _graph_bottom_border(graph_render_config)
+    bottom_border = _graph_bottom_border(graph_display_config)
 
     # Prepare position and translation of origin
     t_range_from = graph_artwork.x_axis["range"][0]
@@ -227,26 +227,26 @@ def render_graph_pdf(
         pdf_document.render_line(t_orig, trans_v(0), right, trans_v(0), color=zero_rule_color)
 
     # Show the inline title
-    if graph_render_config.show_title == "inline":
-        title_top = top - (_mm_per_ex_by_render_options(graph_render_config) * 2)
+    if graph_display_config.show_title == "inline":
+        title_top = top - (_mm_per_ex_by_render_options(graph_display_config) * 2)
         pdf_document.render_aligned_text(
             left,
             title_top,
             width,
-            _mm_per_ex_by_render_options(graph_render_config) * 2,
+            _mm_per_ex_by_render_options(graph_display_config) * 2,
             graph_artwork.title,
             align="center",
             bold=True,
             color=foreground_color,
         )
 
-    if graph_render_config.show_graph_time:
-        title_top = top - (_mm_per_ex_by_render_options(graph_render_config) * 2)
+    if graph_display_config.show_graph_time:
+        title_top = top - (_mm_per_ex_by_render_options(graph_display_config) * 2)
         pdf_document.render_aligned_text(
             left - right_margin,
             title_top,
             width,
-            _mm_per_ex_by_render_options(graph_render_config) * 2,
+            _mm_per_ex_by_render_options(graph_display_config) * 2,
             graph_artwork.x_axis["title"],
             align="right",
             bold=True,
@@ -254,7 +254,7 @@ def render_graph_pdf(
         )
 
     # Paint the vertical axis
-    if graph_render_config.show_vertical_axis:
+    if graph_display_config.show_vertical_axis:
         # Render optional vertical axis label
         vertical_axis_label = graph_artwork.y_axis["unit_label"]
         if vertical_axis_label:
@@ -281,7 +281,7 @@ def render_graph_pdf(
                 dashes=v_line_dash[v_axis_label.line_width],
             )
 
-        if graph_render_config.show_vertical_axis and v_axis_label.text is not None:
+        if graph_display_config.show_vertical_axis and v_axis_label.text is not None:
             pdf_document.render_aligned_text(
                 t_orig - v_label_margin - left_border,
                 trans_v(v_axis_label.position),
@@ -307,7 +307,7 @@ def render_graph_pdf(
                 dashes=t_line_dash[t_axis_label.line_width],
             )
 
-        if graph_render_config.show_time_axis and t_axis_label.text:
+        if graph_display_config.show_time_axis and t_axis_label.text:
             pdf_document.render_aligned_text(
                 t_pos_mm,
                 v_orig - t_label_margin - mm_per_ex,
@@ -331,8 +331,8 @@ def render_graph_pdf(
             )
 
     # Paint legend
-    if graph_render_config.show_legend:
-        legend_lineskip = _get_graph_legend_lineskip(graph_render_config)
+    if graph_display_config.show_legend:
+        legend_lineskip = _get_graph_legend_lineskip(graph_display_config)
         legend_top_margin = _graph_legend_top_margin()
         legend_top = bottom - legend_top_margin + bottom_margin
         legend_column_width = (width - left_margin - left_border - right_margin) / 7.0
@@ -443,15 +443,15 @@ def get_mm_per_ex(font_size: float) -> SizeMM:
     return font_size / 3.0
 
 
-def _mm_per_ex_by_render_options(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    return get_mm_per_ex(graph_render_config.font_size)
+def _mm_per_ex_by_render_options(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    return get_mm_per_ex(graph_display_config.font_size)
 
 
-def _graph_bottom_border(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    mm_per_ex = get_mm_per_ex(graph_render_config.font_size)
+def _graph_bottom_border(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    mm_per_ex = get_mm_per_ex(graph_display_config.font_size)
     t_label_margin = _graph_time_label_margin()
 
-    if graph_render_config.show_time_axis:
+    if graph_display_config.show_time_axis:
         return mm_per_ex + t_label_margin
     return 0
 
@@ -464,66 +464,66 @@ def _graph_time_label_margin() -> SizeMM:
     return 1.0  # mm
 
 
-def _get_graph_legend_lineskip(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    return _mm_per_ex_by_render_options(graph_render_config) * 1.5
+def _get_graph_legend_lineskip(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    return _mm_per_ex_by_render_options(graph_display_config) * 1.5
 
 
-def _graph_vertical_axis_width(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    if not graph_render_config.show_vertical_axis:
+def _graph_vertical_axis_width(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    if not graph_display_config.show_vertical_axis:
         return 0.0  # mm
 
     if (
-        isinstance(graph_render_config.vertical_axis_width, tuple)
-        and graph_render_config.vertical_axis_width[0] == "explicit"
+        isinstance(graph_display_config.vertical_axis_width, tuple)
+        and graph_display_config.vertical_axis_width[0] == "explicit"
     ):
-        return get_mm_per_ex(graph_render_config.vertical_axis_width[1])
+        return get_mm_per_ex(graph_display_config.vertical_axis_width[1])
 
-    return 5 * _mm_per_ex_by_render_options(graph_render_config)
+    return 5 * _mm_per_ex_by_render_options(graph_display_config)
 
 
-def _graph_top_margin(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    if graph_render_config.show_margin:
+def _graph_top_margin(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    if graph_display_config.show_margin:
         return 1.0  # mm
     return 0.0
 
 
-def _graph_right_margin(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    if graph_render_config.show_margin:
+def _graph_right_margin(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    if graph_display_config.show_margin:
         return 2.5  # mm
     return 0.0
 
 
-def _graph_bottom_margin(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    if graph_render_config.show_margin:
+def _graph_bottom_margin(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    if graph_display_config.show_margin:
         return 1.0  # mm
     return 0.0
 
 
-def _graph_axis_over_width(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    if graph_render_config.show_margin:
+def _graph_axis_over_width(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    if graph_display_config.show_margin:
         return 0.5  # mm
     return 0.0
 
 
-def _graph_left_margin(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    if graph_render_config.show_margin:
+def _graph_left_margin(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    if graph_display_config.show_margin:
         return 2.0  # mm
     return 0.0
 
 
-def graph_title_height(graph_render_config: GraphRenderConfigImage) -> SizeMM:
-    if graph_render_config.show_title in [False, "inline"]:
+def graph_title_height(graph_display_config: GraphDisplayConfigImage) -> SizeMM:
+    if graph_display_config.show_title in [False, "inline"]:
         return 0
-    return _mm_per_ex_by_render_options(graph_render_config) * 2
+    return _mm_per_ex_by_render_options(graph_display_config) * 2
 
 
 def graph_legend_height(
-    graph_artwork: GraphArtwork, graph_render_config: GraphRenderConfigImage
+    graph_artwork: GraphArtwork, graph_display_config: GraphDisplayConfigImage
 ) -> SizeMM:
-    if not graph_render_config.show_legend:
+    if not graph_display_config.show_legend:
         return 0
 
-    legend_lineskip = _get_graph_legend_lineskip(graph_render_config)
+    legend_lineskip = _get_graph_legend_lineskip(graph_display_config)
     legend_top_margin = _graph_legend_top_margin()
 
     return legend_top_margin + (

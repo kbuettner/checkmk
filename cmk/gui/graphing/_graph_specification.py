@@ -29,6 +29,7 @@ from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.utils.temperate_unit import TemperatureUnit
 
 from ._from_api import RegisteredMetric
+from ._graph_display_config import GraphRenderOptions
 from ._graph_metric_expressions import (
     AugmentedTimeSeries,
     GraphConsolidationFunction,
@@ -37,7 +38,6 @@ from ._graph_metric_expressions import (
     LineType,
     parse_graph_metric_expression,
 )
-from ._graph_render_config import GraphRenderOptions
 from ._translated_metrics import TranslatedMetric
 from ._unit import (
     ConvertibleUnitSpecification,

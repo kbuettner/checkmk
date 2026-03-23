@@ -70,7 +70,7 @@ class GraphRenderOptions(BaseModel):
         return self.model_dump(exclude_none=True)
 
 
-class GraphRenderConfigBase(BaseModel):
+class GraphDisplayConfigBase(BaseModel):
     border_width: SizeMM = 0.05
     color_gradient: float = 20.0
     editing: bool = False
@@ -104,7 +104,7 @@ class GraphRenderConfigBase(BaseModel):
         )
 
 
-class GraphRenderConfig(GraphRenderConfigBase):
+class GraphDisplayConfig(GraphDisplayConfigBase):
     explicit_title: str | None = None
     foreground_color: str
     onclick: str | None = None
@@ -122,7 +122,7 @@ class GraphRenderConfig(GraphRenderConfigBase):
         )
 
 
-class GraphRenderConfigImage(GraphRenderConfigBase):
+class GraphDisplayConfigImage(GraphDisplayConfigBase):
     background_color: str = "#f8f4f0"
     canvas_color: str = "#ffffff"
     foreground_color: str = "#000000"

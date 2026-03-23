@@ -12,6 +12,11 @@ from ._from_api import (
     perfometers_from_api,
     RegisteredMetric,
 )
+from ._graph_display_config import (
+    GraphDisplayConfig,
+    GraphDisplayConfigImage,
+    GraphRenderOptions,
+)
 from ._graph_images import graph_spec_from_request, GraphSpec
 from ._graph_metric_expressions import (
     GraphConsolidationFunction,
@@ -24,11 +29,6 @@ from ._graph_pdf import (
     compute_pdf_graph_time_range,
     get_mm_per_ex,
     render_graph_pdf,
-)
-from ._graph_render_config import (
-    GraphRenderConfig,
-    GraphRenderConfigImage,
-    GraphRenderOptions,
 )
 from ._graph_specification import (
     GraphMetric,
@@ -111,8 +111,8 @@ __all__ = [
     "GraphMetricOperation",
     "GraphPluginChoice",
     "GraphRecipe",
-    "GraphRenderConfig",
-    "GraphRenderConfigImage",
+    "GraphDisplayConfig",
+    "GraphDisplayConfigImage",
     "GraphRenderOptions",
     "GraphSpec",
     "GraphSpecification",

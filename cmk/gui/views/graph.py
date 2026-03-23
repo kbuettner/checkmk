@@ -20,7 +20,7 @@ from cmk.gui.graphing import (
     FetchTimeSeries,
     get_temperature_unit,
     get_template_graph_specification,
-    GraphRenderConfig,
+    GraphDisplayConfig,
     GraphRenderOptions,
     graphs_from_api,
     make_graph_time_range,
@@ -210,7 +210,7 @@ def _paint_time_graph_cmk(
     if options is not None:
         graph_render_options.update(options)
 
-    graph_render_config = GraphRenderConfig.from_user_context_and_options(
+    graph_display_config = GraphDisplayConfig.from_user_context_and_options(
         user,
         theme.get(),
         GraphRenderOptions.from_graph_render_options_vs(graph_render_options),
@@ -230,11 +230,11 @@ def _paint_time_graph_cmk(
 
     graph_time_range = make_graph_time_range(
         time_range,
-        graph_render_config.size[1],
+        graph_display_config.size[1],
     )
 
     if is_mobile(request, response):
-        graph_render_config = graph_render_config.model_copy(
+        graph_display_config = graph_display_config.model_copy(
             update={
                 "interaction": False,
                 "show_controls": False,
@@ -269,7 +269,7 @@ def _paint_time_graph_cmk(
             service_name=row.get("service_description", "_HOST_"),
         ),
         graph_time_range,
-        graph_render_config,
+        graph_display_config,
         registered_metrics,
         registered_graphs,
         user_permissions,

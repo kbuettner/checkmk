@@ -15,7 +15,7 @@ import { cmkAjax } from '@/lib/ajax'
 
 type SizePT = number
 
-interface GraphRenderConfig {
+interface GraphDisplayConfig {
   fixed_timerange: boolean
   font_size: SizePT
   foreground_color: string
@@ -38,11 +38,11 @@ interface GraphTimeRange {
   time_range: [number, number]
 }
 
-interface AjaxContext {
+interface GraphContext {
   graph_id: string
-  graph_recipe: GraphRecipe
+  recipe: GraphRecipe
   time_range: GraphTimeRange
-  render_config: GraphRenderConfig
+  display_config: GraphDisplayConfig
   display_id: string
 }
 
@@ -113,7 +113,7 @@ interface GraphArtwork {
   //optional properties assigned dynamically in javascript
   id: string
   canvas_obj: HTMLCanvasElement
-  render_config: GraphRenderConfig
+  display_config: GraphDisplayConfig
   time_origin?: number
   vertical_origin?: number
   // Actual data and axes
@@ -132,7 +132,7 @@ interface GraphArtwork {
 export interface AjaxGraph {
   html: string
   graph: GraphArtwork
-  context: AjaxContext
+  context: GraphContext
   error?: string
   warning?: string
   queries_reached_limit?: GraphLineQuery[]

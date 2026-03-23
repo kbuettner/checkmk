@@ -42,17 +42,17 @@ from ._artwork import (
 )
 from ._fetch_time_series import fetch_augmented_time_series
 from ._from_api import graphs_from_api, metrics_from_api, RegisteredMetric
+from ._graph_display_config import (
+    GraphDisplayConfigImage,
+    GraphRenderOptions,
+    GraphTitleFormat,
+)
 from ._graph_metric_expressions import LineType
 from ._graph_pdf import (
     compute_pdf_graph_time_range,
     get_mm_per_ex,
     graph_legend_height,
     render_graph_pdf,
-)
-from ._graph_render_config import (
-    GraphRenderConfigImage,
-    GraphRenderOptions,
-    GraphTitleFormat,
 )
 from ._graph_specification import (
     AugmentedTimeSeriesOfGraphMetric,
@@ -142,12 +142,12 @@ def _answer_graph_image_request(
         end_time = int(time.time())
         start_time = end_time - (25 * 3600)
 
-        graph_render_config = GraphRenderConfigImage.from_user_context_and_options(
+        graph_display_config = GraphDisplayConfigImage.from_user_context_and_options(
             user,
             graph_image_render_options(),
         )
 
-        graph_time_range = graph_image_time_range(graph_render_config, start_time, end_time)
+        graph_time_range = graph_image_time_range(graph_display_config, start_time, end_time)
         graph_recipes = get_template_graph_specification(
             site_id=SiteId(site) if site else None,
             host_name=host_name,
@@ -169,12 +169,12 @@ def _answer_graph_image_request(
             graph_artwork = compute_graph_artwork(
                 graph_recipe,
                 graph_time_range,
-                graph_render_config.size,
+                graph_display_config.size,
                 registered_metrics,
                 temperature_unit=temperature_unit,
                 backend_time_series_fetcher=backend_time_series_fetcher,
             ).artwork
-            graph_png = render_graph_image(graph_artwork, graph_render_config)
+            graph_png = render_graph_image(graph_artwork, graph_display_config)
 
             graphs.append(base64.b64encode(graph_png).decode("ascii"))
 
@@ -189,10 +189,10 @@ def _answer_graph_image_request(
 
 
 def graph_image_time_range(
-    graph_render_config: GraphRenderConfigImage, start_time: int, end_time: int
+    graph_display_config: GraphDisplayConfigImage, start_time: int, end_time: int
 ) -> GraphTimeRange:
-    mm_per_ex = get_mm_per_ex(graph_render_config.font_size)
-    width_mm = graph_render_config.size[0] * mm_per_ex
+    mm_per_ex = get_mm_per_ex(graph_display_config.font_size)
+    width_mm = graph_display_config.size[0] * mm_per_ex
     return compute_pdf_graph_time_range(width_mm, start_time, end_time)
 
 
@@ -224,18 +224,18 @@ def graph_image_render_options(api_request: dict[str, Any] | None = None) -> Gra
 @tracer.instrument("graphing.render_graph_image")
 def render_graph_image(
     graph_artwork: GraphArtwork,
-    graph_render_config: GraphRenderConfigImage,
+    graph_display_config: GraphDisplayConfigImage,
 ) -> bytes:
-    width_ex, height_ex = graph_render_config.size
-    mm_per_ex = get_mm_per_ex(graph_render_config.font_size)
+    width_ex, height_ex = graph_display_config.size
+    mm_per_ex = get_mm_per_ex(graph_display_config.font_size)
 
-    legend_height = graph_legend_height(graph_artwork, graph_render_config)
+    legend_height = graph_legend_height(graph_artwork, graph_display_config)
     image_height = (height_ex * mm_per_ex) + legend_height
 
     # TODO: Better use reporting.get_report_instance()
     doc = pdf.Document(
         font_family="Helvetica",
-        font_size=graph_render_config.font_size,
+        font_size=graph_display_config.font_size,
         lineheight=1.2,
         pagesize=(width_ex * mm_per_ex, image_height),
         margins=(0, 0, 0, 0),
@@ -244,7 +244,7 @@ def render_graph_image(
     render_graph_pdf(
         doc,
         graph_artwork,
-        graph_render_config,
+        graph_display_config,
         pos_left=0.0,
         pos_top=0.0,
         total_width=(width_ex * mm_per_ex),

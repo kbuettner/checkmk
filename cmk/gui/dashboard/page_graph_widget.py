@@ -35,7 +35,7 @@ from cmk.gui.dashboard.token_util import (
 from cmk.gui.exceptions import MKMissingDataError, MKUserError
 from cmk.gui.graphing import (
     get_temperature_unit,
-    GraphRenderConfig,
+    GraphDisplayConfig,
     host_service_graph_dashlet_cmk,
     metric_backend_registry,
     metrics_from_api,
@@ -74,7 +74,7 @@ def render_graph_widget_content(
                 #       for that we need to adapt host_service_graph_dashlet_cmk and its call sites
                 ctx.request,
                 graph_recipes,
-                GraphRenderConfig.model_validate(
+                GraphDisplayConfig.model_validate(
                     dashlet_config["graph_render_options"]
                     | {
                         "foreground_color": (

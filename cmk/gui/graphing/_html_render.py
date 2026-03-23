@@ -66,13 +66,13 @@ from ._artwork import (
 )
 from ._fetch_time_series import fetch_augmented_time_series
 from ._from_api import metrics_from_api, RegisteredMetric
-from ._graph_metric_expressions import GraphMetricExpression
-from ._graph_render_config import (
-    GraphRenderConfig,
-    GraphRenderConfigBase,
+from ._graph_display_config import (
+    GraphDisplayConfig,
+    GraphDisplayConfigBase,
     GraphRenderOptions,
     GraphTitleFormat,
 )
+from ._graph_metric_expressions import GraphMetricExpression
 from ._graph_specification import GraphRecipe, GraphSpecification, GraphTimeRange
 from ._graph_templates import (
     get_template_graph_specification,
@@ -102,13 +102,13 @@ class ExpandableLegendAppearance(Enum):
 # an update of the graph should be done. It must contain everything that we need to
 # create the HTML code of the graph. The entry "graph_id" will be set by the javascript
 # code since it is not known to us.
-class AjaxContext(BaseModel):
+class GraphContext(BaseModel):
     """Round-trip envelope sent to the browser and echoed back on graph updates."""
 
     graph_id: str = ""
-    graph_recipe: GraphRecipe
+    recipe: GraphRecipe
     time_range: GraphTimeRange
-    render_config: GraphRenderConfig
+    display_config: GraphDisplayConfig
     display_id: str = ""
 
 
@@ -254,7 +254,7 @@ def host_service_graph_popup_cmk(
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
 ) -> None:
-    graph_render_config = GraphRenderConfig.from_user_context_and_options(
+    graph_display_config = GraphDisplayConfig.from_user_context_and_options(
         user,
         theme.get(),
         GraphRenderOptions(
@@ -270,7 +270,7 @@ def host_service_graph_popup_cmk(
 
     graph_time_range = make_graph_time_range(
         ((end_time := int(time.time())) - 8 * 3600, end_time),
-        graph_render_config.size[1],
+        graph_display_config.size[1],
     )
 
     html.write_html(
@@ -281,7 +281,7 @@ def host_service_graph_popup_cmk(
                 service_name=service_description,
             ),
             graph_time_range,
-            graph_render_config,
+            graph_display_config,
             registered_metrics,
             registered_graphs,
             user_permissions,
@@ -319,7 +319,7 @@ def _render_graph_html(
     display_id: str,
     graph_artwork: GraphArtwork,
     graph_time_range: GraphTimeRange,
-    graph_render_config: GraphRenderConfig,
+    graph_display_config: GraphDisplayConfig,
     expandable_legend_appearance: ExpandableLegendAppearance,
 ) -> HTML:
     with output_funnel.plugged():
@@ -329,7 +329,7 @@ def _render_graph_html(
             display_id,
             graph_artwork,
             graph_time_range,
-            graph_render_config,
+            graph_display_config,
             expandable_legend_appearance,
         )
         html_code = HTML.without_escaping(output_funnel.drain())
@@ -340,10 +340,10 @@ def _render_graph_html(
             json.dumps(str(html_code)),
             json.dumps(graph_artwork.model_dump()),
             json.dumps(
-                AjaxContext(
-                    graph_recipe=graph_recipe,
+                GraphContext(
+                    recipe=graph_recipe,
                     time_range=graph_time_range,
-                    render_config=graph_render_config,
+                    display_config=graph_display_config,
                     display_id=display_id,
                 ).model_dump()
             ),
@@ -359,12 +359,12 @@ def _render_title_elements_plain(elements: Iterable[str]) -> str:
 def render_plain_graph_title(
     graph_recipe: GraphRecipe,
     graph_artwork: GraphArtwork,
-    graph_render_config: GraphRenderConfigBase,
+    graph_display_config: GraphDisplayConfigBase,
 ) -> str:
     return _render_title_elements_plain(
         element[0]
         for element in _render_graph_title_elements(
-            request, graph_recipe, graph_artwork, graph_render_config
+            request, graph_recipe, graph_artwork, graph_display_config
         )
     )
 
@@ -373,10 +373,10 @@ def _render_graph_title_elements(
     request: Request,
     graph_recipe: GraphRecipe,
     graph_artwork: GraphArtwork,
-    graph_render_config: GraphRenderConfigBase,
+    graph_display_config: GraphDisplayConfigBase,
     explicit_title: str | None = None,
 ) -> list[tuple[str, str | None]]:
-    if not graph_render_config.show_title:
+    if not graph_display_config.show_title:
         return []
 
     # Hard override of the graph title. This is e.g. needed for the graph previews
@@ -385,7 +385,7 @@ def _render_graph_title_elements(
 
     title_elements: list[tuple[str, str | None]] = []
 
-    if graph_render_config.title_format.plain and graph_artwork.title:
+    if graph_display_config.title_format.plain and graph_artwork.title:
         title_elements.append((graph_artwork.title, None))
 
     # Only add host/service information for template based graphs
@@ -394,7 +394,7 @@ def _render_graph_title_elements(
         return title_elements
 
     title_elements.extend(
-        _title_info_elements(request, specification, graph_render_config.title_format)
+        _title_info_elements(request, specification, graph_display_config.title_format)
     )
 
     return title_elements
@@ -441,7 +441,7 @@ def _show_graph_html_content(
     display_id: str,
     graph_artwork: GraphArtwork,
     graph_time_range: GraphTimeRange,
-    graph_render_config: GraphRenderConfig,
+    graph_display_config: GraphDisplayConfig,
     expandable_legend_appearance: ExpandableLegendAppearance,
 ) -> None:
     """Render the HTML code of a graph without its container
@@ -451,12 +451,12 @@ def _show_graph_html_content(
     """
     html.open_div(
         class_=["graph"]
-        + (["preview"] if graph_render_config.preview else [])
-        + (["with_margin"] if graph_render_config.show_margin else []),
-        style=f"font-size: {graph_render_config.font_size:.1f}pt;",
+        + (["preview"] if graph_display_config.preview else [])
+        + (["with_margin"] if graph_display_config.show_margin else []),
+        style=f"font-size: {graph_display_config.font_size:.1f}pt;",
     )
 
-    if graph_render_config.show_controls:
+    if graph_display_config.show_controls:
         # Data will be transferred via URL and Javascript magic eventually
         # to our function popup_add_element (htdocs/reporting.py)
         # argument report_name --> provided by popup system
@@ -468,10 +468,10 @@ def _show_graph_html_content(
             data=[
                 "pnpgraph",
                 None,
-                AjaxContext(
-                    graph_recipe=graph_recipe,
+                GraphContext(
+                    recipe=graph_recipe,
                     time_range=graph_time_range,
-                    render_config=graph_render_config,
+                    display_config=graph_display_config,
                     display_id=display_id,
                 ).model_dump(),
             ],
@@ -483,13 +483,13 @@ def _show_graph_html_content(
         html.div(v_axis_label, class_="v_axis_label")
 
     # Add the floating elements
-    if graph_render_config.show_graph_time and not graph_render_config.preview:
+    if graph_display_config.show_graph_time and not graph_display_config.preview:
         html.div(
             graph_artwork.x_axis["title"] or "",
-            css=["time"] + (["inline"] if graph_render_config.show_title == "inline" else []),
+            css=["time"] + (["inline"] if graph_display_config.show_title == "inline" else []),
         )
 
-    if graph_render_config.show_controls and graph_render_config.resizable:
+    if graph_display_config.show_controls and graph_display_config.resizable:
         html.img(src=theme.detect_icon_path("resize_graph", prefix=""), class_="resize")
 
     if title := text_with_links_to_user_translated_html(
@@ -497,19 +497,19 @@ def _show_graph_html_content(
             request,
             graph_recipe,
             graph_artwork,
-            graph_render_config,
-            explicit_title=graph_render_config.explicit_title,
+            graph_display_config,
+            explicit_title=graph_display_config.explicit_title,
         ),
         separator=HTML.without_escaping(" / "),
     ):
         html.div(
             title,
-            class_=["title"] + (["inline"] if graph_render_config.show_title == "inline" else []),
+            class_=["title"] + (["inline"] if graph_display_config.show_title == "inline" else []),
         )
 
     # Create canvas where actual graph will be rendered
-    graph_width: float = graph_render_config.size[0] * html_size_per_ex
-    graph_height: float = graph_render_config.size[1] * html_size_per_ex
+    graph_width: float = graph_display_config.size[0] * html_size_per_ex
+    graph_height: float = graph_display_config.size[1] * html_size_per_ex
     html.canvas(
         "",
         style="position: relative; width: %dpx; height: %dpx;" % (graph_width, graph_height),
@@ -518,9 +518,9 @@ def _show_graph_html_content(
     )
 
     # Note: due to "omit_zero_metrics" the graph might not have any curves
-    if graph_render_config.show_legend and graph_artwork.curves:
+    if graph_display_config.show_legend and graph_artwork.curves:
         _show_graph_legend(
-            graph_recipe, graph_artwork, graph_render_config, expandable_legend_appearance
+            graph_recipe, graph_artwork, graph_display_config, expandable_legend_appearance
         )
 
     if additional_html := graph_recipe.additional_html:
@@ -532,7 +532,7 @@ def _show_graph_html_content(
     html.close_div()
 
 
-def _show_pin_time(graph_artwork: GraphArtwork, config: GraphRenderConfig) -> bool:
+def _show_pin_time(graph_artwork: GraphArtwork, config: GraphDisplayConfig) -> bool:
     if not config.show_pin:
         return False
 
@@ -556,7 +556,7 @@ class _LegendTitle:
 
 
 def _compute_legend_titles(
-    graph_recipe: GraphRecipe, graph_artwork: GraphArtwork, graph_render_config: GraphRenderConfig
+    graph_recipe: GraphRecipe, graph_artwork: GraphArtwork, graph_display_config: GraphDisplayConfig
 ) -> Generator[_LegendTitle]:
     consolidation_function = graph_recipe.consolidation_function
     yield _LegendTitle(
@@ -575,15 +575,15 @@ def _compute_legend_titles(
         consolidation_function is not None and consolidation_function != "average",
     )
     yield _LegendTitle("last", _("Last"), False)
-    if _show_pin_time(graph_artwork, graph_render_config):
+    if _show_pin_time(graph_artwork, graph_display_config):
         yield _LegendTitle("pin", _render_pin_time_label(graph_artwork), False)
 
 
-def _compute_graph_legend_styles(graph_render_config: GraphRenderConfig) -> Iterator[str]:
+def _compute_graph_legend_styles(graph_display_config: GraphDisplayConfig) -> Iterator[str]:
     """Render legend that describe the metrics"""
-    graph_width = graph_render_config.size[0] * html_size_per_ex
+    graph_width = graph_display_config.size[0] * html_size_per_ex
 
-    if graph_render_config.show_vertical_axis or graph_render_config.show_controls:
+    if graph_display_config.show_vertical_axis or graph_display_config.show_controls:
         legend_margin_left = 49
     else:
         legend_margin_left = 0
@@ -674,16 +674,18 @@ def _render_attributes(
 def _show_graph_legend(
     graph_recipe: GraphRecipe,
     graph_artwork: GraphArtwork,
-    graph_render_config: GraphRenderConfig,
+    graph_display_config: GraphDisplayConfig,
     expandable_legend_appearance: ExpandableLegendAppearance,
 ) -> None:
-    font_size_style = "font-size: %dpt;" % graph_render_config.font_size
-    legend_titles = list(_compute_legend_titles(graph_recipe, graph_artwork, graph_render_config))
-    graph_legend_styles = list(_compute_graph_legend_styles(graph_render_config))
+    font_size_style = "font-size: %dpt;" % graph_display_config.font_size
+    legend_titles = list(_compute_legend_titles(graph_recipe, graph_artwork, graph_display_config))
+    graph_legend_styles = list(_compute_graph_legend_styles(graph_display_config))
 
     legend_container_styles: list[str] = []
-    if graph_render_config.legend_max_height_px is not None:
-        legend_container_styles.append("max-height:%dpx" % graph_render_config.legend_max_height_px)
+    if graph_display_config.legend_max_height_px is not None:
+        legend_container_styles.append(
+            "max-height:%dpx" % graph_display_config.legend_max_height_px
+        )
         legend_container_styles.append("overflow-y:auto")
     html.open_div(class_=["legend_container"], style=legend_container_styles or None)
     html.open_table(class_="legend", style=graph_legend_styles)
@@ -759,7 +761,7 @@ def _show_graph_legend(
 
         for legend_title in legend_titles:
             if legend_title.type == "pin" and not _show_pin_time(
-                graph_artwork, graph_render_config
+                graph_artwork, graph_display_config
             ):
                 continue
 
@@ -848,7 +850,7 @@ class AjaxGraph(Page):
         response.set_content_type("application/json")
         try:
             context_var = ctx.request.get_str_input_mandatory("context")
-            context = AjaxContext.model_validate(json.loads(context_var))
+            context = GraphContext.model_validate(json.loads(context_var))
             response_data = render_ajax_graph(
                 ctx.request,
                 context,
@@ -872,7 +874,7 @@ class AjaxGraph(Page):
 @tracer.instrument("graphing.render_ajax_graph")
 def render_ajax_graph(
     request: Request,
-    context: AjaxContext,
+    context: GraphContext,
     registered_metrics: Mapping[str, RegisteredMetric],
     *,
     temperature_unit: TemperatureUnit,
@@ -881,8 +883,8 @@ def render_ajax_graph(
     converter: Callable[[GraphMetricExpression], JsonSerializable] | None,
 ) -> JsonSerializable:
     graph_time_range = context.time_range
-    graph_render_config = context.render_config
-    graph_recipe = context.graph_recipe
+    graph_display_config = context.display_config
+    graph_recipe = context.recipe
 
     start_time_var = request.var("start_time")
     end_time_var = request.var("end_time")
@@ -900,11 +902,11 @@ def render_ajax_graph(
     resize_y_var = request.var("resize_y")
 
     if resize_x_var is not None and resize_y_var is not None:
-        render_opt_x, render_opt_y = graph_render_config.size
+        render_opt_x, render_opt_y = graph_display_config.size
         size_x = max(min_resize_width, float(resize_x_var) / html_size_per_ex + render_opt_x)
         size_y = max(min_resize_height, float(resize_y_var) / html_size_per_ex + render_opt_y)
         user.save_file("graph_size", (size_x, size_y))
-        graph_render_config.size = (size_x, size_y)
+        graph_display_config.size = (size_x, size_y)
 
     range_from_var = request.var("range_from")
     range_to_var = request.var("range_to")
@@ -928,18 +930,16 @@ def render_ajax_graph(
     )
 
     # Persist the current data range for the graph editor.
-    if graph_render_config.editing and (context.graph_recipe.specification.id):
+    if graph_display_config.editing and (context.recipe.specification.id):
         assert user.id is not None
-        UserGraphTimeRangeStore(user.id).save(
-            context.graph_recipe.specification.id, graph_time_range
-        )
+        UserGraphTimeRangeStore(user.id).save(context.recipe.specification.id, graph_time_range)
 
     graph_display_id = context.display_id
 
     graph_artwork_or_errors = compute_graph_artwork(
         graph_recipe,
         graph_time_range,
-        graph_render_config.size,
+        graph_display_config.size,
         registered_metrics,
         temperature_unit=temperature_unit,
         backend_time_series_fetcher=backend_time_series_fetcher,
@@ -991,7 +991,7 @@ def render_ajax_graph(
             graph_display_id,
             graph_artwork_or_errors.artwork,
             graph_time_range,
-            graph_render_config,
+            graph_display_config,
             ExpandableLegendAppearance.FOLDABLE,
         )
         html_code = HTML.without_escaping(output_funnel.drain())
@@ -999,11 +999,11 @@ def render_ajax_graph(
     return {
         "html": str(html_code),
         "graph": graph_artwork_or_errors.artwork.model_dump(),
-        "context": AjaxContext(
+        "context": GraphContext(
             graph_id=context.graph_id,
-            graph_recipe=graph_recipe,
+            recipe=graph_recipe,
             time_range=graph_time_range,
-            render_config=graph_render_config,
+            display_config=graph_display_config,
             display_id=graph_display_id,
         ).model_dump(),
         "error": error_msg,
@@ -1062,7 +1062,7 @@ class UserGraphTimeRangeStore:
 def render_graphs_from_specification_html(
     graph_specification: GraphSpecification,
     graph_time_range: GraphTimeRange,
-    graph_render_config: GraphRenderConfig,
+    graph_display_config: GraphDisplayConfig,
     registered_metrics: Mapping[str, RegisteredMetric],
     registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],
     user_permissions: UserPermissions,
@@ -1109,7 +1109,7 @@ def render_graphs_from_specification_html(
             output += _render_graph_container_html(
                 graph_recipe,
                 graph_time_range.model_copy(update=dict(graph_recipe.time_range or {})),
-                graph_render_config.update_from_options(graph_recipe.render_options),
+                graph_display_config.update_from_options(graph_recipe.render_options),
                 graph_display_id=graph_display_id,
             )
         else:
@@ -1117,12 +1117,12 @@ def render_graphs_from_specification_html(
                 request,
                 graph_recipe,
                 graph_time_range.model_copy(update=dict(graph_recipe.time_range or {})),
-                graph_render_config.update_from_options(graph_recipe.render_options),
+                graph_display_config.update_from_options(graph_recipe.render_options),
                 registered_metrics,
                 compute_graph_artwork(
                     graph_recipe,
                     graph_time_range,
-                    graph_render_config.size,
+                    graph_display_config.size,
                     metrics_from_api,
                     temperature_unit=temperature_unit,
                     backend_time_series_fetcher=backend_time_series_fetcher,
@@ -1143,7 +1143,7 @@ def render_graphs_from_specification_html(
 def _render_graph_container_html(
     graph_recipe: GraphRecipe,
     graph_time_range: GraphTimeRange,
-    graph_render_config: GraphRenderConfig,
+    graph_display_config: GraphDisplayConfig,
     *,
     graph_display_id: str,
 ) -> HTML:
@@ -1151,8 +1151,8 @@ def _render_graph_container_html(
     # this does calculate the size of the canvas area and does not take e.g. the legend
     # into account. We would need the graph_artwork to calculate that, but this is something
     # we don't have in this early stage.
-    graph_width = graph_render_config.size[0] * html_size_per_ex
-    graph_height = graph_render_config.size[1] * html_size_per_ex
+    graph_width = graph_display_config.size[0] * html_size_per_ex
+    graph_height = graph_display_config.size[1] * html_size_per_ex
 
     content = HTMLWriter.render_div("", class_="title") + HTMLWriter.render_div(
         "", class_="content", style="width:%dpx;height:%dpx" % (graph_width, graph_height)
@@ -1167,7 +1167,7 @@ def _render_graph_container_html(
         % (
             json.dumps(graph_recipe.model_dump()),
             json.dumps(graph_time_range.model_dump()),
-            json.dumps(graph_render_config.model_dump()),
+            json.dumps(graph_display_config.model_dump()),
             json.dumps(graph_display_id),
         )
     )
@@ -1186,7 +1186,9 @@ class AjaxRenderGraphContent(AjaxPage):
         api_request = ctx.request.get_request()
         graph_recipe = GraphRecipe.model_validate(api_request["graph_recipe"])
         graph_time_range = GraphTimeRange.model_validate(api_request["graph_time_range"])
-        graph_render_config = GraphRenderConfig.model_validate(api_request["graph_render_config"])
+        graph_display_config = GraphDisplayConfig.model_validate(
+            api_request["graph_display_config"]
+        )
         temperature_unit = get_temperature_unit(user, ctx.config.default_temperature_unit)
         backend_time_series_fetcher = metric_backend_registry[
             str(edition(paths.omd_root))
@@ -1196,12 +1198,12 @@ class AjaxRenderGraphContent(AjaxPage):
             ctx.request,
             graph_recipe,
             graph_time_range,
-            graph_render_config,
+            graph_display_config,
             metrics_from_api,
             compute_graph_artwork(
                 graph_recipe,
                 graph_time_range,
-                graph_render_config.size,
+                graph_display_config.size,
                 metrics_from_api,
                 temperature_unit=temperature_unit,
                 backend_time_series_fetcher=backend_time_series_fetcher,
@@ -1221,7 +1223,7 @@ def _render_graph_content_html(
     request: Request,
     graph_recipe: GraphRecipe,
     graph_time_range: GraphTimeRange,
-    graph_render_config: GraphRenderConfig,
+    graph_display_config: GraphDisplayConfig,
     registered_metrics: Mapping[str, RegisteredMetric],
     graph_artwork_or_errors: GraphArtworkOrErrors,
     *,
@@ -1247,7 +1249,7 @@ def _render_graph_content_html(
                 _("Cannot render complete graph"),
                 class_="error",
             )
-        graph_render_config.size = (graph_render_config.size[0], graph_render_config.size[1] - 6)
+        graph_display_config.size = (graph_display_config.size[0], graph_display_config.size[1] - 6)
     else:
         output = HTML.empty()
 
@@ -1281,7 +1283,7 @@ def _render_graph_content_html(
                 ),
                 class_="warning",
             )
-        graph_render_config.size = (graph_render_config.size[0], graph_render_config.size[1] - 8)
+        graph_display_config.size = (graph_display_config.size[0], graph_display_config.size[1] - 8)
 
     try:
         output += _render_graph_html(
@@ -1290,16 +1292,16 @@ def _render_graph_content_html(
             graph_display_id,
             graph_artwork_or_errors.artwork,
             graph_time_range,
-            graph_render_config,
+            graph_display_config,
             expandable_legend_appearance,
         )
-        if graph_render_config.show_time_range_previews:
+        if graph_display_config.show_time_range_previews:
             return HTMLWriter.render_div(
                 output
                 + _render_time_range_selection(
                     request,
                     graph_recipe,
-                    graph_render_config,
+                    graph_display_config,
                     registered_metrics,
                     graph_timeranges=graph_timeranges,
                     temperature_unit=temperature_unit,
@@ -1332,7 +1334,7 @@ def _render_graph_content_html(
 def _render_time_range_selection(
     request: Request,
     graph_recipe: GraphRecipe,
-    graph_render_config: GraphRenderConfig,
+    graph_display_config: GraphDisplayConfig,
     registered_metrics: Mapping[str, RegisteredMetric],
     *,
     graph_timeranges: Sequence[GraphTimerange],
@@ -1342,35 +1344,35 @@ def _render_time_range_selection(
     expandable_legend_appearance: ExpandableLegendAppearance,
 ) -> HTML:
     now = int(time.time())
-    graph_render_config = copy.deepcopy(graph_render_config)
+    graph_display_config = copy.deepcopy(graph_display_config)
     rows = []
     for timerange_attrs in graph_timeranges:
         duration = timerange_attrs["duration"]
         assert isinstance(duration, int)
 
-        graph_render_config.size = (20, 4)
-        graph_render_config.font_size = SizePT(6.0)
-        graph_render_config.onclick = "cmk.graphs.change_graph_timerange(graph, %d)" % duration
-        graph_render_config.fixed_timerange = (
+        graph_display_config.size = (20, 4)
+        graph_display_config.font_size = SizePT(6.0)
+        graph_display_config.onclick = "cmk.graphs.change_graph_timerange(graph, %d)" % duration
+        graph_display_config.fixed_timerange = (
             True  # Do not follow timerange changes of other graphs
         )
-        graph_render_config.explicit_title = timerange_attrs["title"]
-        graph_render_config.show_legend = False
-        graph_render_config.show_controls = False
-        graph_render_config.preview = True
-        graph_render_config.resizable = False
-        graph_render_config.interaction = False
+        graph_display_config.explicit_title = timerange_attrs["title"]
+        graph_display_config.show_legend = False
+        graph_display_config.show_controls = False
+        graph_display_config.preview = True
+        graph_display_config.resizable = False
+        graph_display_config.interaction = False
 
         timerange = now - duration, now
         graph_time_range = GraphTimeRange(
             time_range=timerange,
-            step=2 * estimate_graph_step_for_html(timerange, graph_render_config.size[1]),
+            step=2 * estimate_graph_step_for_html(timerange, graph_display_config.size[1]),
         )
 
         graph_artwork = compute_graph_artwork(
             graph_recipe,
             graph_time_range,
-            graph_render_config.size,
+            graph_display_config.size,
             registered_metrics,
             temperature_unit=temperature_unit,
             backend_time_series_fetcher=backend_time_series_fetcher,
@@ -1384,7 +1386,7 @@ def _render_time_range_selection(
                     graph_display_id,
                     graph_artwork,
                     graph_time_range,
-                    graph_render_config,
+                    graph_display_config,
                     expandable_legend_appearance,
                 ),
                 title=_("Change graph time range to: %s") % timerange_attrs["title"],
@@ -1436,11 +1438,11 @@ def estimate_graph_step_for_html(
 class AjaxGraphHover(Page):
     def page(self, ctx: PageContext) -> PageResult:
         """Registered as `ajax_graph_hover`."""
-        context = AjaxContext.model_validate(
+        context = GraphContext.model_validate(
             json.loads(ctx.request.get_str_input_mandatory("context"))
         )
         render_graph_hover_for_recipe(
-            context.graph_recipe,
+            context.recipe,
             context.time_range,
             metrics_from_api,
             debug=ctx.config.debug,
@@ -1535,7 +1537,7 @@ class GraphDestinations:
 def host_service_graph_dashlet_cmk(
     request: Request,
     graph_recipes: Sequence[GraphRecipe],
-    graph_render_config: GraphRenderConfig,
+    graph_display_config: GraphDisplayConfig,
     registered_metrics: Mapping[str, RegisteredMetric],
     *,
     debug: bool,
@@ -1551,8 +1553,8 @@ def host_service_graph_dashlet_cmk(
     height_var = request.get_float_input_mandatory("height", 0.0)
     height = height_var / html_size_per_ex
 
-    bounds = _graph_margin_ex(graph_render_config.show_margin)
-    if graph_render_config.show_title not in [False, "inline"]:
+    bounds = _graph_margin_ex(graph_display_config.show_margin)
+    if graph_display_config.show_title not in [False, "inline"]:
         height -= 1
     height -= bounds.top + bounds.bottom
     width -= bounds.left + bounds.right
@@ -1562,7 +1564,7 @@ def host_service_graph_dashlet_cmk(
     else:
         raise MKGraphRecipeNotFoundError(_("Failed to calculate a graph recipe."))
 
-    graph_render_config.size = (width, height)
+    graph_display_config.size = (width, height)
 
     time_range = (
         json.loads(request.get_str_input_mandatory("timerange"))
@@ -1583,7 +1585,7 @@ def host_service_graph_dashlet_cmk(
 
     try:
         graph_time_range = make_graph_time_range(
-            (start_time, end_time), graph_render_config.size[1]
+            (start_time, end_time), graph_display_config.size[1]
         )
     except ZeroDivisionError:
         return HTML("", escape=False)
@@ -1591,7 +1593,7 @@ def host_service_graph_dashlet_cmk(
     graph_artwork_or_errors = compute_graph_artwork(
         graph_recipe,
         graph_time_range,
-        graph_render_config.size,
+        graph_display_config.size,
         registered_metrics,
         temperature_unit=temperature_unit,
         backend_time_series_fetcher=backend_time_series_fetcher,
@@ -1603,7 +1605,7 @@ def host_service_graph_dashlet_cmk(
     # handles legend overflow, so we skip the height reduction.
     is_preview = graph_display_id.endswith("-preview")
     if (
-        graph_render_config.show_legend
+        graph_display_config.show_legend
         and graph_artwork_or_errors.artwork.curves
         and not is_preview
     ):
@@ -1631,14 +1633,14 @@ def host_service_graph_dashlet_cmk(
         max_legend_height_ex = min(height // 3, max(height - min_widget_height_ex, 0))
         legend_height_ex = min(estimated_legend_height_ex, max_legend_height_ex)
         height -= legend_height_ex
-        graph_render_config.size = (width, height)
-        graph_render_config.legend_max_height_px = int(legend_height_ex * html_size_per_ex)
+        graph_display_config.size = (width, height)
+        graph_display_config.legend_max_height_px = int(legend_height_ex * html_size_per_ex)
 
     return _render_graph_content_html(
         request,
         graph_recipe,
         graph_time_range.model_copy(update=dict(graph_recipe.time_range or {})),
-        graph_render_config.update_from_options(graph_recipe.render_options),
+        graph_display_config.update_from_options(graph_recipe.render_options),
         registered_metrics,
         graph_artwork_or_errors,
         debug=debug,
