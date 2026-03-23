@@ -1259,9 +1259,11 @@ class Site:
         # logger.debug("= END PROCESSES AFTER STOP =======================================")
 
         i = 0
-        while not self.is_stopped():
+        while (status := self.omd("status")).returncode != 1:
             i += 1
             if i > 10:
+                logger.error("omd status %s stdout: %s", self.id, status.stdout)
+                logger.error("omd status %s stderr: %s", self.id, status.stderr)
                 raise Exception("Could not stop site %s" % self.id)
             logger.warning("The site %s is still running, sleeping... (round %d)", self.id, i)
             sys.stdout.flush()
