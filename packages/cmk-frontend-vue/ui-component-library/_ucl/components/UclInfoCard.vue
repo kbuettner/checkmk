@@ -24,7 +24,7 @@ const { iconName, title, subtitle, bulletPoints = [] } = defineProps<UclInfoCard
 <template>
   <div class="ucl-info-card">
     <div class="ucl-info-card__header">
-      <CmkIcon v-if="iconName" :name="iconName" size="large" class="ucl-info-card__header-icon" />
+      <CmkIcon v-if="iconName" :name="iconName" size="xlarge" class="ucl-info-card__header-icon" />
       <CmkHeading type="h4" class="ucl-info-card__heading">{{ title }}</CmkHeading>
     </div>
 
