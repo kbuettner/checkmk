@@ -15,19 +15,37 @@ import { cmkAjax } from '@/lib/ajax'
 
 type SizePT = number
 
+interface GraphTitleFormat {
+  plain: boolean
+  add_host_name: boolean
+  add_host_alias: boolean
+  add_service_description: boolean
+}
+
 interface GraphDisplayConfig {
+  border_width: number
+  color_gradient: number
+  editing: boolean
+  explicit_title: string | null
   fixed_timerange: boolean
   font_size: SizePT
   foreground_color: string
   interaction: boolean
+  legend_max_height_px: number | null
   onclick: string | null
   preview: boolean
   resizable: boolean
   show_controls: boolean
+  show_graph_time: boolean
+  show_legend: boolean
+  show_margin: boolean
   show_pin: boolean
   show_time_axis: boolean
   show_time_range_previews: boolean
+  show_title: boolean | 'inline'
   show_vertical_axis: boolean
+  size: [number, number]
+  title_format: GraphTitleFormat
   vertical_axis_width: 'fixed' | ['explicit', SizePT]
 }
 
