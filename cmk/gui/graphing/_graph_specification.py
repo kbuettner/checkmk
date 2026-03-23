@@ -207,8 +207,16 @@ class GraphRecipe(BaseModel, frozen=True):
     consolidation_function: GraphConsolidationFunction | None
     metrics: Sequence[GraphMetric]
     additional_html: AdditionalGraphHTML | None = None
-    render_options: GraphRenderOptions = GraphRenderOptions()
-    time_range: GraphTimeRange | None = None
+    # The fields 'render_options' and 'time_range' are per-recipe overrides
+    # that are merged into the outer GraphContext.view and
+    # GraphContext.time_range before the round-trip begins. Carrying them again
+    # inside the serialized recipe is redundant and misleading.  Using
+    # Field(exclude=True) keeps the fields accessible in Python (so existing
+    # callers such as forecast graphs still work) but removes them from
+    # model_dump() output, so they no longer travel in the JSON sent to the
+    # browser and back.
+    render_options: GraphRenderOptions = Field(default_factory=GraphRenderOptions, exclude=True)
+    time_range: GraphTimeRange | None = Field(default=None, exclude=True)
     mark_requested_end_time: bool = False
     # https://docs.pydantic.dev/2.4/concepts/serialization/#subclass-instances-for-fields-of-basemodel-dataclasses-typeddict
     # https://docs.pydantic.dev/2.4/concepts/serialization/#serializing-with-duck-typing
