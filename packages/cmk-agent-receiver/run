@@ -3,9 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# NOTE: This script is only used by CI (via ci.json) and should not be used directly.
-# Use the individual bazel targets instead.
-
 set -e
 
 cd -- "${BASH_SOURCE%/*}"
