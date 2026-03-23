@@ -96,6 +96,17 @@ class LayoutedCurveStack(_LayoutedCurveBase):
 LayoutedCurve = LayoutedCurveLine | LayoutedCurveArea | LayoutedCurveStack
 
 
+class ActualTimeRange(BaseModel, frozen=True):
+    start: int
+    end: int
+    step: int
+
+
+class RequestedTimeRange(BaseModel, frozen=True):
+    start: int
+    end: int
+
+
 class YAxis(TypedDict):
     range: tuple[float, float]
     unit_label: str | None
@@ -125,12 +136,9 @@ class GraphArtwork(BaseModel):
     x_axis: XAxis
     mark_requested_end_time: bool
     # Displayed range
-    start_time: int
-    end_time: int
-    step: int
-    requested_vrange: tuple[float, float] | None
-    requested_start_time: int
-    requested_end_time: int
+    actual_time: ActualTimeRange
+    requested_time: RequestedTimeRange
+    requested_y_range: tuple[float, float] | None
     pin_time: int | None
 
 
@@ -346,12 +354,12 @@ def compute_graph_artwork(
             x_axis=_compute_graph_t_axis(start_time, end_time, width, step),
             mark_requested_end_time=graph_recipe.mark_requested_end_time,
             # Displayed range
-            start_time=int(start_time),
-            end_time=int(end_time),
-            step=int(step),
-            requested_vrange=graph_data_range.vertical_range,
-            requested_start_time=graph_data_range.time_range[0],
-            requested_end_time=graph_data_range.time_range[1],
+            actual_time=ActualTimeRange(start=int(start_time), end=int(end_time), step=int(step)),
+            requested_time=RequestedTimeRange(
+                start=graph_data_range.time_range[0],
+                end=graph_data_range.time_range[1],
+            ),
+            requested_y_range=graph_data_range.vertical_range,
             pin_time=pin_time,
         ),
         errors,

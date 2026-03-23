@@ -118,6 +118,17 @@ export interface HorizontalRule {
   title: string
 }
 
+interface ActualTimeRange {
+  start: number
+  end: number
+  step: number
+}
+
+interface RequestedTimeRange {
+  start: number
+  end: number
+}
+
 //this type is from cmk/gui/plugins/metrics/artwork.py:82
 export interface GraphArtwork {
   //optional properties assigned dynamically in javascript
@@ -133,12 +144,9 @@ export interface GraphArtwork {
   x_axis: XAxis
   mark_requested_end_time: boolean
   //Displayed range
-  start_time: number
-  end_time: number
-  step: number
-  requested_vrange: [number, number] | null
-  requested_start_time: number
-  requested_end_time: number
+  actual_time: ActualTimeRange
+  requested_time: RequestedTimeRange
+  requested_y_range: [number, number] | null
   pin_time: number | null
 }
 
@@ -728,7 +736,7 @@ function render_graph(graph: GraphArtwork) {
 
   // Paint curves
   const curves = graph['curves']
-  const step = graph['step'] / 2.0
+  const step = graph['actual_time']['step'] / 2.0
   let color, opacity
   for (let i = 0; i < curves.length; i++) {
     const curve = curves[i]
@@ -756,7 +764,7 @@ function render_graph(graph: GraphArtwork) {
       ctx.strokeStyle = color
       ctx.lineWidth = curve_line_width
       render_curve(
-        graph['start_time'],
+        graph['actual_time']['start'],
         step,
         coordinate_trans,
         corner_markers.map(([lower, upper]) => {
@@ -768,11 +776,17 @@ function render_graph(graph: GraphArtwork) {
         }),
         ctx
       )
-      render_area(graph['start_time'], step, coordinate_trans, corner_markers, ctx)
+      render_area(graph['actual_time']['start'], step, coordinate_trans, corner_markers, ctx)
     } else if (curve['line_type'] == 'line' || curve['line_type'] == '-line') {
       ctx.strokeStyle = color
       ctx.lineWidth = curve_line_width
-      render_curve(graph['start_time'], step, coordinate_trans, points as TimeSeriesValue[], ctx)
+      render_curve(
+        graph['actual_time']['start'],
+        step,
+        coordinate_trans,
+        points as TimeSeriesValue[],
+        ctx
+      )
     }
   }
   ctx.restore()
@@ -825,7 +839,7 @@ function render_graph(graph: GraphArtwork) {
   }
   // paint forecast graph future start
   if (graph.mark_requested_end_time) {
-    const pin_x = coordinate_trans.trans_t(graph.requested_end_time)
+    const pin_x = coordinate_trans.trans_t(graph.requested_time.end)
     if (pin_x >= t_orig) {
       paint_line([pin_x, v_orig + axis_over_width], [pin_x, 0], '#00ff00')
     }
@@ -1859,8 +1873,9 @@ function update_graph(
     // RRDTool align the times as it needs. The graph always is align
     // to the RRDTool data, but the zooming into small time intervals
     // does not work correctly if we do not base this on the requested start_time.
-    start_time = time_zoom_center - (time_zoom_center - graph['requested_start_time']) * time_zoom
-    end_time = time_zoom_center + (graph['requested_end_time'] - time_zoom_center) * time_zoom
+    start_time =
+      time_zoom_center - (time_zoom_center - graph['requested_time']['start']) * time_zoom
+    end_time = time_zoom_center + (graph['requested_time']['end'] - time_zoom_center) * time_zoom
 
     // Sanity check
     if (end_time < start_time) {
@@ -1879,8 +1894,8 @@ function update_graph(
 
   // Time shift
   else {
-    start_time = graph['start_time'] + time_shift
-    end_time = graph['end_time'] + time_shift
+    start_time = graph['actual_time']['start'] + time_shift
+    end_time = graph['actual_time']['end'] + time_shift
   }
 
   // Check for range
@@ -1902,9 +1917,9 @@ function update_graph(
     const old_range_to = graph['y_axis']['range'][1]
     range_from = old_range_from / vertical_zoom
     range_to = old_range_to / vertical_zoom
-  } else if (graph['requested_vrange'] != null) {
-    range_from = graph['requested_vrange'][0]
-    range_to = graph['requested_vrange'][1]
+  } else if (graph['requested_y_range'] != null) {
+    range_from = graph['requested_y_range'][0]
+    range_to = graph['requested_y_range'][1]
   }
 
   // Recompute step
@@ -2065,8 +2080,8 @@ export function change_graph_timerange(graph: GraphArtwork, duration: number) {
 
   const now = Math.floor(new Date().getTime() / 1000)
 
-  main_graph.start_time = now - duration
-  main_graph.end_time = now
+  main_graph.actual_time.start = now - duration
+  main_graph.actual_time.end = now
 
   pause(g_page_update_delay)
   sync_all_graph_timeranges(main_graph_id, false)
@@ -2098,12 +2113,12 @@ function sync_all_graph_timeranges(graph_id: string, skip_origin: boolean | unde
     // only look for the other graphs. Don't update graphs having fixed
     // time ranges, like the timerange chooser graphs on the overview page
     if ((!skip_origin || name != graph_id) && !g_graphs[name].render_config.fixed_timerange) {
-      g_timerange_update_queue.push([name, graph.start_time, graph.end_time])
+      g_timerange_update_queue.push([name, graph.actual_time.start, graph.actual_time.end])
     }
   }
 
-  update_delayed_graphs_timerange(graph.start_time, graph.end_time)
-  update_pdf_export_link_timerange(graph.start_time, graph.end_time)
+  update_delayed_graphs_timerange(graph.actual_time.start, graph.actual_time.end)
+  update_pdf_export_link_timerange(graph.actual_time.start, graph.actual_time.end)
 
   // Kick off 4 graph timerange updaters (related to the number of maximum
   // parallel AJAX request)

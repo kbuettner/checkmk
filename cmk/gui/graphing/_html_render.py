@@ -537,7 +537,10 @@ def _show_pin_time(graph_artwork: GraphArtwork, config: GraphRenderConfig) -> bo
         return False
 
     timestamp = graph_artwork.pin_time
-    return timestamp is not None and graph_artwork.start_time <= timestamp <= graph_artwork.end_time
+    return (
+        timestamp is not None
+        and graph_artwork.actual_time.start <= timestamp <= graph_artwork.actual_time.end
+    )
 
 
 def _render_pin_time_label(graph_artwork: GraphArtwork) -> str:
@@ -689,7 +692,7 @@ def _show_graph_legend(
     html.th("")
     for legend_title in legend_titles:
         classes = ["scalar", legend_title.type]
-        if legend_title.inactive and graph_artwork.step != 60:
+        if legend_title.inactive and graph_artwork.actual_time.step != 60:
             descr = _(
                 'This graph is based on data consolidated with the function "%s". The '
                 'values in this column are the "%s" values of the "%s" values '
@@ -699,10 +702,10 @@ def _show_graph_legend(
                 graph_recipe.consolidation_function,
                 legend_title.type,
                 graph_recipe.consolidation_function,
-                get_step_label(graph_artwork.step),
+                get_step_label(graph_artwork.actual_time.step),
                 legend_title.type,
                 graph_recipe.consolidation_function,
-                (graph_artwork.step / 60),
+                (graph_artwork.actual_time.step / 60),
             )
 
             descr += (
@@ -761,7 +764,7 @@ def _show_graph_legend(
                 continue
 
             classes = ["scalar"]
-            if legend_title.inactive and graph_artwork.step != 60:
+            if legend_title.inactive and graph_artwork.actual_time.step != 60:
                 classes.append("inactive")
 
             html.td(curve["scalars"][legend_title.type][1], class_=classes, style=font_size_style)

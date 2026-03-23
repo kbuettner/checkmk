@@ -48,8 +48,8 @@ export class CmkGraphTimeseriesFigure extends TimeseriesFigure {
     const data: { timestamp: number; value: number | null; tag: string }[] = []
 
     // Metrics
-    const step = graph_data.graph.step
-    const start_time = graph_data.graph.start_time
+    const step = graph_data.graph.actual_time.step
+    const start_time = graph_data.graph.actual_time.start
     graph_data.graph.curves.forEach((curve: LayoutedCurve, idx: number) => {
       const curve_tag = 'metric_' + idx
       const stack_tag = 'stack_' + curve_tag

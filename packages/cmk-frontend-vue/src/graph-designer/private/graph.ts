@@ -98,6 +98,17 @@ interface XAxis {
 }
 
 //this type is from cmk/gui/plugins/metrics/artwork.py:82
+interface ActualTimeRange {
+  start: number
+  end: number
+  step: number
+}
+
+interface RequestedTimeRange {
+  start: number
+  end: number
+}
+
 interface GraphArtwork {
   //optional properties assigned dynamically in javascript
   id: string
@@ -112,12 +123,9 @@ interface GraphArtwork {
   x_axis: XAxis
   mark_requested_end_time: boolean
   //Displayed range
-  start_time: number
-  end_time: number
-  step: number
-  requested_vrange: [number, number] | null
-  requested_start_time: number
-  requested_end_time: number
+  actual_time: ActualTimeRange
+  requested_time: RequestedTimeRange
+  requested_y_range: [number, number] | null
   pin_time: number | null
 }
 

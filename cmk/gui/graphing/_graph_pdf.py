@@ -164,9 +164,9 @@ def render_graph_pdf(
     # Paint curves
     pdf_document.save_state()
     pdf_document.add_clip_rect(t_orig, v_orig, t_mm, v_mm)
-    step = graph_artwork.step // 2
+    step = graph_artwork.actual_time.step // 2
     for curve in graph_artwork.curves:
-        t = graph_artwork.start_time
+        t = graph_artwork.actual_time.start
         color = parse_color(curve["color"])
 
         if _is_area_or_stacked_layouted_curve(curve):
@@ -409,7 +409,7 @@ def render_graph_pdf(
                 )
 
     if graph_artwork.mark_requested_end_time:
-        pin = trans_t(graph_artwork.requested_end_time)
+        pin = trans_t(graph_artwork.requested_time.end)
         pdf_document.render_line(pin, v_orig, pin, trans_v(v_range_to), color=(0.0, 1.0, 0.0))
 
     pdf_document.restore_state()
