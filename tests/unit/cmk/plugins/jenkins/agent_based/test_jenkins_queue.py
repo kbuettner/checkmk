@@ -4,6 +4,7 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 import datetime
+import json
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -22,7 +23,25 @@ def _section() -> jq.JenkinsQueue:
     return jq.parse_jenkins_queue(
         [
             [
-                '[{"task": {"color": "blue_anime", "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob", "name": "testbuild"}, "inQueueSince": 1566892922469, "why": "Build #475 is already in progress (ETA: 23 min)", "stuck": false, "_class": "hudson.model.Queue$BlockedItem", "buildableStartMilliseconds": 1566892928443, "id": 174702, "blocked": true, "pending": false}]'
+                json.dumps(
+                    [
+                        {
+                            "task": {
+                                "color": "blue_anime",
+                                "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+                                "name": "testbuild",
+                            },
+                            "inQueueSince": 1566892922469,
+                            "why": "Build #475 is already in progress (ETA: 23 min)",
+                            "stuck": False,
+                            "_class": "hudson.model.Queue$BlockedItem",
+                            "buildableStartMilliseconds": 1566892928443,
+                            "id": 174702,
+                            "blocked": True,
+                            "pending": False,
+                        }
+                    ]
+                )
             ]
         ]
     )
@@ -67,7 +86,40 @@ def _multi_task_section() -> jq.JenkinsQueue:
     return jq.parse_jenkins_queue(
         [
             [
-                '[{"_class": "hudson.model.Queue$BuildableItem", "blocked": false, "id": 18, "inQueueSince": 1709648603185, "stuck": false, "task": {"_class": "hudson.model.FreeStyleProject", "name": "more", "color": "notbuilt"}, "why": "\\u2018Jenkins\\u2019 is reserved for jobs with matching label expression; \\u2018ubu2\\u2019 is offline; \\u2018ubu\\u2019 is offline", "buildableStartMilliseconds": 1709648603186, "pending": false}, {"_class": "hudson.model.Queue$BuildableItem", "blocked": false, "id": 17, "inQueueSince": 1709648516803, "stuck": true, "task": {"_class": "hudson.model.FreeStyleProject", "name": "asdf", "color": "blue"}, "why": "\\u2018Jenkins\\u2019 is reserved for jobs with matching label expression; \\u2018ubu2\\u2019 is offline; \\u2018ubu\\u2019 is offline", "buildableStartMilliseconds": 1709648516816, "pending": false}]'
+                json.dumps(
+                    [
+                        {
+                            "_class": "hudson.model.Queue$BuildableItem",
+                            "blocked": False,
+                            "id": 18,
+                            "inQueueSince": 1709648603185,
+                            "stuck": False,
+                            "task": {
+                                "_class": "hudson.model.FreeStyleProject",
+                                "name": "more",
+                                "color": "notbuilt",
+                            },
+                            "why": "‘Jenkins’ is reserved for jobs with matching label expression; ‘ubu2’ is offline; ‘ubu’ is offline",
+                            "buildableStartMilliseconds": 1709648603186,
+                            "pending": False,
+                        },
+                        {
+                            "_class": "hudson.model.Queue$BuildableItem",
+                            "blocked": False,
+                            "id": 17,
+                            "inQueueSince": 1709648516803,
+                            "stuck": True,
+                            "task": {
+                                "_class": "hudson.model.FreeStyleProject",
+                                "name": "asdf",
+                                "color": "blue",
+                            },
+                            "why": "‘Jenkins’ is reserved for jobs with matching label expression; ‘ubu2’ is offline; ‘ubu’ is offline",
+                            "buildableStartMilliseconds": 1709648516816,
+                            "pending": False,
+                        },
+                    ]
+                )
             ]
         ]
     )

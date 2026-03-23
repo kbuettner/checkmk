@@ -6,6 +6,8 @@
 # mypy: disable-error-code="misc"
 # mypy: disable-error-code="no-untyped-def"
 
+import json
+
 import pytest
 
 import cmk.plugins.jenkins.agent_based.jenkins_nodes as jn
@@ -17,11 +19,166 @@ def _section() -> jn.Section:
     return jn.parse_jenkins_nodes(
         [
             [
-                """
-                [{"displayName": "master", "description": "the master Jenkins node", "temporarilyOffline": false, "monitorData": {"hudson.node_monitors.SwapSpaceMonitor": {"totalPhysicalMemory": 67429359616, "availableSwapSpace": 59097583616, "_class": "hudson.node_monitors.SwapSpaceMonitor$MemoryUsage2", "availablePhysicalMemory": 4450242560, "totalSwapSpace": 64000876544}, "hudson.node_monitors.ClockMonitor": {"diff": 0, "_class": "hudson.util.ClockDifference"}, "hudson.node_monitors.DiskSpaceMonitor": {"size": 290845855744, "timestamp": 1573468791686, "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace", "path": "/var/lib/jenkins"}, "hudson.node_monitors.TemporarySpaceMonitor": {"size": 32569888768, "timestamp": 1573468792277, "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace", "path": "/tmp"}, "hudson.node_monitors.ResponseTimeMonitor": {"timestamp": 1573468791687, "average": 0, "_class": "hudson.node_monitors.ResponseTimeMonitor$Data"}, "hudson.node_monitors.ArchitectureMonitor": "MYARCH1"}, "assignedLabels": [{"busyExecutors": 3, "idleExecutors": 17, "nodes": [{"_class": "hudson.model.Hudson", "mode": "EXCLUSIVE"}]}, {"busyExecutors": 3, "idleExecutors": 17}], "numExecutors": 20, "idle": false, "offlineCause": null, "offline": false, "_class": "hudson.model.Hudson$MasterComputer", "jnlpAgent": false},
-                {"displayName": "Windows", "description": "Name: MYNAME, IP-Address: 1.1.1.1", "temporarilyOffline": false, "monitorData": {"hudson.node_monitors.SwapSpaceMonitor": {"totalPhysicalMemory": 17179332608, "availableSwapSpace": 8569982976, "_class": "hudson.node_monitors.SwapSpaceMonitor$MemoryUsage2", "availablePhysicalMemory": 5656227840, "totalSwapSpace": 22548041728}, "hudson.node_monitors.ClockMonitor": {"diff": 8, "_class": "hudson.util.ClockDifference"}, "hudson.node_monitors.DiskSpaceMonitor": {"size": 15085674496, "timestamp": 1573468791711, "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace", "path": "C:\\\\"}, "hudson.node_monitors.TemporarySpaceMonitor": {"size": 15085674496, "timestamp": 1573468792334, "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace", "path": "C:\\\\Windows\\\\Temp"}, "hudson.node_monitors.ResponseTimeMonitor": {"timestamp": 1573468791722, "average": 35, "_class": "hudson.node_monitors.ResponseTimeMonitor$Data"}, "hudson.node_monitors.ArchitectureMonitor": "MYARCH"}, "assignedLabels": [{"busyExecutors": 0, "idleExecutors": 1, "nodes": [{"_class": "hudson.slaves.DumbSlave", "mode": "EXCLUSIVE"}]}, {"busyExecutors": 0, "idleExecutors": 1}], "numExecutors": 1, "idle": true, "offlineCause": null, "offline": false, "_class": "hudson.slaves.SlaveComputer", "jnlpAgent": true},
-                {"displayName": "foo", "description": "Name: MYNAME, IP-Address: 1.1.1.1", "temporarilyOffline": false, "monitorData": {"hudson.node_monitors.SwapSpaceMonitor": {"totalPhysicalMemory": 17179332608, "availableSwapSpace": 8569982976, "_class": "hudson.node_monitors.SwapSpaceMonitor$MemoryUsage2", "availablePhysicalMemory": 5656227840, "totalSwapSpace": 22548041728}, "hudson.node_monitors.ClockMonitor": {"diff": -5000, "_class": "hudson.util.ClockDifference"}, "hudson.node_monitors.DiskSpaceMonitor": {"size": 15085674496, "timestamp": 1573468791711, "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace", "path": "C:\\\\"}, "hudson.node_monitors.TemporarySpaceMonitor": {"size": 15085674496, "timestamp": 1573468792334, "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace", "path": "C:\\\\Windows\\\\Temp"}, "hudson.node_monitors.ResponseTimeMonitor": {"timestamp": 1573468791722, "average": 1337, "_class": "hudson.node_monitors.ResponseTimeMonitor$Data"}, "hudson.node_monitors.ArchitectureMonitor": "MYARCH"}, "assignedLabels": [{"busyExecutors": 0, "idleExecutors": 1, "nodes": [{"_class": "hudson.slaves.DumbSlave", "mode": "EXCLUSIVE"}]}, {"busyExecutors": 0, "idleExecutors": 1}], "numExecutors": 1, "idle": true, "offlineCause": null, "offline": false, "_class": "hudson.slaves.SlaveComputer", "jnlpAgent": true}]
-                """
+                json.dumps(
+                    [
+                        {
+                            "displayName": "master",
+                            "description": "the master Jenkins node",
+                            "temporarilyOffline": False,
+                            "monitorData": {
+                                "hudson.node_monitors.SwapSpaceMonitor": {
+                                    "totalPhysicalMemory": 67429359616,
+                                    "availableSwapSpace": 59097583616,
+                                    "_class": "hudson.node_monitors.SwapSpaceMonitor$MemoryUsage2",
+                                    "availablePhysicalMemory": 4450242560,
+                                    "totalSwapSpace": 64000876544,
+                                },
+                                "hudson.node_monitors.ClockMonitor": {
+                                    "diff": 0,
+                                    "_class": "hudson.util.ClockDifference",
+                                },
+                                "hudson.node_monitors.DiskSpaceMonitor": {
+                                    "size": 290845855744,
+                                    "timestamp": 1573468791686,
+                                    "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace",
+                                    "path": "/var/lib/jenkins",
+                                },
+                                "hudson.node_monitors.TemporarySpaceMonitor": {
+                                    "size": 32569888768,
+                                    "timestamp": 1573468792277,
+                                    "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace",
+                                    "path": "/tmp",
+                                },
+                                "hudson.node_monitors.ResponseTimeMonitor": {
+                                    "timestamp": 1573468791687,
+                                    "average": 0,
+                                    "_class": "hudson.node_monitors.ResponseTimeMonitor$Data",
+                                },
+                                "hudson.node_monitors.ArchitectureMonitor": "MYARCH1",
+                            },
+                            "assignedLabels": [
+                                {
+                                    "busyExecutors": 3,
+                                    "idleExecutors": 17,
+                                    "nodes": [
+                                        {"_class": "hudson.model.Hudson", "mode": "EXCLUSIVE"}
+                                    ],
+                                },
+                                {"busyExecutors": 3, "idleExecutors": 17},
+                            ],
+                            "numExecutors": 20,
+                            "idle": False,
+                            "offlineCause": None,
+                            "offline": False,
+                            "_class": "hudson.model.Hudson$MasterComputer",
+                            "jnlpAgent": False,
+                        },
+                        {
+                            "displayName": "Windows",
+                            "description": "Name: MYNAME, IP-Address: 1.1.1.1",
+                            "temporarilyOffline": False,
+                            "monitorData": {
+                                "hudson.node_monitors.SwapSpaceMonitor": {
+                                    "totalPhysicalMemory": 17179332608,
+                                    "availableSwapSpace": 8569982976,
+                                    "_class": "hudson.node_monitors.SwapSpaceMonitor$MemoryUsage2",
+                                    "availablePhysicalMemory": 5656227840,
+                                    "totalSwapSpace": 22548041728,
+                                },
+                                "hudson.node_monitors.ClockMonitor": {
+                                    "diff": 8,
+                                    "_class": "hudson.util.ClockDifference",
+                                },
+                                "hudson.node_monitors.DiskSpaceMonitor": {
+                                    "size": 15085674496,
+                                    "timestamp": 1573468791711,
+                                    "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace",
+                                    "path": "C:\\\\",
+                                },
+                                "hudson.node_monitors.TemporarySpaceMonitor": {
+                                    "size": 15085674496,
+                                    "timestamp": 1573468792334,
+                                    "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace",
+                                    "path": "C:\\\\Windows\\\\Temp",
+                                },
+                                "hudson.node_monitors.ResponseTimeMonitor": {
+                                    "timestamp": 1573468791722,
+                                    "average": 35,
+                                    "_class": "hudson.node_monitors.ResponseTimeMonitor$Data",
+                                },
+                                "hudson.node_monitors.ArchitectureMonitor": "MYARCH",
+                            },
+                            "assignedLabels": [
+                                {
+                                    "busyExecutors": 0,
+                                    "idleExecutors": 1,
+                                    "nodes": [
+                                        {"_class": "hudson.slaves.DumbSlave", "mode": "EXCLUSIVE"}
+                                    ],
+                                },
+                                {"busyExecutors": 0, "idleExecutors": 1},
+                            ],
+                            "numExecutors": 1,
+                            "idle": True,
+                            "offlineCause": None,
+                            "offline": False,
+                            "_class": "hudson.slaves.SlaveComputer",
+                            "jnlpAgent": True,
+                        },
+                        {
+                            "displayName": "foo",
+                            "description": "Name: MYNAME, IP-Address: 1.1.1.1",
+                            "temporarilyOffline": False,
+                            "monitorData": {
+                                "hudson.node_monitors.SwapSpaceMonitor": {
+                                    "totalPhysicalMemory": 17179332608,
+                                    "availableSwapSpace": 8569982976,
+                                    "_class": "hudson.node_monitors.SwapSpaceMonitor$MemoryUsage2",
+                                    "availablePhysicalMemory": 5656227840,
+                                    "totalSwapSpace": 22548041728,
+                                },
+                                "hudson.node_monitors.ClockMonitor": {
+                                    "diff": -5000,
+                                    "_class": "hudson.util.ClockDifference",
+                                },
+                                "hudson.node_monitors.DiskSpaceMonitor": {
+                                    "size": 15085674496,
+                                    "timestamp": 1573468791711,
+                                    "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace",
+                                    "path": "C:\\\\",
+                                },
+                                "hudson.node_monitors.TemporarySpaceMonitor": {
+                                    "size": 15085674496,
+                                    "timestamp": 1573468792334,
+                                    "_class": "hudson.node_monitors.DiskSpaceMonitorDescriptor$DiskSpace",
+                                    "path": "C:\\\\Windows\\\\Temp",
+                                },
+                                "hudson.node_monitors.ResponseTimeMonitor": {
+                                    "timestamp": 1573468791722,
+                                    "average": 1337,
+                                    "_class": "hudson.node_monitors.ResponseTimeMonitor$Data",
+                                },
+                                "hudson.node_monitors.ArchitectureMonitor": "MYARCH",
+                            },
+                            "assignedLabels": [
+                                {
+                                    "busyExecutors": 0,
+                                    "idleExecutors": 1,
+                                    "nodes": [
+                                        {"_class": "hudson.slaves.DumbSlave", "mode": "EXCLUSIVE"}
+                                    ],
+                                },
+                                {"busyExecutors": 0, "idleExecutors": 1},
+                            ],
+                            "numExecutors": 1,
+                            "idle": True,
+                            "offlineCause": None,
+                            "offline": False,
+                            "_class": "hudson.slaves.SlaveComputer",
+                            "jnlpAgent": True,
+                        },
+                    ]
+                )
             ]
         ]
     )
@@ -125,82 +282,54 @@ def _multi_label_section() -> jn.Section:
     return jn.parse_jenkins_nodes(
         [
             [
-                """
-            [
-    {
-        "_class": "hudson.slaves.SlaveComputer",
-        "assignedLabels":
-        [
-            {
-                "busyExecutors": 42,
-                "idleExecutors": 63,
-                "name": "fra",
-                "nodes":
-                [
-                    {
-                        "mode": "EXCLUSIVE"
-                    },
-                    {
-                        "mode": "EXCLUSIVE"
-                    },
-                    {
-                        "mode": "NORMAL"
-                    },
-                    {
-                        "mode": "EXCLUSIVE"
-                    },
-                    {
-                        "mode": "EXCLUSIVE"
-                    }
-                ]
-            },
-            {
-                "busyExecutors": 7,
-                "idleExecutors": 14,
-                "name": "build-fra-002.lan.corpo.net",
-                "nodes":
-                [
-                    {
-                        "mode": "NORMAL"
-                    }
-                ]
-            },
-            {
-                "busyExecutors": 42,
-                "idleExecutors": 63,
-                "name": "both",
-                "nodes":
-                [
-                    {
-                        "mode": "EXCLUSIVE"
-                    },
-                    {
-                        "mode": "EXCLUSIVE"
-                    },
-                    {
-                        "mode": "EXCLUSIVE"
-                    },
-                    {
-                        "mode": "NORMAL"
-                    },
-                    {
-                        "mode": "EXCLUSIVE"
-                    }
-                ]
-            }
-        ],
-        "description": "",
-        "displayName": "build-fra-002.lan.corpo.net",
-        "idle": false,
-        "jnlpAgent": false,
-        "monitorData": {},
-        "numExecutors": 21,
-        "offline": false,
-        "offlineCause": null,
-        "temporarilyOffline": false
-    }
-]
-            """
+                json.dumps(
+                    [
+                        {
+                            "_class": "hudson.slaves.SlaveComputer",
+                            "assignedLabels": [
+                                {
+                                    "busyExecutors": 42,
+                                    "idleExecutors": 63,
+                                    "name": "fra",
+                                    "nodes": [
+                                        {"mode": "EXCLUSIVE"},
+                                        {"mode": "EXCLUSIVE"},
+                                        {"mode": "NORMAL"},
+                                        {"mode": "EXCLUSIVE"},
+                                        {"mode": "EXCLUSIVE"},
+                                    ],
+                                },
+                                {
+                                    "busyExecutors": 7,
+                                    "idleExecutors": 14,
+                                    "name": "build-fra-002.lan.corpo.net",
+                                    "nodes": [{"mode": "NORMAL"}],
+                                },
+                                {
+                                    "busyExecutors": 42,
+                                    "idleExecutors": 63,
+                                    "name": "both",
+                                    "nodes": [
+                                        {"mode": "EXCLUSIVE"},
+                                        {"mode": "EXCLUSIVE"},
+                                        {"mode": "EXCLUSIVE"},
+                                        {"mode": "NORMAL"},
+                                        {"mode": "EXCLUSIVE"},
+                                    ],
+                                },
+                            ],
+                            "description": "",
+                            "displayName": "build-fra-002.lan.corpo.net",
+                            "idle": False,
+                            "jnlpAgent": False,
+                            "monitorData": {},
+                            "numExecutors": 21,
+                            "offline": False,
+                            "offlineCause": None,
+                            "temporarilyOffline": False,
+                        }
+                    ]
+                )
             ]
         ]
     )

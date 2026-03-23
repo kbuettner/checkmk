@@ -3,6 +3,8 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
+import json
+
 import pytest
 
 import cmk.plugins.jenkins.agent_based.jenkins_instance as ji
@@ -14,9 +16,16 @@ def _section() -> ji.JenkinsInstance:
     return ji.parse_jenkins_instance(
         [
             [
-                """
-                {"quietingDown": false, "nodeDescription": "the master Jenkins node", "numExecutors": 10, "mode": "NORMAL", "_class": "hudson.model.Hudson", "useSecurity": true}
-                """
+                json.dumps(
+                    {
+                        "quietingDown": False,
+                        "nodeDescription": "the master Jenkins node",
+                        "numExecutors": 10,
+                        "mode": "NORMAL",
+                        "_class": "hudson.model.Hudson",
+                        "useSecurity": True,
+                    }
+                )
             ]
         ]
     )
