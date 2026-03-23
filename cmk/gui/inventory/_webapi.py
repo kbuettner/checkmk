@@ -15,7 +15,7 @@ from cmk.ccc.hostaddress import HostAddress, HostName
 from cmk.ccc.site import SiteId
 from cmk.gui.exceptions import MKUserError
 from cmk.gui.htmllib.html import html
-from cmk.gui.http import request, response
+from cmk.gui.http import response
 from cmk.gui.i18n import _
 from cmk.gui.pages import PageContext
 from cmk.inventory.structured_data import SDRawTree, serialize_tree
@@ -64,7 +64,7 @@ def _write_python(resp: _HostInvAPIResponse) -> None:
 def page_host_inv_api(ctx: PageContext) -> None:
     resp: _HostInvAPIResponse
     try:
-        api_request = request.get_request()
+        api_request = ctx.request.get_request()
         if not (hosts := api_request.get("hosts")):
             if (host_name := api_request.get("host")) is None:
                 raise MKUserError("host", _('You need to provide a "host".'))
