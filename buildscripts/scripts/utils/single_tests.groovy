@@ -112,7 +112,8 @@ void withAugmentedTimeout(Map args = [:], Closure body) {
             return;
         }
     } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException exc) {
-        if (exc.causes.any { it.toString().contains("Timeout") }) {
+        def isTimeout = exc.causes.any { it.toString().contains("Timeout") }
+        if (isTimeout) {
             println("Timeout detected");
             raise("${defaultDict.message}. Timeout is ${defaultDict.timeout}min");
         }
