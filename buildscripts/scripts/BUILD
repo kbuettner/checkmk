@@ -41,11 +41,6 @@ py_binary(
 )
 
 py_binary(
-    name = "collect_packages",
-    srcs = ["collect_packages.py"],
-)
-
-py_binary(
     name = "get_distros",
     srcs = ["get_distros.py"],
     deps = [":lib"],
