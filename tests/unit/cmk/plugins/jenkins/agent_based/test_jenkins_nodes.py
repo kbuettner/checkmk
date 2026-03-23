@@ -4,7 +4,6 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 # mypy: disable-error-code="misc"
-# mypy: disable-error-code="no-untyped-def"
 
 import json
 
@@ -341,7 +340,7 @@ def _multi_label_section() -> Section:
     )
 
 
-def test_showing_correct_executor_amount(multi_label_section):
+def test_showing_correct_executor_amount(multi_label_section: Section) -> None:
     """
     Test that the correct executor amount is shown
 
@@ -367,7 +366,7 @@ def test_showing_correct_executor_amount(multi_label_section):
         assert metric_to_search in executor_metrics
 
 
-def test_showing_correct_executor_mode(multi_label_section):
+def test_showing_correct_executor_mode(multi_label_section: Section) -> None:
     check_results = list(
         check_jenkins_nodes(
             "build-fra-002.lan.corpo.net",

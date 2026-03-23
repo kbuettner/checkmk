@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-def"
-
 import json
 
 import pytest
@@ -105,7 +103,7 @@ def _section() -> Section:
     )
 
 
-def test_discovery_jenkins_org_folder():
+def test_discovery_jenkins_org_folder() -> None:
     section = parse_jenkins_jobs(
         [
             [
