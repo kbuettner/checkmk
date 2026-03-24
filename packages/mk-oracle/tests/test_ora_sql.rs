@@ -1837,12 +1837,11 @@ SQLNET.WALLET_OVERRIDE = TRUE
     assert_eq!(content, expected);
 }
 
-#[cfg(unix)]
 mod find_sids {
-    use mk_oracle::ora_sql::detect::{find_oracle_home_from_oratab, find_oratab_file};
-    use mk_oracle::types::Sid;
+    use mk_oracle::ora_sql::detect::find_oratab_file;
     use std::io::Write;
 
+    #[cfg(unix)]
     #[test]
     fn test_find_sids() {
         use mk_oracle::ora_sql::detect::find_sids_by_processes;
@@ -1861,7 +1860,14 @@ mod find_sids {
     fn test_find_oratab_file_not_found() {
         let result = find_oratab_file(Some(&["/nonexistent/path/oratab"]));
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("oratab not found"));
+        if cfg!(windows) {
+            assert!(result
+                .unwrap_err()
+                .to_string()
+                .contains("oratab is not supported on Windows"));
+        } else {
+            assert!(result.unwrap_err().to_string().contains("oratab not found"));
+        }
     }
 
     #[test]
@@ -1873,12 +1879,23 @@ mod find_sids {
 
         let oratab_str = oratab_path.to_str().unwrap();
         let result = find_oratab_file(Some(&["/nonexistent/path/oratab", oratab_str]));
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap(), oratab_path);
+        if cfg!(windows) {
+            assert!(result
+                .unwrap_err()
+                .to_string()
+                .contains("oratab is not supported on Windows"));
+        } else {
+            assert!(result.is_ok());
+            assert_eq!(result.unwrap(), oratab_path);
+        }
     }
 
+    #[cfg(unix)]
     #[test]
     fn test_find_oracle_home_from_oratab_sid_found() {
+        use mk_oracle::ora_sql::detect::find_oracle_home_from_oratab;
+        use mk_oracle::types::Sid;
+
         let tmp_dir = tempfile::tempdir().expect("create temp dir");
         let oratab_path = tmp_dir.path().join("oratab");
         let mut file = std::fs::File::create(&oratab_path).expect("create oratab file");

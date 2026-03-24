@@ -69,14 +69,19 @@ pub fn find_sids_by_processes(match_string: Option<&str>) -> Result<HashSet<Stri
 }
 
 /// Finds the oratab file in standard locations.
+/// Linux only
 /// Returns the Result with path to oratab file or error if not found.
 pub fn find_oratab_file(oratab_paths: Option<&[&str]>) -> Result<PathBuf> {
-    oratab_paths
-        .unwrap_or(&["/etc/oratab", "/var/opt/oracle/oratab"])
-        .iter()
-        .find(|p| Path::new(p).is_file())
-        .map(PathBuf::from)
-        .ok_or(anyhow::anyhow!("ORA-99999 oratab not found in local mode")) // ORA-99999 is a code from legacy plugin, we keep it for backward compatibility of error handling
+    if cfg!(windows) {
+        anyhow::bail!("ORA-99999 oratab is not supported on Windows") // ORA-99999 is a code from legacy plugin, we keep it for backward compatibility of error handling
+    } else {
+        oratab_paths
+            .unwrap_or(&["/etc/oratab", "/var/opt/oracle/oratab"])
+            .iter()
+            .find(|p| Path::new(p).is_file())
+            .map(PathBuf::from)
+            .ok_or(anyhow::anyhow!("ORA-99999 oratab not found in local mode")) // ORA-99999 is a code from legacy plugin, we keep it for backward compatibility of error handling
+    }
 }
 
 /// Finds ORACLE_HOME for a given SID by parsing oratab file.
@@ -121,7 +126,7 @@ fn dump_local_instances() -> String {
         .iter()
         .map(|i| {
             format!(
-                "'{:16}': home={:60} base={:60}",
+                "{:16} {:60} {:60}",
                 i.name,
                 i.home.display().to_string(),
                 i.base.display().to_string()
@@ -129,7 +134,14 @@ fn dump_local_instances() -> String {
         })
         .collect::<Vec<String>>()
         .join("\n");
-    format!("{}\nTotal instances found: {}\n", rows, instances.len())
+    let header = format!("{:16} {:60} {:60}", "SID", "ORACLE_HOME", "ORACLE_BASE");
+
+    format!(
+        "{}\n{}\nTotal instances found: {}\n",
+        header,
+        rows,
+        instances.len()
+    )
 }
 
 pub fn dump_detected_sids() -> Result<String> {
