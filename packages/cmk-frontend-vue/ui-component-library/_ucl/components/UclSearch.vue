@@ -49,7 +49,7 @@ watch(searchResults, (results) => {
 <template>
   <div class="ucl-search__input-wrapper">
     <div class="ucl-search__input-root">
-      <CmkIcon class="ucl-search__input-icon" name="main-search" size="small" />
+      <CmkIcon class="ucl-search__input-icon" name="main-search" size="medium" />
       <input
         v-model="searchQuery"
         type="text"
@@ -101,7 +101,6 @@ watch(searchResults, (results) => {
 
 .ucl-search__input-icon {
   margin-left: var(--dimension-4, 8px);
-  opacity: 0.6;
 }
 
 .ucl-search__input-field {
