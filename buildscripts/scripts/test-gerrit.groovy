@@ -112,31 +112,19 @@ void main() {
                 ) {
                     def build_params = [:];
 
-                    switch ("${item.NAME}") {
-                        case "Enforced package build":
-                            relative_job_name = "${branch_base_folder}/builders/trigger-cmk-distro-package";
-                            build_params << [
-                                CUSTOM_GIT_REF: GERRIT_PATCHSET_REVISION,
-                                DISTRO: "ubuntu-24.04",
-                                EDITION: "pro",
-                            ];
-                            break;
-                        default:
-                            build_params << [
-                                CUSTOM_GIT_REF: GERRIT_PATCHSET_REVISION,
-                                CIPARAM_NAME: item.NAME,
-                                CIPARAM_DIR: item.DIR,
-                                CIPARAM_ENV_VARS: item.ENV_VARS,
-                                CIPARAM_ENV_VAR_LIST_STR: env_var_list_str,
-                                CIPARAM_SEC_VAR_LIST_STR: sec_var_list_str,
-                                CIPARAM_GIT_FETCH_TAGS: item.GIT_FETCH_TAGS,
-                                CIPARAM_GIT_FETCH_NOTES: item.GIT_FETCH_NOTES,
-                                CIPARAM_COMMAND: independent_command,
-                                CIPARAM_RESULT_CHECK_FILE_PATTERN: item.RESULT_CHECK_FILE_PATTERN,
-                                CIPARAM_BAZEL_LOCKS_AMOUNT: item.BAZEL_LOCKS_AMOUNT,
-                            ];
-                            break;
-                    }
+                    build_params << [
+                        CUSTOM_GIT_REF: GERRIT_PATCHSET_REVISION,
+                        CIPARAM_NAME: item.NAME,
+                        CIPARAM_DIR: item.DIR,
+                        CIPARAM_ENV_VARS: item.ENV_VARS,
+                        CIPARAM_ENV_VAR_LIST_STR: env_var_list_str,
+                        CIPARAM_SEC_VAR_LIST_STR: sec_var_list_str,
+                        CIPARAM_GIT_FETCH_TAGS: item.GIT_FETCH_TAGS,
+                        CIPARAM_GIT_FETCH_NOTES: item.GIT_FETCH_NOTES,
+                        CIPARAM_COMMAND: independent_command,
+                        CIPARAM_RESULT_CHECK_FILE_PATTERN: item.RESULT_CHECK_FILE_PATTERN,
+                        CIPARAM_BAZEL_LOCKS_AMOUNT: item.BAZEL_LOCKS_AMOUNT,
+                    ];
 
                     // use another switch statement to apply k8s specific settings and/or job paths, CMK-25972
                     switch ("${item.NAME}") {
