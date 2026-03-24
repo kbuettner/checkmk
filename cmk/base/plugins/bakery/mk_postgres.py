@@ -5,25 +5,36 @@
 
 # mypy: disable-error-code="possibly-undefined"
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
+
+from pydantic import BaseModel
 
 from .bakery_api.v1 import FileGenerator, OS, Plugin, PluginConfig, register
 
 
-def get_mk_postgres_files(conf: dict[str, Any]) -> FileGenerator:
-    for current_os in (OS.LINUX, OS.WINDOWS):
-        yield Plugin(base_os=current_os, source=Path("mk_postgres.py"))
+class _Config(BaseModel):
+    deployment: tuple[Literal["do_not_deploy", "sync", "cached"], float | None]
+    instances_settings: dict[str, Any] | None = None
 
-        try:
-            instances_settings = conf["instances_settings"]
-        except (TypeError, KeyError):
+
+def get_mk_postgres_files(conf: Mapping[str, object]) -> FileGenerator:
+    config = _Config.model_validate(conf)
+    if config.deployment[0] == "do_not_deploy":
+        return
+
+    interval = None if (v := config.deployment[1]) is None else int(v)
+
+    for current_os in (OS.LINUX, OS.WINDOWS):
+        yield Plugin(base_os=current_os, source=Path("mk_postgres.py"), interval=interval)
+
+        if config.instances_settings is None:
             continue
 
         yield PluginConfig(
             base_os=current_os,
-            lines=list(_get_mk_postgres_config(instances_settings, current_os)),
+            lines=list(_get_mk_postgres_config(config.instances_settings, current_os)),
             target=Path("postgres.cfg"),
             include_header=True,
         )
