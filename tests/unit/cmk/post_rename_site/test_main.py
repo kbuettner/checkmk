@@ -13,7 +13,7 @@ import pytest
 
 from cmk.ccc.site import SiteId
 from cmk.post_rename_site import main
-from cmk.post_rename_site.registry import Name, RenameAction, RenameActionRegistry, SortIndex, Title
+from cmk.post_rename_site.registry import Name, RenameAction, SortIndex, Title
 
 
 def test_parse_arguments_verbose() -> None:
@@ -48,7 +48,7 @@ def restore_root_logger_handlers():
 def test_main_executes_run(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    def mock_run(verbose: bool, old_site_id: SiteId, new_site_id: SiteId) -> bool:
+    def mock_run(*_a: object, **_kw: object) -> bool:
         sys.stdout.write("XYZ\n")
         return False
 
@@ -63,19 +63,19 @@ def test_main_executes_run(
 def test_run_executes_plugins(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    registry = RenameActionRegistry()
-    monkeypatch.setattr(main, "rename_action_registry", registry)
-
     args = list[object]()
 
     def handler_mock(old_site_id: SiteId, new_site_id: SiteId, logger: logging.Logger) -> None:
         args[:] = [old_site_id, new_site_id, logger]
 
-    registry.register(
-        RenameAction(
-            name=Name("test"), title=Title("Test Title"), sort_index=SortIndex(), run=handler_mock
-        )
+    my_action = RenameAction(
+        name=Name("test"),
+        title=Title("Test Title"),
+        sort_index=SortIndex(),
+        run=handler_mock,
     )
+
+    monkeypatch.setattr(main, "load_plugins", lambda *_a, **_kw: [my_action])
 
     assert main.main(["-v", "old"]) == 0
 

@@ -7,7 +7,6 @@ import pytest
 
 from cmk.ccc.version import Edition, edition
 from cmk.post_rename_site import main
-from cmk.post_rename_site.registry import rename_action_registry
 from cmk.utils import paths
 
 
@@ -18,15 +17,12 @@ from cmk.utils import paths
 def test_load_plugins() -> None:
     """The test changes a global variable `rename_action_registry`.
     We can't reliably monkey patch this variable - must use separate module for testing"""
-    main.load_plugins(edition(paths.omd_root))
-    assert sorted(rename_action_registry.keys()) == sorted(
-        [
-            "sites",
-            "messaging",
-            "hosts_and_folders",
-            "update_core_config",
-            "warn_remote_site",
-            "warn_about_network_ports",
-            "warn_about_configs_to_review",
-        ]
-    )
+    assert {p.name for p in main.load_plugins(edition(paths.omd_root))} == {
+        "sites",
+        "messaging",
+        "hosts_and_folders",
+        "update_core_config",
+        "warn_remote_site",
+        "warn_about_network_ports",
+        "warn_about_configs_to_review",
+    }

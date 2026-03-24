@@ -5,7 +5,7 @@
 
 import os
 from argparse import ArgumentParser
-from collections.abc import Iterator, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
 
@@ -27,7 +27,7 @@ from cmk.utils.log import VERBOSE
 from cmk.utils.plugin_loader import load_plugins_with_exceptions, PluginFailures
 
 from .logger import logger, setup_logging
-from .registry import rename_action_registry
+from .registry import rename_action_registry, RenameAction
 
 
 @dataclass(slots=True)
@@ -82,10 +82,10 @@ def main(args: Sequence[str]) -> int:
         logger.error("The following errors occurred during plug-in loading: %r", errors)
         return 1
 
-    load_plugins(edition)
+    plugins = load_plugins(edition)
 
     try:
-        has_errors = run(arguments.debug, arguments.old_site_id, new_site_id)
+        has_errors = run(plugins, arguments.debug, arguments.old_site_id, new_site_id)
     except Exception:
         if arguments.debug:
             raise
@@ -97,11 +97,12 @@ def main(args: Sequence[str]) -> int:
     return 1 if has_errors else 0
 
 
-def load_plugins(edition: Edition) -> None:
+def load_plugins(edition: Edition) -> Iterable[RenameAction]:
     for plugin, exc in _load_plugins(edition):
         logger.error("Error in action plug-in %s: %s\n", plugin, exc)
         if cmk.ccc.debug.enabled():
             raise exc
+    return rename_action_registry.values()
 
 
 def _load_plugins(edition: Edition) -> PluginFailures:
@@ -114,11 +115,13 @@ def _load_plugins(edition: Edition) -> PluginFailures:
         )
 
 
-def run(debug: bool, old_site_id: SiteId, new_site_id: SiteId) -> bool:
+def run(
+    plugins: Iterable[RenameAction], debug: bool, old_site_id: SiteId, new_site_id: SiteId
+) -> bool:
     has_errors = False
     with _force_automations_cli_interface(), gui_context(), SuperUserContext():
         logger.debug("Starting actions...")
-        actions = sorted(rename_action_registry.values(), key=lambda a: a.sort_index)
+        actions = sorted(plugins, key=lambda a: a.sort_index)
         total = len(actions)
         for count, rename_action in enumerate(actions, start=1):
             logger.log(
