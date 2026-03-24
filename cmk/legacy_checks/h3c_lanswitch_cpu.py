@@ -3,9 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-call"
-# mypy: disable-error-code="no-untyped-def"
-
 # Example output of multi-unit stack (SS5500-EL, etc):
 # SNMPv2-SMI::enterprises.43.45.1.6.1.1.1.3.65536 = Gauge32: 11
 #
@@ -20,13 +17,26 @@
 # We prefer "Switch 1 CPU 1" over "65537"...
 
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import contains, OIDEnd, SNMPTree, StringTable
+from collections.abc import Mapping
+from typing import Any
 
-check_info = {}
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    contains,
+    DiscoveryResult,
+    Metric,
+    OIDEnd,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
 
 
-def h3c_lanswitch_cpu_genitem(item):
+def _genitem(item: str) -> str:
     # decide switch class here (stacked or standalone/modular)
     cpuid = int(item)
 
@@ -47,42 +57,52 @@ def h3c_lanswitch_cpu_genitem(item):
         switchid = 1
         cputype = "Unknown"
         cpunum = cpuid
-    return "Switch %d %s %d" % (switchid, cputype, cpunum)
+    return f"Switch {switchid} {cputype} {cpunum}"
 
 
-def discover_h3c_lanswitch_cpu(info):
-    return [(h3c_lanswitch_cpu_genitem(line[0]), {}) for line in info]
+def discover_h3c_lanswitch_cpu(section: StringTable) -> DiscoveryResult:
+    for line in section:
+        yield Service(item=_genitem(line[0]))
 
 
-def check_h3c_lanswitch_cpu(item, params, info):
+def check_h3c_lanswitch_cpu(
+    item: str, params: Mapping[str, Any], section: StringTable
+) -> CheckResult:
     warn, crit = params["levels"]
-    for line in info:
-        if h3c_lanswitch_cpu_genitem(line[0]) == item:
+    for line in section:
+        if _genitem(line[0]) == item:
             util = int(line[1])
-            infotext = "average usage was %d%% over last 5 minutes." % util
-            perfdata = [("usage", util, warn, crit, 0, 100)]
+            infotext = f"average usage was {util}% over last 5 minutes."
 
             if util > crit:
-                return (2, infotext, perfdata)
-            if util > warn:
-                return (1, infotext, perfdata)
-            return (0, infotext, perfdata)
+                yield Result(state=State.CRIT, summary=infotext)
+            elif util > warn:
+                yield Result(state=State.WARN, summary=infotext)
+            else:
+                yield Result(state=State.OK, summary=infotext)
+            yield Metric("usage", util, levels=(warn, crit), boundaries=(0, 100))
+            return
 
-    return (3, "%s not found" % item)
+    yield Result(state=State.UNKNOWN, summary=f"{item} not found")
 
 
 def parse_h3c_lanswitch_cpu(string_table: StringTable) -> StringTable:
     return string_table
 
 
-check_info["h3c_lanswitch_cpu"] = LegacyCheckDefinition(
+snmp_section_h3c_lanswitch_cpu = SimpleSNMPSection(
     name="h3c_lanswitch_cpu",
-    parse_function=parse_h3c_lanswitch_cpu,
     detect=contains(".1.3.6.1.2.1.1.1.0", "3com s"),
     fetch=SNMPTree(
         base=".1.3.6.1.4.1.43.45.1.6.1.1.1",
         oids=[OIDEnd(), "3"],
     ),
+    parse_function=parse_h3c_lanswitch_cpu,
+)
+
+
+check_plugin_h3c_lanswitch_cpu = CheckPlugin(
+    name="h3c_lanswitch_cpu",
     service_name="CPU Utilization %s",
     discovery_function=discover_h3c_lanswitch_cpu,
     check_function=check_h3c_lanswitch_cpu,
