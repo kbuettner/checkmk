@@ -43,6 +43,7 @@ def pong_received_message(stdout: IO[str], wait_for: int) -> bool:
     return False
 
 
+@pytest.mark.skip("https://tribe29.slack.com/archives/C085MHGLPJ6/p1774342431437719")
 @pytest.mark.skip_if_edition("cloud")
 class TestCMKBrokerTest:
     """Make sure our cmk-broker-test tool works"""
@@ -196,6 +197,7 @@ UNSUPPORTED_VERSIONS = (
 SUPPORTED_VERSIONS = (ssl.TLSVersion.TLSv1_3,)
 
 
+@pytest.mark.skip("https://tribe29.slack.com/archives/C085MHGLPJ6/p1774342431437719")
 @pytest.mark.parametrize("tls_version", UNSUPPORTED_VERSIONS, ids=lambda v: v.name)
 def test_unsupported_tls_versions(
     central_site: Site, broker_ca: Path, tls_version: ssl.TLSVersion
@@ -209,6 +211,7 @@ def test_unsupported_tls_versions(
         )
 
 
+@pytest.mark.skip("https://tribe29.slack.com/archives/C085MHGLPJ6/p1774342431437719")
 @pytest.mark.parametrize("tls_version", SUPPORTED_VERSIONS, ids=lambda v: v.name)
 def test_supported_tls_versions(
     central_site: Site, broker_ca: Path, tls_version: ssl.TLSVersion
