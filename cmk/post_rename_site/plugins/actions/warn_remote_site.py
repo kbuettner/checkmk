@@ -9,9 +9,8 @@ from cmk.ccc import tty
 from cmk.ccc.site import SiteId
 from cmk.gui.config import active_config
 from cmk.gui.site_config import is_distributed_setup_remote_site
-from cmk.post_rename_site.registry import (
+from cmk.post_rename_site.internal import (
     Name,
-    rename_action_registry,
     RenameAction,
     SortIndex,
     Title,
@@ -38,11 +37,9 @@ def warn_about_renamed_remote_site(
     )
 
 
-rename_action_registry.register(
-    RenameAction(
-        name=Name("warn_remote_site"),
-        title=Title("Warn about renamed remote site"),
-        sort_index=SortIndex(950),
-        run=warn_about_renamed_remote_site,
-    )
+rename_action_warn_remote_site = RenameAction(
+    name=Name("warn_remote_site"),
+    title=Title("Warn about renamed remote site"),
+    sort_index=SortIndex(950),
+    run=warn_about_renamed_remote_site,
 )

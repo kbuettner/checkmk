@@ -8,9 +8,8 @@ from pathlib import Path
 
 from cmk.ccc import tty
 from cmk.ccc.site import SiteId
-from cmk.post_rename_site.registry import (
+from cmk.post_rename_site.internal import (
     Name,
-    rename_action_registry,
     RenameAction,
     SortIndex,
     Title,
@@ -39,11 +38,9 @@ def warn_about_network_ports(old_site_id: SiteId, new_site_id: SiteId, logger: L
     )
 
 
-rename_action_registry.register(
-    RenameAction(
-        name=Name("warn_about_network_ports"),
-        title=Title("Warn about new network ports"),
-        sort_index=SortIndex(955),
-        run=warn_about_network_ports,
-    )
+rename_action_warn_about_network_ports = RenameAction(
+    name=Name("warn_about_network_ports"),
+    title=Title("Warn about new network ports"),
+    sort_index=SortIndex(955),
+    run=warn_about_network_ports,
 )

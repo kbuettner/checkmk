@@ -5,10 +5,8 @@
 
 import sys
 
-from cmk.ccc.version import edition
 from cmk.post_rename_site.main import load_plugins
-from cmk.utils import paths
 
-plugins = {p.name for p in load_plugins(edition(paths.omd_root))}
+plugins = {p.name for p in load_plugins()}
 
 sys.stdout.write(f"{'test' in plugins}\n")

@@ -9,9 +9,8 @@ from logging import Logger
 from cmk.ccc.site import SiteId
 from cmk.gui.config import active_config
 from cmk.gui.watolib.hosts_and_folders import folder_tree
-from cmk.post_rename_site.registry import (
+from cmk.post_rename_site.internal import (
     Name,
-    rename_action_registry,
     RenameAction,
     SortIndex,
     Title,
@@ -69,11 +68,9 @@ def _update_locked_by(
     )
 
 
-rename_action_registry.register(
-    RenameAction(
-        name=Name("hosts_and_folders"),
-        title=Title("Hosts and folders"),
-        sort_index=SortIndex(15),
-        run=update_hosts_and_folders,
-    )
+rename_action_hosts_and_folders = RenameAction(
+    name=Name("hosts_and_folders"),
+    title=Title("Hosts and folders"),
+    sort_index=SortIndex(15),
+    run=update_hosts_and_folders,
 )

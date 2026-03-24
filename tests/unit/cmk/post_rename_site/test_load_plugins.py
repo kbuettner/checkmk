@@ -17,7 +17,7 @@ from cmk.utils import paths
 def test_load_plugins() -> None:
     """The test changes a global variable `rename_action_registry`.
     We can't reliably monkey patch this variable - must use separate module for testing"""
-    assert {p.name for p in main.load_plugins(edition(paths.omd_root))} == {
+    assert {p.name for p in main.load_plugins()} == {
         "sites",
         "messaging",
         "hosts_and_folders",

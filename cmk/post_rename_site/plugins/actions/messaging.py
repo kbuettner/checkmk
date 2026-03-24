@@ -17,9 +17,8 @@ from cmk.gui.watolib.broker_certificates import (
 )
 from cmk.gui.watolib.changes import add_change
 from cmk.gui.watolib.config_domains import ConfigDomainGUI
-from cmk.post_rename_site.registry import (
+from cmk.post_rename_site.internal import (
     Name,
-    rename_action_registry,
     RenameAction,
     SortIndex,
     Title,
@@ -52,11 +51,9 @@ def update_broker_config(old_site_id: SiteId, new_site_id: SiteId, logger: Logge
     )
 
 
-rename_action_registry.register(
-    RenameAction(
-        name=Name("messaging"),
-        title=Title("Broker certificates and configuration"),
-        sort_index=SortIndex(10),
-        run=update_broker_config,
-    )
+rename_action_messaging = RenameAction(
+    name=Name("messaging"),
+    title=Title("Broker certificates and configuration"),
+    sort_index=SortIndex(10),
+    run=update_broker_config,
 )

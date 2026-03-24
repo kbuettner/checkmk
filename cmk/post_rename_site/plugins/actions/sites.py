@@ -8,9 +8,8 @@ from logging import Logger
 from cmk.ccc.site import SiteId
 from cmk.gui.config import active_config
 from cmk.gui.watolib.sites import site_management_registry
-from cmk.post_rename_site.registry import (
+from cmk.post_rename_site.internal import (
     Name,
-    rename_action_registry,
     RenameAction,
     SortIndex,
     Title,
@@ -68,11 +67,9 @@ def update_site_config(old_site_id: SiteId, new_site_id: SiteId, logger: Logger)
         )
 
 
-rename_action_registry.register(
-    RenameAction(
-        name=Name("sites"),
-        title=Title("Distributed monitoring configuration"),
-        sort_index=SortIndex(10),
-        run=update_site_config,
-    )
+rename_action_sites = RenameAction(
+    name=Name("sites"),
+    title=Title("Distributed monitoring configuration"),
+    sort_index=SortIndex(10),
+    run=update_site_config,
 )

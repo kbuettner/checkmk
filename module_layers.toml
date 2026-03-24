@@ -1096,7 +1096,14 @@ allows = [
 allows = ["@ccc", "cmk.utils"]
 
 [components."cmk.post_rename_site"]
-allows = ["@ccc", "@messaging", "cmk.dcd.gui", "cmk.gui", "cmk.utils"]
+allows = [
+  "@ccc",
+  "@messaging",
+  "cmk.discover_plugins",
+  "cmk.dcd.gui",
+  "cmk.gui",
+  "cmk.utils",
+]
 
 [components."cmk.trace"]
 allows = []

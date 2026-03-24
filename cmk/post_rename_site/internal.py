@@ -4,12 +4,11 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from logging import Logger
 from typing import Protocol
 
-from cmk.ccc.plugin_registry import Registry
 from cmk.ccc.site import SiteId
 
 
@@ -42,9 +41,5 @@ class RenameAction:
     run: RenameActionHandler
 
 
-class RenameActionRegistry(Registry[RenameAction]):
-    def plugin_name(self, instance: RenameAction) -> str:
-        return instance.name
-
-
-rename_action_registry = RenameActionRegistry()
+def entry_point_prefixes() -> Mapping[type[RenameAction], str]:
+    return {RenameAction: "rename_action_"}

@@ -13,7 +13,7 @@ import cmk.ccc.debug
 import cmk.ccc.version as cmk_version
 from cmk.ccc.i18n import _ as localizer
 from cmk.ccc.site import omd_site, SiteId
-from cmk.ccc.version import Edition
+from cmk.discover_plugins import discover_plugins_from_modules, discover_submodules
 
 # This special script needs persistence and conversion code from different places of Checkmk. We may
 # centralize the conversion and move the persistence to a specific layer in the future, but for the
@@ -24,10 +24,9 @@ from cmk.gui.utils.script_helpers import gui_context
 from cmk.gui.watolib.automations import ENV_VARIABLE_FORCE_CLI_INTERFACE
 from cmk.utils import paths
 from cmk.utils.log import VERBOSE
-from cmk.utils.plugin_loader import load_plugins_with_exceptions, PluginFailures
 
+from .internal import entry_point_prefixes, RenameAction
 from .logger import logger, setup_logging
-from .registry import rename_action_registry, RenameAction
 
 
 @dataclass(slots=True)
@@ -77,12 +76,12 @@ def main(args: Sequence[str]) -> int:
 
     # Do the loading here so that run() can be tested without any additional loading
     logger.debug("Initializing application...")
-    main_modules.register(edition := cmk_version.edition(paths.omd_root))
+    main_modules.register(cmk_version.edition(paths.omd_root))
     if errors := main_modules.get_failed_plugins():
         logger.error("The following errors occurred during plug-in loading: %r", errors)
         return 1
 
-    plugins = load_plugins(edition)
+    plugins = load_plugins()
 
     try:
         has_errors = run(plugins, arguments.debug, arguments.old_site_id, new_site_id)
@@ -97,22 +96,21 @@ def main(args: Sequence[str]) -> int:
     return 1 if has_errors else 0
 
 
-def load_plugins(edition: Edition) -> Iterable[RenameAction]:
-    for plugin, exc in _load_plugins(edition):
-        logger.error("Error in action plug-in %s: %s\n", plugin, exc)
-        if cmk.ccc.debug.enabled():
-            raise exc
-    return rename_action_registry.values()
-
-
-def _load_plugins(edition: Edition) -> PluginFailures:
-    yield from load_plugins_with_exceptions("cmk.post_rename_site.plugins.actions")
-    if edition is not Edition.COMMUNITY:
-        yield from load_plugins_with_exceptions("cmk.post_rename_site.nonfree.pro.plugins.actions")
-    if edition in (Edition.ULTIMATEMT, Edition.ULTIMATE, Edition.CLOUD):
-        yield from load_plugins_with_exceptions(
-            "cmk.post_rename_site.nonfree.ultimate.plugins.actions"
-        )
+def load_plugins() -> Iterable[RenameAction]:
+    discovered_actions = discover_plugins_from_modules(
+        entry_point_prefixes(),
+        discover_submodules(
+            "cmk.post_rename_site.plugins.actions",
+            "cmk.post_rename_site.nonfree.pro.plugins.actions",
+            "cmk.post_rename_site.nonfree.ultimate.plugins.actions",
+            raise_errors=cmk.ccc.debug.enabled(),
+        ),
+        skip_wrong_types=False,
+        raise_errors=cmk.ccc.debug.enabled(),
+    )
+    for exc in discovered_actions.errors:
+        logger.error("Error in action plug-in: %s\n", exc)
+    return discovered_actions.plugins.values()
 
 
 def run(

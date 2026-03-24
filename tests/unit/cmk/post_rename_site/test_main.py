@@ -13,7 +13,7 @@ import pytest
 
 from cmk.ccc.site import SiteId
 from cmk.post_rename_site import main
-from cmk.post_rename_site.registry import Name, RenameAction, SortIndex, Title
+from cmk.post_rename_site.internal import Name, RenameAction, SortIndex, Title
 
 
 def test_parse_arguments_verbose() -> None:
