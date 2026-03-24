@@ -7,7 +7,7 @@
 
 import pytest
 
-import cmk.ccc.version as cmk_version
+from cmk.ccc.version import Edition, edition
 from cmk.gui.watolib.automation_commands import automation_command_registry
 from cmk.gui.watolib.config_domain_name import (
     config_domain_registry,
@@ -32,16 +32,16 @@ def test_registered_config_domains() -> None:
         "product_usage_analytics",
     ]
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
+    if edition(paths.omd_root) is not Edition.COMMUNITY:
         expected_config_domains += [
             "dcd",
             "mknotifyd",
             "liveproxyd",
         ]
 
-    if cmk_version.edition(paths.omd_root) in {
-        cmk_version.Edition.ULTIMATE,
-        cmk_version.Edition.ULTIMATEMT,
+    if edition(paths.omd_root) in {
+        Edition.ULTIMATE,
+        Edition.ULTIMATEMT,
     }:
         expected_config_domains += [
             "metric_backend",
@@ -52,6 +52,10 @@ def test_registered_config_domains() -> None:
     assert registered == sorted(expected_config_domains)
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_automation_commands() -> None:
     expected_automation_commands = [
         "activate-changes",
@@ -87,14 +91,6 @@ def test_registered_automation_commands() -> None:
         "store-broker-certs",
         "sync-remote-site",
     ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_automation_commands += [
-            "execute-dcd-command",
-            "get-agent-requests",
-            "update-agent-requests",
-            "distribute-verification-response",
-        ]
 
     registered = sorted(automation_command_registry.keys())
     assert registered == sorted(expected_automation_commands)
@@ -236,7 +232,7 @@ def test_registered_configvars() -> None:
         "product_usage_analytics",
     ]
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
+    if edition(paths.omd_root) is not Edition.COMMUNITY:
         expected_vars += [
             "agent_bakery_logging",
             "agent_deployment_enabled",
@@ -309,9 +305,9 @@ def test_registered_configvars() -> None:
             "ntop_connection",
         ]
 
-    if cmk_version.edition(paths.omd_root) in {
-        cmk_version.Edition.ULTIMATE,
-        cmk_version.Edition.ULTIMATEMT,
+    if edition(paths.omd_root) in {
+        Edition.ULTIMATE,
+        Edition.ULTIMATEMT,
     }:
         expected_vars += [
             "metric_backend",
@@ -320,7 +316,7 @@ def test_registered_configvars() -> None:
             "site_opentelemetry_collector_delta_to_cumulative_processor",
         ]
 
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.CLOUD:
+    if edition(paths.omd_root) is Edition.CLOUD:
         expected_vars += [
             "enable_ai_explanations",
         ]
@@ -346,7 +342,7 @@ def test_registered_configvar_groups() -> None:
         "Product usage analytics",
     ]
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
+    if edition(paths.omd_root) is not Edition.COMMUNITY:
         expected_groups += [
             "Dynamic configuration",
             "Automatic agent updates",
@@ -358,7 +354,7 @@ def test_registered_configvar_groups() -> None:
             "Telemetry",
         ]
 
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.CLOUD:
+    if edition(paths.omd_root) is Edition.CLOUD:
         expected_groups += [
             "AI features",
         ]

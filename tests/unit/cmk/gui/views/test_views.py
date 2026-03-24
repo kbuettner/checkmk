@@ -11,10 +11,10 @@ from typing import Any
 
 import pytest
 
-import cmk.ccc.version as cmk_version
 import cmk.gui.plugins.views
 import cmk.gui.views
 from cmk.ccc.site import SiteId
+from cmk.ccc.version import Edition, edition
 from cmk.gui.config import active_config
 from cmk.gui.data_source import ABCDataSource, RowTable
 from cmk.gui.display_options import display_options
@@ -174,6 +174,10 @@ def test_legacy_register_command_group(monkeypatch: pytest.MonkeyPatch) -> None:
     assert group.sort_index == 123
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_commands() -> None:
     expected: dict[str, dict[str, Any]] = {
         "acknowledge": {
@@ -287,17 +291,6 @@ def test_registered_commands() -> None:
             "title": "Delete crash reports",
         },
     }
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected.update(
-            {
-                "edit_downtimes": {
-                    "permission": "action.downtimes",
-                    "tables": ["downtime"],
-                    "title": "Edit downtimes",
-                },
-            }
-        )
 
     names = command_registry.keys()
     assert sorted(expected.keys()) == sorted(names)

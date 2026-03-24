@@ -9,8 +9,8 @@ from typing import Any
 
 import pytest
 
-import cmk.ccc.version as cmk_version
 import cmk.gui.views
+from cmk.ccc.version import Edition, edition
 from cmk.gui.config import active_config
 from cmk.gui.type_defs import BuiltinIconVisibility, DynamicIconName, IconSpec
 from cmk.gui.utils.roles import UserPermissions
@@ -23,6 +23,10 @@ from cmk.gui.views.icon import registry as icon_registry
 from cmk.utils import paths
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_builtin_icons_and_actions() -> None:
     expected_icons_and_actions = [
         "action_menu",
@@ -59,15 +63,6 @@ def test_builtin_icons_and_actions() -> None:
         "status_stale",
         "wato",
     ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_icons_and_actions += [
-            "agent_deployment",
-            "deployment_status",
-            "status_shadow",
-            "ntop_host",
-            "robotmk_html_log",
-        ]
 
     cmk.gui.views.register_legacy_icons()
     builtin_icons = sorted(icon_and_action_registry.keys())

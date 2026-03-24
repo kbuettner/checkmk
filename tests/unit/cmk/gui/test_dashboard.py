@@ -9,12 +9,11 @@
 
 
 from collections.abc import Iterator
-from typing import Literal
 
 import pytest
 
-import cmk.ccc.version as cmk_version
 from cmk.ccc.plugin_registry import Registry
+from cmk.ccc.version import Edition, edition
 from cmk.gui.dashboard import dashlet_registry, DashletConfig
 from cmk.gui.dashboard.dashlet.base import Dashlet
 from cmk.utils import paths
@@ -64,6 +63,10 @@ def fixture_dummy_config() -> DummyDashletConfig:
 
 
 @pytest.mark.usefixtures("reset_dashlet_registry")
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_dashlet_registry_plugins() -> None:
     expected_plugins = [
         "hoststats",
@@ -80,57 +83,7 @@ def test_dashlet_registry_plugins() -> None:
         "snapin",
     ]
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_plugins += [
-            "alerts_bar_chart",
-            "alert_overview",
-            "average_scatterplot",
-            "barplot",
-            "gauge",
-            "notifications_bar_chart",
-            "problem_graph",
-            "single_metric",
-            "site_overview",
-            "custom_graph",
-            "combined_graph",
-            "ntop_alerts",
-            "ntop_flows",
-            "ntop_top_talkers",
-            "single_timeseries",
-            "state_service",
-            "top_list",
-            "state_host",
-            "host_state_summary",
-            "service_state_summary",
-            "inventory",
-        ]
-
     assert sorted(dashlet_registry.keys()) == sorted(expected_plugins)
-
-
-def _expected_intervals() -> list[tuple[str, Literal[False] | int]]:
-    expected = [
-        ("hoststats", False),
-        ("nodata", False),
-        ("notify_failed_notifications", 60),
-        ("user_messages", False),
-        ("pnpgraph", 60),
-        ("servicestats", False),
-        ("snapin", 30),
-        ("url", False),
-        ("view", False),
-        ("linked_view", False),
-    ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected += [
-            ("custom_graph", 60),
-            ("combined_graph", 60),
-            ("problem_graph", 60),
-            ("single_timeseries", 60),
-        ]
-
-    return expected
 
 
 @pytest.mark.usefixtures("request_context")

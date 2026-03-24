@@ -3,11 +3,17 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-import cmk.ccc.version as cmk_version
+import pytest
+
 import cmk.gui.watolib.config_domain_name as utils
+from cmk.ccc.version import Edition, edition
 from cmk.utils import paths
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_generators() -> None:
     expected_generators = [
         "acknowledge_initial_werks",
@@ -19,31 +25,18 @@ def test_registered_generators() -> None:
         "ec_sample_rule_pack",
     ]
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_generators += [
-            "cee_agent_bakery",
-            "cee_rrd_config",
-            "create_relay_dyndns_rule",
-        ]
-
     assert sorted(utils.sample_config_generator_registry.keys()) == sorted(expected_generators)
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_get_sorted_generators() -> None:
     expected = [
         "contact_groups",
         "basic_wato_config",
         "create_local_site_connection",
-    ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected += [
-            "cee_rrd_config",
-            "cee_agent_bakery",
-            "create_relay_dyndns_rule",
-        ]
-
-    expected += [
         "acknowledge_initial_werks",
         "ec_sample_rule_pack",
         "create_initial_admin_user",

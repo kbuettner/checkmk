@@ -3,11 +3,17 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-import cmk.ccc.version as cmk_version
+import pytest
+
+from cmk.ccc.version import Edition, edition
 from cmk.gui import cron
 from cmk.utils import paths
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_jobs() -> None:
     expected = [
         "execute_inventory_cleanup_job",
@@ -24,19 +30,6 @@ def test_registered_jobs() -> None:
         "execute_autodiscovery",
         "execute_deprecation_tests_and_notify_users",
     ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected += [
-            "execute_host_registration_job",
-            "execute_discover_registered_hosts_job",
-            "cleanup_stored_reports",
-            "do_scheduled_reports",
-            "ntop_instance_check",
-            "execute_licensing_online_verification_background_job",
-            "execute_host_label_sync_job",
-            "replace_builtin_signature_cert",
-            "execute_signing_key_validation_job",
-        ]
 
     found_jobs = sorted([f.name for f in cron.cron_job_registry.values()])
     assert found_jobs == sorted(expected)

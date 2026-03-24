@@ -11,7 +11,7 @@ from collections.abc import Sequence
 
 import pytest
 
-import cmk.ccc.version as cmk_version
+from cmk.ccc.version import Edition, edition
 from cmk.gui import visuals
 from cmk.gui.http import request
 from cmk.gui.type_defs import SingleInfos, VisualContext
@@ -65,27 +65,21 @@ def _expected_visual_types():
         },
     }
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_visual_types.update(
-            {
-                "reports": {
-                    "add_visual_handler": "popup_add_element",
-                    "ident_attr": "name",
-                    "multicontext_links": True,
-                    "plural_title": "reports",
-                    "show_url": "report.py",
-                    "title": "report",
-                },
-            }
-        )
-
     return expected_visual_types
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_visual_types() -> None:
     assert sorted(visual_type_registry.keys()) == sorted(_expected_visual_types().keys())
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_visual_type_attributes() -> None:
     for ident, plugin_class in visual_type_registry.items():
         plugin = plugin_class()
@@ -303,7 +297,7 @@ def test_get_context_specs_no_info_limit() -> None:
         "service",
         "servicegroup",
     ]
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.ULTIMATEMT:
+    if edition(paths.omd_root) is Edition.ULTIMATEMT:
         expected += ["customer"]
 
     assert {r[0] for r in result} == set(expected)

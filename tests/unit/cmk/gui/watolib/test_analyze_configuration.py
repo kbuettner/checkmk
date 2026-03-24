@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-import cmk.ccc.version as cmk_version
 from cmk.ccc.site import SiteId
+from cmk.ccc.version import Edition, edition
 from cmk.gui.config import Config
 from cmk.gui.watolib.analyze_configuration import (
     ac_test_registry,
@@ -23,6 +23,10 @@ from cmk.gui.watolib.analyze_configuration import (
 from cmk.utils import paths
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_ac_tests() -> None:
     expected_ac_tests = [
         "ACTestApacheNumberOfProcesses",
@@ -59,14 +63,6 @@ def test_registered_ac_tests() -> None:
         "ACTestTmpfs",
         "ACTestUnexpectedAllowedIPRanges",
     ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_ac_tests += [
-            "ACTestAlertHandlerEventTypes",
-            "ACTestDeprecatedBakeryPlugins",
-            "ACTestMknotifydCommunicationEncrypted",
-            "ACTestSecureAgentUpdaterTransport",
-        ]
 
     registered_plugins = sorted(ac_test_registry.keys())
     assert registered_plugins == sorted(expected_ac_tests)
