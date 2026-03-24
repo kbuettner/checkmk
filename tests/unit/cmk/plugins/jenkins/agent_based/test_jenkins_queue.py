@@ -57,6 +57,7 @@ def test_discovery(section: JenkinsQueue) -> None:
     assert list(discover_jenkins_queue(section)) == [Service()]
 
 
+@time_machine.travel(TEST_TIME_2019)
 def test_check_jenkins_queue(section: JenkinsQueue) -> None:
     params: ParamsDict = {
         "blocked": State.OK,
@@ -66,25 +67,24 @@ def test_check_jenkins_queue(section: JenkinsQueue) -> None:
         "stuck": State.CRIT,
     }
 
-    with time_machine.travel(TEST_TIME_2019):
-        assert list(check_jenkins_queue(params, section)) == [
-            Result(state=State.OK, summary="Queue length: 1 Tasks"),
-            Metric("queue", 1),
-            Result(state=State.OK, summary="Stuck: 0"),
-            Metric("jenkins_stuck_tasks", 0, levels=(1, 2)),
-            Result(state=State.OK, summary="Blocked: 1"),
-            Metric("jenkins_blocked_tasks", 1),
-            Result(state=State.OK, summary="Pending: 0"),
-            Metric("jenkins_pending_tasks", 0),
-            Result(
-                state=State.CRIT,
-                notice=(
-                    "ID: 174702, Stuck: no, Blocked: yes, Pending: no, "
-                    "In queue since: 2019-08-27 10:02:02 - 3 hours 12 minutes (warn/crit at 1 hour 0 minutes/2 hours 0 minutes), "
-                    "Why kept: Build #475 is already in progress (ETA: 23 min)"
-                ),
+    assert list(check_jenkins_queue(params, section)) == [
+        Result(state=State.OK, summary="Queue length: 1 Tasks"),
+        Metric("queue", 1),
+        Result(state=State.OK, summary="Stuck: 0"),
+        Metric("jenkins_stuck_tasks", 0, levels=(1, 2)),
+        Result(state=State.OK, summary="Blocked: 1"),
+        Metric("jenkins_blocked_tasks", 1),
+        Result(state=State.OK, summary="Pending: 0"),
+        Metric("jenkins_pending_tasks", 0),
+        Result(
+            state=State.CRIT,
+            notice=(
+                "ID: 174702, Stuck: no, Blocked: yes, Pending: no, "
+                "In queue since: 2019-08-27 10:02:02 - 3 hours 12 minutes (warn/crit at 1 hour 0 minutes/2 hours 0 minutes), "
+                "Why kept: Build #475 is already in progress (ETA: 23 min)"
             ),
-        ]
+        ),
+    ]
 
 
 @pytest.fixture(scope="module", name="multi_task_section")
@@ -131,6 +131,7 @@ def _multi_task_section() -> JenkinsQueue:
     )
 
 
+@time_machine.travel(TEST_TIME_2024)
 def test_check_jenkins_queue_with_multiple_tasks(multi_task_section: JenkinsQueue) -> None:
     params: ParamsDict = {
         "blocked": State.OK,
@@ -140,30 +141,29 @@ def test_check_jenkins_queue_with_multiple_tasks(multi_task_section: JenkinsQueu
         "stuck": State.CRIT,
     }
 
-    with time_machine.travel(TEST_TIME_2024):
-        assert list(check_jenkins_queue(params, multi_task_section)) == [
-            Result(state=State.OK, summary="Queue length: 2 Tasks"),
-            Metric("queue", 2),
-            Result(state=State.WARN, summary="Stuck: 1 (warn/crit at 1/2)"),
-            Metric("jenkins_stuck_tasks", 1, levels=(1, 2)),
-            Result(state=State.OK, summary="Blocked: 0"),
-            Metric("jenkins_blocked_tasks", 0),
-            Result(state=State.OK, summary="Pending: 0"),
-            Metric("jenkins_pending_tasks", 0),
-            Result(
-                state=State.CRIT,
-                summary=(
-                    "ID: 17, Stuck: yes, Blocked: no, Pending: no, "
-                    "In queue since: 2024-03-05 15:21:56 - 4 hours 0 minutes (warn/crit at 1 hour 0 minutes/2 hours 0 minutes), "
-                    "Why kept: ‘Jenkins’ is reserved for jobs with matching label expression; ‘ubu2’ is offline; ‘ubu’ is offline"
-                ),
+    assert list(check_jenkins_queue(params, multi_task_section)) == [
+        Result(state=State.OK, summary="Queue length: 2 Tasks"),
+        Metric("queue", 2),
+        Result(state=State.WARN, summary="Stuck: 1 (warn/crit at 1/2)"),
+        Metric("jenkins_stuck_tasks", 1, levels=(1, 2)),
+        Result(state=State.OK, summary="Blocked: 0"),
+        Metric("jenkins_blocked_tasks", 0),
+        Result(state=State.OK, summary="Pending: 0"),
+        Metric("jenkins_pending_tasks", 0),
+        Result(
+            state=State.CRIT,
+            summary=(
+                "ID: 17, Stuck: yes, Blocked: no, Pending: no, "
+                "In queue since: 2024-03-05 15:21:56 - 4 hours 0 minutes (warn/crit at 1 hour 0 minutes/2 hours 0 minutes), "
+                "Why kept: ‘Jenkins’ is reserved for jobs with matching label expression; ‘ubu2’ is offline; ‘ubu’ is offline"
             ),
-            Result(
-                state=State.CRIT,
-                summary=(
-                    "ID: 18, Stuck: no, Blocked: no, Pending: no, "
-                    "In queue since: 2024-03-05 15:23:23 - 3 hours 59 minutes (warn/crit at 1 hour 0 minutes/2 hours 0 minutes), "
-                    "Why kept: ‘Jenkins’ is reserved for jobs with matching label expression; ‘ubu2’ is offline; ‘ubu’ is offline"
-                ),
+        ),
+        Result(
+            state=State.CRIT,
+            summary=(
+                "ID: 18, Stuck: no, Blocked: no, Pending: no, "
+                "In queue since: 2024-03-05 15:23:23 - 3 hours 59 minutes (warn/crit at 1 hour 0 minutes/2 hours 0 minutes), "
+                "Why kept: ‘Jenkins’ is reserved for jobs with matching label expression; ‘ubu2’ is offline; ‘ubu’ is offline"
             ),
-        ]
+        ),
+    ]
