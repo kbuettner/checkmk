@@ -156,8 +156,10 @@ STAGES:
     - NAME: "Bazel sanity check (guarded)"
       ONLY_WHEN_NOT_EMPTY: CHANGED_BAZEL_FILES
       COMMAND: |
-          bazel aquery ... &> ${RESULTS}/results.txt && rm ${RESULTS}/results.txt || exit 1
-          bazel cquery ... &> ${RESULTS}/results.txt && rm ${RESULTS}/results.txt || exit 1
+          for edition in community pro ultimate ultimatemt cloud; do \
+              bazel aquery --cmk_edition=$edition ... &> ${RESULTS}/results.txt && rm ${RESULTS}/results.txt || exit 1
+              bazel cquery --cmk_edition=$edition ... &> ${RESULTS}/results.txt && rm ${RESULTS}/results.txt || exit 1
+          done
           bazel mod graph --output=json | jq -e ".. | select(.name? == \"boringssl\")" >"${RESULTS}/results.txt" && exit 1 || true
       RESULT_CHECK_FILE_PATTERN: "results/results.txt"
       BAZEL_LOCKS_AMOUNT: 1
