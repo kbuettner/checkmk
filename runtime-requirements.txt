@@ -2624,6 +2624,7 @@ pydantic==2.12.5 \
     #   -c requirements.txt
     #   -r cmk/requirements.in
     #   -r non-free/packages/cmk-bakery/requirements.in
+    #   -r non-free/packages/cmk-cloud/requirements.in
     #   -r non-free/packages/cmk-core-helpers/requirements.in
     #   -r non-free/packages/cmk-dcd/requirements.in
     #   -r non-free/packages/cmk-liveproxyd/requirements.in

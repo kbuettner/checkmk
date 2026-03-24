@@ -3631,6 +3631,7 @@ pydantic==2.12.5 \
     # via
     #   -r cmk/requirements.in
     #   -r non-free/packages/cmk-bakery/requirements.in
+    #   -r non-free/packages/cmk-cloud/requirements.in
     #   -r non-free/packages/cmk-core-helpers/requirements.in
     #   -r non-free/packages/cmk-dcd/requirements.in
     #   -r non-free/packages/cmk-liveproxyd/requirements.in
@@ -4031,6 +4032,7 @@ pytest==8.3.5 \
     # via
     #   -c constraints.txt
     #   -r non-free/packages/cmk-bakery/dev-requirements.in
+    #   -r non-free/packages/cmk-cloud/dev-requirements.in
     #   -r non-free/packages/cmk-core-helpers/dev-requirements.in
     #   -r non-free/packages/cmk-dcd/dev-requirements.in
     #   -r non-free/packages/cmk-licensing-nonfree/dev-requirements.in
