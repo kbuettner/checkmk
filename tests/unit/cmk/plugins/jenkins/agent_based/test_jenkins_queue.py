@@ -67,7 +67,8 @@ def test_check_jenkins_queue(section: JenkinsQueue) -> None:
         "stuck": State.CRIT,
     }
 
-    assert list(check_jenkins_queue(params, section)) == [
+    value = list(check_jenkins_queue(params, section))
+    expected = [
         Result(state=State.OK, summary="Queue length: 1 Tasks"),
         Metric("queue", 1),
         Result(state=State.OK, summary="Stuck: 0"),
@@ -85,6 +86,8 @@ def test_check_jenkins_queue(section: JenkinsQueue) -> None:
             ),
         ),
     ]
+
+    assert value == expected
 
 
 @pytest.fixture(scope="module", name="multi_task_section")
@@ -141,7 +144,8 @@ def test_check_jenkins_queue_with_multiple_tasks(multi_task_section: JenkinsQueu
         "stuck": State.CRIT,
     }
 
-    assert list(check_jenkins_queue(params, multi_task_section)) == [
+    value = list(check_jenkins_queue(params, multi_task_section))
+    expected = [
         Result(state=State.OK, summary="Queue length: 2 Tasks"),
         Metric("queue", 2),
         Result(state=State.WARN, summary="Stuck: 1 (warn/crit at 1/2)"),
@@ -167,3 +171,5 @@ def test_check_jenkins_queue_with_multiple_tasks(multi_task_section: JenkinsQueu
             ),
         ),
     ]
+
+    assert value == expected

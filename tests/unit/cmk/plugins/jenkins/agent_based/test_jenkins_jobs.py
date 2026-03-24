@@ -148,23 +148,27 @@ def test_discovery_jenkins_org_folder() -> None:
         ]
     )
 
-    assert list(discovery_jenkins_jobs(section)) == [
-        Service(item="Powershell/Add-Laptops-Group"),
-    ]
+    value = list(discovery_jenkins_jobs(section))
+    expected = [Service(item="Powershell/Add-Laptops-Group")]
+
+    assert value == expected
 
 
 def test_discovery(section: Section) -> None:
-    assert list(discovery_jenkins_jobs(section)) == [
+    value = list(discovery_jenkins_jobs(section))
+    expected = [
         Service(item="project/Job"),
         Service(item="project/Job1"),
         Service(item="project/Job2"),
         Service(item="project/Job3"),
     ]
+    assert value == expected
 
 
 def test_check_job_item(section: Section) -> None:
     """Successfull job"""
-    assert list(_check_jenkins_jobs("project/Job", {}, section, now=TEST_TIME)) == [
+    value = list(_check_jenkins_jobs("project/Job", {}, section, now=TEST_TIME))
+    expected = [
         Result(state=State.OK, summary="Display name: Job"),
         Result(state=State.OK, summary="State: Success"),
         Result(state=State.OK, summary="Job score: 80.00%"),
@@ -178,20 +182,23 @@ def test_check_job_item(section: Section) -> None:
         Metric("jenkins_build_duration", 507.524),
         Result(state=State.OK, summary="Build result: Success"),
     ]
+    assert value == expected
 
 
 def test_check_job1_item(section: Section) -> None:
     "Never built job, state change to WARN"
-    assert list(check_jenkins_jobs("project/Job1", {"job_state": {"notbuilt": 1}}, section)) == [
+    value = list(check_jenkins_jobs("project/Job1", {"job_state": {"notbuilt": 1}}, section))
+    expected = [
         Result(state=State.OK, summary="Display name: Job 1"),
         Result(state=State.WARN, summary="State: Not built"),
     ]
+    assert value == expected
 
 
 def test_check_job2_item(section: Section) -> None:
     """Failed job"""
-
-    assert list(_check_jenkins_jobs("project/Job2", {}, section, now=TEST_TIME)) == [
+    value = list(_check_jenkins_jobs("project/Job2", {}, section, now=TEST_TIME))
+    expected = [
         Result(state=State.OK, summary="Display name: Job 2"),
         Result(state=State.OK, summary="State: Success"),
         Result(state=State.OK, summary="Job score: 50.00%"),
@@ -205,10 +212,12 @@ def test_check_job2_item(section: Section) -> None:
         Metric("jenkins_build_duration", 212.036),
         Result(state=State.OK, summary="Build result: Success"),
     ]
+    assert value == expected
 
 
 def test_check_job3_item(section: Section) -> None:
-    assert list(_check_jenkins_jobs("project/Job3", {}, section, now=TEST_TIME)) == [
+    value = list(_check_jenkins_jobs("project/Job3", {}, section, now=TEST_TIME))
+    expected = [
         Result(state=State.OK, summary="Display name: Job 3"),
         Result(state=State.OK, summary="State: Success"),
         Result(state=State.OK, summary="Job score: 100.00%"),
@@ -222,26 +231,23 @@ def test_check_job3_item(section: Section) -> None:
         Metric("jenkins_build_duration", 193.715),
         Result(state=State.CRIT, summary="Build result: Failure"),
     ]
+    assert value == expected
 
 
 def test_check_job3_item_with_params(section: Section) -> None:
-    assert list(
-        _check_jenkins_jobs(
-            "project/Job3",
-            {
-                "build_result": {
-                    "success": 0,
-                    "unstable": 0,
-                    "failure": 0,
-                    "aborted": 0,
-                    "null": 0,
-                    "none": 0,
-                }
-            },
-            section,
-            now=TEST_TIME,
-        )
-    ) == [
+    params = {
+        "build_result": {
+            "success": 0,
+            "unstable": 0,
+            "failure": 0,
+            "aborted": 0,
+            "null": 0,
+            "none": 0,
+        }
+    }
+
+    value = list(_check_jenkins_jobs("project/Job3", params, section, now=TEST_TIME))
+    expected = [
         Result(state=State.OK, summary="Display name: Job 3"),
         Result(state=State.OK, summary="State: Success"),
         Result(state=State.OK, summary="Job score: 100.00%"),
@@ -255,3 +261,5 @@ def test_check_job3_item_with_params(section: Section) -> None:
         Metric("jenkins_build_duration", 193.715),
         Result(state=State.OK, summary="Build result: Failure"),
     ]
+
+    assert value == expected

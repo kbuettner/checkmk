@@ -190,15 +190,18 @@ def _section() -> Section:
 
 
 def test_discovery(section: Section) -> None:
-    assert list(discover_jenkins_nodes(section)) == [
+    value = list(discover_jenkins_nodes(section))
+    expected = [
         Service(item="master"),
         Service(item="Windows"),
         Service(item="foo"),
     ]
+    assert value == expected
 
 
 def test_check_windows_item(section: Section) -> None:
-    assert list(check_jenkins_nodes("Windows", CHECK_DEFAULT_PARAMETERS, section)) == [
+    value = list(check_jenkins_nodes("Windows", CHECK_DEFAULT_PARAMETERS, section))
+    expected = [
         Result(state=State.OK, summary="Description: Name: Myname, Ip-Address: 1.1.1.1"),
         Result(state=State.OK, summary="Is JNLP agent: yes"),
         Result(state=State.OK, summary="Is idle: yes"),
@@ -217,10 +220,12 @@ def test_check_windows_item(section: Section) -> None:
         Result(state=State.OK, summary="Free temp space: 14.0 GiB"),
         Metric("jenkins_temp", 15085674496),
     ]
+    assert value == expected
 
 
 def test_check_master_item(section: Section) -> None:
-    assert list(check_jenkins_nodes("master", CHECK_DEFAULT_PARAMETERS, section)) == [
+    value = list(check_jenkins_nodes("master", CHECK_DEFAULT_PARAMETERS, section))
+    expected = [
         Result(state=State.OK, summary="Description: The Master Jenkins Node"),
         Result(state=State.OK, summary="Is JNLP agent: no"),
         Result(state=State.OK, summary="Is idle: no"),
@@ -239,20 +244,19 @@ def test_check_master_item(section: Section) -> None:
         Result(state=State.OK, summary="Free temp space: 30.3 GiB"),
         Metric("jenkins_temp", 32569888768),
     ]
+    assert value == expected
 
 
 def test_check_foo_item(section: Section) -> None:
-    assert list(
-        check_jenkins_nodes(
-            "foo",
-            {
-                **CHECK_DEFAULT_PARAMETERS,
-                "avg_response_time": ("fixed", (1.0, 2.0)),
-                "jenkins_clock": ("fixed", (3.0, 4.0)),
-            },
-            section,
-        )
-    ) == [
+    item = "foo"
+    params = {
+        **CHECK_DEFAULT_PARAMETERS,
+        "avg_response_time": ("fixed", (1.0, 2.0)),
+        "jenkins_clock": ("fixed", (3.0, 4.0)),
+    }
+
+    value = list(check_jenkins_nodes(item, params, section))
+    expected = [
         Result(state=State.OK, summary="Description: Name: Myname, Ip-Address: 1.1.1.1"),
         Result(state=State.OK, summary="Is JNLP agent: yes"),
         Result(state=State.OK, summary="Is idle: yes"),
@@ -277,6 +281,8 @@ def test_check_foo_item(section: Section) -> None:
         Result(state=State.OK, summary="Free temp space: 14.0 GiB"),
         Metric("jenkins_temp", 15085674496),
     ]
+
+    assert value == expected
 
 
 @pytest.fixture(scope="module", name="multi_label_section")
@@ -346,33 +352,22 @@ def test_showing_correct_executor_amount(multi_label_section: Section) -> None:
 
     The test will only check for very specific metrics and their correct value.
     """
-    executor_metrics = [
-        metric
-        for metric in check_jenkins_nodes(
-            "build-fra-002.lan.corpo.net",
-            CHECK_DEFAULT_PARAMETERS,
-            multi_label_section,
-        )
-        if isinstance(metric, Metric) and metric[0].endswith("_executors")
-    ]
+    item = "build-fra-002.lan.corpo.net"
 
-    expected_metrics = [
+    value = set(check_jenkins_nodes(item, CHECK_DEFAULT_PARAMETERS, multi_label_section))
+    expected = {
         Metric("jenkins_num_executors", 21.0),
         Metric("jenkins_busy_executors", 7.0),
         Metric("jenkins_idle_executors", 14.0),
-    ]
+    }
 
-    for metric_to_search in expected_metrics:
-        assert metric_to_search in executor_metrics
+    assert value & expected == expected
 
 
 def test_showing_correct_executor_mode(multi_label_section: Section) -> None:
-    check_results = list(
-        check_jenkins_nodes(
-            "build-fra-002.lan.corpo.net",
-            CHECK_DEFAULT_PARAMETERS,
-            multi_label_section,
-        )
-    )
+    item = "build-fra-002.lan.corpo.net"
 
-    assert Result(state=State.OK, summary="Mode: Normal") in check_results
+    value = check_jenkins_nodes(item, CHECK_DEFAULT_PARAMETERS, multi_label_section)
+    expected = Result(state=State.OK, summary="Mode: Normal")
+
+    assert expected in value
