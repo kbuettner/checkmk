@@ -119,8 +119,13 @@ def _expected_replication_paths() -> list[ReplicationPath]:
         ReplicationPath.make(
             ty=ReplicationPathType.DIR,
             ident="topology",
-            site_path="var/check_mk/topology",
+            site_path="var/check_mk/topology/configs",
             excludes_exact_match=[],
+        ),
+        ReplicationPath.make(
+            ty=ReplicationPathType.FILE,
+            ident="topology_settings",
+            site_path="var/check_mk/topology/topology_settings",
         ),
         ReplicationPath.make(
             ty=ReplicationPathType.DIR,

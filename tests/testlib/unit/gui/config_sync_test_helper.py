@@ -20,7 +20,7 @@ import cmk.gui.mkeventd.wato
 import cmk.utils.paths
 from cmk.ccc.site import SiteId
 from cmk.gui.config import active_config
-from cmk.gui.nodevis.utils import topology_dir
+from cmk.gui.nodevis.utils import topology_configs_dir
 from cmk.gui.watolib import activate_changes, config_sync
 from cmk.messaging import rabbitmq
 
@@ -88,7 +88,7 @@ def create_test_sync_config(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
 
     (cmk.utils.paths.omd_root / "local").mkdir(parents=True, exist_ok=True)
     (cmk.utils.paths.var_dir / "packages").mkdir(parents=True, exist_ok=True)
-    topology_dir.mkdir(parents=True, exist_ok=True)
+    topology_configs_dir.mkdir(parents=True, exist_ok=True)
 
     gui_conf_dir = cmk.utils.paths.default_config_dir / "multisite.d/wato"
     gui_conf_dir.mkdir(parents=True, exist_ok=True)

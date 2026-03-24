@@ -145,7 +145,7 @@ def _get_expected_paths(user_id: UserId) -> list[str]:
         "var/check_mk/packages",
         "var/check_mk/packages_local",
         "var/check_mk/disabled_packages",
-        "var/check_mk/topology",
+        "var/check_mk/topology/configs",
     ]
 
     return expected_paths
