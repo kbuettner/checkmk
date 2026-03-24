@@ -5,6 +5,7 @@
 
 
 import signal
+from pathlib import Path
 from types import FrameType
 from typing import NoReturn
 
@@ -20,6 +21,6 @@ def _handle_keepalive_interrupt(signum: int, frame: FrameType | None) -> NoRetur
     raise MKTerminate()
 
 
-def create_rrd(rrd_interface: RRDInterface) -> None:
+def create_rrd(rrd_interface: RRDInterface, omd_root: Path) -> None:
     signal.signal(signal.SIGINT, _handle_keepalive_interrupt)
-    RRDCreator(rrd_interface).create_rrds_keepalive(RRDConfig)
+    RRDCreator(rrd_interface, omd_root).create_rrds_keepalive(RRDConfig)

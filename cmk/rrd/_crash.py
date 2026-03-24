@@ -5,6 +5,7 @@
 
 import os
 import sys
+from pathlib import Path
 
 from cmk.ccc.crash_reporting import (
     ABCCrashReport,
@@ -15,16 +16,13 @@ from cmk.ccc.crash_reporting import (
     VersionInfo,
 )
 from cmk.ccc.version import get_general_version_infos
-from cmk.utils import paths
 
 
-def create_crash_report() -> None:
+def create_crash_report(omd_root: Path) -> None:
     CrashReportStore().save(
         CMKBaseCrashReport(
-            crash_report_base_path=make_crash_report_base_path(paths.omd_root),
-            crash_info=CMKBaseCrashReport.make_crash_info(
-                get_general_version_infos(paths.omd_root)
-            ),
+            crash_report_base_path=make_crash_report_base_path(omd_root),
+            crash_info=CMKBaseCrashReport.make_crash_info(get_general_version_infos(omd_root)),
         )
     )
 

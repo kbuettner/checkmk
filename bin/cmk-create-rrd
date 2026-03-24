@@ -6,6 +6,8 @@
 # NOTE: rrdtool is missing type hints
 import argparse
 import logging
+import os
+from pathlib import Path
 
 import rrdtool  # type: ignore[import-not-found]
 
@@ -25,7 +27,7 @@ def main() -> None:
     args = parser.parse_args()
     _set_log_level(args.verbose)
 
-    create_rrd(rrdtool)
+    create_rrd(rrdtool, Path(os.environ.get("OMD_ROOT", "")))
 
 
 if __name__ == "__main__":

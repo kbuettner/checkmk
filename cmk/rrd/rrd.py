@@ -728,8 +728,9 @@ def _write_line(text: str) -> None:
 
 
 class RRDCreator:
-    def __init__(self, rrd_interface: RRDInterface):
+    def __init__(self, rrd_interface: RRDInterface, omd_root: Path):
         self._rrd_interface = rrd_interface
+        self._omd_root = omd_root
         self._rrd_helper_output_buffer = b""
 
     def create_rrds_keepalive(self, config_class: type[RRDConfig]) -> None:
@@ -771,7 +772,7 @@ class RRDCreator:
         except Exception:
             if cmk.ccc.debug.enabled():
                 raise
-            create_crash_report()
+            create_crash_report(self._omd_root)
             self._queue_rrd_helper_response(
                 f"Check_MK RRD creator failed: {traceback.format_exc()}"
             )
@@ -795,7 +796,7 @@ class RRDCreator:
         except Exception as e:
             if cmk.ccc.debug.enabled():
                 raise
-            create_crash_report()
+            create_crash_report(self._omd_root)
             self._queue_rrd_helper_response(
                 f"Error creating RRD for {spec}: {str(e) or traceback.format_exc()}"
             )
