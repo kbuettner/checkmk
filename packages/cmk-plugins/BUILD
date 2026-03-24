@@ -344,6 +344,7 @@ py_test(
     deps = [
         ":__test__",
         ":netapp",
+        requirement("netapp_ontap"),
         requirement("polyfactory"),
         requirement("pytest"),
         requirement("time-machine"),
