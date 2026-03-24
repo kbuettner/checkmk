@@ -37,6 +37,16 @@ defineProps<{
   text-align: center;
 }
 
+@media (width < 1024px) {
+  .ucl-hero-banner {
+    background: linear-gradient(
+      90deg,
+      var(--color-corporate-green-70),
+      var(--color-corporate-green-40)
+    );
+  }
+}
+
 .ucl-hero-banner__content {
   display: flex;
   flex-direction: column;

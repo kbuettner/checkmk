@@ -144,4 +144,20 @@ import UclFooter from './UclFooter.vue'
   margin-bottom: 4px;
 }
 /* stylelint-enable selector-pseudo-class-no-unknown */
+
+@media (width < 1666px) {
+  .ucl-home-layout__audience-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width < 1024px) {
+  .ucl-home-layout__feature-split {
+    flex-direction: column;
+  }
+
+  .ucl-home-layout__audience-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
