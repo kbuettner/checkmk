@@ -44,6 +44,7 @@ from ._graph_specification import (
     graph_specification_registry,
     GraphMetric,
     GraphRecipe,
+    GraphRecipeWithOverrides,
     GraphSpecification,
     HorizontalRule,
     MinimalVerticalRange,
@@ -360,27 +361,29 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
         graph_index: int,
         graph_id: str,
         graph_recipe: GraphRecipe,
-    ) -> GraphRecipe | None:
-        return GraphRecipe(
-            title=(
-                f"{graph_recipe.title} (Graph ID: {graph_id})"
-                if painter_options.get("show_internal_graph_and_metric_ids")
-                else graph_recipe.title
-            ),
-            unit_spec=graph_recipe.unit_spec,
-            explicit_vertical_range=graph_recipe.explicit_vertical_range,
-            horizontal_rules=graph_recipe.horizontal_rules,
-            omit_zero_metrics=graph_recipe.omit_zero_metrics,
-            consolidation_function=graph_recipe.consolidation_function,
-            metrics=graph_recipe.metrics,
-            specification=self._make_specification(
-                site=site_id,
-                host_name=self.host_name,
-                service_description=self.service_description,
-                graph_index=graph_index,
-                graph_id=graph_id,
-                destination=self.destination,
-            ),
+    ) -> GraphRecipeWithOverrides | None:
+        return GraphRecipeWithOverrides(
+            recipe=GraphRecipe(
+                title=(
+                    f"{graph_recipe.title} (Graph ID: {graph_id})"
+                    if painter_options.get("show_internal_graph_and_metric_ids")
+                    else graph_recipe.title
+                ),
+                unit_spec=graph_recipe.unit_spec,
+                explicit_vertical_range=graph_recipe.explicit_vertical_range,
+                horizontal_rules=graph_recipe.horizontal_rules,
+                omit_zero_metrics=graph_recipe.omit_zero_metrics,
+                consolidation_function=graph_recipe.consolidation_function,
+                metrics=graph_recipe.metrics,
+                specification=self._make_specification(
+                    site=site_id,
+                    host_name=self.host_name,
+                    service_description=self.service_description,
+                    graph_index=graph_index,
+                    graph_id=graph_id,
+                    destination=self.destination,
+                ),
+            )
         )
 
     @tracer.instrument("graphing.TemplateGraphSpecification.recipes")
@@ -393,7 +396,7 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
         consolidation_function: GraphConsolidationFunction,
         debug: bool,
         temperature_unit: TemperatureUnit,
-    ) -> Sequence[GraphRecipe]:
+    ) -> Sequence[GraphRecipeWithOverrides]:
         row = self._get_graph_data_from_livestatus()
         if not (
             translated_metrics := translated_metrics_from_row(

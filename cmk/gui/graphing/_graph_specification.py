@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Annotated, final, Literal
 
 from pydantic import (
@@ -137,7 +137,7 @@ class GraphSpecification(BaseModel, ABC, frozen=True):
         consolidation_function: GraphConsolidationFunction,
         debug: bool,
         temperature_unit: TemperatureUnit,
-    ) -> Sequence[GraphRecipe]: ...
+    ) -> Sequence[GraphRecipeWithOverrides]: ...
 
     # mypy does not support other decorators on top of @property:
     # https://github.com/python/mypy/issues/14461
@@ -207,16 +207,6 @@ class GraphRecipe(BaseModel, frozen=True):
     consolidation_function: GraphConsolidationFunction | None
     metrics: Sequence[GraphMetric]
     additional_html: AdditionalGraphHTML | None = None
-    # The fields 'render_options' and 'time_range' are per-recipe overrides
-    # that are merged into the outer GraphContext.view and
-    # GraphContext.time_range before the round-trip begins. Carrying them again
-    # inside the serialized recipe is redundant and misleading.  Using
-    # Field(exclude=True) keeps the fields accessible in Python (so existing
-    # callers such as forecast graphs still work) but removes them from
-    # model_dump() output, so they no longer travel in the JSON sent to the
-    # browser and back.
-    render_options: GraphRenderOptions = Field(default_factory=GraphRenderOptions, exclude=True)
-    time_range: GraphTimeRange | None = Field(default=None, exclude=True)
     mark_requested_end_time: bool = False
     # https://docs.pydantic.dev/2.4/concepts/serialization/#subclass-instances-for-fields-of-basemodel-dataclasses-typeddict
     # https://docs.pydantic.dev/2.4/concepts/serialization/#serializing-with-duck-typing
@@ -226,3 +216,18 @@ class GraphRecipe(BaseModel, frozen=True):
     @classmethod
     def parse_specification(cls, value: Mapping[str, object]) -> GraphSpecification:
         return parse_raw_graph_specification(value)
+
+
+@dataclass(frozen=True)
+class GraphRecipeWithOverrides:
+    """Wraps a GraphRecipe together with optional per-recipe overrides.
+
+    The overrides mirror the sibling fields already present in GraphContext
+    (time_range and view_config) and allow individual recipes to request
+    a different time range or render options without embedding those fields
+    inside GraphRecipe itself.
+    """
+
+    recipe: GraphRecipe
+    time_range: GraphTimeRange | None = None
+    render_options: GraphRenderOptions = field(default_factory=GraphRenderOptions)

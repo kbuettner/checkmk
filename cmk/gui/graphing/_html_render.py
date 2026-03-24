@@ -73,7 +73,12 @@ from ._graph_display_config import (
     GraphTitleFormat,
 )
 from ._graph_metric_expressions import GraphMetricExpression
-from ._graph_specification import GraphRecipe, GraphSpecification, GraphTimeRange
+from ._graph_specification import (
+    GraphRecipe,
+    GraphRecipeWithOverrides,
+    GraphSpecification,
+    GraphTimeRange,
+)
 from ._graph_templates import (
     get_template_graph_specification,
     TemplateGraphSpecification,
@@ -1117,20 +1122,29 @@ def render_graphs_from_specification_html(
         )
 
     output = HTML.empty()
-    for graph_recipe in graph_recipes:
+    for graph_recipe_with_overrides in graph_recipes:
+        graph_recipe = graph_recipe_with_overrides.recipe
         if render_async:
             output += _render_graph_container_html(
                 graph_recipe,
-                graph_time_range.model_copy(update=dict(graph_recipe.time_range or {})),
-                graph_display_config.update_from_options(graph_recipe.render_options),
+                graph_time_range.model_copy(
+                    update=dict(graph_recipe_with_overrides.time_range or {})
+                ),
+                graph_display_config.update_from_options(
+                    graph_recipe_with_overrides.render_options
+                ),
                 graph_display_id=graph_display_id,
             )
         else:
             output += _render_graph_content_html(
                 request,
                 graph_recipe,
-                graph_time_range.model_copy(update=dict(graph_recipe.time_range or {})),
-                graph_display_config.update_from_options(graph_recipe.render_options),
+                graph_time_range.model_copy(
+                    update=dict(graph_recipe_with_overrides.time_range or {})
+                ),
+                graph_display_config.update_from_options(
+                    graph_recipe_with_overrides.render_options
+                ),
                 registered_metrics,
                 compute_graph_artwork(
                     graph_recipe,
@@ -1549,7 +1563,7 @@ class GraphDestinations:
 @tracer.instrument("graphing.host_service_graph_dashlet_cmk")
 def host_service_graph_dashlet_cmk(
     request: Request,
-    graph_recipes: Sequence[GraphRecipe],
+    graph_recipes: Sequence[GraphRecipeWithOverrides],
     graph_display_config: GraphDisplayConfig,
     registered_metrics: Mapping[str, RegisteredMetric],
     *,
@@ -1573,7 +1587,8 @@ def host_service_graph_dashlet_cmk(
     width -= bounds.left + bounds.right
 
     if graph_recipes:
-        graph_recipe = graph_recipes[0]
+        graph_recipe_with_overrides = graph_recipes[0]
+        graph_recipe = graph_recipe_with_overrides.recipe
     else:
         raise MKGraphRecipeNotFoundError(_("Failed to calculate a graph recipe."))
 
@@ -1652,8 +1667,8 @@ def host_service_graph_dashlet_cmk(
     return _render_graph_content_html(
         request,
         graph_recipe,
-        graph_time_range.model_copy(update=dict(graph_recipe.time_range or {})),
-        graph_display_config.update_from_options(graph_recipe.render_options),
+        graph_time_range.model_copy(update=dict(graph_recipe_with_overrides.time_range or {})),
+        graph_display_config.update_from_options(graph_recipe_with_overrides.render_options),
         registered_metrics,
         graph_artwork_or_errors,
         debug=debug,

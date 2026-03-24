@@ -16,6 +16,7 @@ from ._graph_specification import (
     FixedVerticalRange,
     GraphMetric,
     GraphRecipe,
+    GraphRecipeWithOverrides,
     GraphSpecification,
     HorizontalRule,
 )
@@ -45,20 +46,22 @@ class ExplicitGraphSpecification(GraphSpecification, frozen=True):
         consolidation_function: GraphConsolidationFunction,
         debug: bool,
         temperature_unit: TemperatureUnit,
-    ) -> Sequence[GraphRecipe]:
+    ) -> Sequence[GraphRecipeWithOverrides]:
         return [
-            GraphRecipe(
-                title=self.title,
-                unit_spec=self.unit,
-                consolidation_function=self.consolidation_function,
-                explicit_vertical_range=FixedVerticalRange(
-                    min=self.explicit_vertical_range[0],
-                    max=self.explicit_vertical_range[1],
-                ),
-                omit_zero_metrics=self.omit_zero_metrics,
-                horizontal_rules=self.horizontal_rules,
-                metrics=self.metrics,
-                specification=self,
-                mark_requested_end_time=self.mark_requested_end_time,
+            GraphRecipeWithOverrides(
+                recipe=GraphRecipe(
+                    title=self.title,
+                    unit_spec=self.unit,
+                    consolidation_function=self.consolidation_function,
+                    explicit_vertical_range=FixedVerticalRange(
+                        min=self.explicit_vertical_range[0],
+                        max=self.explicit_vertical_range[1],
+                    ),
+                    omit_zero_metrics=self.omit_zero_metrics,
+                    horizontal_rules=self.horizontal_rules,
+                    metrics=self.metrics,
+                    specification=self,
+                    mark_requested_end_time=self.mark_requested_end_time,
+                )
             )
         ]

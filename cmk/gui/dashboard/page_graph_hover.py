@@ -119,7 +119,7 @@ class GraphHoverTokenAuthPage(DashboardTokenAuthenticatedPage):
             graph_time_range = make_graph_time_range((start_time, end_time), height_in_ex)
 
             render_graph_hover_for_recipe(
-                recipes[0],
+                recipes[0].recipe,
                 graph_time_range,
                 metrics_from_api,
                 debug=ctx.config.debug,

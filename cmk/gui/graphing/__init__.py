@@ -33,6 +33,7 @@ from ._graph_pdf import (
 from ._graph_specification import (
     GraphMetric,
     GraphRecipe,
+    GraphRecipeWithOverrides,
     GraphSpecification,
     GraphTimeRange,
     parse_raw_graph_specification,
@@ -111,6 +112,7 @@ __all__ = [
     "GraphMetricOperation",
     "GraphPluginChoice",
     "GraphRecipe",
+    "GraphRecipeWithOverrides",
     "GraphDisplayConfig",
     "GraphDisplayConfigImage",
     "GraphRenderOptions",

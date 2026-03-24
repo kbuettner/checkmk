@@ -30,7 +30,7 @@ from cmk.gui.graphing import (
     get_template_graph_specification,
     GraphDestinations,
     GraphPluginChoice,
-    GraphRecipe,
+    GraphRecipeWithOverrides,
     graphs_from_api,
     GraphSpecification,
     metrics_from_api,
@@ -62,7 +62,12 @@ from cmk.gui.visuals import (
 )
 from cmk.utils.servicename import ServiceName
 
-from ..base import Dashlet, RelativeLayoutConstraints, ResponsiveLayoutConstraints, WidgetSize
+from ..base import (
+    Dashlet,
+    RelativeLayoutConstraints,
+    ResponsiveLayoutConstraints,
+    WidgetSize,
+)
 from .status_helpers import make_mk_missing_data_error
 
 GRAPH_TEMPLATE_CHOICE_AUTOCOMPLETER_ID = "available_graph_templates"
@@ -176,7 +181,7 @@ class ABCGraphDashlet(Dashlet[T], Generic[T, TGraphSpec]):
             self._dashlet_spec["timerange"] = "25h"
 
         self._cached_graph_specification: TGraphSpec | None = None
-        self._cached_recipes: Sequence[GraphRecipe] | None = None
+        self._cached_recipes: Sequence[GraphRecipeWithOverrides] | None = None
         self._init_exception: Exception | None = None
         try:
             self._cached_graph_specification = self.build_graph_specification(
@@ -191,7 +196,7 @@ class ABCGraphDashlet(Dashlet[T], Generic[T, TGraphSpec]):
     @staticmethod
     def _compute_graph_recipes(
         graph_specification: TGraphSpec, config: Config
-    ) -> Sequence[GraphRecipe]:
+    ) -> Sequence[GraphRecipeWithOverrides]:
         try:
             return graph_specification.recipes(
                 metrics_from_api,
@@ -210,7 +215,7 @@ class ABCGraphDashlet(Dashlet[T], Generic[T, TGraphSpec]):
         except Exception as e:
             raise make_mk_missing_data_error(reason=_("Failed to calculate a graph recipe.")) from e
 
-    def graph_recipes(self) -> Sequence[GraphRecipe]:
+    def graph_recipes(self) -> Sequence[GraphRecipeWithOverrides]:
         if self._cached_recipes is None:
             assert self._init_exception is not None
             raise self._init_exception
@@ -218,7 +223,7 @@ class ABCGraphDashlet(Dashlet[T], Generic[T, TGraphSpec]):
 
     def default_display_title(self) -> str:
         if self._cached_recipes:
-            return self._cached_recipes[0].title
+            return self._cached_recipes[0].recipe.title
         return self.title()
 
 

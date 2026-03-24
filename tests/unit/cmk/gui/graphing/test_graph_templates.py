@@ -816,8 +816,9 @@ def test_template_recipes_matching(
     graph_index: int | None,
     expected: Sequence[GraphRecipe],
 ) -> None:
-    assert (
-        _FakeTemplateGraphSpecification(
+    assert [
+        r.recipe
+        for r in _FakeTemplateGraphSpecification(
             site=SiteId("site_id"),
             host_name=HostName("host_name"),
             service_description=ServiceName("service_name"),
@@ -861,8 +862,7 @@ def test_template_recipes_matching(
             debug=False,
             temperature_unit=TemperatureUnit.CELSIUS,
         )
-        == expected
-    )
+    ] == expected
 
 
 @pytest.mark.parametrize(
@@ -2091,77 +2091,80 @@ class _FakeTemplateGraphSpecificationFS(TemplateGraphSpecification):
 
 
 def test_template_recipes_fs() -> None:
-    assert _FakeTemplateGraphSpecificationFS(
-        site=SiteId("site_id"),
-        host_name=HostName("host_name"),
-        service_description="service_name",
-    ).recipes(
-        {
-            "fs_growth": RegisteredMetric(
-                name="fs_growth",
-                title_localizer=lambda _localizer: "Growth",
-                unit_spec=ConvertibleUnitSpecification(
-                    notation=IECNotation(symbol="B/d"),
-                    precision=AutoPrecision(digits=2),
-                ),
-                color="#1ee6e6",
-            ),
-            "fs_used": RegisteredMetric(
-                name="fs_used",
-                title_localizer=lambda _localizer: "Used space",
-                unit_spec=ConvertibleUnitSpecification(
-                    notation=IECNotation(symbol="B"),
-                    precision=AutoPrecision(digits=2),
-                ),
-                color="#1e90ff",
-            ),
-            "fs_free": RegisteredMetric(
-                name="fs_free",
-                title_localizer=lambda _localizer: "Free space",
-                unit_spec=ConvertibleUnitSpecification(
-                    notation=IECNotation(symbol="B"),
-                    precision=AutoPrecision(digits=2),
-                ),
-                color="#d28df6",
-            ),
-            "fs_size": RegisteredMetric(
-                name="fs_size",
-                title_localizer=lambda _localizer: "Total size",
-                unit_spec=ConvertibleUnitSpecification(
-                    notation=IECNotation(symbol="B"),
-                    precision=AutoPrecision(digits=2),
-                ),
-                color="#37fa37",
-            ),
-        },
-        {
-            "fs_used": graphs.Graph(
-                name="fs_used",
-                title=Title("Size and used space"),
-                minimal_range=graphs.MinimalRange(
-                    0,
-                    metrics.MaximumOf(
-                        "fs_used",
-                        metrics.Color.GRAY,
+    assert [
+        r.recipe
+        for r in _FakeTemplateGraphSpecificationFS(
+            site=SiteId("site_id"),
+            host_name=HostName("host_name"),
+            service_description="service_name",
+        ).recipes(
+            {
+                "fs_growth": RegisteredMetric(
+                    name="fs_growth",
+                    title_localizer=lambda _localizer: "Growth",
+                    unit_spec=ConvertibleUnitSpecification(
+                        notation=IECNotation(symbol="B/d"),
+                        precision=AutoPrecision(digits=2),
                     ),
+                    color="#1ee6e6",
                 ),
-                compound_lines=[
-                    "fs_used",
-                    "fs_free",
-                ],
-                simple_lines=[
-                    "fs_size",
-                    metrics.WarningOf("fs_used"),
-                    metrics.CriticalOf("fs_used"),
-                ],
-                conflicting=["reserved"],
-            ),
-        },
-        UserPermissions({}, {}, {}, []),
-        consolidation_function="max",
-        debug=False,
-        temperature_unit=TemperatureUnit.CELSIUS,
-    ) == [
+                "fs_used": RegisteredMetric(
+                    name="fs_used",
+                    title_localizer=lambda _localizer: "Used space",
+                    unit_spec=ConvertibleUnitSpecification(
+                        notation=IECNotation(symbol="B"),
+                        precision=AutoPrecision(digits=2),
+                    ),
+                    color="#1e90ff",
+                ),
+                "fs_free": RegisteredMetric(
+                    name="fs_free",
+                    title_localizer=lambda _localizer: "Free space",
+                    unit_spec=ConvertibleUnitSpecification(
+                        notation=IECNotation(symbol="B"),
+                        precision=AutoPrecision(digits=2),
+                    ),
+                    color="#d28df6",
+                ),
+                "fs_size": RegisteredMetric(
+                    name="fs_size",
+                    title_localizer=lambda _localizer: "Total size",
+                    unit_spec=ConvertibleUnitSpecification(
+                        notation=IECNotation(symbol="B"),
+                        precision=AutoPrecision(digits=2),
+                    ),
+                    color="#37fa37",
+                ),
+            },
+            {
+                "fs_used": graphs.Graph(
+                    name="fs_used",
+                    title=Title("Size and used space"),
+                    minimal_range=graphs.MinimalRange(
+                        0,
+                        metrics.MaximumOf(
+                            "fs_used",
+                            metrics.Color.GRAY,
+                        ),
+                    ),
+                    compound_lines=[
+                        "fs_used",
+                        "fs_free",
+                    ],
+                    simple_lines=[
+                        "fs_size",
+                        metrics.WarningOf("fs_used"),
+                        metrics.CriticalOf("fs_used"),
+                    ],
+                    conflicting=["reserved"],
+                ),
+            },
+            UserPermissions({}, {}, {}, []),
+            consolidation_function="max",
+            debug=False,
+            temperature_unit=TemperatureUnit.CELSIUS,
+        )
+    ] == [
         GraphRecipe(
             title="Size and used space",
             unit_spec=ConvertibleUnitSpecification(
@@ -2226,7 +2229,6 @@ def test_template_recipes_fs() -> None:
                 ),
             ],
             additional_html=None,
-            time_range=None,
             mark_requested_end_time=False,
             specification=_FakeTemplateGraphSpecificationFS(
                 site=SiteId("site_id"),
@@ -2267,7 +2269,6 @@ def test_template_recipes_fs() -> None:
                 )
             ],
             additional_html=None,
-            time_range=None,
             mark_requested_end_time=False,
             specification=_FakeTemplateGraphSpecificationFS(
                 site=SiteId("site_id"),

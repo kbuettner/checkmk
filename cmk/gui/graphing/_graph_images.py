@@ -56,7 +56,7 @@ from ._graph_pdf import (
 )
 from ._graph_specification import (
     AugmentedTimeSeriesOfGraphMetric,
-    GraphRecipe,
+    GraphRecipeWithOverrides,
     GraphTimeRange,
     parse_raw_graph_specification,
 )
@@ -165,9 +165,9 @@ def _answer_graph_image_request(
         num_graphs = request.get_integer_input("num_graphs") or len(graph_recipes)
 
         graphs = []
-        for graph_recipe in graph_recipes[:num_graphs]:
+        for graph_recipe_with_overrides in graph_recipes[:num_graphs]:
             graph_artwork = compute_graph_artwork(
-                graph_recipe,
+                graph_recipe_with_overrides.recipe,
                 graph_time_range,
                 graph_display_config.size,
                 registered_metrics,
@@ -265,7 +265,7 @@ def graph_recipes_for_api_request(
     *,
     debug: bool,
     temperature_unit: TemperatureUnit,
-) -> tuple[GraphTimeRange, Sequence[GraphRecipe]]:
+) -> tuple[GraphTimeRange, Sequence[GraphRecipeWithOverrides]]:
     # Get and validate the specification
     if not (raw_graph_spec := api_request.get("specification")):
         raise MKUserError(None, _("The graph specification is missing"))
@@ -378,7 +378,7 @@ def graph_spec_from_request(  # type: ignore[misc]
             debug=debug,
             temperature_unit=temperature_unit,
         )
-        graph_recipe = graph_recipes[0]
+        graph_recipe = graph_recipes[0].recipe
 
     except PydanticValidationError as e:
         raise MKUserError(None, str(e))
