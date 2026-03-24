@@ -3,7 +3,9 @@ Copyright (C) 2026 Checkmk GmbH - License: GNU General Public License v2
 This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 conditions defined in the file COPYING, which is part of this source code package.
 -->
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import UclFooter from './UclFooter.vue'
+</script>
 
 <template>
   <div class="ucl-home-layout">
@@ -36,6 +38,15 @@ conditions defined in the file COPYING, which is part of this source code packag
         </div>
       </section>
     </main>
+
+    <div class="ucl-home-layout__container ucl-home-layout__footer-wrapper">
+      <UclFooter
+        title="Design System documentation"
+        subtitle="Explore detailed guidelines, usage principles, and processes in our Design System documentation. This space provides additional context to help you design, build, and maintain consistent components."
+        button-text="View documentation"
+        button-url="https://wiki.lan.checkmk.net/spaces/DS/pages/190546413/Design+System+Home"
+      />
+    </div>
   </div>
 </template>
 
@@ -45,7 +56,6 @@ conditions defined in the file COPYING, which is part of this source code packag
   --spacing-section: 64px;
 
   line-height: 1.5;
-  padding-bottom: 80px;
 }
 
 .ucl-home-layout__container {
@@ -95,6 +105,10 @@ conditions defined in the file COPYING, which is part of this source code packag
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   width: 100%;
+}
+
+.ucl-home-layout__footer-wrapper {
+  padding-bottom: 24px;
 }
 
 /* stylelint-disable selector-pseudo-class-no-unknown */

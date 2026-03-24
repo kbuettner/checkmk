@@ -5,10 +5,9 @@ conditions defined in the file COPYING, which is part of this source code packag
 -->
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 
-import UclFooter from './components/UclFooter.vue'
 import UclHeader from './components/UclHeader.vue'
 import UclNavigation from './components/UclNavigation.vue'
 import { useLegacyCss } from './composables/useLegacyCss'
@@ -18,12 +17,6 @@ useLegacyCss()
 const currentRoute = useRoute()
 const screenshotMode = ref(currentRoute.query.screenshot === 'true')
 const BUILD_COMMIT = import.meta.env.VITE_BUILD_COMMIT
-
-const documentationUrl = computed(() =>
-  currentRoute.path === '/'
-    ? 'https://wiki.lan.checkmk.net/spaces/DS/pages/190546413/Design+System+Home'
-    : 'https://wiki.lan.checkmk.net/spaces/DS/pages/190552500/Components'
-)
 
 watch(
   () => currentRoute.query.screenshot,
@@ -49,14 +42,6 @@ watch(
           <RouterView />
         </div>
 
-        <footer class="ucl-app__footer">
-          <UclFooter
-            title="Design System documentation"
-            subtitle="Explore detailed guidelines, usage principles, and processes in our Design System documentation. This space provides additional context to help you design, build, and maintain consistent components."
-            button-text="View documentation"
-            :button-url="documentationUrl"
-          />
-        </footer>
         <div class="ucl-app__footer-build-info">
           <ul>
             <li v-if="BUILD_COMMIT">
@@ -146,11 +131,6 @@ watch(
 .ucl-app__area {
   flex: 1;
   padding: 16px;
-}
-
-.ucl-app__footer {
-  margin-top: auto;
-  padding: 0 16px 16px;
 }
 
 .ucl-app__footer-build-info {
