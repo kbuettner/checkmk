@@ -34,7 +34,7 @@ const { page } = defineProps<{
   color: var(--ucl-body-text-color);
 }
 
-.ucl-nav-page.ucl-nav-page--active {
+:root a.ucl-nav-page.ucl-nav-page--active {
   color: var(--ucl-nav-tree-link-active-color);
   font-weight: 700;
   border-left: 3px solid var(--ucl-nav-tree-link-active-color);

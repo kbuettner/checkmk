@@ -51,7 +51,7 @@ function toggle(f: NavFolder) {
   width: 100%;
   background: none;
   border: none;
-  padding: 4px 0 4px 15px;
+  padding: 4px 0 4px 8px;
   font-size: 12px;
   text-decoration: none;
   cursor: pointer;
@@ -61,11 +61,11 @@ function toggle(f: NavFolder) {
 
 .ucl-nav-folder--root {
   font-size: 14px;
-  padding: 8px 0 8px 12px;
+  padding: 8px 0;
 }
 
 .ucl-nav-folder__children {
-  margin-left: 20px;
+  margin-left: 15px;
   list-style: none;
   padding: 0;
   margin-top: 4px;

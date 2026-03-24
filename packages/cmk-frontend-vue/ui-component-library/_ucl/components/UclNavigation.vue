@@ -40,14 +40,14 @@ const isSearching = ref(false)
   font-size: 14px;
   font-weight: 700;
   color: var(--ucl-headings-font-color);
-  padding: 8px 0 8px 40px;
-  margin-bottom: 4px;
+  padding: 4px 0 4px 26px;
   text-decoration: none;
 }
 
-.ucl-navigation__home-link--active {
+.ucl-navigation__home-link.ucl-navigation__home-link--active {
   color: var(--ucl-nav-tree-link-active-color);
   border-left: 3px solid var(--ucl-nav-tree-link-active-color);
   background-color: var(--ucl-nav-tree-link-active-color-bg);
+  padding-left: 23px;
 }
 </style>
