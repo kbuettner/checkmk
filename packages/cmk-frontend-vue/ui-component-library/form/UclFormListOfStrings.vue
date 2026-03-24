@@ -72,6 +72,11 @@ const autocompleterStringSpec: String = {
   }
 }
 
+const autocompleterStringSpecWithHint: String = {
+  ...autocompleterStringSpec,
+  input_hint: '(Select hostname)'
+}
+
 const simpleStringSpec: String = {
   type: 'string',
   title: '',
@@ -98,6 +103,7 @@ function getSpec(additionalParams: Partial<ListOfStrings>): ListOfStrings {
 }
 
 const data = ref<Array<string>>(['some', 'value'])
+const autocompleterEmptyData = ref<Array<string>>([])
 const oneElementData1 = ref<Array<string>>([])
 const manyElementsData1 = ref<Array<string>>(['1', '2', '3', '4', '5', '6'])
 const oneElementData2 = ref<Array<string>>([])
@@ -111,6 +117,13 @@ const manyElementsData2 = ref<Array<string>>(['1', '2', '3', '4', '5', '6'])
     <FormEdit
       v-model:data="data"
       :spec="getSpec({ string_spec: autocompleterStringSpec })"
+      :backend-validation="[]"
+    />
+    <h2>With autocompleter and input hint to show placeholder rendering</h2>
+    <pre>{{ JSON.stringify(autocompleterEmptyData) }}</pre>
+    <FormEdit
+      v-model:data="autocompleterEmptyData"
+      :spec="getSpec({ string_spec: autocompleterStringSpecWithHint })"
       :backend-validation="[]"
     />
   </span>
