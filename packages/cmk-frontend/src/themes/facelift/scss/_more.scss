@@ -64,7 +64,7 @@ a.more {
 
     /* stylelint-disable-next-line selector-pseudo-element-colon-notation */
     &:after {
-      content: url('../facelift/images/icon_show_more.svg');
+      content: url('images/icon_show_more.svg');
     }
   }
 
@@ -78,7 +78,7 @@ a.more {
 
       /* stylelint-disable-next-line selector-pseudo-element-colon-notation */
       &:after {
-        content: url('../facelift/images/icon_show_less.svg');
+        content: url('images/icon_show_less.svg');
       }
     }
   }
