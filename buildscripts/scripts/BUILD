@@ -74,6 +74,13 @@ py_binary(
     deps = [requirement("pyyaml")],
 )
 
+py_binary(
+    name = "collect_mypy",
+    srcs = ["collect_mypy.py"],
+    main = "collect_mypy.py",
+    tags = ["manual"],
+)
+
 filegroup(
     name = "groovy_files",
     srcs = glob(["**/*.groovy"]),
@@ -84,6 +91,7 @@ sh_library(
     name = "buildscripts_sh",
     srcs = [
         "bazel_execution_log_parser.sh",
+        "bazel_mypy.sh",
         "bazel_test_non_cpp.sh",
         "bazel_test_post_archive_xunit.sh",
         "create_unsign_msi_patch.sh",

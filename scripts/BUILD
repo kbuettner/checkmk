@@ -22,13 +22,6 @@ py_binary(
     deps = [requirement("sarif-tools")],
 )
 
-py_binary(
-    name = "collect_mypy",
-    srcs = ["collect_mypy.py"],
-    main = "collect_mypy.py",
-    tags = ["manual"],
-)
-
 sh_library(
     name = "scripts_sh",
     srcs = [

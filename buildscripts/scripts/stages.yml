@@ -350,18 +350,13 @@ STAGES:
       ONLY_WHEN_NOT_EMPTY: CHANGED_REFERENCE_IMAGE,CHANGED_FIND_PYTHON_FILES_SCRIPT,CHANGED_PYTHON_FILES,CHANGED_BAZEL_FILES,CHANGED_BAZEL_MODULES
       COMMAND: |
           set +e
-          bazel \
-             build \
-             --keep_going \
-             --aspects=//bazel/tools:aspects.bzl%mypy_aspect \
-             --output_groups=mypy \
-             ...
+          ./buildscripts/scripts/bazel_mypy.sh
           exit_code=$?
           set -e
           bazel \
              --run_under="cd $PWD &&" \
              run \
-             //scripts:collect_mypy \
+             //buildscripts/scripts:collect_mypy \
              -- \
              bazel-out/k8-fastbuild/bin \
              > results/mypy-results.xml

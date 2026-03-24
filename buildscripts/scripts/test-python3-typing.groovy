@@ -7,12 +7,25 @@ void main() {
 
     dir("${checkout_dir}") {
         test_jenkins_helper.execute_test([
-            name: "test-mypy-docker",
-            cmd: "MYPY_ADDOPTS='--no-color-output --junit-xml mypy.xml' make -C tests test-mypy",
+            name: "test-mypy",
+            cmd: """\
+set +e
+./buildscripts/scripts/bazel_mypy.sh
+exit_code=\$?
+set -e
+mkdir -p results
+bazel --run_under="cd \$PWD &&" run //buildscripts/scripts:collect_mypy -- bazel-out/k8-fastbuild/bin > results/mypy-results.xml
+exit \$exit_code
+            """,
             disable_hot_cache: true,
         ]);
 
-        test_jenkins_helper.analyse_issues("MYPY", "mypy.xml");
+        archiveArtifacts(
+            allowEmptyArchive: true,
+            artifacts: "results/mypy-results.xml",
+            fingerprint: true,
+        );
+        test_jenkins_helper.analyse_issues("JUNIT", "results/mypy-results.xml");
     }
 }
 
