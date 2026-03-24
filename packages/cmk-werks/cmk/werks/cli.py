@@ -458,7 +458,7 @@ def git_commit(werk: Werk, custom_files: list[str]) -> None:
 
 def git_top_level() -> str:
     with subprocess.Popen(["git", "rev-parse", "--show-toplevel"], stdout=subprocess.PIPE) as info:
-        return str(info.communicate()[0].split()[0])
+        return info.communicate()[0].decode().split()[0]
 
 
 def something_in_git_index() -> bool:
