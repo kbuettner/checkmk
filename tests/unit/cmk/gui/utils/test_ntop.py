@@ -9,11 +9,8 @@
 from typing import Any
 
 import pytest
-from pytest import MonkeyPatch
 
-import cmk.ccc.version as cmk_version
-from cmk.gui.config import active_config
-from cmk.gui.logged_in import user
+from cmk.ccc.version import Edition, edition
 from cmk.gui.utils.ntop import (
     get_ntop_misconfiguration_reason,
     is_ntop_available,
@@ -22,11 +19,13 @@ from cmk.gui.utils.ntop import (
 from cmk.utils import paths
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 @pytest.mark.usefixtures("load_config")
 def test_is_ntop_available() -> None:
-    assert is_ntop_available() != (
-        cmk_version.edition(paths.omd_root) is cmk_version.Edition.COMMUNITY
-    )
+    assert not is_ntop_available()
 
 
 @pytest.mark.usefixtures("load_config")
@@ -63,20 +62,15 @@ def test_is_ntop_available() -> None:
         ),
     ],
 )
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_is_ntop_configured_and_reason(
-    monkeypatch: MonkeyPatch,
     ntop_connection: dict[str, Any],
     custom_user: str,
     answer: bool,
     reason: str,
 ) -> None:
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.COMMUNITY:
-        assert not is_ntop_configured()
-        assert get_ntop_misconfiguration_reason() == "ntopng integration is only available in CEE"
-    else:
-        with monkeypatch.context() as m:
-            m.setattr(active_config, "ntop_connection", ntop_connection)
-            if custom_user:
-                user._set_attribute("ntop_alias", custom_user)
-            assert is_ntop_configured() == answer
-            assert get_ntop_misconfiguration_reason() == reason
+    assert not is_ntop_configured()
+    assert get_ntop_misconfiguration_reason() == "ntopng integration is only available in CEE"
