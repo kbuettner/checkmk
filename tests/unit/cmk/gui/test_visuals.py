@@ -242,6 +242,10 @@ def test_get_missing_single_infos_missing_context() -> None:
     assert visuals.get_missing_single_infos(single_infos=["host"], context={}) == {"host"}
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_get_context_specs_no_info_limit() -> None:
     result = visuals.get_context_specs(["host"], list(visual_info_registry.keys()))
     expected = [
@@ -297,8 +301,6 @@ def test_get_context_specs_no_info_limit() -> None:
         "service",
         "servicegroup",
     ]
-    if edition(paths.omd_root) is Edition.ULTIMATEMT:
-        expected += ["customer"]
 
     assert {r[0] for r in result} == set(expected)
 

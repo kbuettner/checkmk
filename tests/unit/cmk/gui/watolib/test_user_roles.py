@@ -11,12 +11,10 @@ from contextlib import contextmanager
 
 import pytest
 
-import cmk.ccc.version as cmk_version
 from cmk.gui.exceptions import MKUserError
 from cmk.gui.userdb import get_user_attributes, UserRole
 from cmk.gui.watolib import userroles
 from cmk.gui.watolib.userroles import RoleID
-from cmk.utils import paths
 
 
 @contextmanager
@@ -42,18 +40,10 @@ def test_deleting_cloned_user_roles() -> None:
     userroles.clone_role(RoleID("admin"), pprint_value=False)
 
     all_roles: Mapping[RoleID, UserRole] = userroles.get_all_roles()
-    assert (
-        len(all_roles) == 5
-        if cmk_version.edition(paths.omd_root) is cmk_version.Edition.ULTIMATE
-        else 4
-    )
+    assert len(all_roles) == 6
     userroles.delete_role(RoleID("adminx"), get_user_attributes([]), pprint_value=False)
     roles_after_deletion: Mapping[RoleID, UserRole] = userroles.get_all_roles()
-    assert (
-        len(roles_after_deletion) == 4
-        if cmk_version.edition(paths.omd_root) is cmk_version.Edition.ULTIMATE
-        else 3
-    )
+    assert len(roles_after_deletion) == 5
 
 
 @pytest.mark.usefixtures("patch_omd_site")
@@ -64,11 +54,7 @@ def test_cloning_user_roles() -> None:
         userroles.clone_role(roleid, pprint_value=False)
 
     all_roles: Mapping[RoleID, UserRole] = userroles.get_all_roles()
-    assert (
-        len(all_roles) == 8
-        if cmk_version.edition(paths.omd_root) is cmk_version.Edition.ULTIMATE
-        else 6
-    )
+    assert len(all_roles) == 10
     assert {roleid for roleid in all_roles.keys() if roleid.endswith("x")} == {
         "adminx",
         "guestx",

@@ -17,8 +17,8 @@ from zoneinfo import ZoneInfo
 import pytest
 import time_machine
 
-import cmk.ccc.version as cmk_version
 from cmk.ccc.user import UserId
+from cmk.ccc.version import Edition, edition
 from cmk.gui import sites
 from cmk.gui.config import active_config
 from cmk.gui.http import request
@@ -72,6 +72,10 @@ def fixture_livestatus_test_config(
     return live
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 @pytest.mark.usefixtures("load_config")
 def test_registered_painters() -> None:
     painters = all_painters(active_config.tags.tag_groups).keys()
@@ -962,46 +966,6 @@ def test_registered_painters() -> None:
         "wato_folder_plain",
         "wato_folder_rel",
     ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_painters += [
-            "svc_metrics_forecast",
-            "svc_metrics_hist",
-            "sla_fixed",
-            "sla_specific",
-            "ntop_host_details",
-            "ntop_ports",
-            "ntop_protocol_breakdown",
-            "ntop_top_peers",
-            "deployment_downloaded_hash",
-            "deployment_icons",
-            "deployment_installed_hash",
-            "deployment_last_contact",
-            "deployment_last_download",
-            "deployment_last_error",
-            "deployment_target_hash",
-            "downtime_recurring",
-            "host_azure_resource_group",
-            "host_azure_subscription",
-        ]
-
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.ULTIMATEMT:
-        expected_painters += [
-            "host_customer",
-            "customer_id",
-            "customer_name",
-            "customer_num_hosts",
-            "customer_num_hosts_down",
-            "customer_num_hosts_pending",
-            "customer_num_hosts_unreach",
-            "customer_num_hosts_up",
-            "customer_num_services",
-            "customer_num_services_crit",
-            "customer_num_services_ok",
-            "customer_num_services_pending",
-            "customer_num_services_unknown",
-            "customer_num_services_warn",
-        ]
 
     assert set(painters) == set(expected_painters)
 

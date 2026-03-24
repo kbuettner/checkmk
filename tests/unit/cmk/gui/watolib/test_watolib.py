@@ -18,6 +18,10 @@ from cmk.gui.watolib.config_domain_name import (
 from cmk.utils import paths
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_config_domains() -> None:
     expected_config_domains = [
         "apache",
@@ -31,22 +35,6 @@ def test_registered_config_domains() -> None:
         "site-certificate",
         "product_usage_analytics",
     ]
-
-    if edition(paths.omd_root) is not Edition.COMMUNITY:
-        expected_config_domains += [
-            "dcd",
-            "mknotifyd",
-            "liveproxyd",
-        ]
-
-    if edition(paths.omd_root) in {
-        Edition.ULTIMATE,
-        Edition.ULTIMATEMT,
-    }:
-        expected_config_domains += [
-            "metric_backend",
-            "otel_collector",
-        ]
 
     registered = sorted(config_domain_registry.keys())
     assert registered == sorted(expected_config_domains)

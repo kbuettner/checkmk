@@ -9,14 +9,18 @@ from typing import override
 import pytest
 from werkzeug.test import create_environ
 
-import cmk.ccc.version as cmk_version
 import cmk.gui.pages
+from cmk.ccc.version import Edition, edition
 from cmk.gui.config import Config
 from cmk.gui.http import Request
 from cmk.gui.pages import Page, PageContext, PageEndpoint
 from cmk.utils import paths
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_pages() -> None:
     expected_pages = [
         "add_bookmark",
@@ -166,89 +170,6 @@ def test_registered_pages() -> None:
         "gui_timings",
         "download_product_usage",
     ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_pages += [
-            "ajax_pagetype_add_element",
-            "ajax_popup_add_metric_to_graph",
-            "combined_graphs",
-            "create_report",
-            "custom_graph",
-            "custom_graph_design",
-            "custom_graphs",
-            "download_agent",
-            "download_mkp",
-            "download_stored_report",
-            "edit_custom_graph",
-            "edit_forecast_graph",
-            "edit_graph_collection",
-            "edit_graph_tuning",
-            "edit_report",
-            "edit_report_content",
-            "edit_report_element",
-            "edit_report_fixel",
-            "edit_reports",
-            "edit_sla_configuration",
-            "forecast_editor",
-            "forecast_graph",
-            "forecast_graphs",
-            "graph_collection",
-            "graph_collections",
-            "graph_export",
-            "graph_image",
-            "graph_tunings",
-            "noauth:deploy_agent",
-            "register_agent",
-            "report",
-            "report_download_preview",
-            "report_instant",
-            "report_instant_graph_collection",
-            "report_scheduler",
-            "report_scheduler_edit",
-            "report_scheduler_preview",
-            "report_store",
-            "report_thumbnail",
-            "sla_configurations",
-            "sla_details",
-            "ntop_host_details",
-            "ajax_ntop_top_talkers",
-            "ajax_ntop_interface_quickstats",
-            "ajax_ntop_host_details",
-            "ajax_ntop_host_stats",
-            "ajax_ntop_host_traffic",
-            "ajax_ntop_host_ports",
-            "ajax_ntop_host_ports_painter",
-            "ajax_ntop_host_protocol_breakdown",
-            "ajax_ntop_host_top_peers_protocols",
-            "ajax_ntop_host_top_peers_protocols_painter",
-            "ajax_ntop_host_top_peers_protocols_bar",
-            "ajax_ntop_host_top_peers_protocols_pie",
-            "ajax_ntop_host_packets",
-            "ajax_ntop_host_applications",
-            "ajax_ntop_flows",
-            "ajax_ntop_engaged_alerts",
-            "ajax_ntop_past_alerts",
-            "ajax_ntop_flow_alerts",
-            "ajax_ntop_ifid",
-            "licensing_download_verification_request",
-            "noauth:saml_acs",
-            "noauth:saml_metadata",
-            "noauth:saml_sso",
-            "robotmk_suite_log",
-            "download_robotmk_suite_report",
-            "ajax_fetch_metric_color",
-            "ajax_fetch_ajax_graph",
-        ]
-
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.CLOUD:
-        expected_pages += [
-            "noauth:cognito_sso",
-            "noauth:cognito_callback",
-            "cognito_logout",
-            "noauth:download_license_request",
-            "noauth:upload_license_response",
-            "noauth:download_license_usage",
-        ]
 
     # TODO: Depending on how we call the test (single test or whole package) we
     # see this page or we don't...

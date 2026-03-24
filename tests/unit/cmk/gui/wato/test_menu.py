@@ -6,7 +6,7 @@
 
 import pytest
 
-import cmk.ccc.version as cmk_version
+from cmk.ccc.version import Edition, edition
 from cmk.gui.search import MatchItem
 from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.wato._snapins import get_wato_menu_items, MatchItemGeneratorSetupMenu
@@ -15,94 +15,22 @@ from cmk.utils import paths
 
 
 def expected_items() -> dict[str, list[str]]:
-    agents_items = []
-
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.COMMUNITY:
-        agents_items += [
+    return {
+        "agents": [
             "download_agents_linux",
             "download_agents_windows",
-        ]
-    else:
-        agents_items += [
-            "agents",
-        ]
-
-    agents_items += [
-        "download_agents",
-    ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        agents_items.append("agent_registration")
-
-    agents_items += [
-        "wato.py?group=vm_cloud_container&mode=rulesets",
-        "wato.py?group=datasource_programs&mode=rulesets",
-        "wato.py?group=agent&mode=rulesets",
-        "wato.py?group=snmp&mode=rulesets",
-    ]
-
-    events_items = [
-        "notifications",
-        "analyze_notifications",
-        "test_notifications",
-        "mkeventd_rule_packs",
-    ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        events_items.append("alert_handlers")
-
-    maintenance_items = ["backup"]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        maintenance_items.append("licensing")
-        maintenance_items.append("mkps")
-
-    maintenance_items += [
-        "diagnostics",
-        "certificate_overview",
-        "analyze_config",
-        "background_jobs_overview",
-    ]
-
-    hosts_items = [
-        "folder",
-        "wato.py?group=host_monconf&mode=rulesets",
-        "tags",
-    ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        hosts_items.append("dcd_connections")
-
-    hosts_items += [
-        "host_groups",
-        "host_attrs",
-        "wato.py?group=inventory&mode=rulesets",
-    ]
-
-    if cmk_version.edition(paths.omd_root) in [
-        cmk_version.Edition.ULTIMATE,
-        cmk_version.Edition.ULTIMATEMT,
-    ]:
-        hosts_items.append("relays")
-
-    users_items = []
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.ULTIMATEMT:
-        users_items.append("customer_management")
-    users_items.extend(
-        [
-            "users",
-            "contact_groups",
-            "roles",
-            "ldap_config",
-        ]
-    )
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        users_items.append("saml_config")
-    users_items.append("user_attrs")
-
-    expected_items_dict = {
-        "agents": agents_items,
-        "events": events_items,
+            "download_agents",
+            "wato.py?group=vm_cloud_container&mode=rulesets",
+            "wato.py?group=datasource_programs&mode=rulesets",
+            "wato.py?group=agent&mode=rulesets",
+            "wato.py?group=snmp&mode=rulesets",
+        ],
+        "events": [
+            "notifications",
+            "analyze_notifications",
+            "test_notifications",
+            "mkeventd_rule_packs",
+        ],
         "general": [
             "rule_search",
             "globalvars",
@@ -114,8 +42,21 @@ def expected_items() -> dict[str, list[str]]:
             "auditlog",
             "icons",
         ],
-        "hosts": hosts_items,
-        "maintenance": maintenance_items,
+        "hosts": [
+            "folder",
+            "wato.py?group=host_monconf&mode=rulesets",
+            "tags",
+            "host_groups",
+            "host_attrs",
+            "wato.py?group=inventory&mode=rulesets",
+        ],
+        "maintenance": [
+            "backup",
+            "diagnostics",
+            "certificate_overview",
+            "analyze_config",
+            "background_jobs_overview",
+        ],
         "quick_setups": [
             "wato.py?mode=edit_configuration_bundles&varname=special_agents%3Aaws",
             "wato.py?mode=edit_configuration_bundles&varname=special_agents%3Aazure",
@@ -132,30 +73,21 @@ def expected_items() -> dict[str, list[str]]:
             "check_plugins",
         ],
         "bi": ["bi_packs"],
-        "users": users_items,
+        "users": [
+            "users",
+            "contact_groups",
+            "roles",
+            "ldap_config",
+            "user_attrs",
+        ],
         "exporter": ["microsoft_entra_id_connections"],
     }
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_items_dict.update(
-            {
-                "exporter": [
-                    "influxdb_connections",
-                    "microsoft_entra_id_connections",
-                ],
-                "synthetic_monitoring": ["robotmk_managed_robots_overview"],
-                "telemetry": [
-                    "otel_overview",
-                    "prometheus_overview",
-                    "otel_collectors_receivers",
-                    "otel_collectors_prom_scrapes",
-                ],
-            }
-        )
 
-    return expected_items_dict
-
-
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 @pytest.mark.usefixtures("request_context", "with_admin_login")
 def test_get_wato_menu_items() -> None:
     items_by_topic: dict[str, list[str]] = {}

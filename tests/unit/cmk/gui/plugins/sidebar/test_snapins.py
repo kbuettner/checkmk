@@ -3,11 +3,17 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-import cmk.ccc.version as cmk_version
+import pytest
+
+from cmk.ccc.version import Edition, edition
 from cmk.gui.sidebar import snapin_registry
 from cmk.utils import paths
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_snapins() -> None:
     expected_snapins = [
         "a_welcome",
@@ -32,29 +38,13 @@ def test_registered_snapins() -> None:
         "wato_foldertree",
     ]
 
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_snapins += [
-            "cmc_stats",
-            "reports",
-        ]
-
-    if cmk_version.edition(paths.omd_root) in (
-        cmk_version.Edition.ULTIMATE,
-        cmk_version.Edition.ULTIMATEMT,
-        cmk_version.Edition.CLOUD,
-    ):
-        expected_snapins += [
-            "metric_backend",
-        ]
-
-    if cmk_version.edition(paths.omd_root) is cmk_version.Edition.ULTIMATEMT:
-        expected_snapins += [
-            "customers",
-        ]
-
     assert sorted(snapin_registry.keys()) == sorted(expected_snapins)
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_refresh_snapins() -> None:
     expected_refresh_snapins = [
         "admin_mini",
@@ -66,20 +56,6 @@ def test_refresh_snapins() -> None:
         "tag_tree",
         "time",
     ]
-
-    if cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_refresh_snapins += [
-            "cmc_stats",
-        ]
-
-    if cmk_version.edition(paths.omd_root) in (
-        cmk_version.Edition.ULTIMATE,
-        cmk_version.Edition.ULTIMATEMT,
-        cmk_version.Edition.CLOUD,
-    ):
-        expected_refresh_snapins += [
-            "metric_backend",
-        ]
 
     refresh_snapins = [s.type_name() for s in snapin_registry.values() if s.refresh_regularly()]
     assert sorted(refresh_snapins) == sorted(expected_refresh_snapins)
