@@ -3,23 +3,37 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="no-untyped-call"
-# mypy: disable-error-code="no-untyped-def"
-# mypy: disable-error-code="type-arg"
 
+from collections.abc import Mapping, Sequence
+from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import all_of, contains, OIDBytes, OIDEnd, SNMPTree, startswith
-from cmk.legacy_includes.elphase import check_elphase
-from cmk.legacy_includes.humidity import check_humidity
-from cmk.legacy_includes.temperature import check_temperature
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    all_of,
+    CheckPlugin,
+    CheckResult,
+    contains,
+    DiscoveryResult,
+    get_value_store,
+    OIDBytes,
+    OIDEnd,
+    Result,
+    Service,
+    SNMPSection,
+    SNMPTree,
+    startswith,
+    State,
+    StringTable,
+)
+from cmk.plugins.lib.elphase import check_elphase, ElPhase, ReadingWithState
+from cmk.plugins.lib.humidity import check_humidity
+from cmk.plugins.lib.temperature import check_temperature, TempParamType
 
 _TABLES = ["1", "2", "3", "4"]
 
+Section = dict[str, Any]
 
-def parse_emka_modules(string_table):
+
+def parse_emka_modules(string_table: Sequence[StringTable]) -> Section | None:
     if not any(string_table):
         return None
 
@@ -49,11 +63,11 @@ def parse_emka_modules(string_table):
         "8": "analogous_output",
     }
 
-    parsed: dict = {"basic_components": {}}
+    parsed: dict[str, Any] = {"basic_components": {}}
     for oidend, status, ty, mod_info, remark in string_table[0]:
         mo_index, co_index = oidend.split(".")
         if mo_index == "0":
-            itemname = "Master %s" % mod_info.split(",")[0]
+            itemname = f"Master {mod_info.split(',')[0]}"
         else:
             itemname = f"Perip {mo_index} {mod_info}"
 
@@ -63,7 +77,7 @@ def parse_emka_modules(string_table):
                 {
                     "type": map_module_types[co_index],
                     "activation": status,
-                    "_location_": "0.%s" % mo_index,
+                    "_location_": f"0.{mo_index}",
                 },
             )
             continue
@@ -98,7 +112,7 @@ def parse_emka_modules(string_table):
             ty = "levels"
 
         for entry, attrs in list(parsed.get("sensor", {}).items()):
-            if attrs["_location_"].startswith("%s." % location):
+            if attrs["_location_"].startswith(f"{location}."):
                 attrs[ty] = (threshold, threshold)
 
     # Explanation from ELM2-MIB:
@@ -113,12 +127,14 @@ def parse_emka_modules(string_table):
     # 0.02  => 2/100 [multiplicator]/[divisor]
     # -30.0          [offset]
     # Notice, may also "=#\xb0C0.0230.0"
-    for oidend, equation_bin in string_table[6]:
-        equation = []
-        part = []
-        for entry in equation_bin:
-            if entry:
-                part.append(entry)
+    for row in string_table[6]:
+        oidend = row[0]
+        equation_bin: Sequence[int] = row[1]  # type: ignore[assignment]  # OIDBytes returns list[int]
+        equation: list[str] = []
+        part: list[int] = []
+        for byte in equation_bin:
+            if byte:
+                part.append(byte)
             elif part:
                 equation.append("".join(map(chr, part)))
                 part = []
@@ -139,12 +155,12 @@ def parse_emka_modules(string_table):
         else:
             m, a = 1.0, 0.0
 
-        def scale_f(x, m=m, a=a):
+        def scale_f(x: str | float, m: float = m, a: float = a) -> float:
             return float(x) * m + a
 
         location = str(chr(int(oidend.split(".", 1)[0])))
         for sensor, attrs in parsed.get("sensor", {}).items():
-            if attrs["_location_"].endswith(".%s" % location):
+            if attrs["_location_"].endswith(f".{location}"):
                 parsed.setdefault(sensor_ty, {})
                 parsed[sensor_ty].setdefault(
                     sensor,
@@ -175,37 +191,39 @@ def parse_emka_modules(string_table):
 #   '----------------------------------------------------------------------'
 
 
-def discover_emka_modules(parsed):
-    for entry, attrs in parsed["basic_components"].items():
+def discover_emka_modules(section: Section) -> DiscoveryResult:
+    for entry, attrs in section["basic_components"].items():
         if attrs["activation"] != "i":
-            yield entry, None
+            yield Service(item=entry)
 
 
-def check_emka_modules(item, params, parsed):
+def check_emka_modules(item: str, section: Section) -> CheckResult:
     map_activation_states = {
-        "-": (0, "vacant"),
-        "?": (0, "detect modus"),
-        "x": (0, "excluded"),
-        "e": (2, "error"),
-        "c": (2, "collision detected"),
-        "w": (1, "wait for dynamic address"),
-        "P": (1, "polling"),
-        "i": (0, "inactive"),
-        "t": (2, "timeout"),
-        "T": (2, "timeout alarm"),
-        "A": (2, "alarm active"),
-        "L": (0, "alarm latched"),
-        "#": (0, "OK"),
+        "-": (State.OK, "vacant"),
+        "?": (State.OK, "detect modus"),
+        "x": (State.OK, "excluded"),
+        "e": (State.CRIT, "error"),
+        "c": (State.CRIT, "collision detected"),
+        "w": (State.WARN, "wait for dynamic address"),
+        "P": (State.WARN, "polling"),
+        "i": (State.OK, "inactive"),
+        "t": (State.CRIT, "timeout"),
+        "T": (State.CRIT, "timeout alarm"),
+        "A": (State.CRIT, "alarm active"),
+        "L": (State.OK, "alarm latched"),
+        "#": (State.OK, "OK"),
     }
 
-    if item in parsed["basic_components"]:
-        attrs = parsed["basic_components"][item]
+    if item in section["basic_components"]:
+        attrs = section["basic_components"][item]
         state, state_readable = map_activation_states[attrs["activation"]]
-        return state, "Activation status: {}, Type: {}".format(state_readable, attrs["type"])
-    return None
+        yield Result(
+            state=state,
+            summary=f"Activation status: {state_readable}, Type: {attrs['type']}",
+        )
 
 
-check_info["emka_modules"] = LegacyCheckDefinition(
+snmp_section_emka_modules = SNMPSection(
     name="emka_modules",
     detect=all_of(
         contains(".1.3.6.1.2.1.1.1.0", "emka"),
@@ -237,6 +255,11 @@ check_info["emka_modules"] = LegacyCheckDefinition(
         ),
     ],
     parse_function=parse_emka_modules,
+)
+
+
+check_plugin_emka_modules = CheckPlugin(
+    name="emka_modules",
     service_name="Module %s",
     discovery_function=discover_emka_modules,
     check_function=check_emka_modules,
@@ -253,27 +276,26 @@ check_info["emka_modules"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_emka_modules_alarm(parsed):
-    for entry, attrs in parsed.get("alarm", {}).items():
+def discover_emka_modules_alarm(section: Section) -> DiscoveryResult:
+    for entry, attrs in section.get("alarm", {}).items():
         if attrs["value"] != "2":
-            yield entry, None
+            yield Service(item=entry)
 
 
-def check_emka_modules_alarm(item, params, parsed):
+def check_emka_modules_alarm(item: str, section: Section) -> CheckResult:
     map_states = {
-        "1": (3, "unknown"),
-        "2": (0, "inactive"),
-        "3": (2, "active"),
-        "4": (0, "latched"),
+        "1": (State.UNKNOWN, "unknown"),
+        "2": (State.OK, "inactive"),
+        "3": (State.CRIT, "active"),
+        "4": (State.OK, "latched"),
     }
 
-    if item in parsed.get("alarm", {}):
-        state, state_readable = map_states[parsed["alarm"][item]["value"]]
-        return state, "Status: %s" % state_readable
-    return None
+    if item in section.get("alarm", {}):
+        state, state_readable = map_states[section["alarm"][item]["value"]]
+        yield Result(state=state, summary=f"Status: {state_readable}")
 
 
-check_info["emka_modules.alarm"] = LegacyCheckDefinition(
+check_plugin_emka_modules_alarm = CheckPlugin(
     name="emka_modules_alarm",
     service_name="Alarm %s",
     sections=["emka_modules"],
@@ -292,28 +314,27 @@ check_info["emka_modules.alarm"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_emka_modules_handle(parsed):
-    for entry, spec in parsed.get("handle", {}).items():
+def discover_emka_modules_handle(section: Section) -> DiscoveryResult:
+    for entry, spec in section.get("handle", {}).items():
         if "value" in spec:
-            yield entry, None
+            yield Service(item=entry)
 
 
-def check_emka_modules_handle(item, params, parsed):
+def check_emka_modules_handle(item: str, section: Section) -> CheckResult:
     map_states = {
-        "1": (0, "closed"),
-        "2": (1, "opened"),
-        "3": (3, "unlocked"),
-        "4": (3, "delay"),
-        "5": (2, "open time ex"),
+        "1": (State.OK, "closed"),
+        "2": (State.WARN, "opened"),
+        "3": (State.UNKNOWN, "unlocked"),
+        "4": (State.UNKNOWN, "delay"),
+        "5": (State.CRIT, "open time ex"),
     }
 
-    if item in parsed.get("handle", {}):
-        state, state_readable = map_states[parsed["handle"][item]["value"]]
-        return state, "Status: %s" % state_readable
-    return None
+    if item in section.get("handle", {}):
+        state, state_readable = map_states[section["handle"][item]["value"]]
+        yield Result(state=state, summary=f"Status: {state_readable}")
 
 
-check_info["emka_modules.handle"] = LegacyCheckDefinition(
+check_plugin_emka_modules_handle = CheckPlugin(
     name="emka_modules_handle",
     service_name="Handle %s",
     sections=["emka_modules"],
@@ -332,26 +353,31 @@ check_info["emka_modules.handle"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_emka_modules_sensor_volt(parsed):
-    for entry in parsed.get("sensor_volt", {}):
-        yield entry, {}
+def discover_emka_modules_sensor_volt(section: Section) -> DiscoveryResult:
+    for entry in section.get("sensor_volt", {}):
+        yield Service(item=entry)
 
 
-def check_emka_modules_sensor_volt(item, params, parsed):
-    if item in parsed.get("sensor_volt", {}):
-        attrs = parsed["sensor_volt"][item]
+def check_emka_modules_sensor_volt(
+    item: str, params: Mapping[str, Any], section: Section
+) -> CheckResult:
+    if item in section.get("sensor_volt", {}):
+        attrs = section["sensor_volt"][item]
         value = attrs["value"] / 1000.0
-        return check_elphase(item, params, {item: {"voltage": value}})
-    return None
+        yield from check_elphase(
+            params,
+            ElPhase(voltage=ReadingWithState(value=value)),
+        )
 
 
-check_info["emka_modules.sensor_volt"] = LegacyCheckDefinition(
+check_plugin_emka_modules_sensor_volt = CheckPlugin(
     name="emka_modules_sensor_volt",
     service_name="Phase %s",
     sections=["emka_modules"],
     discovery_function=discover_emka_modules_sensor_volt,
     check_function=check_emka_modules_sensor_volt,
     check_ruleset_name="el_inphase",
+    check_default_parameters={},
 )
 
 # .
@@ -365,32 +391,34 @@ check_info["emka_modules.sensor_volt"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_emka_modules_sensor_temp(parsed):
-    for entry in parsed.get("sensor_temp", {}):
-        yield entry, {}
+def discover_emka_modules_sensor_temp(section: Section) -> DiscoveryResult:
+    for entry in section.get("sensor_temp", {}):
+        yield Service(item=entry)
 
 
-def check_emka_modules_sensor_temp(item, params, parsed):
-    if item in parsed.get("sensor_temp", {}):
-        attrs = parsed["sensor_temp"][item]
-        value = attrs["value"]
-        return check_temperature(
-            value,
-            params,
-            "emka_modules_sensor_temp.%s" % item,
-            dev_levels=attrs["levels"],
-            dev_levels_lower=attrs["levels_lower"],
+def check_emka_modules_sensor_temp(
+    item: str, params: TempParamType, section: Section
+) -> CheckResult:
+    if item in section.get("sensor_temp", {}):
+        attrs = section["sensor_temp"][item]
+        yield from check_temperature(
+            reading=attrs["value"],
+            params=params,
+            unique_name=f"emka_modules_sensor_temp.{item}",
+            value_store=get_value_store(),
+            dev_levels=tuple(attrs["levels"]),
+            dev_levels_lower=tuple(attrs["levels_lower"]),
         )
-    return None
 
 
-check_info["emka_modules.sensor_temp"] = LegacyCheckDefinition(
+check_plugin_emka_modules_sensor_temp = CheckPlugin(
     name="emka_modules_sensor_temp",
     service_name="Temperature %s",
     sections=["emka_modules"],
     discovery_function=discover_emka_modules_sensor_temp,
     check_function=check_emka_modules_sensor_temp,
     check_ruleset_name="temperature",
+    check_default_parameters={},
 )
 
 # .
@@ -404,26 +432,27 @@ check_info["emka_modules.sensor_temp"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_emka_modules_sensor_humid(parsed):
-    for entry in parsed.get("sensor_humid", {}):
-        yield entry, {}
+def discover_emka_modules_sensor_humid(section: Section) -> DiscoveryResult:
+    for entry in section.get("sensor_humid", {}):
+        yield Service(item=entry)
 
 
-def check_emka_modules_sensor_humid(item, params, parsed):
-    if item in parsed.get("sensor_humid", {}):
-        attrs = parsed["sensor_humid"][item]
-        value = attrs["value"]
-        return check_humidity(value, params)
-    return None
+def check_emka_modules_sensor_humid(
+    item: str, params: Mapping[str, Any], section: Section
+) -> CheckResult:
+    if item in section.get("sensor_humid", {}):
+        attrs = section["sensor_humid"][item]
+        yield from check_humidity(attrs["value"], params)
 
 
-check_info["emka_modules.sensor_humid"] = LegacyCheckDefinition(
+check_plugin_emka_modules_sensor_humid = CheckPlugin(
     name="emka_modules_sensor_humid",
     service_name="Humidity %s",
     sections=["emka_modules"],
     discovery_function=discover_emka_modules_sensor_humid,
     check_function=check_emka_modules_sensor_humid,
     check_ruleset_name="humidity",
+    check_default_parameters={},
 )
 
 # .
@@ -437,25 +466,24 @@ check_info["emka_modules.sensor_humid"] = LegacyCheckDefinition(
 #   '----------------------------------------------------------------------'
 
 
-def discover_emka_modules_relay(parsed):
-    for entry, attrs in parsed.get("relay", {}).items():
+def discover_emka_modules_relay(section: Section) -> DiscoveryResult:
+    for entry, attrs in section.get("relay", {}).items():
         if attrs["value"] != "1":
-            yield entry, None
+            yield Service(item=entry)
 
 
-def check_emka_modules_relay(item, params, parsed):
+def check_emka_modules_relay(item: str, section: Section) -> CheckResult:
     map_states = {
-        "1": (0, "off"),
-        "2": (0, "on"),
+        "1": (State.OK, "off"),
+        "2": (State.OK, "on"),
     }
 
-    if item in parsed.get("relay", {}):
-        state, state_readable = map_states[parsed["relay"][item]["value"]]
-        return state, "Status: %s" % state_readable
-    return None
+    if item in section.get("relay", {}):
+        state, state_readable = map_states[section["relay"][item]["value"]]
+        yield Result(state=state, summary=f"Status: {state_readable}")
 
 
-check_info["emka_modules.relay"] = LegacyCheckDefinition(
+check_plugin_emka_modules_relay = CheckPlugin(
     name="emka_modules_relay",
     service_name="Relay %s",
     sections=["emka_modules"],
