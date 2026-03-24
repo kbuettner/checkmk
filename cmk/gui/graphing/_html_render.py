@@ -74,6 +74,7 @@ from ._graph_display_config import (
 )
 from ._graph_metric_expressions import GraphMetricExpression
 from ._graph_specification import (
+    AdditionalGraphHTML,
     GraphRecipe,
     GraphRecipeWithOverrides,
     GraphSpecification,
@@ -326,6 +327,7 @@ def _render_graph_html(
     graph_time_range: GraphTimeRange,
     graph_display_config: GraphDisplayConfig,
     expandable_legend_appearance: ExpandableLegendAppearance,
+    additional_html: AdditionalGraphHTML | None = None,
 ) -> HTML:
     with output_funnel.plugged():
         _show_graph_html_content(
@@ -336,6 +338,7 @@ def _render_graph_html(
             graph_time_range,
             graph_display_config,
             expandable_legend_appearance,
+            additional_html,
         )
         html_code = HTML.without_escaping(output_funnel.drain())
 
@@ -448,6 +451,7 @@ def _show_graph_html_content(
     graph_time_range: GraphTimeRange,
     graph_display_config: GraphDisplayConfig,
     expandable_legend_appearance: ExpandableLegendAppearance,
+    additional_html: AdditionalGraphHTML | None = None,
 ) -> None:
     """Render the HTML code of a graph without its container
 
@@ -541,7 +545,7 @@ def _show_graph_html_content(
             graph_recipe, graph_artwork, graph_display_config, expandable_legend_appearance
         )
 
-    if additional_html := graph_recipe.additional_html:
+    if additional_html:
         html.open_div(align="center")
         html.h2(additional_html.title)
         html.write_html(HTML.without_escaping(additional_html.html))
@@ -1134,6 +1138,7 @@ def render_graphs_from_specification_html(
                     graph_recipe_with_overrides.render_options
                 ),
                 graph_display_id=graph_display_id,
+                additional_html=graph_recipe_with_overrides.additional_html,
             )
         else:
             output += _render_graph_content_html(
@@ -1162,6 +1167,7 @@ def render_graphs_from_specification_html(
                 graph_display_id=graph_display_id,
                 expandable_legend_appearance=ExpandableLegendAppearance.FOLDABLE,
                 show_limits_if_reached=False,
+                additional_html=graph_recipe_with_overrides.additional_html,
             )
     return output
 
@@ -1173,6 +1179,7 @@ def _render_graph_container_html(
     graph_display_config: GraphDisplayConfig,
     *,
     graph_display_id: str,
+    additional_html: AdditionalGraphHTML | None = None,
 ) -> HTML:
     # Estimate size of graph. This will not be the exact size of the graph, because
     # this does calculate the size of the canvas area and does not take e.g. the legend
@@ -1190,12 +1197,13 @@ def _render_graph_container_html(
         class_="graph_load_container",
     )
     output += HTMLWriter.render_javascript(
-        "cmk.graphs.load_graph_content(%s, %s, %s, %s)"
+        "cmk.graphs.load_graph_content(%s, %s, %s, %s, %s)"
         % (
             json.dumps(graph_recipe.model_dump()),
             json.dumps(graph_time_range.model_dump()),
             json.dumps(graph_display_config.model_dump()),
             json.dumps(graph_display_id),
+            json.dumps(additional_html.model_dump() if additional_html else None),
         )
     )
 
@@ -1215,6 +1223,11 @@ class AjaxRenderGraphContent(AjaxPage):
         graph_time_range = GraphTimeRange.model_validate(api_request["graph_time_range"])
         graph_display_config = GraphDisplayConfig.model_validate(
             api_request["graph_display_config"]
+        )
+        additional_html = (
+            None
+            if (raw_additional_html := api_request.get("additional_html")) is None
+            else AdditionalGraphHTML.model_validate(raw_additional_html)
         )
         temperature_unit = get_temperature_unit(user, ctx.config.default_temperature_unit)
         backend_time_series_fetcher = metric_backend_registry[
@@ -1243,6 +1256,7 @@ class AjaxRenderGraphContent(AjaxPage):
             graph_display_id=graph_display_id,
             expandable_legend_appearance=ExpandableLegendAppearance.FOLDABLE,
             show_limits_if_reached=False,
+            additional_html=additional_html,
         )
 
 
@@ -1261,6 +1275,7 @@ def _render_graph_content_html(
     graph_display_id: str = "",
     expandable_legend_appearance: ExpandableLegendAppearance,
     show_limits_if_reached: bool,
+    additional_html: AdditionalGraphHTML | None = None,
 ) -> HTML:
     if graph_artwork_or_errors.errors:
         if url := graph_recipe.specification.url():
@@ -1321,6 +1336,7 @@ def _render_graph_content_html(
             graph_time_range,
             graph_display_config,
             expandable_legend_appearance,
+            additional_html,
         )
         if graph_display_config.show_time_range_previews:
             return HTMLWriter.render_div(

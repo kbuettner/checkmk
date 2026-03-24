@@ -206,7 +206,6 @@ class GraphRecipe(BaseModel, frozen=True):
     omit_zero_metrics: bool
     consolidation_function: GraphConsolidationFunction | None
     metrics: Sequence[GraphMetric]
-    additional_html: AdditionalGraphHTML | None = None
     mark_requested_end_time: bool = False
     # https://docs.pydantic.dev/2.4/concepts/serialization/#subclass-instances-for-fields-of-basemodel-dataclasses-typeddict
     # https://docs.pydantic.dev/2.4/concepts/serialization/#serializing-with-duck-typing
@@ -220,14 +219,15 @@ class GraphRecipe(BaseModel, frozen=True):
 
 @dataclass(frozen=True)
 class GraphRecipeWithOverrides:
-    """Wraps a GraphRecipe together with optional per-recipe overrides.
+    """Bundles a GraphRecipe with its per-recipe settings.
 
-    The overrides mirror the sibling fields already present in GraphContext
-    (time_range and view_config) and allow individual recipes to request
-    a different time range or render options without embedding those fields
-    inside GraphRecipe itself.
+    Keeps the core GraphRecipe (the serializable graph definition) separate
+    from per-recipe settings (time_range, render_options, additional_html)
+    that mirror the sibling fields in GraphContext without polluting the
+    recipe itself.
     """
 
     recipe: GraphRecipe
     time_range: GraphTimeRange | None = None
     render_options: GraphRenderOptions = field(default_factory=GraphRenderOptions)
+    additional_html: AdditionalGraphHTML | None = None

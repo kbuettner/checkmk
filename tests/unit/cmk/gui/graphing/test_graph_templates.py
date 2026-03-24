@@ -2228,7 +2228,6 @@ def test_template_recipes_fs() -> None:
                     color="#37fa37",
                 ),
             ],
-            additional_html=None,
             mark_requested_end_time=False,
             specification=_FakeTemplateGraphSpecificationFS(
                 site=SiteId("site_id"),
@@ -2268,7 +2267,6 @@ def test_template_recipes_fs() -> None:
                     color="#1ee6e6",
                 )
             ],
-            additional_html=None,
             mark_requested_end_time=False,
             specification=_FakeTemplateGraphSpecificationFS(
                 site=SiteId("site_id"),

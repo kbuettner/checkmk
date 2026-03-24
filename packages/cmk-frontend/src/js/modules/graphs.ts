@@ -236,6 +236,7 @@ interface DelayedGraph {
   graph_display_config: GraphDisplayConfig
   script_object: HTMLScriptElement
   graph_display_id: string
+  additional_html: object | null
 }
 
 //#   .-Creation-----------------------------------------------------------.
@@ -431,7 +432,8 @@ export function load_graph_content(
   graph_recipe: GraphRecipe,
   graph_time_range: GraphTimeRange,
   graph_display_config: GraphDisplayConfig,
-  graph_display_id: string
+  graph_display_id: string,
+  additional_html: object | null = null
 ) {
   const script_object = get_current_script()
 
@@ -445,7 +447,8 @@ export function load_graph_content(
       graph_time_range: graph_time_range,
       graph_display_config: graph_display_config,
       script_object: script_object,
-      graph_display_id: graph_display_id
+      graph_display_id: graph_display_id,
+      additional_html: additional_html
     })
     return
   } else {
@@ -454,7 +457,8 @@ export function load_graph_content(
       graph_time_range,
       graph_display_config,
       script_object,
-      graph_display_id
+      graph_display_id,
+      additional_html
     )
   }
 }
@@ -485,7 +489,8 @@ function do_load_graph_content(
   graph_time_range: GraphTimeRange,
   graph_display_config: GraphDisplayConfig,
   script_object: HTMLScriptElement,
-  graph_display_id: string
+  graph_display_id: string,
+  additional_html: object | null = null
 ) {
   const graph_load_container = script_object.previousSibling as HTMLElement
   update_graph_load_container(
@@ -501,7 +506,8 @@ function do_load_graph_content(
         graph_recipe: graph_recipe,
         graph_time_range: graph_time_range,
         graph_display_config: graph_display_config,
-        graph_display_id: graph_display_id
+        graph_display_id: graph_display_id,
+        additional_html: additional_html
       })
     )
 
@@ -578,7 +584,8 @@ function delayed_graph_renderer() {
         entry.graph_time_range,
         entry.graph_display_config,
         entry.script_object,
-        entry.graph_display_id
+        entry.graph_display_id,
+        entry.additional_html
       )
       g_delayed_graphs.splice(i, 1)
     }
