@@ -11,8 +11,8 @@ import usei18n from '@/lib/i18n'
 
 import CmkDropdown from '@/components/CmkDropdown'
 import CmkIconButton from '@/components/CmkIconButton.vue'
+import CmkInlineButton from '@/components/user-input/CmkInlineButton.vue'
 
-import FormButton from '@/form/private/FormButton.vue'
 import { type ValidationMessages } from '@/form/private/validation'
 
 import BinaryConditionChoices from './BinaryConditionChoices.vue'
@@ -83,7 +83,7 @@ function removeGroup(groupIndex: number) {
         </tr>
       </tbody>
     </table>
-    <FormButton @click="addGroup">{{ _t('Add to condition') }}</FormButton>
+    <CmkInlineButton @click="addGroup">{{ _t('Add to condition') }}</CmkInlineButton>
   </div>
 </template>
 

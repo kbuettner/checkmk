@@ -5,8 +5,7 @@ conditions defined in the file COPYING, which is part of this source code packag
 -->
 <script setup lang="ts">
 import CmkIconButton from '@/components/CmkIconButton.vue'
-
-import FormButton from '@/form/private/FormButton.vue'
+import CmkInlineButton from '@/components/user-input/CmkInlineButton.vue'
 
 defineOptions({
   inheritAttrs: false
@@ -19,8 +18,8 @@ defineProps<{
 </script>
 
 <template>
-  <FormButton v-if="addElementLabel!!" @click="addElement">
+  <CmkInlineButton v-if="addElementLabel!!" @click="addElement">
     {{ addElementLabel }}
-  </FormButton>
+  </CmkInlineButton>
   <CmkIconButton v-else name="plus" @click="addElement" />
 </template>

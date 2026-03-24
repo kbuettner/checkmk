@@ -7,8 +7,7 @@ conditions defined in the file COPYING, which is part of this source code packag
 import usei18n from '@/lib/i18n'
 
 import CmkParagraph from '@/components/typography/CmkParagraph.vue'
-
-import FormButton from '@/form/private/FormButton.vue'
+import CmkInlineButton from '@/components/user-input/CmkInlineButton.vue'
 
 import type { FilterConfigState } from '@/dashboard/components/Wizard/components/filter/utils.ts'
 import FilterInputItem from '@/dashboard/components/filter/FilterInputItem/FilterInputItem.vue'
@@ -64,11 +63,11 @@ const filterDefinitions = useFilterDefinitions()
       <CmkParagraph style="padding-bottom: var(--dimension-4)">{{
         _t('Add optional filters to refine this widget')
       }}</CmkParagraph>
-      <FormButton
+      <CmkInlineButton
         class="db-multi-filter__add-filter-button"
         icon="plus"
         @click="emit('set-focus', objectType)"
-        >{{ _t('Add filter') }}</FormButton
+        >{{ _t('Add filter') }}</CmkInlineButton
       >
     </div>
     <AddFilterMessage v-else />

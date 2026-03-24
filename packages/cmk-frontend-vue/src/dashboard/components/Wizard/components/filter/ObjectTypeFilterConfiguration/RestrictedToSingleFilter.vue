@@ -10,8 +10,7 @@ import usei18n from '@/lib/i18n'
 import { capitalizeFirstLetter } from '@/lib/utils'
 
 import CmkParagraph from '@/components/typography/CmkParagraph.vue'
-
-import FormButton from '@/form/private/FormButton.vue'
+import CmkInlineButton from '@/components/user-input/CmkInlineButton.vue'
 
 import FilterInputComponentRenderer from '@/dashboard/components/filter/FilterInputItem/components/FilterInputComponent.vue'
 import RemoveFilterButton from '@/dashboard/components/filter/shared/RemoveFilterButton.vue'
@@ -77,9 +76,9 @@ onMounted(async () => {
       <CmkParagraph style="padding-bottom: var(--dimension-4)">{{
         _t('Add %{objectType} to refine this widget', { objectType: singular })
       }}</CmkParagraph>
-      <FormButton icon="plus" @click="handleShowInputs">{{
+      <CmkInlineButton icon="plus" @click="handleShowInputs">{{
         _t('Add %{name}', { name: filterName })
-      }}</FormButton>
+      }}</CmkInlineButton>
     </div>
 
     <div v-else class="db-restricted-to-single-filter__container">

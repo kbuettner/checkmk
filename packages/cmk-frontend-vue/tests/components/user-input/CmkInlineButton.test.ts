@@ -6,7 +6,7 @@
 import { fireEvent, render, screen } from '@testing-library/vue'
 import { defineComponent } from 'vue'
 
-import FormButton from '@/form/private/FormButton.vue'
+import CmkInlineButton from '@/components/user-input/CmkInlineButton.vue'
 
 const submitHandler = vi.fn((e) => e.preventDefault())
 
@@ -19,12 +19,12 @@ afterEach(() => {
   document.removeEventListener('submit', submitHandler)
 })
 
-test('FormButton does not submit form without click callback', async () => {
+test('CmkInlineButton does not submit form without click callback', async () => {
   const testComponent = defineComponent({
-    components: { FormButton },
+    components: { CmkInlineButton },
     template: `
       <form>
-        <FormButton name="foo" />
+        <CmkInlineButton name="foo" />
       </form>
     `
   })
@@ -34,10 +34,10 @@ test('FormButton does not submit form without click callback', async () => {
   expect(submitHandler).not.toHaveBeenCalled()
 })
 
-test('FormButton does not submit form with click callback', async () => {
+test('CmkInlineButton disabled prevents click callback', async () => {
   let clicked: boolean = false
   const testComponent = defineComponent({
-    components: { FormButton },
+    components: { CmkInlineButton },
     setup() {
       const onclick = () => {
         clicked = true
@@ -46,7 +46,30 @@ test('FormButton does not submit form with click callback', async () => {
     },
     template: `
       <form>
-        <FormButton name="foo" @click="onclick" />
+        <CmkInlineButton name="foo" :disabled="true" @click="onclick" />
+      </form>
+    `
+  })
+  render(testComponent)
+  const button = screen.getByRole('button')
+  expect(button).toBeDisabled()
+  await fireEvent.click(button)
+  expect(clicked).toBe(false)
+})
+
+test('CmkInlineButton does not submit form with click callback', async () => {
+  let clicked: boolean = false
+  const testComponent = defineComponent({
+    components: { CmkInlineButton },
+    setup() {
+      const onclick = () => {
+        clicked = true
+      }
+      return { onclick }
+    },
+    template: `
+      <form>
+        <CmkInlineButton name="foo" @click="onclick" />
       </form>
     `
   })

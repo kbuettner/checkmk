@@ -15,10 +15,10 @@ import CmkDropdown from '@/components/CmkDropdown'
 import { useCmkErrorBoundary } from '@/components/CmkErrorBoundary'
 import CmkSlideInDialog from '@/components/CmkSlideInDialog.vue'
 import CmkSpace from '@/components/CmkSpace.vue'
+import CmkInlineButton from '@/components/user-input/CmkInlineButton.vue'
 import FormValidation from '@/components/user-input/CmkInlineValidation.vue'
 
 import FormSingleChoiceEditableEditAsync from '@/form/FormEditAsync.vue'
-import FormButton from '@/form/private/FormButton.vue'
 import {
   type Payload,
   configEntityAPI
@@ -173,18 +173,18 @@ const { CmkErrorBoundary, error } = useCmkErrorBoundary()
         !hideButtonChoices.find((choice) => choice.name === selectedObjectId)?.hide_edit
       "
     >
-      <FormButton
+      <CmkInlineButton
         v-show="selectedObjectId !== null"
         icon="edit"
         @click="openSlideIn(selectedObjectId)"
       >
         {{ spec.i18n.edit }}
-      </FormButton>
+      </CmkInlineButton>
       <CmkSpace v-show="selectedObjectId !== null" />
     </template>
-    <FormButton @click="openSlideIn(null)">
+    <CmkInlineButton @click="openSlideIn(null)">
       {{ spec.i18n.create }}
-    </FormButton>
+    </CmkInlineButton>
 
     <CmkSlideInDialog
       :open="slideInOpen"

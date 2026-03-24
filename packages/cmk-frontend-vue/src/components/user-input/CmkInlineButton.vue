@@ -9,7 +9,7 @@ import { computed, ref } from 'vue'
 import CmkIcon from '@/components/CmkIcon'
 import type { SimpleIcons } from '@/components/CmkIcon'
 
-export interface FormButtonProps {
+export interface CmkInlineButtonProps {
   icon?: SimpleIcons | null
   disabled?: boolean | string | undefined
 }
@@ -22,8 +22,8 @@ defineExpose({
   }
 })
 
-const props = defineProps<FormButtonProps>()
-const iconName = props.icon || 'plus'
+const props = defineProps<CmkInlineButtonProps>()
+const iconName = computed(() => props.icon || 'plus')
 const isDisabled = computed(() => props.disabled === true || props.disabled === 'true')
 
 defineEmits(['click'])
@@ -32,12 +32,12 @@ defineEmits(['click'])
 <template>
   <button
     ref="buttonRef"
-    class="form-button"
-    :class="{ 'form-button--disabled': isDisabled }"
+    class="cmk-inline-button"
+    :class="{ 'cmk-inline-button--disabled': isDisabled }"
     :disabled="isDisabled"
     @click.prevent="
       (e) => {
-        $emit('click', e)
+        if (!isDisabled) $emit('click', e)
       }
     "
   >
@@ -47,7 +47,7 @@ defineEmits(['click'])
 </template>
 
 <style scoped>
-.form-button {
+.cmk-inline-button {
   display: inline-flex;
   height: var(--form-field-height);
   padding: 0 8px;
@@ -59,11 +59,11 @@ defineEmits(['click'])
   border: 1px solid var(--button-form-border-color);
   color: var(--button-form-text-color);
 
-  &:hover:not(.form-button--disabled) {
+  &:hover:not(.cmk-inline-button--disabled) {
     background-color: color-mix(in srgb, var(--default-button-form-color) 90%, var(--white) 10%);
   }
 
-  &:active:not(.form-button--disabled) {
+  &:active:not(.cmk-inline-button--disabled) {
     background-color: color-mix(
       in srgb,
       var(--default-button-form-color) 90%,
@@ -72,7 +72,7 @@ defineEmits(['click'])
   }
 }
 
-button.form-button--disabled {
+button.cmk-inline-button--disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
