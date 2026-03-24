@@ -1543,7 +1543,7 @@ allows = [
 ]
 
 [components."tests.integration.cmk.post_rename_site"]
-allows = ["@ccc", "cmk.utils.paths", "cmk.post_rename_site"]
+allows = ["@ccc", "cmk.post_rename_site", "cmk.utils.paths"]
 
 [components."tests.integration.cmk.snmplib"]
 allows = ["@ccc", "cmk.snmplib", "cmk.utils"]

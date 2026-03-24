@@ -4,34 +4,22 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 from collections.abc import Iterator
+from pathlib import Path
 
 import pytest
 
 from tests.testlib.site import Site
 
-test_plugin_code = """
-from cmk.post_rename_site.registry import rename_action_registry, RenameAction
+from . import prs_test_plugin
 
-def test(old_site_id, new_site_id):
-    pass
-
-rename_action_registry.register(
-    RenameAction(
-        name="test",
-        title="test",
-        sort_index=20,
-        handler=test,
-    )
-)
-"""
+POST_RENAME_SITE_PLUGINS_PATH = "local/lib/python3/cmk/post_rename_site/plugins/actions"
 
 
 @pytest.fixture()
 def plugin_path(site: Site) -> Iterator[str]:
-    base_dir = "local/lib/python3/cmk/post_rename_site/plugins/actions"
-    site.makedirs(base_dir)
-    path = f"{base_dir}/test_plugin.py"
-    site.write_file(path, test_plugin_code)
+    site.makedirs(POST_RENAME_SITE_PLUGINS_PATH)
+    path = f"{POST_RENAME_SITE_PLUGINS_PATH}/test_plugin.py"
+    site.write_file(path, Path(prs_test_plugin.__file__).read_text())
     yield path
     site.delete_file(path)
 
