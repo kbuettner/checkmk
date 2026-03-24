@@ -820,7 +820,7 @@ def test_openapi_delete_downtime_with_host_group(
         [
             "GET downtimes",
             "Columns: id is_service",
-            "Filter: host_groups ~~ windows",
+            "Filter: host_groups >= windows",
         ],
     )
     mock_livestatus.expect_query("COMMAND [...] DEL_SVC_DOWNTIME;124", match_type="ellipsis")
@@ -919,7 +919,7 @@ def test_openapi_delete_downtime_with_service_group(
         [
             "GET downtimes",
             "Columns: id is_service",
-            "Filter: service_groups ~~ CPU",
+            "Filter: service_groups >= CPU",
         ],
     )
     mock_livestatus.expect_query("COMMAND [...] DEL_SVC_DOWNTIME;123", match_type="ellipsis")
@@ -1455,7 +1455,7 @@ def test_openapi_modify_downtime_with_host_group(
         [
             "GET downtimes",
             "Columns: id is_service",
-            "Filter: host_groups ~~ windows",
+            "Filter: host_groups >= windows",
         ],
     )
 
@@ -1554,7 +1554,7 @@ def test_openapi_modify_downtime_with_service_group(
         [
             "GET downtimes",
             "Columns: id is_service",
-            "Filter: service_groups ~~ CPU",
+            "Filter: service_groups >= CPU",
         ],
     )
 
