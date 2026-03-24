@@ -1,3 +1,4 @@
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@omd_packages//omd/packages/Python:version.bzl", "PYTHON_MAJOR_DOT_MINOR")
 load("@python_modules//:requirements.bzl", "all_requirements")
 load(":build-python3-modules.bzl", "build_python_module", "create_requirements_file")
@@ -107,4 +108,9 @@ genrule(
     """.format(pyMajMin = PYTHON_MAJOR_DOT_MINOR),
     tags = ["manual"],
     visibility = ["//omd:__subpackages__"],
+)
+
+build_test(
+    name = "build_test",
+    targets = [":python3-modules"],
 )
