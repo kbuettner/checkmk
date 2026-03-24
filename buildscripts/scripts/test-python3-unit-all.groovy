@@ -15,10 +15,24 @@ void main() {
     dir("${checkout_dir}") {
         test_jenkins_helper.execute_test([
             name: "test-unit-all",
-            cmd: "make -C tests test-unit-all",
+            cmd: """\
+set +e
+cd tests
+BAZEL_TEST_LOGS_DEST=../results/unit ../buildscripts/scripts/bazel_test_non_cpp.sh
+make_rc=\$?
+set -e
+../buildscripts/scripts/bazel_test_post_archive_xunit.sh || :
+exit \$make_rc""",
             container_name: "ubuntu-2404-${container_safe_branch_name}-latest",
             disable_hot_cache: true,
         ]);
+
+        archiveArtifacts(
+            allowEmptyArchive: true,
+            artifacts: "results/unit/**/test.xml",
+            fingerprint: true,
+        );
+        test_jenkins_helper.analyse_issues("JUNIT", "results/unit/**/test.xml");
     }
 }
 

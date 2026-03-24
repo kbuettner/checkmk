@@ -181,18 +181,7 @@ STAGES:
       DIR: "tests"
       COMMAND: |
           set +e
-          bazel test \
-              --test_verbose_timeout_warnings \
-              --test_env=TZ="America/Chicago" \
-              --test_tag_filters=-component \
-              --keep_going \
-              --//:use_faked_artifacts=true \
-              --cmk_edition=ultimate \
-              -- //... \
-              -//packages/livestatus/... \
-              -//packages/neb/... \
-              -//packages/unixcat/... \
-              -//non-free/packages/cmc/...
+          ../buildscripts/scripts/bazel_test_non_cpp.sh
           make_rc=$?
           set -e
           ../buildscripts/scripts/bazel_test_post_archive_xunit.sh || :
