@@ -10,11 +10,10 @@ import logging
 import sys
 
 import pytest
-from pytest_mock import MockerFixture
 
 from cmk.ccc.site import SiteId
 from cmk.post_rename_site import main
-from cmk.post_rename_site.registry import RenameAction, RenameActionRegistry
+from cmk.post_rename_site.registry import Name, RenameAction, RenameActionRegistry, SortIndex, Title
 
 
 def test_parse_arguments_verbose() -> None:
@@ -62,13 +61,20 @@ def test_main_executes_run(
 
 @pytest.mark.usefixtures("restore_root_logger_handlers")
 def test_run_executes_plugins(
-    monkeypatch: pytest.MonkeyPatch, mocker: MockerFixture, capsys: pytest.CaptureFixture[str]
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     registry = RenameActionRegistry()
     monkeypatch.setattr(main, "rename_action_registry", registry)
-    handler_mock = mocker.MagicMock()
+
+    args = list[object]()
+
+    def handler_mock(old_site_id: SiteId, new_site_id: SiteId, logger: logging.Logger) -> None:
+        args[:] = [old_site_id, new_site_id, logger]
+
     registry.register(
-        RenameAction(name="test", title="Test Title", sort_index=0, handler=handler_mock)
+        RenameAction(
+            name=Name("test"), title=Title("Test Title"), sort_index=SortIndex(), run=handler_mock
+        )
     )
 
     assert main.main(["-v", "old"]) == 0
@@ -77,6 +83,4 @@ def test_run_executes_plugins(
     assert output.err == ""
     assert "1/1 Test Title..." in output.out
     assert output.out.endswith("Done\n")
-    handler_mock.assert_called_once_with(
-        SiteId("old"), SiteId("NO_SITE"), logging.getLogger("cmk.post_rename_site")
-    )
+    assert args == [SiteId("old"), SiteId("NO_SITE"), logging.getLogger("cmk.post_rename_site")]

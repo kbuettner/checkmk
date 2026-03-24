@@ -6,11 +6,16 @@
 from logging import Logger
 
 from cmk.ccc import tty
-from cmk.ccc.i18n import _
 from cmk.ccc.site import SiteId
 from cmk.gui.config import active_config
 from cmk.gui.site_config import is_distributed_setup_remote_site
-from cmk.post_rename_site.registry import rename_action_registry, RenameAction
+from cmk.post_rename_site.registry import (
+    Name,
+    rename_action_registry,
+    RenameAction,
+    SortIndex,
+    Title,
+)
 from cmk.utils.log import console
 
 
@@ -35,9 +40,9 @@ def warn_about_renamed_remote_site(
 
 rename_action_registry.register(
     RenameAction(
-        name="warn_remote_site",
-        title=_("Warn about renamed remote site"),
-        sort_index=950,
-        handler=warn_about_renamed_remote_site,
+        name=Name("warn_remote_site"),
+        title=Title("Warn about renamed remote site"),
+        sort_index=SortIndex(950),
+        run=warn_about_renamed_remote_site,
     )
 )

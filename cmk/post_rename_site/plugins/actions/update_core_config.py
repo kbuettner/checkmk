@@ -6,9 +6,14 @@
 import subprocess
 from logging import Logger
 
-from cmk.ccc.i18n import _
 from cmk.ccc.site import SiteId
-from cmk.post_rename_site.registry import rename_action_registry, RenameAction
+from cmk.post_rename_site.registry import (
+    Name,
+    rename_action_registry,
+    RenameAction,
+    SortIndex,
+    Title,
+)
 
 
 def update_core_config(old_site_id: SiteId, new_site_id: SiteId, logger: Logger) -> None:
@@ -18,9 +23,9 @@ def update_core_config(old_site_id: SiteId, new_site_id: SiteId, logger: Logger)
 
 rename_action_registry.register(
     RenameAction(
-        name="update_core_config",
-        title=_("Update core config"),
-        sort_index=900,
-        handler=update_core_config,
+        name=Name("update_core_config"),
+        title=Title("Update core config"),
+        sort_index=SortIndex(900),
+        run=update_core_config,
     )
 )

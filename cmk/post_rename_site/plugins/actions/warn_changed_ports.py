@@ -7,9 +7,14 @@ from logging import Logger
 from pathlib import Path
 
 from cmk.ccc import tty
-from cmk.ccc.i18n import _
 from cmk.ccc.site import SiteId
-from cmk.post_rename_site.registry import rename_action_registry, RenameAction
+from cmk.post_rename_site.registry import (
+    Name,
+    rename_action_registry,
+    RenameAction,
+    SortIndex,
+    Title,
+)
 from cmk.utils.log import console
 
 
@@ -36,9 +41,9 @@ def warn_about_network_ports(old_site_id: SiteId, new_site_id: SiteId, logger: L
 
 rename_action_registry.register(
     RenameAction(
-        name="warn_about_network_ports",
-        title=_("Warn about new network ports"),
-        sort_index=955,
-        handler=warn_about_network_ports,
+        name=Name("warn_about_network_ports"),
+        title=Title("Warn about new network ports"),
+        sort_index=SortIndex(955),
+        run=warn_about_network_ports,
     )
 )

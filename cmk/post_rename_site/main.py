@@ -11,6 +11,7 @@ from dataclasses import dataclass
 
 import cmk.ccc.debug
 import cmk.ccc.version as cmk_version
+from cmk.ccc.i18n import _ as localizer
 from cmk.ccc.site import omd_site, SiteId
 from cmk.ccc.version import Edition
 
@@ -120,9 +121,11 @@ def run(debug: bool, old_site_id: SiteId, new_site_id: SiteId) -> bool:
         actions = sorted(rename_action_registry.values(), key=lambda a: a.sort_index)
         total = len(actions)
         for count, rename_action in enumerate(actions, start=1):
-            logger.log(VERBOSE, " %i/%i %s...", count, total, rename_action.title)
+            logger.log(
+                VERBOSE, " %i/%i %s...", count, total, rename_action.title.localize(localizer)
+            )
             try:
-                rename_action.run(old_site_id, new_site_id)
+                rename_action.run(old_site_id, new_site_id, logger)
             except Exception:
                 has_errors = True
                 logger.error(' + "%s" failed', rename_action.title, exc_info=True)

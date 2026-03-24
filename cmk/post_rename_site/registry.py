@@ -5,42 +5,41 @@
 
 
 from collections.abc import Callable
+from dataclasses import dataclass
 from logging import Logger
+from typing import Protocol
 
 from cmk.ccc.plugin_registry import Registry
 from cmk.ccc.site import SiteId
 
-from .logger import logger
 
-RenameActionHandler = Callable[[SiteId, SiteId, Logger], None]
+class Name(str): ...
 
 
+class Title:
+    def __init__(self, raw: str, /) -> None:
+        self._raw = raw
+
+    def localize(self, localizer: Callable[[str], str], /) -> str:
+        return localizer(self._raw)
+
+
+class SortIndex(int): ...
+
+
+class RenameActionHandler(Protocol):
+    def __call__(self, old_site_id: SiteId, new_site_id: SiteId, logger: Logger) -> None:
+        pass
+
+
+@dataclass(frozen=True, kw_only=True)
 class RenameAction:
-    """Base class for all site rename operations"""
+    """Plugin class for all site rename operations"""
 
-    def __init__(
-        self, name: str, title: str, sort_index: int, handler: RenameActionHandler
-    ) -> None:
-        self._name = name
-        self._title = title
-        self._sort_index = sort_index
-        self._handler = handler
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def title(self) -> str:
-        return self._title
-
-    @property
-    def sort_index(self) -> int:
-        return self._sort_index
-
-    def run(self, old_site_id: SiteId, new_site_id: SiteId) -> None:
-        """Execute the rename operation"""
-        self._handler(old_site_id, new_site_id, logger)
+    name: Name
+    title: Title
+    sort_index: SortIndex
+    run: RenameActionHandler
 
 
 class RenameActionRegistry(Registry[RenameAction]):

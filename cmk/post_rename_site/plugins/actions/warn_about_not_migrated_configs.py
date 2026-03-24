@@ -6,9 +6,14 @@
 from logging import Logger
 
 from cmk.ccc import tty
-from cmk.ccc.i18n import _
 from cmk.ccc.site import SiteId
-from cmk.post_rename_site.registry import rename_action_registry, RenameAction
+from cmk.post_rename_site.registry import (
+    Name,
+    rename_action_registry,
+    RenameAction,
+    SortIndex,
+    Title,
+)
 from cmk.utils.log import console
 
 
@@ -33,9 +38,9 @@ def warn_about_configs_to_review(old_site_id: SiteId, new_site_id: SiteId, logge
 
 rename_action_registry.register(
     RenameAction(
-        name="warn_about_configs_to_review",
-        title=_("Warn about configurations to review"),
-        sort_index=960,
-        handler=warn_about_configs_to_review,
+        name=Name("warn_about_configs_to_review"),
+        title=Title("Warn about configurations to review"),
+        sort_index=SortIndex(960),
+        run=warn_about_configs_to_review,
     )
 )

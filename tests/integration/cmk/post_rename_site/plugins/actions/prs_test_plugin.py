@@ -6,7 +6,13 @@
 import logging
 
 from cmk.ccc.site import SiteId
-from cmk.post_rename_site.registry import rename_action_registry, RenameAction
+from cmk.post_rename_site.registry import (
+    Name,
+    rename_action_registry,
+    RenameAction,
+    SortIndex,
+    Title,
+)
 
 
 def handler(old_site_id: SiteId, new_site_id: SiteId, logger: logging.Logger) -> None:
@@ -15,9 +21,9 @@ def handler(old_site_id: SiteId, new_site_id: SiteId, logger: logging.Logger) ->
 
 rename_action_registry.register(
     RenameAction(
-        name="test",
-        title="test",
-        sort_index=20,
-        handler=handler,
+        name=Name("test"),
+        title=Title("test"),
+        sort_index=SortIndex(20),
+        run=handler,
     )
 )

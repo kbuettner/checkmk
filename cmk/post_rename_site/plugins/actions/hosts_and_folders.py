@@ -6,11 +6,16 @@
 from collections.abc import Sequence
 from logging import Logger
 
-from cmk.ccc.i18n import _
 from cmk.ccc.site import SiteId
 from cmk.gui.config import active_config
 from cmk.gui.watolib.hosts_and_folders import folder_tree
-from cmk.post_rename_site.registry import rename_action_registry, RenameAction
+from cmk.post_rename_site.registry import (
+    Name,
+    rename_action_registry,
+    RenameAction,
+    SortIndex,
+    Title,
+)
 from cmk.utils.global_ident_type import GlobalIdent
 
 
@@ -66,9 +71,9 @@ def _update_locked_by(
 
 rename_action_registry.register(
     RenameAction(
-        name="hosts_and_folders",
-        title=_("Hosts and folders"),
-        sort_index=15,
-        handler=update_hosts_and_folders,
+        name=Name("hosts_and_folders"),
+        title=Title("Hosts and folders"),
+        sort_index=SortIndex(15),
+        run=update_hosts_and_folders,
     )
 )
