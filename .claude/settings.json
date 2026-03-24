@@ -9,6 +9,7 @@
       "Skill(owners)",
       "Skill(jira-plan-ticket)",
       "Skill(jira-read-ticket)",
+      "Skill(backport)",
 
       "Bash(bazel *)",
       "Bash(make *)",
@@ -29,6 +30,7 @@
       "Bash(git rebase *)",
       "Bash(git ls-tree *)",
       "Bash(git cherry-pick *)",
+      "Bash(git worktree *)",
       "Bash(git stash push *)",
       "Bash(git stash pop *)",
 
@@ -63,6 +65,7 @@
       "Bash(patch *)",
       "Bash(clickhouse client *)",
 
+      "Bash(/tmp/cmk-master-venv/.venv/bin/werk *)",
       "Bash(gerrit-change-log *)",
       "Bash(jenkins_build_data.py *)",
       "Bash(mkdir -p /tmp/jenkins-artifacts)",
