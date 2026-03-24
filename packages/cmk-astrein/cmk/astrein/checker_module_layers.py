@@ -13,10 +13,8 @@ from pathlib import Path
 from cmk.astrein.framework import ASTVisitorChecker
 from cmk.astrein.module_layers_config import (
     Component,
-    COMPONENTS,
-    EXPLICIT_FILE_TO_COMPONENT,
-    EXPLICIT_FILE_TO_DEPENDENCIES,
     get_absolute_importee,
+    ModuleLayersConfig,
     ModuleName,
     ModulePath,
 )
@@ -26,11 +24,18 @@ class ModuleLayersChecker(ASTVisitorChecker):
     """Checker for module layer architecture violations.
 
     Enforces architectural boundaries between different components of the
-    Checkmk codebase based on the COMPONENTS mapping.
-    """
+    Checkmk codebase based on the component rules in module_layers.toml."""
 
-    def __init__(self, file_path: Path, repo_root: Path, source_code: str):
+    def __init__(
+        self,
+        file_path: Path,
+        repo_root: Path,
+        source_code: str,
+        config: ModuleLayersConfig,
+    ):
         super().__init__(file_path, repo_root, source_code)
+
+        self._config = config
 
         # Compute module name from file path
         self.module_name = self._compute_module_name()
@@ -154,25 +159,26 @@ class ModuleLayersChecker(ASTVisitorChecker):
     ) -> bool:
         """Check if an import is allowed based on component rules"""
         if component:
-            return COMPONENTS[component](imported=imported, component=component)
+            return self._config.components[component](imported=imported, component=component)
 
         try:
-            file_specific_checker = EXPLICIT_FILE_TO_DEPENDENCIES[importing_path]
+            file_specific_checker = self._config.file_dependencies[importing_path]
         except KeyError:
             # This file does not belong to any component, and is not listed in
-            # _EXPLICIT_FILE_TO_DEPENDENCIES. We don't allow any cmk imports.
+            # file_dependencies. We don't allow any cmk imports.
             return False
         return file_specific_checker(imported=imported, component=component)
 
-    @staticmethod
-    def _find_component(importing: ModuleName, importing_path: ModulePath) -> Component | None:
+    def _find_component(
+        self, importing: ModuleName, importing_path: ModulePath
+    ) -> Component | None:
         """Find which component a file belongs to"""
         # Let's *not* check the explicit list first. We don't want to encourage to define exceptions.
         # What's below cmk/foobar, belongs to cmk.foobar, PERIOD.
-        for component in COMPONENTS:
+        for component in self._config.components:
             if importing.in_component(component):
                 return component
         try:
-            return EXPLICIT_FILE_TO_COMPONENT[importing_path]
+            return self._config.file_components[importing_path]
         except KeyError:
             return None

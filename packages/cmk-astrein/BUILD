@@ -21,7 +21,10 @@ py_library(
         "cmk/astrein/module_layers_config.py",
         "cmk/astrein/sarif.py",
     ],
-    data = [":py_typed"],
+    data = [
+        ":py_typed",
+        "//:module_layers.toml",
+    ],
     imports = ["."],
     deps = [
         requirement("pygls"),
@@ -79,6 +82,7 @@ py_pytest_main(
 py_test(
     name = "test",
     srcs = ["__test__"] + glob(["tests/test_*.py"]),
+    data = ["//:module_layers.toml"],
     main = "__test__.py",
     deps = [
         ":__test__",

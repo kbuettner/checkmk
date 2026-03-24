@@ -12,13 +12,16 @@ import logging
 import signal
 import sys
 import tempfile
+from functools import partial
 from pathlib import Path
 
 from lsprotocol import types as lsp
 from pygls.lsp.server import LanguageServer
 
+from cmk.astrein.checker_module_layers import ModuleLayersChecker
 from cmk.astrein.checkers import all_checkers
-from cmk.astrein.framework import CheckerError, run_checkers
+from cmk.astrein.framework import ASTVisitorChecker, CheckerError, CheckerFactory, run_checkers
+from cmk.astrein.module_layers_config import CONFIG_FILENAME, load_config
 
 logger = logging.getLogger(__name__)
 
@@ -146,6 +149,29 @@ def _validate_document(ls: AstreinLanguageServer, uri: str, *, source: str | Non
     logger.info("Published %d diagnostic(s) for %s", len(diagnostics), uri)
 
 
+def _bind_configs(
+    checker_classes: list[type[ASTVisitorChecker]],
+    repo_root: Path,
+) -> list[CheckerFactory]:
+    """Pre-load configs and bind them to checker factories that need them.
+
+    In the LSP context the workspace may not contain a module_layers.toml,
+    so we skip the module-layers checker when the file is missing.
+    """
+    config_path = repo_root / CONFIG_FILENAME
+    if not config_path.exists():
+        logger.warning(
+            "module_layers.toml not found at %s, skipping module-layers checker", repo_root
+        )
+        return [cls for cls in checker_classes if cls is not ModuleLayersChecker]
+
+    config = load_config(config_path)
+    return [
+        partial(ModuleLayersChecker, config=config) if cls is ModuleLayersChecker else cls
+        for cls in checker_classes
+    ]
+
+
 def get_diagnostics(
     uri: str, repo_root: Path | None, *, source: str | None = None
 ) -> list[lsp.Diagnostic] | None:
@@ -159,20 +185,20 @@ def get_diagnostics(
         logger.warning("repo_root not set, skipping validation")
         return None
 
-    checkers = list(all_checkers().values())
-    errors = []
+    factories = _bind_configs(list(all_checkers().values()), repo_root)
+    errors: list[CheckerError] = []
     try:
         if source is not None:
             with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=True) as tmp:
                 tmp.write(source)
                 tmp.flush()
-                errors.extend(run_checkers(Path(tmp.name), repo_root, checkers))
+                errors.extend(run_checkers(Path(tmp.name), repo_root, factories))
         else:
             if not file_path.exists():
                 logger.warning("File does not exist: %s", file_path)
                 return None
 
-            errors.extend(run_checkers(file_path, repo_root, checkers))
+            errors.extend(run_checkers(file_path, repo_root, factories))
 
         return [_checker_error_to_diagnostic(e) for e in errors]
 

@@ -12,10 +12,13 @@ import os
 import sys
 from collections.abc import Sequence
 from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
 
+from cmk.astrein.checker_module_layers import ModuleLayersChecker
 from cmk.astrein.checkers import all_checkers
-from cmk.astrein.framework import ASTVisitorChecker, CheckerError, run_checkers
+from cmk.astrein.framework import ASTVisitorChecker, CheckerError, CheckerFactory, run_checkers
+from cmk.astrein.module_layers_config import CONFIG_FILENAME, load_config
 from cmk.astrein.sarif import format_sarif
 
 
@@ -58,7 +61,9 @@ def main() -> int:
     work_dir = Path(os.environ.get("BUILD_WORKING_DIRECTORY", os.getcwd()))
     workspace_dir = Path(os.environ.get("BUILD_WORKSPACE_DIRECTORY", work_dir))
 
-    checker_classes = _select_checkers(args.checker, checkers)
+    selected = _select_checkers(args.checker, checkers)
+    factories = _bind_configs(selected, workspace_dir)
+
     try:
         files_to_check = _collect_files(args.paths, work_dir)
     except ValueError as e:
@@ -66,26 +71,39 @@ def main() -> int:
         return 1
 
     return _handle_results(
-        _run_checkers(files_to_check, workspace_dir, checker_classes),
+        _run_checkers(files_to_check, workspace_dir, factories),
         args.format,
         args.output,
     )
 
 
+def _bind_configs(
+    checker_classes: list[type[ASTVisitorChecker]],
+    workspace_dir: Path,
+) -> list[CheckerFactory]:
+    """Pre-load configs and bind them to checker factories that need them."""
+    config = load_config(workspace_dir / CONFIG_FILENAME)
+    return [
+        partial(ModuleLayersChecker, config=config) if cls is ModuleLayersChecker else cls
+        for cls in checker_classes
+    ]
+
+
 def _select_checkers(
-    checker_arg: str, checkers: dict[str, type[ASTVisitorChecker]]
+    checker_arg: str,
+    checkers: dict[str, type[ASTVisitorChecker]],
 ) -> list[type[ASTVisitorChecker]]:
-    checker_classes: list[type[ASTVisitorChecker]] = []
+    selected: list[type[ASTVisitorChecker]] = []
 
     if checker_arg == "all":
-        checker_classes.extend(checkers.values())
+        selected.extend(checkers.values())
     elif checker_arg in checkers:
-        checker_classes.append(checkers[checker_arg])
+        selected.append(checkers[checker_arg])
 
-    if not checker_classes:
+    if not selected:
         raise SystemExit("Exit: No checkers selected")
 
-    return checker_classes
+    return selected
 
 
 def _collect_files(paths: Sequence[Path], workspace_dir: Path) -> list[Path]:
@@ -132,13 +150,13 @@ class CheckerResults:
 def _run_checkers(
     files_to_check: list[Path],
     workspace_dir: Path,
-    checker_classes: list[type[ASTVisitorChecker]],
+    factories: list[CheckerFactory],
 ) -> CheckerResults:
     all_errors: list[CheckerError] = []
     files_with_errors = 0
 
     for file_path in files_to_check:
-        errors = run_checkers(file_path, workspace_dir, checker_classes)
+        errors = run_checkers(file_path, workspace_dir, factories)
 
         if errors:
             files_with_errors += 1

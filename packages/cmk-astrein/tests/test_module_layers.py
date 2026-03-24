@@ -6,17 +6,30 @@
 import ast
 from pathlib import Path
 
+import pytest
+
 from cmk.astrein.checker_module_layers import ModuleLayersChecker
-from cmk.astrein.module_layers_config import (
-    Component,
-    COMPONENTS,
-)
+from cmk.astrein.module_layers_config import Component, CONFIG_FILENAME, load_config
+
+
+def _find_repo_root() -> Path:
+    """Find the repository root by walking up from this file."""
+    p = Path(__file__).resolve()
+    while p != p.parent:
+        if (p / "module_layers.toml").exists():
+            return p
+        p = p.parent
+    pytest.skip("module_layers.toml not found in parent directories")
+    raise AssertionError("unreachable")
+
+
+_REPO_ROOT = _find_repo_root()
+_CONFIG = load_config(_REPO_ROOT / CONFIG_FILENAME)
 
 
 def _make_checker(file_path: str, source_code: str = "") -> ModuleLayersChecker:
-    repo_root = Path("/repo")
-    full_path = repo_root / file_path
-    return ModuleLayersChecker(full_path, repo_root, source_code)
+    full_path = _REPO_ROOT / file_path
+    return ModuleLayersChecker(full_path, _REPO_ROOT, source_code, config=_CONFIG)
 
 
 def test_no_component_masked_by_more_general_component() -> None:
@@ -25,8 +38,9 @@ def test_no_component_masked_by_more_general_component() -> None:
     This test verifies that component hierarchies are properly ordered so that
     more specific components aren't masked by more general ones.
     """
+    config = load_config(_REPO_ROOT / CONFIG_FILENAME)
     seen: set[Component] = set()
-    for component in COMPONENTS:
+    for component in config.components:
         shadowed = {c for c in seen if component.is_below(c)}
         assert not shadowed, f"Component {component} is shadowed by {shadowed}"
         seen.add(component)
@@ -34,9 +48,6 @@ def test_no_component_masked_by_more_general_component() -> None:
 
 def test_inline_suppression_support() -> None:
     """Test that inline suppressions are respected by the checker."""
-    test_file = Path(__file__).resolve()
-    repo_root = test_file.parent.parent.parent.parent.parent
-
     # Test code with suppressed and unsuppressed violations
     source_code = """from cmk.base.config import something  # astrein: disable=cmk-module-layer-violation
 
@@ -48,9 +59,9 @@ from cmk.checkengine.plugins import Plugin
 
     # Parse and check
     tree = ast.parse(source_code)
-    test_file_path = repo_root / "cmk" / "test_suppression.py"
+    test_file_path = _REPO_ROOT / "cmk" / "test_suppression.py"
 
-    checker = ModuleLayersChecker(test_file_path, repo_root, source_code)
+    checker = ModuleLayersChecker(test_file_path, _REPO_ROOT, source_code, config=_CONFIG)
     errors = checker.check(tree)
 
     # Only the last import (line 6) should produce an error

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import ast
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -88,10 +89,23 @@ class ASTVisitorChecker(ABC, ast.NodeVisitor):
         return self.errors
 
 
+#: A callable that creates a checker for a given file.
+#: Checker classes satisfy this directly; use ``functools.partial`` to bind
+#: extra arguments (e.g. a pre-loaded config) before passing to ``run_checkers``.
+CheckerFactory = Callable[[Path, Path, str], ASTVisitorChecker]
+
+
 def run_checkers(
-    file_path: Path, repo_root: Path, checker_classes: list[type[ASTVisitorChecker]]
+    file_path: Path,
+    repo_root: Path,
+    checker_factories: list[CheckerFactory],
 ) -> list[CheckerError]:
-    """Run multiple checkers on a Python file"""
+    """Run multiple checkers on a Python file.
+
+    Each factory is called with ``(file_path, repo_root, source_code)``
+    to produce a checker instance.  Plain checker classes work as factories;
+    use ``functools.partial`` to pre-bind extra parameters.
+    """
     try:
         source_code = file_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as e:
@@ -121,8 +135,8 @@ def run_checkers(
         ]
 
     all_errors: list[CheckerError] = []
-    for checker_class in checker_classes:
-        checker = checker_class(file_path, repo_root, source_code)
+    for factory in checker_factories:
+        checker = factory(file_path, repo_root, source_code)
         errors = checker.check(tree)
         all_errors.extend(errors)
 
