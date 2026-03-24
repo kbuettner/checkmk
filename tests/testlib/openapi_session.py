@@ -157,6 +157,7 @@ class CMKOpenApiSession(requests.Session):
         self.event_console = EventConsoleAPI(self)
         self.saml2 = Saml2API(self)
         self.relays = RelayAPI(self)
+        self.relays_internal = InternalRelayAPI(self)
         self.relay_registration_tokens = RelayRegistrationTokenAPI(self)
         self.metric_backend = MetricBackendAPI(self)
 
@@ -1896,7 +1897,7 @@ class Saml2API(BaseAPI):
             raise UnexpectedResponse.from_response(response)
 
 
-class RelayAPI(BaseAPI):
+class _BaseRelayAPI(BaseAPI):
     _domain_url = "/domain-types/relay/collections/all"
     _headers = {"Content-Type": "application/json"}
 
@@ -1904,8 +1905,11 @@ class RelayAPI(BaseAPI):
     def _object_url(relay_id: str) -> str:
         return f"/objects/relay/{relay_id}"
 
+
+class InternalRelayAPI(_BaseRelayAPI):
     def create(
         self,
+        relay_id: str,
         alias: str,
         site_id: str,
         num_fetchers: int = 13,
@@ -1915,6 +1919,7 @@ class RelayAPI(BaseAPI):
             url=self._domain_url,
             headers=self._headers,
             json={
+                "relay_id": relay_id,
                 "alias": alias,
                 "siteid": site_id,
                 "num_fetchers": num_fetchers,
@@ -1925,6 +1930,8 @@ class RelayAPI(BaseAPI):
         if response.status_code != 200:
             raise UnexpectedResponse.from_response(response)
 
+
+class RelayAPI(_BaseRelayAPI):
     def get(self, relay_id: str) -> tuple[Relay, str]:
         response = self.session.get(
             url=self._object_url(relay_id),
