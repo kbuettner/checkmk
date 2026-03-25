@@ -28,7 +28,7 @@ def _parameter_form() -> Dictionary:
     )
 
 
-rule_spec_cisco_meraki_org_device_status_ps = CheckParameters(
+rule_spec_cisco_meraki_org_api_response_codes = CheckParameters(
     name="cisco_meraki_org_api_response_codes",
     topic=Topic.NETWORKING,
     parameter_form=_parameter_form,
