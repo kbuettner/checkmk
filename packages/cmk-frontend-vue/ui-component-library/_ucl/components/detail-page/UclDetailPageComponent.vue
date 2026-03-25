@@ -22,6 +22,7 @@ import UclLegacyCssSwitch from './UclLegacyCssSwitch.vue'
 <style scoped>
 .ucl-detail-page-component__component-container {
   display: flex;
+  flex-wrap: wrap-reverse;
   gap: var(--dimension-10);
   padding: var(--dimension-10);
   border: 1px solid var(--ucl-elements-border-color);
@@ -30,7 +31,7 @@ import UclLegacyCssSwitch from './UclLegacyCssSwitch.vue'
 }
 
 .ucl-detail-page-component__preview-panel {
-  flex: 1;
+  flex: 100;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,8 +39,7 @@ import UclLegacyCssSwitch from './UclLegacyCssSwitch.vue'
 }
 
 .ucl-detail-page-component__properties-panel {
-  flex-shrink: 0;
-  min-width: 300px;
+  flex: 1 0 300px;
   display: flex;
   flex-direction: column;
   gap: var(--dimension-4);
