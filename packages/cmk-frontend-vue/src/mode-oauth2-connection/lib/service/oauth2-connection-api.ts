@@ -4,13 +4,13 @@
  * conditions defined in the file COPYING, which is part of this source code package.
  */
 import { Api } from '@/lib/api-client'
+import type { SetDataResult } from '@/lib/configuration_entity_types'
 
-import type { SetDataResult } from '@/form/FormEditAsync.vue'
 import {
   type EntityDescription,
   type Payload,
   configEntityAPI
-} from '@/form/private/forms/FormSingleChoiceEditable/configuration_entity'
+} from '@/components/user-input/CmkConfigurationEntityDropdown'
 
 export type PasswordValue = [string, string, string, boolean]
 

@@ -31,14 +31,14 @@ import CmkSlideInDialog from '@/components/CmkSlideInDialog.vue'
 import type { Suggestion } from '@/components/CmkSuggestions'
 import CmkSwitch from '@/components/CmkSwitch.vue'
 import CmkCheckbox from '@/components/user-input/CmkCheckbox.vue'
+import {
+  type Payload,
+  configEntityAPI
+} from '@/components/user-input/CmkConfigurationEntityDropdown'
 import CmkInput from '@/components/user-input/CmkInput.vue'
 
 import FormSingleChoiceEditableEditAsync from '@/form/FormEditAsync.vue'
 import FormHelp from '@/form/private/FormHelp.vue'
-import {
-  type Payload,
-  configEntityAPI
-} from '@/form/private/forms/FormSingleChoiceEditable/configuration_entity'
 import { type ValidationMessages } from '@/form/private/validation'
 
 import FormMetricBackendCustomQuery, {

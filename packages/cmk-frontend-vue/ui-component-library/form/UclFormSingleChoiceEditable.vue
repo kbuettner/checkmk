@@ -9,9 +9,10 @@ import { HttpResponse, bypass, http, passthrough } from 'msw'
 import { setupWorker } from 'msw/browser'
 import { onBeforeMount, onBeforeUnmount, ref } from 'vue'
 
+import { configEntityAPI } from '@/components/user-input/CmkConfigurationEntityDropdown'
+
 import { initializeComponentRegistry } from '@/form/private/FormEditDispatcher/dispatch'
 import FormSingleChoiceEditable from '@/form/private/forms/FormSingleChoiceEditable/FormSingleChoiceEditable.vue'
-import { configEntityAPI } from '@/form/private/forms/FormSingleChoiceEditable/configuration_entity'
 
 initializeComponentRegistry()
 

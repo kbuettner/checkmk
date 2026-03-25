@@ -9,8 +9,7 @@ import type { FormSpec } from 'cmk-shared-typing/typescript/vue_formspec_compone
 
 import client, { unwrap } from '@/lib/rest-api-client/client'
 
-import type { SetDataResult } from '@/form/FormEditAsync.vue'
-import type { ValidationMessages } from '@/form/private/validation'
+import type { SetDataResult, ValidationMessages } from './api-result-types'
 
 export interface EntityDescription {
   ident: string

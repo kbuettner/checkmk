@@ -15,14 +15,14 @@ import CmkDropdown from '@/components/CmkDropdown'
 import { useCmkErrorBoundary } from '@/components/CmkErrorBoundary'
 import CmkSlideInDialog from '@/components/CmkSlideInDialog.vue'
 import CmkSpace from '@/components/CmkSpace.vue'
+import {
+  type Payload,
+  configEntityAPI
+} from '@/components/user-input/CmkConfigurationEntityDropdown'
 import CmkInlineButton from '@/components/user-input/CmkInlineButton.vue'
 import FormValidation from '@/components/user-input/CmkInlineValidation.vue'
 
 import FormSingleChoiceEditableEditAsync from '@/form/FormEditAsync.vue'
-import {
-  type Payload,
-  configEntityAPI
-} from '@/form/private/forms/FormSingleChoiceEditable/configuration_entity'
 import { type ValidationMessages, useValidation } from '@/form/private/validation'
 
 const props = defineProps<{

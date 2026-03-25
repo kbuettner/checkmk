@@ -11,6 +11,7 @@ import type {
 } from 'cmk-shared-typing/typescript/vue_formspec_components'
 import { onUnmounted, ref, toRaw } from 'vue'
 
+import { type SetDataResult } from '@/lib/configuration_entity_types'
 import usei18n from '@/lib/i18n'
 import { untranslated } from '@/lib/i18n'
 import { immediateWatch } from '@/lib/watch'
@@ -27,9 +28,7 @@ import FormEditDispatcher from '@/form/private/FormEditDispatcher/FormEditDispat
 
 export type Payload = Record<string, unknown>
 
-export type SetDataResult<Result> =
-  | { type: 'success'; entity: Result }
-  | { type: 'error'; validationMessages: Array<ValidationMessage> }
+export type { SetDataResult }
 
 export type API<ObjectIdent, Result> = {
   getSchema: (signal?: AbortSignal) => Promise<FormSpec>
