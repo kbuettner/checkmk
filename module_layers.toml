@@ -132,6 +132,11 @@ allows = [
   "cmk.utils",
 ]
 
+# This hosts internal plugins. They can not be subjected to
+# any common dependency restrictions.
+[plugin_families.violations.dcd]
+allows = ["@ccc", "cmk.dcd", "cmk.gui.config", "cmk.post_rename_site.internal"]
+
 [plugin_families.violations.custom_query_metric_backend]
 allows = [
   "cmk.metric_backend",

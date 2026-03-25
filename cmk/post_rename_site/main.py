@@ -100,6 +100,9 @@ def load_plugins() -> Iterable[RenameAction]:
     discovered_actions = discover_plugins_from_modules(
         entry_point_prefixes(),
         discover_submodules(
+            # TODO: switch to the generic 'cmk.plugins.*.<GROUP>' mechanism
+            # once all plugins are moved.
+            "cmk.plugins.dcd.post_rename_site",
             "cmk.post_rename_site.plugins.actions",
             "cmk.post_rename_site.nonfree.pro.plugins.actions",
             "cmk.post_rename_site.nonfree.ultimate.plugins.actions",
