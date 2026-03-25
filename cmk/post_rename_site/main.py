@@ -76,12 +76,11 @@ def main(args: Sequence[str]) -> int:
 
     # Do the loading here so that run() can be tested without any additional loading
     logger.debug("Initializing application...")
-
+    main_modules.register(edition := cmk_version.edition(paths.omd_root))
     if errors := main_modules.get_failed_plugins():
         logger.error("The following errors occurred during plug-in loading: %r", errors)
         return 1
 
-    main_modules.register(edition := cmk_version.edition(paths.omd_root))
     load_plugins(edition)
 
     try:
