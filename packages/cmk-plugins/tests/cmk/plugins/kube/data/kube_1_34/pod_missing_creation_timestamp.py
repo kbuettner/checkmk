@@ -209,7 +209,7 @@ DATA = {
                 "state": {"running": {"startedAt": "2026-03-19T17:34:38Z"}},
                 "user": {"linux": {"gid": 10001, "supplementalGroups": [10001], "uid": 10001}},
                 "volumeMounts": [
-                    {"mountPath": "/tmp", "name": "tmp"},
+                    {"mountPath": "/mnt/tmp", "name": "tmp"},
                     {
                         "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
                         "name": "kube-api-access-pf9dl",
