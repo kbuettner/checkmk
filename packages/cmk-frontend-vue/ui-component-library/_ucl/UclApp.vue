@@ -63,7 +63,6 @@ watch(
   color: var(--ucl-body-text-color);
   background-color: var(--ucl-app-bg-color);
   height: 100vh;
-  overflow: hidden;
 }
 
 .ucl-app__header {
@@ -79,7 +78,6 @@ watch(
 .ucl-app__body {
   display: flex;
   flex: 1;
-  overflow: hidden;
   padding: 16px;
   gap: 16px;
 }
@@ -89,7 +87,6 @@ watch(
   flex-direction: column;
   width: 250px;
   border-right: 1px solid var(--ucl-elements-border-color);
-  overflow: hidden auto;
   flex-shrink: 0;
   scrollbar-width: thin;
   scrollbar-color: var(--ucl-nav-tree-scroll-bar-color) transparent;
@@ -112,7 +109,7 @@ watch(
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden auto;
+  min-width: 0;
 }
 
 .ucl-app__main::-webkit-scrollbar {

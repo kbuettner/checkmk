@@ -65,7 +65,6 @@ const normalizedData = computed(() =>
   border: 1px solid var(--ucl-elements-border-color);
   background: var(--ucl-detail-section-bg-color);
   border-radius: 8px;
-  overflow: hidden;
   width: 100%;
   margin-bottom: var(--spacing);
 }
