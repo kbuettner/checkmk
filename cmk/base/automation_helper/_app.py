@@ -17,7 +17,7 @@ from fastapi.responses import JSONResponse
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from pydantic import BaseModel
 
-from cmk.automations.helper_api import AutomationPayload, AutomationResponse
+from cmk.automations.models.helper import AutomationPayload, AutomationResponse
 from cmk.automations.results import ABCAutomationResult
 from cmk.base import config
 from cmk.base.app import make_app

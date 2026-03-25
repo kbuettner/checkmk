@@ -16,7 +16,7 @@ from cmk.automations.backends._base import (
     AutomationExecutor,
     LocalAutomationResult,
 )
-from cmk.automations.helper_api import AutomationPayload, AutomationResponse
+from cmk.automations.models.helper import AutomationPayload, AutomationResponse
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.i18n import _
 from cmk.utils import paths

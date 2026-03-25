@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from cmk.automations.helper_api import AutomationPayload, AutomationResponse
+from cmk.automations.models.helper import AutomationPayload, AutomationResponse
 from cmk.automations.results import AnalyseServiceResult, SerializedResult
 from cmk.base.automation_helper._app import HealthCheckResponse
 from cmk.base.automation_helper._config import (
