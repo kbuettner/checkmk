@@ -6,19 +6,36 @@
 # mypy: disable-error-code="type-arg"
 
 
+from collections.abc import Sequence
+from logging import getLogger
 from pathlib import Path
 
+import pytest
 from pytest import MonkeyPatch
+
+from livestatus import SiteConfiguration, SiteConfigurations
 
 import cmk.gui.watolib.hosts_and_folders
 import cmk.utils.paths
 from cmk.ccc.hostaddress import HostName
 from cmk.ccc.site import SiteId
+from cmk.gui.config import active_config
 from cmk.gui.watolib.builtin_attributes import HostAttributeSite
+from cmk.gui.watolib.host_attributes import (
+    HostAttributes,
+)
 from cmk.gui.watolib.hosts_and_folders import folder_tree
 from cmk.post_rename_site.logger import logger
-from cmk.post_rename_site.plugins.actions.hosts_and_folders import update_hosts_and_folders
+from cmk.post_rename_site.plugins.actions.hosts_and_folders import (
+    _update_locked_by,
+    update_hosts_and_folders,
+)
+from cmk.utils.global_ident_type import (
+    GlobalIdent,
+)
 from cmk.utils.tags import TagGroupID
+
+CreateHost = tuple[HostName, HostAttributes, Sequence[HostName] | None]
 
 
 def _write_folder_attributes(folder_attributes: dict) -> Path:
@@ -157,3 +174,239 @@ host_attributes.update(
     hosts_config = root_folder._load_hosts_file()
     assert hosts_config is not None
     assert hosts_config["host_tags"]["ag"]["site"] == "dingdong"
+
+
+@pytest.mark.parametrize(
+    "old_site_id, new_site_id, locked_by, expected",
+    [
+        (SiteId("SITE"), SiteId("NEWSITE"), None, None),
+        (
+            SiteId("SITE"),
+            SiteId("NEWSITE"),
+            GlobalIdent(site_id="BAD-SITE-NAME", program_id="aaa", instance_id="bbb"),
+            None,
+        ),
+        (
+            SiteId("SITE"),
+            SiteId("NEWSITE"),
+            GlobalIdent(site_id="SITE", program_id="aaa", instance_id="bbb"),
+            ("NEWSITE", "aaa", "bbb"),
+        ),
+    ],
+)
+def test_updating_locked_by(
+    old_site_id: SiteId,
+    new_site_id: SiteId,
+    locked_by: GlobalIdent | None,
+    expected: Sequence[str],
+) -> None:
+    updated_locked_by: Sequence[str] | None = _update_locked_by(old_site_id, new_site_id, locked_by)
+    assert updated_locked_by == expected
+
+
+def test_updating_site_name_for_dcd(monkeypatch: pytest.MonkeyPatch) -> None:
+    """
+    We have one site and two hosts.
+        * host-2 is locked by host-1
+
+    Updating the site name for host-1 should update host-2 and the host-2.locked_by
+    """
+
+    def extend_site_context(m: pytest.MonkeyPatch) -> None:
+        m.setattr(
+            active_config,
+            "sites",
+            SiteConfigurations(
+                {
+                    **active_config.sites,
+                    SiteId("NEWSITE"): SiteConfiguration(
+                        id=SiteId("NEWSITE"),
+                        alias="No Site",
+                        socket=("local", None),
+                        disable_wato=True,
+                        disabled=False,
+                        insecure=False,
+                        url_prefix="/NEWSITE/",
+                        multisiteurl="",
+                        persist=False,
+                        replicate_ec=False,
+                        replicate_mkps=False,
+                        replication=None,
+                        timeout=5,
+                        user_login=True,
+                        proxy=None,
+                        user_sync="all",
+                        status_host=None,
+                        message_broker_port=5672,
+                        is_trusted=False,
+                    ),
+                }
+            ),
+        )
+
+    old_site_id = SiteId("NO_SITE")
+    new_site_id = SiteId("NEWSITE")
+
+    host_info_1: CreateHost = (HostName("host-1"), {"site": old_site_id}, [])
+    host_info_2: CreateHost = (
+        HostName("host-2"),
+        {
+            "site": old_site_id,
+            "locked_by": (old_site_id, "aaa", "bbb"),
+        },
+        [],
+    )
+
+    ## Let's prepare the initial state of the hosts.
+    root = folder_tree().root_folder()
+    root.create_hosts([host_info_1, host_info_2], pprint_value=False, use_git=False)
+
+    ## Check the initial state of the hosts.
+    host_1 = root.load_host(HostName("host-1"))
+    host_2 = root.load_host(HostName("host-2"))
+
+    assert host_1.attributes.get("site") == old_site_id
+    assert host_2.attributes.get("site") == old_site_id
+
+    assert host_1.locked_by() is None
+    assert host_2.locked_by() == GlobalIdent(
+        site_id=old_site_id, program_id="aaa", instance_id="bbb"
+    )
+
+    ## Update the site name.
+    with monkeypatch.context() as m:
+        extend_site_context(m)
+        update_hosts_and_folders(
+            old_site_id=old_site_id, new_site_id=new_site_id, logger=getLogger("test")
+        )
+
+    ## Check the state of the hosts after the update.
+    root = folder_tree().root_folder()
+
+    host_1 = root.load_host(HostName("host-1"))
+    host_2 = root.load_host(HostName("host-2"))
+
+    assert host_1.attributes.get("site") == new_site_id
+    assert host_2.attributes.get("site") == new_site_id
+
+    assert host_1.locked_by() is None
+    assert host_2.locked_by() == GlobalIdent(
+        site_id=new_site_id, program_id="aaa", instance_id="bbb"
+    )
+    ## Let's change the site back.
+    update_hosts_and_folders(
+        old_site_id=new_site_id, new_site_id=old_site_id, logger=getLogger("test")
+    )
+
+    ## Check the state of the hosts, it should be exactly the same as the initial one.
+    host_1 = root.load_host(HostName("host-1"))
+    host_2 = root.load_host(HostName("host-2"))
+
+    assert host_1.attributes.get("site") == old_site_id
+    assert host_2.attributes.get("site") == old_site_id
+
+    assert host_1.locked_by() is None
+    assert host_2.locked_by() == GlobalIdent(
+        site_id=old_site_id, program_id="aaa", instance_id="bbb"
+    )
+
+
+def test_updating_site_name_without_dcd(monkeypatch: pytest.MonkeyPatch) -> None:
+    """
+    We have two site and two separate hosts.
+
+    Updating the site name for host-1 shouldn't change host-2.
+    """
+
+    def extend_site_context(m: pytest.MonkeyPatch) -> None:
+        m.setattr(
+            active_config,
+            "sites",
+            SiteConfigurations(
+                {
+                    **active_config.sites,
+                    SiteId("HOST2SITE"): SiteConfiguration(
+                        id=SiteId("HOST2SITE"),
+                        alias="No Site",
+                        socket=("local", None),
+                        disable_wato=True,
+                        disabled=False,
+                        insecure=False,
+                        url_prefix="/HOST2SITE/",
+                        multisiteurl="",
+                        persist=False,
+                        replicate_ec=False,
+                        replicate_mkps=False,
+                        replication=None,
+                        timeout=5,
+                        user_login=True,
+                        proxy=None,
+                        user_sync="all",
+                        status_host=None,
+                        message_broker_port=5672,
+                        is_trusted=False,
+                    ),
+                }
+            ),
+        )
+
+    old_site_id = SiteId("NO_SITE")
+    new_site_id = SiteId("NEWSITE")
+    host_2_site_id = SiteId("HOST2SITE")
+
+    host_info_1: CreateHost = (HostName("host-1"), {"site": old_site_id}, [])
+    host_info_2: CreateHost = (
+        HostName("host-2"),
+        {
+            "site": host_2_site_id,
+        },
+        [],
+    )
+
+    ## Let's prepare the initial state of the hosts.
+    root = folder_tree().root_folder()
+    with monkeypatch.context() as m:
+        extend_site_context(m)
+        root.create_hosts([host_info_1, host_info_2], pprint_value=False, use_git=False)
+
+    ## Check the initial state of the hosts.
+    host_1 = root.load_host(HostName("host-1"))
+    host_2 = root.load_host(HostName("host-2"))
+
+    assert host_1.attributes.get("site") == old_site_id
+    assert host_2.attributes.get("site") == host_2_site_id
+
+    assert host_1.locked_by() is None
+    assert host_2.locked_by() is None
+
+    ## Update the site name.
+    update_hosts_and_folders(
+        old_site_id=old_site_id, new_site_id=new_site_id, logger=getLogger("test")
+    )
+
+    ## Check the state of the hosts after the update.
+    root = folder_tree().root_folder()
+
+    host_1 = root.load_host(HostName("host-1"))
+    host_2 = root.load_host(HostName("host-2"))
+
+    assert host_1.attributes.get("site") == new_site_id
+    assert host_2.attributes.get("site") == host_2_site_id
+
+    assert host_1.locked_by() is None
+    assert host_2.locked_by() is None
+
+    ## Let's change the site back.
+    update_hosts_and_folders(
+        old_site_id=new_site_id, new_site_id=old_site_id, logger=getLogger("test")
+    )
+
+    ## Check the state of the hosts, it should be exactly the same as the initial one.
+    host_1 = root.load_host(HostName("host-1"))
+    host_2 = root.load_host(HostName("host-2"))
+
+    assert host_1.attributes.get("site") == old_site_id
+    assert host_2.attributes.get("site") == host_2_site_id
+
+    assert host_1.locked_by() is None
+    assert host_2.locked_by() is None
