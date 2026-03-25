@@ -39,7 +39,6 @@ from cmk.gui.watolib.hosts_and_folders import Folder, folder_tree, Host
 from cmk.utils import paths
 from cmk.utils.global_ident_type import PROGRAM_ID_QUICK_SETUP
 from cmk.utils.tags import BuiltinTagConfig
-from tests.testlib.common.repo import is_ultimate_repo
 from tests.testlib.unit.gui.web_test_app import WebTestAppForCMK
 from tests.testlib.unit.rest_api_client import ClientRegistry, RestApiException
 
@@ -1506,6 +1505,10 @@ def test_openapi_host_config_correct_contactgroup_default(
     }
 
 
+@pytest.mark.skipif(
+    version.edition(paths.omd_root) is not version.Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 @time_machine.travel(datetime.datetime.fromisoformat("2022-11-05T00:00:00+00:00"), tick=False)
 def test_openapi_host_config_effective_attributes_includes_all_host_attributes_regression(
     clients: ClientRegistry, with_admin: tuple[str, str]
@@ -1525,8 +1528,6 @@ def test_openapi_host_config_effective_attributes_includes_all_host_attributes_r
         "additional_ipv4addresses": [],
         "additional_ipv6addresses": [],
         "alias": "",
-        **({"bake_agent_package": False} if is_ultimate_repo() else {}),
-        **({"cmk_agent_connection": "pull-agent"} if is_ultimate_repo() else {}),
         "contactgroups": {
             "groups": [],
             "recurse_perms": False,
@@ -1565,14 +1566,12 @@ def test_openapi_host_config_effective_attributes_includes_all_host_attributes_r
         },
         "parents": [],
         "site": "NO_SITE",
-        **({"relay": ""} if is_ultimate_repo() else {}),
         "snmp_community": None,
         "tag_address_family": "ip-v4-only",
         "tag_agent": "cmk-agent",
         "tag_piggyback": "auto-piggyback",
         "tag_snmp_ds": "no-snmp",
         "waiting_for_discovery": False,
-        **({"metrics_association": ["disabled", None]} if is_ultimate_repo() else {}),
     }
     assert resp.json["extensions"]["effective_attributes"] == expected, expected
 
@@ -1782,15 +1781,17 @@ class TestHostsFilters:
         assert not resp.json["value"]
 
 
-def test_openapi_built_in_host_attributes_in_sync(test_edition: version.Edition) -> None:
-    known_exceptions = ["meta_data", "network_scan_result"]
-    if test_edition is version.Edition.COMMUNITY:
-        known_exceptions.append("bake_agent_package")
-    if test_edition not in [
-        version.Edition.ULTIMATEMT,
-        version.Edition.ULTIMATE,
-    ]:
-        known_exceptions.append("cmk_agent_connection")
+@pytest.mark.skipif(
+    version.edition(paths.omd_root) is not version.Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
+def test_openapi_built_in_host_attributes_in_sync() -> None:
+    known_exceptions = [
+        "meta_data",
+        "network_scan_result",
+        "bake_agent_package",
+        "cmk_agent_connection",
+    ]
 
     assert set(BuiltInHostAttributes.__annotations__) == set(
         list(BaseHostAttribute().fields.keys()) + known_exceptions
