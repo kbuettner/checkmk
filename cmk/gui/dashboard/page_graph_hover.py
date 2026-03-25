@@ -105,7 +105,7 @@ class GraphHoverTokenAuthPage(DashboardTokenAuthenticatedPage):
                 graph_dashlet_config,
                 dashboard.get("context"),  # dashboard-level base context
             )
-            recipes = dashlet.graph_recipes()
+            recipes = dashlet.recipes()
 
             if not recipes:
                 raise InvalidWidgetError()
@@ -116,11 +116,11 @@ class GraphHoverTokenAuthPage(DashboardTokenAuthenticatedPage):
             height_in_ex = graph_dashlet_config.get("graph_render_options", {}).get(
                 "size", GraphDisplayConfigBase.model_fields["size"].default
             )[1]
-            graph_time_range = make_graph_time_range((start_time, end_time), height_in_ex)
+            time_range = make_graph_time_range((start_time, end_time), height_in_ex)
 
             render_graph_hover_for_recipe(
                 recipes[0].recipe,
-                graph_time_range,
+                time_range,
                 metrics_from_api,
                 debug=ctx.config.debug,
                 hover_time=ctx.request.get_integer_input_mandatory("hover_time"),

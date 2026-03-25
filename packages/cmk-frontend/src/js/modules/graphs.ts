@@ -232,11 +232,11 @@ function _hover_cache_set(key: string, data: GraphHover): void {
 
 interface DelayedGraph {
   graph_load_container: HTMLElement | Node | null
-  graph_recipe: GraphRecipe
-  graph_time_range: GraphTimeRange
-  graph_display_config: GraphDisplayConfigHTML
+  recipe: GraphRecipe
+  time_range: GraphTimeRange
+  display_config: GraphDisplayConfigHTML
   script_object: HTMLScriptElement
-  graph_display_id: string
+  display_id: string
   additional_html: object | null
 }
 
@@ -357,11 +357,7 @@ export function show_ajax_graph_at_container(ajax_graph: AjaxGraph, container: H
   render_graph(g_graphs[graph_id])
 }
 
-export function create_graph(
-  html_code: string,
-  graph_artwork: GraphArtwork,
-  ajax_context: GraphContext
-) {
+export function create_graph(html_code: string, artwork: GraphArtwork, ajax_context: GraphContext) {
   // Detect whether or not a new graph_id has to be calculated. During the view
   // data reload create_graph() is called again for all already existing graphs.
   // In this situation the graph_id needs to be detected and reused instead of
@@ -390,9 +386,9 @@ export function create_graph(
     id: graph_id,
     canvas: null,
     display_config: ajax_context.display_config,
-    artwork: graph_artwork,
-    pin_time: graph_artwork.pin_time,
-    actual_time: { ...graph_artwork.actual_time },
+    artwork: artwork,
+    pin_time: artwork.pin_time,
+    actual_time: { ...artwork.actual_time },
     pixels_per_second: 0,
     pixels_per_unit: 0,
     time_origin: 0,
@@ -430,10 +426,10 @@ function get_current_script(): HTMLScriptElement {
 // b) Process the rendering asynchronous via javascript to make the page loading
 //    faster by parallelizing the graph loading processes.
 export function load_graph_content(
-  graph_recipe: GraphRecipe,
-  graph_time_range: GraphTimeRange,
-  graph_display_config: GraphDisplayConfigHTML,
-  graph_display_id: string,
+  recipe: GraphRecipe,
+  time_range: GraphTimeRange,
+  display_config: GraphDisplayConfigHTML,
+  display_id: string,
   additional_html: object | null = null
 ) {
   const script_object = get_current_script()
@@ -444,21 +440,21 @@ export function load_graph_content(
   if (!is_in_viewport(graph_load_container as HTMLElement)) {
     g_delayed_graphs.push({
       graph_load_container: graph_load_container,
-      graph_recipe: graph_recipe,
-      graph_time_range: graph_time_range,
-      graph_display_config: graph_display_config,
+      recipe: recipe,
+      time_range: time_range,
+      display_config: display_config,
       script_object: script_object,
-      graph_display_id: graph_display_id,
+      display_id: display_id,
       additional_html: additional_html
     })
     return
   } else {
     do_load_graph_content(
-      graph_recipe,
-      graph_time_range,
-      graph_display_config,
+      recipe,
+      time_range,
+      display_config,
       script_object,
-      graph_display_id,
+      display_id,
       additional_html
     )
   }
@@ -486,11 +482,11 @@ export function register_delayed_graph_listener() {
 }
 
 function do_load_graph_content(
-  graph_recipe: GraphRecipe,
-  graph_time_range: GraphTimeRange,
-  graph_display_config: GraphDisplayConfigHTML,
+  recipe: GraphRecipe,
+  time_range: GraphTimeRange,
+  display_config: GraphDisplayConfigHTML,
   script_object: HTMLScriptElement,
-  graph_display_id: string,
+  display_id: string,
   additional_html: object | null = null
 ) {
   const graph_load_container = script_object.previousSibling as HTMLElement
@@ -504,10 +500,10 @@ function do_load_graph_content(
     'request=' +
     encodeURIComponent(
       JSON.stringify({
-        graph_recipe: graph_recipe,
-        graph_time_range: graph_time_range,
-        graph_display_config: graph_display_config,
-        graph_display_id: graph_display_id,
+        recipe: recipe,
+        time_range: time_range,
+        display_config: display_config,
+        display_id: display_id,
         additional_html: additional_html
       })
     )
@@ -581,11 +577,11 @@ function delayed_graph_renderer() {
     const entry = g_delayed_graphs[i]
     if (is_in_viewport(entry.graph_load_container as HTMLElement)) {
       do_load_graph_content(
-        entry.graph_recipe,
-        entry.graph_time_range,
-        entry.graph_display_config,
+        entry.recipe,
+        entry.time_range,
+        entry.display_config,
         entry.script_object,
-        entry.graph_display_id,
+        entry.display_id,
         entry.additional_html
       )
       g_delayed_graphs.splice(i, 1)
@@ -597,8 +593,8 @@ function delayed_graph_renderer() {
 function update_delayed_graphs_timerange(start_time: number, end_time: number) {
   for (let i = 0, len = g_delayed_graphs.length; i < len; i++) {
     const entry = g_delayed_graphs[i]
-    entry.graph_time_range.start = start_time
-    entry.graph_time_range.end = end_time
+    entry.time_range.start = start_time
+    entry.time_range.end = end_time
   }
 }
 
@@ -622,7 +618,7 @@ let ctx: null | CanvasRenderingContext2D = null
 // - We paint as few padding as possible. Additional padding is being
 //   added via CSS
 // NOTE: If you change something here, then please check if you also need to
-// adapt the Python code that creates that graph_artwork
+// adapt the Python code that creates that artwork
 function render_graph(graph: GraphInstance) {
   // First find the canvas object and add a reference to the graph dict
   // If the initial rendering failed then any later update does not
@@ -2091,7 +2087,7 @@ function handle_graph_update(graph_container: HTMLElement, ajax_response: string
   // Structure of response:
   // {
   //     "html" : html_code,
-  //     "graph" : graph_artwork,
+  //     "graph" : artwork,
   //     "context" : { "graph_id", "recipe", "time_range", "view", "display_id" }
   // }
   if (!response.context) {

@@ -38,21 +38,21 @@ tracer = trace.get_tracer()
 @tracer.instrument("graphing.fetch_augmented_time_series")
 def fetch_augmented_time_series(
     registered_metrics: Mapping[str, RegisteredMetric],
-    graph_recipe: GraphRecipe,
-    graph_time_range: GraphTimeRange,
+    recipe: GraphRecipe,
+    time_range: GraphTimeRange,
     *,
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
 ) -> Iterator[Result[AugmentedTimeSeriesOfGraphMetric, QueryDataError]]:
-    consolidation_function = graph_recipe.consolidation_function
-    conversion = user_specific_unit(graph_recipe.unit_spec, temperature_unit).conversion
-    start_time = graph_time_range.start
-    end_time = graph_time_range.end
-    step = graph_time_range.step
+    consolidation_function = recipe.consolidation_function
+    conversion = user_specific_unit(recipe.unit_spec, temperature_unit).conversion
+    start_time = time_range.start
+    end_time = time_range.end
+    step = time_range.step
 
     rrd_keys = set()
     query_keys = set()
-    for graph_metric in graph_recipe.metrics:
+    for graph_metric in recipe.metrics:
         for key in graph_metric.operation.keys(registered_metrics):
             match key:
                 case RRDDataKey():
@@ -100,18 +100,18 @@ def fetch_augmented_time_series(
                 yield Error(result.error)
 
     fallback_time_range = FallbackTimeRange(
-        start=graph_time_range.start,
-        end=graph_time_range.end,
+        start=time_range.start,
+        end=time_range.end,
         # We only encounter `str`` here for forecast graphs, where the fallback range should be
         # irrelevant.
-        step=max(graph_time_range.step, 60) if isinstance(graph_time_range.step, int) else 60,
+        step=max(time_range.step, 60) if isinstance(time_range.step, int) else 60,
     )
 
-    for graph_metric in graph_recipe.metrics:
+    for graph_metric in recipe.metrics:
         for augmented_time_series in graph_metric.operation.compute_augmented_time_series(
             registered_metrics, rrd_data, query_data, fallback_time_range
         ):
-            if graph_recipe.omit_zero_metrics and not augmented_time_series.time_series:
+            if recipe.omit_zero_metrics and not augmented_time_series.time_series:
                 # TODO omit_zero_metrics: Do we need this? (it was part of the
                 # legacy API, check other call sites)
                 continue

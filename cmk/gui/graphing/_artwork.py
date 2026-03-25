@@ -207,7 +207,7 @@ def _areastack(
 # stacking and mirroring (displaying positive values in negative
 # direction).
 def _layout_graph_curves(
-    graph_recipe: GraphRecipe,
+    recipe: GraphRecipe,
     unit_renderer: Callable[[float], str],
     pin_time: int | None,
     augmented_time_series_of_graph_metrics: Sequence[AugmentedTimeSeriesOfGraphMetric],
@@ -296,8 +296,8 @@ class GraphArtworkOrErrors:
 
 @tracer.instrument("graphing.compute_graph_artwork")
 def compute_graph_artwork(
-    graph_recipe: GraphRecipe,
-    graph_time_range: GraphTimeRange,
+    recipe: GraphRecipe,
+    time_range: GraphTimeRange,
     size: tuple[float, float],
     registered_metrics: Mapping[str, RegisteredMetric],
     *,
@@ -305,15 +305,15 @@ def compute_graph_artwork(
     backend_time_series_fetcher: FetchTimeSeries | None,
     pin_time: int | None = None,
 ) -> GraphArtworkOrErrors:
-    unit_spec = user_specific_unit(graph_recipe.unit_spec, temperature_unit)
+    unit_spec = user_specific_unit(recipe.unit_spec, temperature_unit)
 
     augmented_time_series_of_graph_metrics: list[AugmentedTimeSeriesOfGraphMetric] = []
     graph_metric_limits_reached: list[GraphMetricLimit] = []
     errors: list[QueryDataError] = []
     for result in fetch_augmented_time_series(
         registered_metrics,
-        graph_recipe,
-        graph_time_range,
+        recipe,
+        time_range,
         temperature_unit=temperature_unit,
         backend_time_series_fetcher=backend_time_series_fetcher,
     ):
@@ -326,7 +326,7 @@ def compute_graph_artwork(
 
     # do stacking, mirroring
     layouted_curves, mirrored = _layout_graph_curves(
-        graph_recipe, unit_spec.formatter.render, pin_time, augmented_time_series_of_graph_metrics
+        recipe, unit_spec.formatter.render, pin_time, augmented_time_series_of_graph_metrics
     )
     width, height = size
 
@@ -334,32 +334,32 @@ def compute_graph_artwork(
         time_series = augmented_time_series_of_graph_metrics[0].time_series[0].time_series
         start_time, end_time, step = time_series.start, time_series.end, time_series.step
     except IndexError:  # Empty graph
-        start_time, end_time, step = graph_time_range.start, graph_time_range.end, 60
+        start_time, end_time, step = time_range.start, time_range.end, 60
 
     return GraphArtworkOrErrors(
         GraphArtwork(
             # Labelling, size, layout
-            title=graph_recipe.title,
+            title=recipe.title,
             # Actual data and axes
             curves=layouted_curves,
-            horizontal_rules=graph_recipe.horizontal_rules,
+            horizontal_rules=recipe.horizontal_rules,
             y_axis=_compute_graph_v_axis(
                 unit_spec,
-                graph_recipe.explicit_vertical_range,
-                graph_time_range,
+                recipe.explicit_vertical_range,
+                time_range,
                 SizeEx(height),
                 layouted_curves,
                 mirrored,
             ),
             x_axis=_compute_graph_t_axis(start_time, end_time, width, step),
-            mark_requested_end_time=graph_recipe.mark_requested_end_time,
+            mark_requested_end_time=recipe.mark_requested_end_time,
             # Displayed range
             actual_time=ActualTimeRange(start=int(start_time), end=int(end_time), step=int(step)),
             requested_time=RequestedTimeRange(
-                start=graph_time_range.start,
-                end=graph_time_range.end,
+                start=time_range.start,
+                end=time_range.end,
             ),
-            requested_y_range=graph_time_range.vertical_range,
+            requested_y_range=time_range.vertical_range,
             pin_time=pin_time,
         ),
         errors,
@@ -556,7 +556,7 @@ def _compute_labels_from_api(
 def _compute_graph_v_axis(
     unit_spec: UserSpecificUnit,
     explicit_vertical_range: FixedVerticalRange | MinimalVerticalRange | None,
-    graph_time_range: GraphTimeRange,
+    time_range: GraphTimeRange,
     height_ex: SizeEx,
     layouted_curves: Sequence[LayoutedCurve],
     mirrored: bool,
@@ -568,7 +568,7 @@ def _compute_graph_v_axis(
     v_axis_min, v_axis_max = _compute_v_axis_min_max(
         explicit_vertical_range,
         layouted_curves,
-        graph_time_range.vertical_range,
+        time_range.vertical_range,
         mirrored,
         height_ex,
     )

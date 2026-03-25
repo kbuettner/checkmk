@@ -64,7 +64,7 @@ def render_graph_widget_content(
     dashlet_type = cast(type[ABCGraphDashlet], dashlet_registry[dashlet_config["type"]])
 
     graph_dashlet = dashlet_type(dashlet_config, base_context)
-    graph_recipes = graph_dashlet.graph_recipes()
+    recipes = graph_dashlet.recipes()
 
     try:
         html.write_html(
@@ -73,7 +73,7 @@ def render_graph_widget_content(
                 #       get_validated_internal_graph_request.
                 #       for that we need to adapt host_service_graph_dashlet_cmk and its call sites
                 ctx.request,
-                graph_recipes,
+                recipes,
                 GraphDisplayConfigHTML.model_validate(
                     dashlet_config["graph_render_options"]
                     | {
@@ -89,7 +89,7 @@ def render_graph_widget_content(
                 backend_time_series_fetcher=metric_backend_registry[
                     str(edition(paths.omd_root))
                 ].get_time_series_fetcher(),
-                graph_display_id=widget_id,
+                display_id=widget_id,
                 time_range=dashlet_config["timerange"],
             )
         )

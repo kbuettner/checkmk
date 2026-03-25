@@ -1515,8 +1515,8 @@ def test__compute_graph_recipes_with_predictive_metrics(
         temperature_unit=TemperatureUnit.CELSIUS,
     )
     assert [
-        graph_recipe
-        for _graph_id, graph_recipe in _compute_graph_recipes(
+        recipe
+        for _graph_id, recipe in _compute_graph_recipes(
             registered_metrics,
             registered_graphs,
             SiteId("site_id"),

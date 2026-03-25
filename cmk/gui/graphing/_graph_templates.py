@@ -360,21 +360,21 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
         *,
         graph_index: int,
         graph_id: str,
-        graph_recipe: GraphRecipe,
+        recipe: GraphRecipe,
     ) -> GraphRecipeWithOverrides | None:
         return GraphRecipeWithOverrides(
             recipe=GraphRecipe(
                 title=(
-                    f"{graph_recipe.title} (Graph ID: {graph_id})"
+                    f"{recipe.title} (Graph ID: {graph_id})"
                     if painter_options.get("show_internal_graph_and_metric_ids")
-                    else graph_recipe.title
+                    else recipe.title
                 ),
-                unit_spec=graph_recipe.unit_spec,
-                explicit_vertical_range=graph_recipe.explicit_vertical_range,
-                horizontal_rules=graph_recipe.horizontal_rules,
-                omit_zero_metrics=graph_recipe.omit_zero_metrics,
-                consolidation_function=graph_recipe.consolidation_function,
-                metrics=graph_recipe.metrics,
+                unit_spec=recipe.unit_spec,
+                explicit_vertical_range=recipe.explicit_vertical_range,
+                horizontal_rules=recipe.horizontal_rules,
+                omit_zero_metrics=recipe.omit_zero_metrics,
+                consolidation_function=recipe.consolidation_function,
+                metrics=recipe.metrics,
                 specification=self._make_specification(
                     site=site_id,
                     host_name=self.host_name,
@@ -440,8 +440,8 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
             ]
         else:
             recipes = [
-                (graph_recipe_index, graph_recipe_id, graph_recipe)
-                for graph_recipe_index, (graph_recipe_id, graph_recipe) in enumerate(
+                (graph_recipe_index, graph_recipe_id, recipe)
+                for graph_recipe_index, (graph_recipe_id, recipe) in enumerate(
                     _compute_graph_recipes(
                         registered_metrics,
                         registered_graphs,
@@ -459,7 +459,7 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
             ]
         return [
             post_processed_recipe
-            for graph_index, graph_id, graph_recipe in recipes
+            for graph_index, graph_id, recipe in recipes
             if (
                 post_processed_recipe := self._post_process_recipe(
                     user_permissions,
@@ -469,7 +469,7 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
                     painter_options,
                     graph_index=graph_index,
                     graph_id=graph_id,
-                    graph_recipe=graph_recipe,
+                    recipe=recipe,
                 )
             )
         ]

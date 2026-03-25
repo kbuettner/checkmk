@@ -142,13 +142,13 @@ def _answer_graph_image_request(
         end_time = int(time.time())
         start_time = end_time - (25 * 3600)
 
-        graph_display_config = GraphDisplayConfigImage.from_user_context_and_options(
+        display_config = GraphDisplayConfigImage.from_user_context_and_options(
             user,
             graph_image_render_options(),
         )
 
-        graph_time_range = graph_image_time_range(graph_display_config, start_time, end_time)
-        graph_recipes = get_template_graph_specification(
+        time_range = graph_image_time_range(display_config, start_time, end_time)
+        recipes = get_template_graph_specification(
             site_id=SiteId(site) if site else None,
             host_name=host_name,
             service_name=service_description,
@@ -162,19 +162,19 @@ def _answer_graph_image_request(
             debug=debug,
             temperature_unit=temperature_unit,
         )
-        num_graphs = request.get_integer_input("num_graphs") or len(graph_recipes)
+        num_graphs = request.get_integer_input("num_graphs") or len(recipes)
 
         graphs = []
-        for graph_recipe_with_overrides in graph_recipes[:num_graphs]:
-            graph_artwork = compute_graph_artwork(
-                graph_recipe_with_overrides.recipe,
-                graph_time_range,
-                graph_display_config.size,
+        for recipe_with_overrides in recipes[:num_graphs]:
+            artwork = compute_graph_artwork(
+                recipe_with_overrides.recipe,
+                time_range,
+                display_config.size,
                 registered_metrics,
                 temperature_unit=temperature_unit,
                 backend_time_series_fetcher=backend_time_series_fetcher,
             ).artwork
-            graph_png = render_graph_image(graph_artwork, graph_display_config)
+            graph_png = render_graph_image(artwork, display_config)
 
             graphs.append(base64.b64encode(graph_png).decode("ascii"))
 
@@ -189,10 +189,10 @@ def _answer_graph_image_request(
 
 
 def graph_image_time_range(
-    graph_display_config: GraphDisplayConfigImage, start_time: int, end_time: int
+    display_config: GraphDisplayConfigImage, start_time: int, end_time: int
 ) -> GraphTimeRange:
-    mm_per_ex = get_mm_per_ex(graph_display_config.font_size)
-    width_mm = graph_display_config.size[0] * mm_per_ex
+    mm_per_ex = get_mm_per_ex(display_config.font_size)
+    width_mm = display_config.size[0] * mm_per_ex
     return compute_pdf_graph_time_range(width_mm, start_time, end_time)
 
 
@@ -223,19 +223,19 @@ def graph_image_render_options(api_request: dict[str, Any] | None = None) -> Gra
 
 @tracer.instrument("graphing.render_graph_image")
 def render_graph_image(
-    graph_artwork: GraphArtwork,
-    graph_display_config: GraphDisplayConfigImage,
+    artwork: GraphArtwork,
+    display_config: GraphDisplayConfigImage,
 ) -> bytes:
-    width_ex, height_ex = graph_display_config.size
-    mm_per_ex = get_mm_per_ex(graph_display_config.font_size)
+    width_ex, height_ex = display_config.size
+    mm_per_ex = get_mm_per_ex(display_config.font_size)
 
-    legend_height = graph_legend_height(graph_artwork, graph_display_config)
+    legend_height = graph_legend_height(artwork, display_config)
     image_height = (height_ex * mm_per_ex) + legend_height
 
     # TODO: Better use reporting.get_report_instance()
     doc = pdf.Document(
         font_family="Helvetica",
-        font_size=graph_display_config.font_size,
+        font_size=display_config.font_size,
         lineheight=1.2,
         pagesize=(width_ex * mm_per_ex, image_height),
         margins=(0, 0, 0, 0),
@@ -243,8 +243,8 @@ def render_graph_image(
 
     render_graph_pdf(
         doc,
-        graph_artwork,
-        graph_display_config,
+        artwork,
+        display_config,
         pos_left=0.0,
         pos_top=0.0,
         total_width=(width_ex * mm_per_ex),
@@ -295,7 +295,7 @@ def graph_recipes_for_api_request(
     raw_graph_time_range["step"] = 60
 
     try:
-        graph_recipes = graph_specification.recipes(
+        recipes = graph_specification.recipes(
             registered_metrics,
             registered_graphs,
             user_permissions,
@@ -310,7 +310,7 @@ def graph_recipes_for_api_request(
     except livestatus.MKLivestatusNotFoundError as e:
         raise MKUserError(None, _("Cannot calculate graph recipes: %s") % e)
 
-    return GraphTimeRange.model_validate(raw_graph_time_range), graph_recipes
+    return GraphTimeRange.model_validate(raw_graph_time_range), recipes
 
 
 class Curves(TypedDict):
@@ -329,11 +329,11 @@ class GraphSpec(TypedDict):
 
 
 def _compute_graph_spec(
-    graph_time_range: GraphTimeRange,
+    time_range: GraphTimeRange,
     augmented_time_series_of_graph_metrics: Sequence[AugmentedTimeSeriesOfGraphMetric],
 ) -> GraphSpec:
     api_curves = []
-    start, end, step = graph_time_range.start, graph_time_range.end, 60  # empty graph
+    start, end, step = time_range.start, time_range.end, 60  # empty graph
     for augmented_time_series_of_graph_metric in augmented_time_series_of_graph_metrics:
         for augmented_time_series in augmented_time_series_of_graph_metric.time_series:
             if (
@@ -369,7 +369,7 @@ def graph_spec_from_request(  # type: ignore[misc]
     backend_time_series_fetcher: FetchTimeSeries | None,
 ) -> GraphSpec:
     try:
-        graph_time_range, graph_recipes = graph_recipes_for_api_request(
+        time_range, recipes = graph_recipes_for_api_request(
             api_request,
             registered_metrics,
             registered_graphs,
@@ -377,7 +377,7 @@ def graph_spec_from_request(  # type: ignore[misc]
             debug=debug,
             temperature_unit=temperature_unit,
         )
-        graph_recipe = graph_recipes[0].recipe
+        recipe = recipes[0].recipe
 
     except PydanticValidationError as e:
         raise MKUserError(None, str(e))
@@ -389,13 +389,13 @@ def graph_spec_from_request(  # type: ignore[misc]
         raise MKUserError(None, _("The requested graph does not exist"))
 
     return _compute_graph_spec(
-        graph_time_range,
+        time_range,
         [
             result.ok
             for result in fetch_augmented_time_series(
                 registered_metrics,
-                graph_recipe,
-                graph_time_range,
+                recipe,
+                time_range,
                 temperature_unit=temperature_unit,
                 backend_time_series_fetcher=backend_time_series_fetcher,
             )

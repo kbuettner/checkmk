@@ -210,7 +210,7 @@ def _paint_time_graph_cmk(
     if options is not None:
         graph_render_options.update(options)
 
-    graph_display_config = GraphDisplayConfigHTML.from_user_context_and_options(
+    display_config = GraphDisplayConfigHTML.from_user_context_and_options(
         user,
         theme.get(),
         GraphRenderOptions.from_graph_render_options_vs(graph_render_options),
@@ -219,22 +219,22 @@ def _paint_time_graph_cmk(
     now = int(time.time())
     if "set_default_time_range" in painter_params:
         duration = painter_params["set_default_time_range"]
-        time_range = now - duration, now
+        raw_time_range: tuple[int, int] = (now - duration, now)
     else:
-        time_range = now - 3600 * 4, now
+        raw_time_range = (now - 3600 * 4, now)
 
     # Load timerange from painter option (overrides the defaults, if set by the user)
     painter_option_pnp_timerange = painter_options.get_without_default("pnp_timerange")
     if painter_option_pnp_timerange is not None:
-        time_range = get_graph_timerange_from_painter_options()
+        raw_time_range = get_graph_timerange_from_painter_options()
 
-    graph_time_range = make_graph_time_range(
-        time_range,
-        graph_display_config.size[1],
+    time_range = make_graph_time_range(
+        raw_time_range,
+        display_config.size[1],
     )
 
     if is_mobile(request, response):
-        graph_display_config = graph_display_config.model_copy(
+        display_config = display_config.model_copy(
             update={
                 "interaction": False,
                 "show_controls": False,
@@ -268,8 +268,8 @@ def _paint_time_graph_cmk(
             host_name=row["host_name"],
             service_name=row.get("service_description", "_HOST_"),
         ),
-        graph_time_range,
-        graph_display_config,
+        time_range,
+        display_config,
         registered_metrics,
         registered_graphs,
         user_permissions,
@@ -285,7 +285,7 @@ def _paint_time_graph_cmk(
         # completely independently of each other, based solely on the livestatus data and on the
         # painter settings (which makes sense). The caching in graph.ts breaks this assumption. So
         # for now, we randomize. See also CMK-13840.
-        graph_display_id=str(uuid4()),
+        display_id=str(uuid4()),
     )
 
 

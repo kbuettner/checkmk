@@ -215,7 +215,7 @@ class ABCGraphDashlet(Dashlet[T], Generic[T, TGraphSpec]):
         except Exception as e:
             raise make_mk_missing_data_error(reason=_("Failed to calculate a graph recipe.")) from e
 
-    def graph_recipes(self) -> Sequence[GraphRecipeWithOverrides]:
+    def recipes(self) -> Sequence[GraphRecipeWithOverrides]:
         if self._cached_recipes is None:
             assert self._init_exception is not None
             raise self._init_exception
