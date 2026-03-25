@@ -159,14 +159,14 @@ def reorganize_response(graph_spec: GraphSpec) -> ReorganizedGraphSpec:
 
 
 def reorganize_time_range(time_range: dict[str, Any] | None) -> dict[str, Any] | None:
-    """Reorganize a TimeRange into the legacy format the WebApi uses.
+    """Reorganize a TimeRange into the format the WebApi uses.
 
-    >>> reorganize_time_range({'start': "1970-01-01T00:00:00Z", 'end': "1970-01-01T00:00:30Z"})
-    {'time_range': ['1970-01-01T00:00:00Z', '1970-01-01T00:00:30Z']}
+    >>> reorganize_time_range({'start': 0, 'end': 30})
+    {'start': 0, 'end': 30}
     """
     if time_range is None:
         return None
-    return {"time_range": [time_range["start"], time_range["end"]]}
+    return {"start": time_range["start"], "end": time_range["end"]}
 
 
 def graph_id_from_request(body: dict[str, Any]) -> str:

@@ -184,7 +184,8 @@ class MinimalVerticalRange(BaseModel, frozen=True):
 
 
 class GraphTimeRange(BaseModel, frozen=True):
-    time_range: tuple[int, int]
+    start: int
+    end: int
     # Forecast graphs represent step as str (see forecasts.py and fetch_rrd_data)
     # colon separated [step length]:[rrd point count]
     step: int | str

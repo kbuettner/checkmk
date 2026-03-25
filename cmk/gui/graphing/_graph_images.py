@@ -277,11 +277,10 @@ def graph_recipes_for_api_request(
 
     # Get and validate the data range
     raw_graph_time_range = api_request.get("data_range", {})
-    raw_graph_time_range.setdefault("time_range", default_time_range)
+    raw_graph_time_range.setdefault("start", default_time_range[0])
+    raw_graph_time_range.setdefault("end", default_time_range[1])
 
-    time_range = raw_graph_time_range.setdefault("time_range", default_time_range)
-    if not time_range or len(time_range) != 2:
-        raise MKUserError(None, _("The graph data range is wrong or missing"))
+    time_range = (raw_graph_time_range["start"], raw_graph_time_range["end"])
 
     try:
         float(time_range[0])
@@ -334,7 +333,7 @@ def _compute_graph_spec(
     augmented_time_series_of_graph_metrics: Sequence[AugmentedTimeSeriesOfGraphMetric],
 ) -> GraphSpec:
     api_curves = []
-    (start, end), step = graph_time_range.time_range, 60  # empty graph
+    start, end, step = graph_time_range.start, graph_time_range.end, 60  # empty graph
     for augmented_time_series_of_graph_metric in augmented_time_series_of_graph_metrics:
         for augmented_time_series in augmented_time_series_of_graph_metric.time_series:
             if (

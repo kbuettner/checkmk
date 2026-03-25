@@ -61,7 +61,8 @@ interface GraphDisplayConfigHTML {
 }
 
 interface GraphTimeRange {
-  time_range: [number, number]
+  start: number
+  end: number
 }
 
 interface GraphContext {
@@ -596,7 +597,8 @@ function delayed_graph_renderer() {
 function update_delayed_graphs_timerange(start_time: number, end_time: number) {
   for (let i = 0, len = g_delayed_graphs.length; i < len; i++) {
     const entry = g_delayed_graphs[i]
-    entry.graph_time_range.time_range = [start_time, end_time]
+    entry.graph_time_range.start = start_time
+    entry.graph_time_range.end = end_time
   }
 }
 

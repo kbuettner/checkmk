@@ -919,7 +919,7 @@ def render_ajax_graph(
         # since step can be relatively small, we round
         step: int | str = int(round(float(step_var)))
     else:
-        start_time, end_time = graph_time_range.time_range
+        start_time, end_time = graph_time_range.start, graph_time_range.end
         step = graph_time_range.step
 
     resize_x_var = request.var("resize_x")
@@ -948,7 +948,8 @@ def render_ajax_graph(
         )
 
     graph_time_range = GraphTimeRange(
-        time_range=(start_time, end_time),
+        start=start_time,
+        end=end_time,
         vertical_range=vertical_range,
         step=step,
     )
@@ -1410,7 +1411,8 @@ def _render_time_range_selection(
 
         timerange = now - duration, now
         graph_time_range = GraphTimeRange(
-            time_range=timerange,
+            start=timerange[0],
+            end=timerange[1],
             step=2 * estimate_graph_step_for_html(timerange, graph_display_config.size[1]),
         )
 
@@ -1447,7 +1449,8 @@ def make_graph_time_range(
     height_in_ex: float,
 ) -> GraphTimeRange:
     return GraphTimeRange(
-        time_range=time_range,
+        start=time_range[0],
+        end=time_range[1],
         step=estimate_graph_step_for_html(time_range, height_in_ex),
     )
 

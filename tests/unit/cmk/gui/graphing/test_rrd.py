@@ -108,7 +108,7 @@ _GRAPH_RECIPE = GraphRecipe(
     ),
 )
 
-_GRAPH_TIME_RANGE = GraphTimeRange(time_range=(1681985455, 1681999855), step=20)
+_GRAPH_TIME_RANGE = GraphTimeRange(start=1681985455, end=1681999855, step=20)
 
 
 def _fetch() -> Iterator[Result[QueryData, QueryDataError]]:
