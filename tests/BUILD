@@ -165,25 +165,6 @@ py_library(
 )
 
 py_library(
-    name = "code_quality",
-    testonly = True,
-    srcs = glob(
-        include = ["code_quality/**/*.py"],
-    ),
-    imports = [".."],
-    deps = [
-        "//cmk/utils",
-        "//packages/cmk-ccc:version",
-        "//packages/cmk-werks",
-        "//tests/testlib/common:repo",
-        requirement("pytest"),
-        requirement("isort"),
-        requirement("requirements-parser"),
-        requirement("gitpython"),
-    ],
-)
-
-py_library(
     name = "composition",
     testonly = True,
     srcs = glob(
