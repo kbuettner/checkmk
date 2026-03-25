@@ -343,6 +343,48 @@ class DummyGroup(RulespecGroup):
         return "help text"
 
 
+class DummySubGroup(RulespecSubGroup):
+    @property
+    def main_group(self) -> type[RulespecGroup]:
+        return DummyGroup
+
+    @property
+    def sub_group_name(self) -> str:
+        return "sub"
+
+    @property
+    def title(self) -> str:
+        return "Sub title"
+
+
+def test_main_group_registered_twice_appears_once_in_get_main_groups() -> None:
+    registry = RulespecGroupRegistry()
+    registry.register(DummyGroup)
+    registry.register(DummyGroup)
+
+    assert [g().name for g in registry.get_main_groups()] == ["group"]
+
+
+def test_sub_group_registered_twice_appears_once_in_get_group_choices() -> None:
+    registry = RulespecGroupRegistry()
+    registry.register(DummyGroup)
+    registry.register(DummySubGroup)
+    registry.register(DummySubGroup)
+
+    assert [name for name, _ in registry.get_group_choices() if "/" in name] == ["group/sub"]
+
+
+def test_get_group_choices_no_duplicates_after_double_registration() -> None:
+    registry = RulespecGroupRegistry()
+    registry.register(DummyGroup)
+    registry.register(DummySubGroup)
+    registry.register(DummyGroup)
+    registry.register(DummySubGroup)
+
+    choice_names = [name for name, _ in registry.get_group_choices()]
+    assert choice_names == ["group", "group/sub"]
+
+
 def test_rulespecs_get_by_group() -> None:
     group_registry = RulespecGroupRegistry()
     registry = RulespecRegistry(group_registry)
