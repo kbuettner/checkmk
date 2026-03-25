@@ -80,13 +80,13 @@ def _site_not_started_html(site_name: str) -> str:
     Must avoid double-quote characters — Apache's ErrorDocument wraps this in double quotes.
     """
     if os.path.exists("/etc/cma/cma.conf"):
-        instructions = "<p>Start it via the Checkmk Appliance management interface.</p>"
+        instructions = "<p>Start it via the Webconf.</p>"
     elif is_containerized():
         instructions = "<p>Restart the container to access the web interface.</p>"
     else:
         instructions = (
             "<p>Start it to access the web interface.</p>"
-            "<p>Run <code>omd start </code> as the site user.</p>"
+            "<p style='display: flex; gap: 5px; justify-content: center;'>Run <code>omd start </code> as the site user.</p>"
         )
 
     # fmt: off
@@ -157,7 +157,7 @@ def _site_not_started_html(site_name: str) -> str:
         "</svg>"
         "</div>"
         "<h1>Site Not Started</h1>"
-        f"<p>The Checkmk site <code>{site_name}</code> is not running.</p>"
+        f"<p>The site <code>{site_name}</code> is not running.</p>"
     )
     footer = (
         "<div class='r'>This page refreshes automatically every 60 seconds.</div>"
