@@ -95,7 +95,7 @@ _PERMISSIONS_MISC = permissions.Optional(
         [
             permissions.Perm("general.see_all"),
             permissions.Perm("bi.see_all"),
-            permissions.Perm("mkeventd.seeall"),
+            permissions.OkayToIgnorePerm("mkeventd.seeall"),
         ]
     )
 )

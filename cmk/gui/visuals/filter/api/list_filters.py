@@ -120,7 +120,7 @@ ENDPOINT_LIST_FILTERS = VersionedEndpoint(
                 [
                     permissions.Perm("general.see_all"),
                     permissions.Perm("bi.see_all"),
-                    permissions.Perm("mkeventd.seeall"),
+                    permissions.OkayToIgnorePerm("mkeventd.seeall"),
                 ]
             )
         )
