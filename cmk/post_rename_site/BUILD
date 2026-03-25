@@ -1,20 +1,31 @@
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 
 py_library(
-    name = "cmk_post_rename_site",
-    srcs = glob(
-        include = ["**/*.py"],
-        exclude = [
-            "**/community/**",
-            "**/nonfree/**",
-        ],
-    ),
+    name = "internal",
+    srcs = ["internal.py"],
     imports = ["../.."],
     visibility = [
         "//cmk:__subpackages__",
         "//tests:__subpackages__",
     ],
     deps = [
+        "//packages/cmk-ccc:site",
+    ],
+)
+
+py_library(
+    name = "post_rename_site",
+    srcs = [
+        "logger.py",
+        "main.py",
+    ],
+    imports = ["../.."],
+    visibility = [
+        "//cmk:__subpackages__",
+        "//tests:__subpackages__",
+    ],
+    deps = [
+        ":internal",
         "//cmk/gui",
         "//cmk/utils",
         "//packages/cmk-ccc:debug",
@@ -23,39 +34,5 @@ py_library(
         "//packages/cmk-ccc:site",
         "//packages/cmk-ccc:tty",
         "//packages/cmk-ccc:version",
-    ],
-)
-
-py_library(
-    name = "cmk_post_rename_site_pro",
-    srcs = glob(
-        include = ["**/nonfree/**/pro/**/*.py"],
-        allow_empty = True,
-    ),
-    imports = ["../.."],
-    visibility = [
-        "//cmk:__subpackages__",
-        "//tests:__subpackages__",
-    ],
-    deps = [
-        ":cmk_post_rename_site",
-        "//cmk/gui:pro",
-    ],
-)
-
-py_library(
-    name = "cmk_post_rename_site_ultimate",
-    srcs = glob(
-        include = ["**/nonfree/**/ultimate/**/*.py"],
-        allow_empty = True,
-    ),
-    imports = ["../.."],
-    visibility = [
-        "//cmk:__subpackages__",
-        "//tests:__subpackages__",
-    ],
-    deps = [
-        ":cmk_post_rename_site",
-        "//cmk/gui:ultimate",
     ],
 )

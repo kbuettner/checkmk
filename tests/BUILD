@@ -314,7 +314,7 @@ py_library(
         ":extension_compatibility",
         ":scripts",
         ":testlib",
-        "//cmk/post_rename_site:cmk_post_rename_site",
+        "//cmk/post_rename_site",
         "//packages/cmk-agent-receiver",
         "//tests/testlib/common:utils",
     ] + select({

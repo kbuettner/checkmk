@@ -48,7 +48,8 @@ py_test(
     deps = [
         ":__test__",
         ":conftest",
-        "//cmk/post_rename_site:cmk_post_rename_site",
+        "//cmk/post_rename_site",
+        "//cmk/post_rename_site/plugins",
         "//tests/testlib/unit:unit_free",
         "//tests/unit:conftest",
         requirement("pytest"),
