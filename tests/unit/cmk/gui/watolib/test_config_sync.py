@@ -16,17 +16,15 @@ from pytest_mock import MockerFixture
 
 import cmk.ccc.version as cmk_version
 import cmk.gui.mkeventd.wato
-import cmk.utils.paths
 from cmk import trace
 from cmk.ccc.site import SiteId
 from cmk.ccc.user import UserId
-from cmk.ccc.version import Edition, edition
+from cmk.ccc.version import Edition
 from cmk.gui.config import active_config
 from cmk.gui.watolib import activate_changes, config_sync
 from cmk.gui.watolib.automations import (
     remote_automation_config_from_site_config,
 )
-from cmk.utils import paths
 from cmk.utils.automation_config import RemoteAutomationConfig
 from tests.testlib.unit.gui.config_sync_test_helper import (
     create_sync_snapshot,
@@ -152,10 +150,6 @@ def _get_expected_paths(user_id: UserId) -> list[str]:
     return expected_paths
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.usefixtures("request_context")
 @pytest.mark.parametrize("remote_site", [SiteId("unit_remote_1"), SiteId("unit_remote_2")])
 def test_generate_snapshot(

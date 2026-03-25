@@ -41,6 +41,7 @@ py_test(
         "--numprocesses=4",
     ],
     data = ["@//:pyproject.toml"],
+    env = {"EDITION": "community"},
     main = ":__test__.py",
     visibility = ["//visibility:private"],
     deps = [

@@ -9,9 +9,7 @@ from collections.abc import Generator
 import pytest
 
 from cmk.ccc.user import UserId
-from cmk.ccc.version import Edition, edition
 from cmk.gui.token_auth import get_token_store, TokenId
-from cmk.utils import paths
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
 
@@ -118,10 +116,6 @@ def test_create_token_expiration_in_past(
     assert resp.json["fields"]["body.expires_at"]["msg"] == "Input should be in the future"
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_create_token_expiration_too_far_in_future(
     clients: ClientRegistry,
     with_automation_user: tuple[UserId, str],
@@ -212,10 +206,6 @@ def test_edit_token_expiration_in_past(
     assert resp.status_code == 200, f"Expected 200, got {resp.status_code} {resp.json!r}"
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_edit_token_invalid_expiration(
     clients: ClientRegistry,
     with_automation_user: tuple[UserId, str],

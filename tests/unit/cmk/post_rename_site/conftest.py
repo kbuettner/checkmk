@@ -13,10 +13,9 @@ from pytest_mock import MockerFixture
 from werkzeug.test import create_environ
 
 from cmk.ccc.user import UserId
-from cmk.ccc.version import edition
+from cmk.ccc.version import Edition
 from cmk.gui import http
 from cmk.gui.config import Config
-from cmk.utils import paths
 from tests.testlib.unit.gui.common_fixtures import (
     create_flask_app,
     create_wsgi_app,
@@ -64,8 +63,8 @@ def load_config(request_context: None) -> Iterator[Config]:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def load_plugins() -> None:
-    perform_load_plugins(edition(paths.omd_root))
+def load_plugins(test_edition: Edition) -> None:
+    perform_load_plugins(test_edition)
 
 
 @pytest.fixture()

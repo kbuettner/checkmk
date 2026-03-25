@@ -3,17 +3,10 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-import pytest
 
-from cmk.ccc.version import Edition, edition
 from cmk.gui.sidebar import snapin_registry
-from cmk.utils import paths
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_snapins() -> None:
     expected_snapins = [
         "a_welcome",
@@ -41,10 +34,6 @@ def test_registered_snapins() -> None:
     assert sorted(snapin_registry.keys()) == sorted(expected_snapins)
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_refresh_snapins() -> None:
     expected_refresh_snapins = [
         "admin_mini",

@@ -18,7 +18,6 @@ import pytest
 import time_machine
 
 from cmk.ccc.user import UserId
-from cmk.ccc.version import Edition, edition
 from cmk.gui import sites
 from cmk.gui.config import active_config
 from cmk.gui.http import request
@@ -33,7 +32,6 @@ from cmk.gui.views.page_edit_view import painters_of_datasource
 from cmk.gui.visual_link import render_link_to_view
 from cmk.inventory.structured_data import deserialize_tree
 from cmk.livestatus_client.testing import MockLiveStatusConnection
-from cmk.utils import paths
 from cmk.utils.paths import default_config_dir
 
 
@@ -72,10 +70,6 @@ def fixture_livestatus_test_config(
     return live
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.usefixtures("load_config")
 def test_registered_painters() -> None:
     painters = all_painters(active_config.tags.tag_groups).keys()

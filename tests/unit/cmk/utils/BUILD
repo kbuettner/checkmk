@@ -26,6 +26,7 @@ py_test(
         include = ["**/test-files/**"],
         exclude = ["**/*.py"],
     ),
+    env = {"EDITION": "community"},
     main = ":__test__.py",
     visibility = ["//visibility:private"],
     deps = [

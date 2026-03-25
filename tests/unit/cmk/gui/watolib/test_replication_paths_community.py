@@ -11,14 +11,12 @@ from livestatus import SiteConfiguration
 
 import cmk.ccc.version as cmk_version
 from cmk.ccc.site import SiteId
-from cmk.ccc.version import Edition, edition
 from cmk.gui.watolib import activate_changes
 from cmk.gui.watolib.config_sync import (
     replication_path_registry,
     ReplicationPath,
     ReplicationPathType,
 )
-from cmk.utils import paths
 from tests.testlib.unit.utils import reset_registries
 
 EDITION = cmk_version.Edition.COMMUNITY
@@ -177,10 +175,6 @@ def _default_site_config() -> SiteConfiguration:
     )
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_get_replication_paths_defaults(request_context: None) -> None:
     expected = _expected_replication_paths()
     assert sorted(
@@ -192,10 +186,6 @@ def test_get_replication_paths_defaults(request_context: None) -> None:
     )
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.parametrize("replicate_ec", [None, True, False])
 @pytest.mark.parametrize("replicate_mkps", [None, True, False])
 def test_get_replication_components(

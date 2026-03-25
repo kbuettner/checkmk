@@ -5,10 +5,8 @@
 
 import pytest
 
-from cmk.ccc.version import Edition, edition
 from cmk.gui.valuespec import autocompleter_registry
 from cmk.livestatus_client.testing import MockLiveStatusConnection
-from cmk.utils import paths
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
 
@@ -28,10 +26,6 @@ def fixture_expected_autocompleters() -> list[str]:
     ]
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_openapi_autocompleter_functions_exist(expected_autocompleters: list[str]) -> None:
     registered_autocompleters = autocompleter_registry.keys()
     for autocomplete_name in expected_autocompleters:

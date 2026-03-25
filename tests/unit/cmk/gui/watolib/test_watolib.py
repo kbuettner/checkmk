@@ -7,7 +7,6 @@
 
 import pytest
 
-from cmk.ccc.version import Edition, edition
 from cmk.gui.watolib.automation_commands import automation_command_registry
 from cmk.gui.watolib.config_domain_name import (
     config_domain_registry,
@@ -15,13 +14,8 @@ from cmk.gui.watolib.config_domain_name import (
     config_variable_registry,
     configvar_order,
 )
-from cmk.utils import paths
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_config_domains() -> None:
     expected_config_domains = [
         "apache",
@@ -40,10 +34,6 @@ def test_registered_config_domains() -> None:
     assert registered == sorted(expected_config_domains)
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_automation_commands() -> None:
     expected_automation_commands = [
         "activate-changes",
@@ -84,10 +74,6 @@ def test_registered_automation_commands() -> None:
     assert registered == sorted(expected_automation_commands)
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_configvars() -> None:
     expected_vars = [
         "actions",
@@ -228,10 +214,6 @@ def test_registered_configvars() -> None:
     assert registered == sorted(expected_vars)
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_configvar_groups() -> None:
     expected_groups = [
         "Setup",

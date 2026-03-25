@@ -14,7 +14,6 @@ import pytest
 import cmk.gui.plugins.views
 import cmk.gui.views
 from cmk.ccc.site import SiteId
-from cmk.ccc.version import Edition, edition
 from cmk.gui.config import active_config
 from cmk.gui.data_source import ABCDataSource, RowTable
 from cmk.gui.display_options import display_options
@@ -44,7 +43,6 @@ from cmk.gui.views.layout import layout_registry
 from cmk.gui.views.page_show_view import get_limit
 from cmk.gui.views.store import multisite_builtin_views
 from cmk.livestatus_client.testing import MockLiveStatusConnection
-from cmk.utils import paths
 from tests.testlib.unit.gui.web_test_app import WebTestAppForCMK
 
 
@@ -174,10 +172,6 @@ def test_legacy_register_command_group(monkeypatch: pytest.MonkeyPatch) -> None:
     assert group.sort_index == 123
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_commands() -> None:
     expected: dict[str, dict[str, Any]] = {
         "acknowledge": {

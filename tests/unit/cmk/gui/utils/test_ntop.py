@@ -10,19 +10,13 @@ from typing import Any
 
 import pytest
 
-from cmk.ccc.version import Edition, edition
 from cmk.gui.utils.ntop import (
     get_ntop_misconfiguration_reason,
     is_ntop_available,
     is_ntop_configured,
 )
-from cmk.utils import paths
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.usefixtures("load_config")
 def test_is_ntop_available() -> None:
     assert not is_ntop_available()
@@ -61,10 +55,6 @@ def test_is_ntop_available() -> None:
             "",
         ),
     ],
-)
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
 )
 def test_is_ntop_configured_and_reason(
     ntop_connection: dict[str, Any],

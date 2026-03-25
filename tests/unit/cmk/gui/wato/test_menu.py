@@ -6,12 +6,10 @@
 
 import pytest
 
-from cmk.ccc.version import Edition, edition
 from cmk.gui.search import MatchItem
 from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.wato._snapins import get_wato_menu_items, MatchItemGeneratorSetupMenu
 from cmk.shared_typing.main_menu import NavItemTopic, NavItemTopicEntry
-from cmk.utils import paths
 
 
 def expected_items() -> dict[str, list[str]]:
@@ -84,10 +82,6 @@ def expected_items() -> dict[str, list[str]]:
     }
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.usefixtures("request_context", "with_admin_login")
 def test_get_wato_menu_items() -> None:
     items_by_topic: dict[str, list[str]] = {}

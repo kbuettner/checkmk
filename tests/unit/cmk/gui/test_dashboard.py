@@ -13,10 +13,8 @@ from collections.abc import Iterator
 import pytest
 
 from cmk.ccc.plugin_registry import Registry
-from cmk.ccc.version import Edition, edition
 from cmk.gui.dashboard import dashlet_registry, DashletConfig
 from cmk.gui.dashboard.dashlet.base import Dashlet
-from cmk.utils import paths
 from tests.testlib.unit.utils import reset_registries
 
 
@@ -63,10 +61,6 @@ def fixture_dummy_config() -> DummyDashletConfig:
 
 
 @pytest.mark.usefixtures("reset_dashlet_registry")
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_dashlet_registry_plugins() -> None:
     expected_plugins = [
         "hoststats",

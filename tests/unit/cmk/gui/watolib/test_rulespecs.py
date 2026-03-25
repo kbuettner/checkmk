@@ -10,7 +10,6 @@ from collections.abc import Sequence
 import pytest
 from pytest import MonkeyPatch
 
-import cmk.ccc.version as cmk_version
 import cmk.gui.watolib.rulespecs
 from cmk.gui.exceptions import MKUserError
 from cmk.gui.plugins.wato.utils import TimeperiodValuespec
@@ -31,7 +30,6 @@ from cmk.gui.watolib.rulespecs import (
     RulespecRegistry,
     RulespecSubGroup,
 )
-from cmk.utils import paths
 
 
 def test_rulespec_sub_group() -> None:
@@ -150,10 +148,6 @@ def _expected_rulespec_group_choices() -> list[tuple[str, str]]:
     return expected
 
 
-@pytest.mark.skipif(
-    cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_rulespec_group_choices() -> None:
     actual_choices = [
         g
@@ -233,10 +227,6 @@ def test_rulespec_get_main_groups() -> None:
     )
 
 
-@pytest.mark.skipif(
-    cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_rulespec_get_all_groups() -> None:
     expected_rulespec_groups = [
         "activechecks",
@@ -291,10 +281,6 @@ def _is_dynamically_generated_group(group_name: str) -> bool:
     return group_name.split("/")[-1].startswith(GENERATED_GROUP_PREFIX)
 
 
-@pytest.mark.skipif(
-    cmk_version.edition(paths.omd_root) is not cmk_version.Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_rulespec_get_host_groups() -> None:
     expected_rulespec_host_groups = [
         "checkparams",

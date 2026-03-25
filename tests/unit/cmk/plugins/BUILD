@@ -27,6 +27,7 @@ py_test(
             "**/*.yaml",
         ],
     ),
+    env = {"EDITION": "community"},
     main = ":__test__.py",
     visibility = ["//visibility:private"],
     deps = [

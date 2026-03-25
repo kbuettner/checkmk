@@ -17,14 +17,12 @@ import time_machine
 from pytest_mock import MockerFixture
 
 import cmk.utils.tags
-from cmk.ccc.version import Edition, edition
 from cmk.gui.bi import _filters as bi_filters
 from cmk.gui.type_defs import Rows, VisualContext
 from cmk.gui.utils.output_funnel import output_funnel
 from cmk.gui.visuals import _filters as filters
 from cmk.gui.visuals.filter import filter_registry
 from cmk.livestatus_client.testing import MockLiveStatusConnection
-from cmk.utils import paths
 from tests.testlib.unit.gui.filter_table_test_helper import (
     filter_inv_table_tests,
     filter_table_tests,
@@ -614,10 +612,6 @@ def test_filters_filter(test: FilterTest, set_config: SetConfig, request_context
         assert filt.filter(filter_vars) == test.expected_filters
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.parametrize("test", filter_table_tests)
 def test_filters_filter_table(
     test: FilterTableTest, monkeypatch: pytest.MonkeyPatch, request_context: None
@@ -638,10 +632,6 @@ def test_filters_filter_table(
         assert filt.filter_table(context, test.rows) == test.expected_rows
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.parametrize("test", filter_inv_table_tests)
 def test_filters_filter_inv_table(test: FilterTableTest) -> None:
     pass

@@ -1505,13 +1505,9 @@ def test_openapi_host_config_correct_contactgroup_default(
     }
 
 
-@pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @time_machine.travel(datetime.datetime.fromisoformat("2022-11-05T00:00:00+00:00"), tick=False)
 def test_openapi_host_config_effective_attributes_includes_all_host_attributes_regression(
-    clients: ClientRegistry, with_admin: tuple[str, str]
+    clients: ClientRegistry, with_admin: tuple[str, str], test_edition: version.Edition
 ) -> None:
     username, password = with_admin
     clients.HostConfig.set_credentials(username, password)
@@ -1781,10 +1777,6 @@ class TestHostsFilters:
         assert not resp.json["value"]
 
 
-@pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_openapi_built_in_host_attributes_in_sync() -> None:
     known_exceptions = [
         "meta_data",

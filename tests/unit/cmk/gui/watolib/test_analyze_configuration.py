@@ -10,7 +10,6 @@ from pathlib import Path
 import pytest
 
 from cmk.ccc.site import SiteId
-from cmk.ccc.version import Edition, edition
 from cmk.gui.config import Config
 from cmk.gui.watolib.analyze_configuration import (
     ac_test_registry,
@@ -20,13 +19,8 @@ from cmk.gui.watolib.analyze_configuration import (
     ACTestResult,
     merge_tests,
 )
-from cmk.utils import paths
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_ac_tests() -> None:
     expected_ac_tests = [
         "ACTestApacheNumberOfProcesses",

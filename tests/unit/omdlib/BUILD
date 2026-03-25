@@ -16,6 +16,7 @@ py_test(
         "--import-mode=importlib",
     ],
     data = ["@//:pyproject.toml"],
+    env = {"EDITION": "community"},
     main = ":__test__.py",
     visibility = ["//visibility:private"],
     deps = [

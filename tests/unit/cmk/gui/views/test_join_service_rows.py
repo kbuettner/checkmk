@@ -7,18 +7,12 @@ import copy
 
 import pytest
 
-from cmk.ccc.version import Edition, edition
 from cmk.gui.type_defs import ColumnSpec
 from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.view import View
 from cmk.gui.views._join_service_rows import _get_needed_join_columns
-from cmk.utils import paths
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.usefixtures("load_config")
 def test_get_needed_join_columns(view: View) -> None:
     view_spec = copy.deepcopy(view.spec)

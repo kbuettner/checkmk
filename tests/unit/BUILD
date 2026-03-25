@@ -60,6 +60,7 @@ py_test(
         "--import-mode=importlib",
     ],
     data = ["@//:pyproject.toml"],
+    env = {"EDITION": "community"},
     main = ":__test__.py",
     deps = [
         ":__test__",

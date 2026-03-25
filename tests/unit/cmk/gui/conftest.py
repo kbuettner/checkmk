@@ -28,7 +28,7 @@ import cmk.utils.log
 from cmk.automations.results import DeleteHostsResult
 from cmk.ccc.hostaddress import HostName
 from cmk.ccc.user import UserId
-from cmk.ccc.version import edition
+from cmk.ccc.version import Edition
 from cmk.gui import http, login
 from cmk.gui.config import active_config, Config
 from cmk.gui.livestatus_utils.testing import mock_livestatus
@@ -36,7 +36,6 @@ from cmk.gui.permissions import permission_registry
 from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.watolib.hosts_and_folders import folder_tree
 from cmk.livestatus_client.testing import MockLiveStatusConnection
-from cmk.utils import paths
 from tests.testlib.unit.gui.common_fixtures import (
     create_aut_user_auth_wsgi_app,
     create_flask_app,
@@ -176,8 +175,8 @@ def set_config(**kwargs: Any) -> Iterator[None]:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def load_plugins() -> None:
-    perform_load_plugins(edition(paths.omd_root))
+def load_plugins(test_edition: Edition) -> None:
+    perform_load_plugins(test_edition)
 
 
 @pytest.fixture()

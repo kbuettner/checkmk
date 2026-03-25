@@ -11,7 +11,6 @@ from collections.abc import Sequence
 
 import pytest
 
-from cmk.ccc.version import Edition, edition
 from cmk.gui import visuals
 from cmk.gui.http import request
 from cmk.gui.type_defs import SingleInfos, VisualContext
@@ -19,7 +18,6 @@ from cmk.gui.visuals import filters_allowed_for_info, filters_allowed_for_infos
 from cmk.gui.visuals.filter import AjaxDropdownFilter, Filter
 from cmk.gui.visuals.info import visual_info_registry
 from cmk.gui.visuals.type import visual_type_registry
-from cmk.utils import paths
 
 
 def test_get_filter() -> None:
@@ -68,18 +66,10 @@ def _expected_visual_types():
     return expected_visual_types
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_visual_types() -> None:
     assert sorted(visual_type_registry.keys()) == sorted(_expected_visual_types().keys())
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_visual_type_attributes() -> None:
     for ident, plugin_class in visual_type_registry.items():
         plugin = plugin_class()
@@ -242,10 +232,6 @@ def test_get_missing_single_infos_missing_context() -> None:
     assert visuals.get_missing_single_infos(single_infos=["host"], context={}) == {"host"}
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_get_context_specs_no_info_limit() -> None:
     result = visuals.get_context_specs(["host"], list(visual_info_registry.keys()))
     expected = [

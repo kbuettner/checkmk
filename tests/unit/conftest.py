@@ -75,12 +75,7 @@ def _fake_version_and_paths() -> None:
     monkeypatch = MonkeyPatch()
     tmp_dir = tempfile.mkdtemp(prefix="pytest_cmk_")
 
-    def guess_from_repo() -> str:
-        if is_non_free_repo():
-            return "ultimatemt"
-        return "community"
-
-    edition = os.getenv("EDITION") or guess_from_repo()
+    edition = _edition()
 
     unpatched_paths: Final = {
         # FIXME :-(
@@ -160,22 +155,17 @@ def _fake_version_and_paths() -> None:
 
     monkeypatch.setattr(cmk_version, "orig_omd_version", cmk_version.omd_version, raising=False)
     monkeypatch.setattr(
-        cmk_version, "omd_version", lambda *args, **kw: f"{cmk_version.__version__}.{edition}"
+        cmk_version, "omd_version", lambda *args, **kw: f"{cmk_version.__version__}.{edition.long}"
     )
 
 
-def _get_edition() -> cmk_version.Edition:
-    def guess_from_repo() -> str:
-        if is_non_free_repo():
-            return "ultimatemt"
-        return "community"
+def _edition() -> cmk_version.Edition:
+    if edition := os.environ.get("EDITION"):
+        return cmk_version.Edition.from_long_edition(edition)
 
-    return cmk_version.Edition.from_long_edition(os.environ.get("EDITION") or guess_from_repo())
-
-
-@pytest.fixture(scope="session")
-def test_edition() -> cmk_version.Edition:
-    return _get_edition()
+    return cmk_version.Edition.from_long_edition(
+        "ultimatemt" if is_non_free_repo() else "community"
+    )
 
 
 # Cleanup temporary directory created above
@@ -197,6 +187,11 @@ def cleanup_cmk() -> Generator[None]:
 # Run _fake_version_and_paths() and add_python_paths() before test execution
 _fake_version_and_paths()
 add_python_paths()
+
+
+@pytest.fixture(scope="session")
+def test_edition() -> cmk_version.Edition:
+    return _edition()
 
 
 @pytest.hookimpl(tryfirst=True)

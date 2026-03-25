@@ -13,7 +13,6 @@ import pytest
 from opentelemetry import trace as otel_trace
 from pydantic import BaseModel
 
-import cmk.ccc.version as cmk_version
 import cmk.gui.log
 import cmk.utils.log
 import cmk.utils.paths
@@ -37,10 +36,6 @@ from tests.testlib.common.utils import wait_until
 tracer = get_tracer()
 
 
-@pytest.mark.skipif(
-    cmk_version.edition(cmk.utils.paths.omd_root) is not cmk_version.Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_background_jobs() -> None:
     expected_jobs = [
         "ActivateChangesSchedulerBackgroundJob",

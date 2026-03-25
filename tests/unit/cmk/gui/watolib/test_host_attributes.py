@@ -7,19 +7,13 @@
 import pytest
 
 import cmk.gui.watolib.host_attributes as attrs
-from cmk.ccc.version import Edition, edition
 from cmk.gui.config import active_config, Config
 from cmk.gui.type_defs import CustomHostAttrSpec
 from cmk.gui.watolib.host_attributes import all_host_attributes
 from cmk.rulesets.v1 import Help, Title
-from cmk.utils import paths
 from tests.testlib.unit.gui.host_attributes_test_helper import BASE_EXPECTED_ATTRIBUTES
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.usefixtures("load_config")
 def test_registered_host_attributes() -> None:
     names = all_host_attributes(
@@ -182,10 +176,6 @@ def test_host_attribute_topics_for_folders() -> None:
     ]
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 @pytest.mark.usefixtures("load_config")
 @pytest.mark.parametrize(
     "for_what",

@@ -10,17 +10,11 @@ import pytest
 from werkzeug.test import create_environ
 
 import cmk.gui.pages
-from cmk.ccc.version import Edition, edition
 from cmk.gui.config import Config
 from cmk.gui.http import Request
 from cmk.gui.pages import Page, PageContext, PageEndpoint
-from cmk.utils import paths
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_pages() -> None:
     expected_pages = [
         "add_bookmark",

@@ -13,15 +13,9 @@ import pytest
 
 import cmk.gui.config
 import cmk.utils.paths
-from cmk.ccc.version import Edition, edition
 from cmk.gui.config import active_config, Config
-from cmk.utils import paths
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_default_config_from_plugins() -> None:
     expected = [
         "roles",

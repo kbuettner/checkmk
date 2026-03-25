@@ -3,17 +3,10 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-import pytest
 
 import cmk.gui.watolib.config_domain_name as utils
-from cmk.ccc.version import Edition, edition
-from cmk.utils import paths
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_registered_generators() -> None:
     expected_generators = [
         "acknowledge_initial_werks",
@@ -28,10 +21,6 @@ def test_registered_generators() -> None:
     assert sorted(utils.sample_config_generator_registry.keys()) == sorted(expected_generators)
 
 
-@pytest.mark.skipif(
-    edition(paths.omd_root) is not Edition.COMMUNITY,
-    reason="Remove condition with CMK-32598",
-)
 def test_get_sorted_generators() -> None:
     expected = [
         "contact_groups",
