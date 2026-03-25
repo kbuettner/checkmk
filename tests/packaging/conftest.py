@@ -44,7 +44,7 @@ def _configure_environment_from_package_path(request: pytest.FixtureRequest) -> 
 def package_path() -> str:
     path = os.environ.get("PACKAGE_PATH")
     if not path:
-        raise Exception(
+        raise RuntimeError(
             "PACKAGE_PATH environment variable pointing to the package to be tested is missing"
         )
     return path
