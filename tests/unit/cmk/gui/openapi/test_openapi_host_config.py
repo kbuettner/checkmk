@@ -8,7 +8,7 @@
 import contextlib
 import datetime
 from collections.abc import Iterator, Sequence
-from typing import Any, Literal
+from typing import Literal
 from unittest.mock import MagicMock
 
 import pytest
@@ -48,12 +48,6 @@ EDITIONS_ULTIMATE_PLUS = {
     version.Edition.ULTIMATE,
     version.Edition.CLOUD,
 }
-
-
-ultamate_plus_test = pytest.mark.skipif(
-    version.edition(paths.omd_root) not in EDITIONS_ULTIMATE_PLUS,
-    reason="not available for other editions",
-)
 
 
 @pytest.fixture()
@@ -1809,141 +1803,6 @@ def test_openapi_built_in_tag_groups_in_sync() -> None:
     }
     assert built_in_tag_group_keys == set(BuiltInHostTagGroups.__annotations__)
     assert built_in_tag_group_keys == set(BaseHostTagGroup().fields.keys())
-
-
-@ultamate_plus_test
-def test_create_host_with_metrics_association(clients: ClientRegistry) -> None:
-    metrics_association_attr = [
-        "enabled",
-        {
-            "attribute_filters": {
-                "resource_attributes": [{"key": "key1", "value": "val1"}],
-                "scope_attributes": [{"key": "key2", "value": "val2"}],
-                "data_point_attributes": [{"key": "key3", "value": "val3"}],
-            },
-            "host_name_resource_attribute_key": "service.name",
-        },
-    ]
-    resp = clients.HostConfig.create(
-        host_name="host1",
-        attributes={"metrics_association": metrics_association_attr},
-    )
-
-    assert resp.status_code == 200
-    assert resp.json["extensions"]["attributes"]["metrics_association"] == metrics_association_attr
-
-
-VALID_CONFIG = {
-    "attribute_filters": [],
-    "host_name_resource_attribute_key": "service.name",
-}
-
-
-@pytest.mark.parametrize(
-    ("invalid_value", "expected_error_snippet"),
-    [
-        pytest.param(
-            "not-a-list-or-tuple",
-            "Not a valid tuple.",
-            id="top_level_type_mismatch",
-        ),
-        pytest.param(["enabled"], "Length must be 2", id="tuple_length_too_short"),
-        pytest.param(
-            ["enabled", VALID_CONFIG, "extra-item"],
-            "Length must be 2",
-            id="tuple_length_too_long",
-        ),
-        pytest.param(
-            ["invalid_status", VALID_CONFIG],
-            "is not one of the enum values: ['enabled', 'disabled']",
-            id="status_enum_violation",
-        ),
-        pytest.param(
-            ["enabled", "this-should-be-a-dict-or-none"],
-            "Invalid input type",
-            id="config_type_mismatch",
-        ),
-        pytest.param(
-            [
-                "enabled",
-                {
-                    # Missing 'host_name_resource_attribute_key'
-                    "attribute_filters": {}
-                },
-            ],
-            "Missing data for required field",
-            id="missing_required_config_key",
-        ),
-        pytest.param(
-            [
-                "enabled",
-                {
-                    "host_name_resource_attribute_key": "service.name",
-                    "attribute_filters": "not-a-dict",  # Wrong type
-                },
-            ],
-            "Invalid input type",
-            id="filters_type_mismatch",
-        ),
-        pytest.param(
-            [
-                "enabled",
-                {
-                    "host_name_resource_attribute_key": "service.name",
-                    "attribute_filters": {
-                        # Missing 'data_point_attributes'
-                        "resource_attributes": [{"key": "k", "value": "v"}],
-                        "scope_attributes": [],
-                    },
-                },
-            ],
-            "Missing data for required field",
-            id="filters_missing_key",
-        ),
-        pytest.param(
-            [
-                "enabled",
-                {
-                    "host_name_resource_attribute_key": "service.name",
-                    "attribute_filters": {
-                        "resource_attributes": [{"key": "k", "value": "v"}],
-                        "scope_attributes": [
-                            {
-                                "key": "k",
-                                # Missing 'value' key
-                            }
-                        ],
-                        "data_point_attributes": [],
-                    },
-                },
-            ],
-            "Missing data for required field",
-            id="filter_item_missing_key",
-        ),
-    ],
-)
-@ultamate_plus_test
-def test_create_host_with_invalid_metrics_association(  # type: ignore[misc]
-    clients: ClientRegistry, invalid_value: Any, expected_error_snippet: str
-) -> None:
-    """
-    Verifies that the API rejects various malformed shapes of the
-    metrics_association attribute with a 400 Bad Request.
-    """
-    # 1. Assert that the specific exception is raised
-    with pytest.raises(RestApiException) as excinfo:
-        clients.HostConfig.create(
-            host_name="host_invalid_metrics",
-            attributes={"metrics_association": invalid_value},
-        )
-    exception = excinfo.value
-
-    # 3. Verify the status code inside the exception
-    assert exception.response.status_code == 400
-
-    # 4. Verify the error message matches the expected validation error
-    # We look at the JSON body of the response contained in the exception
-    assert expected_error_snippet in str(exception.response.json)
 
 
 @pytest.mark.skipif(

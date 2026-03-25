@@ -227,69 +227,6 @@ def test_openapi_bulk_groups(
     )
 
 
-@pytest.mark.skipif(not _is_managed_edition, reason="customer field requires managed edition")
-@pytest.mark.parametrize("group_type", ["host", "contact", "service"])
-def test_openapi_groups_with_customer(
-    monkeypatch: pytest.MonkeyPatch,
-    group_type: str,
-    aut_user_auth_wsgi_app: WebTestAppForCMK,
-) -> None:
-    name = _random_string(10)
-    alias = _random_string(10)
-
-    group = {"name": name, "alias": alias, "customer": "global"}
-
-    base = "/NO_SITE/check_mk/api/1.0"
-    _resp = aut_user_auth_wsgi_app.call_method(
-        "post",
-        base + f"/domain-types/{group_type}_group_config/collections/all",
-        params=json.dumps(group),
-        headers={"Accept": "application/json"},
-        status=200,
-        content_type="application/json",
-    )
-
-    resp = aut_user_auth_wsgi_app.call_method(
-        "get",
-        base + f"/objects/{group_type}_group_config/{name}",
-        headers={"Accept": "application/json"},
-        status=200,
-    )
-    assert resp.json_body["extensions"]["customer"] == "global"
-
-    resp = aut_user_auth_wsgi_app.call_method(
-        "put",
-        base + f"/objects/{group_type}_group_config/{name}",
-        headers={"If-Match": resp.headers["ETag"], "Accept": "application/json"},
-        params=json.dumps(
-            {
-                "alias": f"{alias}+",
-            }
-        ),
-        status=200,
-        content_type="application/json",
-    )
-    assert resp.json_body["extensions"]["customer"] == "global"
-
-    resp = aut_user_auth_wsgi_app.call_method(
-        "put",
-        base + f"/objects/{group_type}_group_config/{name}",
-        headers={"If-Match": resp.headers["ETag"], "Accept": "application/json"},
-        params=json.dumps({"alias": alias, "customer": "provider"}),
-        status=200,
-        content_type="application/json",
-    )
-    assert resp.json_body["extensions"]["customer"] == "provider"
-
-    monkeypatch.setattr("cmk.gui.mkeventd.wato._get_rule_stats_from_ec", lambda: {})
-    aut_user_auth_wsgi_app.delete(
-        base + f"/objects/{group_type}_group_config/{name}",
-        headers={"If-Match": resp.headers["ETag"], "Accept": "application/json"},
-        status=204,
-        content_type="application/json",
-    )
-
-
 def test_openapi_group_values_are_links(group_client: GroupConfig, group_type: str) -> None:
     response = group_client.list()
     assert len(response.json["value"]) == 0

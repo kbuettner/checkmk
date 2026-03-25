@@ -49,20 +49,6 @@ MOCK_SAML_CONNECTOR_NAME = "saml_connector"
 _is_managed_edition = version.edition(paths.omd_root) is version.Edition.ULTIMATEMT
 
 
-@pytest.mark.skipif(not _is_managed_edition, reason="customer field requires managed edition")
-def test_nonexistant_customer(clients: ClientRegistry) -> None:
-    username = "user"
-    customer = "i_do_not_exist"
-
-    clients.User.create(
-        username=username, fullname="User Name", customer=customer, expect_ok=False
-    ).assert_status_code(400)
-
-    clients.User.create(username=username, fullname="User Name", customer="global")
-
-    clients.User.edit(username=username, customer=customer, expect_ok=False).assert_status_code(400)
-
-
 def test_idle_timeout(clients: ClientRegistry) -> None:
     username = "user"
 
@@ -86,49 +72,6 @@ def test_idle_timeout(clients: ClientRegistry) -> None:
         idle_timeout={"option": "disable"},
     )
     assert resp.json["extensions"]["idle_timeout"]["option"] == "disable"
-
-
-@pytest.mark.skipif(not _is_managed_edition, reason="customer field requires managed edition")
-def test_openapi_customer(clients: ClientRegistry, monkeypatch: MonkeyPatch) -> None:
-    username = "user"
-
-    with time_machine.travel(datetime.datetime.fromisoformat("2010-02-01 08:00:00Z")):
-        resp = clients.User.create(
-            username=username,
-            fullname="User Name",
-            customer="global",
-        )
-
-    assert resp.json["extensions"] == {
-        "fullname": "User Name",
-        "customer": "global",
-        "contactgroups": [],
-        "disable_notifications": {},
-        "contact_options": {"email": "", "fallback_contact": False},
-        "idle_timeout": {"option": "global"},
-        "disable_login": False,
-        "pager_address": "",
-        "roles": [],
-        # TODO: auth_option being an empty dict is a bug and should not
-        # happen: there should not be a user without connection type (this is
-        # what it's called in the GUI) see CMK-12723
-        "auth_option": {},
-        "interface_options": {
-            "interface_theme": "default",
-            "main_menu_icons": "topic",
-            "mega_menu_icons": "topic",  # TODO: DEPRECATED(18295) remove "mega_menu_icons"
-            "navigation_bar_icons": "hide",
-            "show_mode": "default",
-            "sidebar_position": "right",
-            "contextual_help_icon": "show_icon",
-            "navbar_changes_action": "slideout",
-        },
-        "start_url": "default_start_url",
-    }
-
-    resp = clients.User.edit(username=username, customer="provider")
-
-    assert resp.json["extensions"]["customer"] == "provider"
 
 
 def test_openapi_user_minimal_settings(
@@ -604,63 +547,6 @@ def test_openapi_user_internal_auth_handling(
     assert loaded["enforce_pw_change"] is True
     assert loaded["is_automation_user"] is False
     assert loaded["store_automation_secret"] is False
-
-
-@pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT,
-    reason="Only relevant for UltimateMT edition",
-)
-def test_openapi_managed_global_edition(clients: ClientRegistry, monkeypatch: MonkeyPatch) -> None:
-    monkeypatch.setattr("cmk.ccc.version.edition", lambda *args, **kw: version.Edition.ULTIMATEMT)
-
-    with time_machine.travel(datetime.datetime.fromisoformat("2010-02-01 08:00:00Z")):
-        resp = clients.User.create(username="user", fullname="Cosme Fulanito", customer="global")
-
-    extensions = resp.json["extensions"]
-    assert extensions["customer"] == "global"
-    assert extensions["idle_timeout"] == {"option": "global"}
-
-
-@pytest.mark.skipif(
-    version.edition(paths.omd_root) is not version.Edition.ULTIMATEMT,
-    reason="Only relevant for UltimateMT edition",
-)
-def test_managed_global_internal(
-    monkeypatch: MonkeyPatch,
-    request_context: None,
-) -> None:
-    # this test uses the internal mechanics of the user endpoint
-
-    user_object: UserSpec = {
-        "ui_theme": None,
-        "ui_sidebar_position": None,
-        "nav_hide_icons_title": None,
-        "icons_per_item": None,
-        "show_mode": None,
-        "start_url": None,
-        "force_authuser": False,
-        "enforce_pw_change": False,
-        "alias": "User Name",
-        "locked": False,
-        "pager": "",
-        "roles": [],
-        "contactgroups": [],
-        "customer": None,  # None represents global internally
-        "email": "",
-        "fallback_contact": False,
-        "disable_notifications": {},
-    }
-    create_user(
-        UserId("user"),
-        user_object,
-        default_sites,
-        get_user_attributes([]),
-        use_git=False,
-        acting_user=LoggedInSuperUser(),
-    )
-    user_internal = _load_user(UserId("user"))
-    user_endpoint_attrs = complement_customer(_internal_to_api_format(user_internal))
-    assert user_endpoint_attrs["customer"] == "global"
 
 
 def test_global_full_configuration(clients: ClientRegistry) -> None:

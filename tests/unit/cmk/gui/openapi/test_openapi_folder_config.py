@@ -732,29 +732,6 @@ def test_openapi_folder_config_collections_recursive_list(
         assert "batman" not in folder["id"]
 
 
-@pytest.mark.skipif(
-    version.edition(paths.omd_root) is version.Edition.COMMUNITY,
-    reason="Tested Attribute is not in RAW",
-)
-def test_bake_agent_package_attribute_regression(
-    clients: ClientRegistry, base: str, aut_user_auth_wsgi_app: WebTestAppForCMK
-) -> None:
-    folder_name = "blablabla"
-
-    clients.Folder.create(
-        folder_name=folder_name,
-        title=folder_name,
-        parent="~",
-        attributes={"bake_agent_package": True},
-    ).assert_status_code(200)
-
-    # see if we get an outbound validation error on a single folder
-    clients.Folder.get(folder_name=f"~{folder_name}").assert_status_code(200)
-
-    # see if we get an outbound validation error on all folders
-    clients.Folder.get_all().assert_status_code(200)
-
-
 def test_delete_root_folder(
     base: str,
     aut_user_auth_wsgi_app: WebTestAppForCMK,

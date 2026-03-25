@@ -5,13 +5,10 @@
 
 import pytest
 
-from cmk.ccc import version
 from cmk.gui.watolib.password_store import PasswordStore
-from cmk.utils import password_store, paths
+from cmk.utils import password_store
 from cmk.utils.password_store import PasswordConfig
 from tests.testlib.unit.rest_api_client import ClientRegistry
-
-_is_managed_edition = version.edition(paths.omd_root) is version.Edition.ULTIMATEMT
 
 
 @pytest.mark.usefixtures("suppress_remote_automation_calls", "mock_password_file_regeneration")
@@ -101,23 +98,6 @@ def test_openapi_password_editable_by(clients: ClientRegistry) -> None:
     resp = clients.Password.edit("test_3", editable_by="group1")
     assert resp.json["extensions"]["editable_by"] == "group1"
     assert resp.json["extensions"]["owned_by"] == "group1"
-
-
-@pytest.mark.skipif(not _is_managed_edition, reason="customer field requires managed edition")
-@pytest.mark.usefixtures("suppress_remote_automation_calls", "mock_password_file_regeneration")
-def test_openapi_password_customer(clients: ClientRegistry) -> None:
-    resp = clients.Password.create(
-        ident="test",
-        title="Checkmk",
-        password="tt",
-        shared=[],
-        editable_by="admin",
-        customer="provider",
-    )
-    assert resp.json["extensions"]["customer"] == "provider"
-
-    resp = clients.Password.edit("test", customer="global")
-    assert resp.json["extensions"]["customer"] == "global"
 
 
 @pytest.mark.usefixtures("suppress_remote_automation_calls", "mock_password_file_regeneration")

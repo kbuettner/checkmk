@@ -5,25 +5,9 @@
 
 from pathlib import Path
 
-import pytest
 from pytest_mock import MockerFixture
 
-import cmk.ccc.version as cmk_version
-from cmk.utils import paths
 from tests.testlib.unit.gui.web_test_app import WebTestAppForCMK
-from tests.testlib.unit.rest_api_client import ClientRegistry
-
-
-@pytest.mark.skipif(
-    cmk_version.edition(paths.omd_root) is cmk_version.Edition.COMMUNITY,
-    reason="No agent deployment in raw edition",
-)
-def test_deploy_agent(wsgi_app: WebTestAppForCMK) -> None:
-    response = wsgi_app.get("/NO_SITE/check_mk/deploy_agent.py")
-    assert response.json["result"].startswith("Missing or invalid")
-
-    response = wsgi_app.get("/NO_SITE/check_mk/deploy_agent.py?mode=agent")
-    assert response.json["result"].startswith("Missing host")
 
 
 def test_download_agent_shipped_with_checkmk(
@@ -51,12 +35,3 @@ def test_download_agent_shipped_with_checkmk(
     assert resp.body == agent_bin_data
     assert resp.headers["Content-Disposition"] == 'attachment; filename="agent_bin_mock.deb"'
     packed_agent_path_patched.assert_called_once()
-
-
-@pytest.mark.skipif(
-    cmk_version.edition(paths.omd_root) is cmk_version.Edition.COMMUNITY,
-    reason="endpoint not available in raw edition",
-)
-def test_openapi_agent_key_id_above_zero_regression(clients: ClientRegistry) -> None:
-    # make sure this doesn't crash
-    clients.Agent.bake_and_sign(key_id="0", passphrase="", expect_ok=False).assert_status_code(400)
