@@ -21,10 +21,19 @@
 from collections.abc import Mapping
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import LegacyCheckDefinition
-from cmk.agent_based.v2 import equals, SNMPTree, StringTable
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    equals,
+    Metric,
+    Result,
+    Service,
+    SimpleSNMPSection,
+    SNMPTree,
+    State,
+    StringTable,
+)
 
 Section = dict[str, int]
 
@@ -42,40 +51,41 @@ def parse_printer_supply_ricoh(string_table: StringTable) -> Section:
     return parsed
 
 
-def discover_printer_supply_ricoh(parsed: Section) -> list[tuple[str, dict[str, object]]]:
-    return [(key, {}) for key in parsed]
+def discover_printer_supply_ricoh(section: Section) -> DiscoveryResult:
+    for key in section:
+        yield Service(item=key)
 
 
 def check_printer_supply_ricoh(
-    item: str, params: Mapping[str, Any] | tuple[float, ...], parsed: Section
-) -> tuple[int, str, list[Any]] | None:
-    def handle_regular(supply_level: int) -> tuple[int, str, int]:
-        infotext = "%.0f%%" % supply_level
+    item: str, params: Mapping[str, Any] | tuple[float, ...], section: Section
+) -> CheckResult:
+    def handle_regular(supply_level: int) -> tuple[State, str, int]:
+        infotext = f"{supply_level:.0f}%"
 
         if supply_level <= crit:
-            state = 2
+            state = State.CRIT
         elif supply_level <= warn:
-            state = 1
+            state = State.WARN
         else:
-            state = 0
+            state = State.OK
 
-        if state > 0:
+        if state != State.OK:
             infotext += f" (warn/crit at {warn:.0f}%/{crit:.0f}%)"
         return state, infotext, supply_level
 
-    def handle_negative(code: int) -> tuple[int, str, int]:
+    def handle_negative(code: int) -> tuple[State, str, int]:
         # the following codes are based on the MP C2800
         if code == -100:
             # does not apply level. Since we don't get a proper reading
             # the best we could do would be test against 0
-            return 2, "almost empty (<10%)", 0
+            return State.CRIT, "almost empty (<10%)", 0
         if code == -2:
             # cartridge removed?
-            return 3, "unknown level", 0
+            return State.UNKNOWN, "unknown level", 0
         if code == -3:
             # -3 = full is based on user claim, but other walks also show
             # the device itself does not alert in this state
-            return 0, "100%", 100
+            return State.OK, "100%", 100
         # unknown code
         return handle_regular(0)
 
@@ -86,32 +96,34 @@ def check_printer_supply_ricoh(
             params = {"levels": params[:2], "upturn_toner": params[2]}
 
     warn, crit = params["levels"]
-    for name, supply_level in parsed.items():
-        if item == name:
-            if supply_level < 0:
-                # negative levels usually have special meaning
-                state, infotext, supply_level = handle_negative(supply_level)
-            else:
-                state, infotext, supply_level = handle_regular(supply_level)
+    if item not in section:
+        return
 
-            if "black" in name.lower():
-                perf_type = "black"
-            elif "cyan" in name.lower():
-                perf_type = "cyan"
-            elif "magenta" in name.lower():
-                perf_type = "magenta"
-            elif "yellow" in name.lower():
-                perf_type = "yellow"
-            else:
-                perf_type = "other"
+    supply_level = section[item]
+    if supply_level < 0:
+        # negative levels usually have special meaning
+        state, infotext, supply_level = handle_negative(supply_level)
+    else:
+        state, infotext, supply_level = handle_regular(supply_level)
 
-            perfdata = [("supply_toner_" + perf_type, supply_level, warn, crit, 0, 100)]
+    if "black" in item.lower():
+        perf_type = "black"
+    elif "cyan" in item.lower():
+        perf_type = "cyan"
+    elif "magenta" in item.lower():
+        perf_type = "magenta"
+    elif "yellow" in item.lower():
+        perf_type = "yellow"
+    else:
+        perf_type = "other"
 
-            return state, infotext, perfdata
-    return None
+    yield Result(state=state, summary=infotext)
+    yield Metric(
+        f"supply_toner_{perf_type}", supply_level, levels=(warn, crit), boundaries=(0, 100)
+    )
 
 
-check_info["printer_supply_ricoh"] = LegacyCheckDefinition(
+snmp_section_printer_supply_ricoh = SimpleSNMPSection(
     name="printer_supply_ricoh",
     detect=equals(".1.3.6.1.2.1.1.2.0", ".1.3.6.1.4.1.367.1.1"),
     fetch=SNMPTree(
@@ -119,6 +131,11 @@ check_info["printer_supply_ricoh"] = LegacyCheckDefinition(
         oids=["2", "5"],
     ),
     parse_function=parse_printer_supply_ricoh,
+)
+
+
+check_plugin_printer_supply_ricoh = CheckPlugin(
+    name="printer_supply_ricoh",
     service_name="Supply %s",
     discovery_function=discover_printer_supply_ricoh,
     check_function=check_printer_supply_ricoh,
