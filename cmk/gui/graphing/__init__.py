@@ -46,6 +46,7 @@ from ._graph_templates import (
     TemplateGraphSpecification,
 )
 from ._html_render import (
+    GraphContext,
     GraphDestinations,
     host_service_graph_dashlet_cmk,
     host_service_graph_popup_cmk,
@@ -104,6 +105,7 @@ __all__ = [
     "FetchTimeSeries",
     "GraphArtwork",
     "GraphConsolidationFunction",
+    "GraphContext",
     "GraphTimeRange",
     "GraphDestinations",
     "GraphMetric",

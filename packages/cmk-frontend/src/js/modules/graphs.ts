@@ -65,7 +65,7 @@ interface GraphTimeRange {
   end: number
 }
 
-interface GraphContext {
+export interface GraphContext {
   graph_id: string
   recipe: GraphRecipe
   time_range: GraphTimeRange
