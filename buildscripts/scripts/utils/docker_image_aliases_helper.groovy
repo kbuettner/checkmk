@@ -179,6 +179,12 @@ inside_container = { Map arg1=[:], Closure arg2 ->
     }
 }
 
+cleanup_container_shadow_workspace = { ->
+    if (kubernetes_inherit_from == "UNSET") {
+        cleanup_directory("${WORKSPACE}/container_shadow_workspace_ci");
+    }
+}
+
 inside_container_minimal = { Map arg1=[:], Closure arg2 ->
     // strangely providing a default value for @args does not work as expected.
     // If no value got provided the provided body is taken as @args.

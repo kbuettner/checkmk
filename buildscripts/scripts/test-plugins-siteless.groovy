@@ -96,6 +96,12 @@ void main() {
                     }
                 }
             }
+            catch (Exception e) {
+                stage("Cleanup") {
+                    cleanup_container_shadow_workspace();
+                }
+                throw e;
+            }
             finally {
                 stage("Archive / process test reports") {
                     show_duration("archiveArtifacts") {
