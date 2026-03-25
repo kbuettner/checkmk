@@ -22,7 +22,7 @@ interface GraphTitleFormat {
   add_service_description: boolean
 }
 
-interface GraphDisplayConfig {
+interface GraphDisplayConfigHTML {
   border_width: number
   color_gradient: number
   editing: boolean
@@ -60,7 +60,7 @@ interface GraphContext {
   graph_id: string
   recipe: GraphRecipe
   time_range: GraphTimeRange
-  display_config: GraphDisplayConfig
+  display_config: GraphDisplayConfigHTML
   display_id: string
 }
 
@@ -132,7 +132,7 @@ interface GraphArtwork {
   //optional properties assigned dynamically in javascript
   id: string
   canvas_obj: HTMLCanvasElement
-  display_config: GraphDisplayConfig
+  display_config: GraphDisplayConfigHTML
   time_origin?: number
   vertical_origin?: number
   // Actual data and axes

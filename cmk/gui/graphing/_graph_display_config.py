@@ -104,7 +104,7 @@ class GraphDisplayConfigBase(BaseModel):
         )
 
 
-class GraphDisplayConfig(GraphDisplayConfigBase):
+class GraphDisplayConfigHTML(GraphDisplayConfigBase):
     explicit_title: str | None = None
     foreground_color: str
     onclick: str | None = None

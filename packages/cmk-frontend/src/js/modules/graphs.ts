@@ -33,7 +33,7 @@ interface GraphTitleFormat {
   add_service_description: boolean
 }
 
-interface GraphDisplayConfig {
+interface GraphDisplayConfigHTML {
   border_width: number
   color_gradient: number
   editing: boolean
@@ -68,7 +68,7 @@ interface GraphContext {
   graph_id: string
   recipe: GraphRecipe
   time_range: GraphTimeRange
-  display_config: GraphDisplayConfig
+  display_config: GraphDisplayConfigHTML
   display_id: string
 }
 
@@ -162,7 +162,7 @@ export interface GraphArtwork {
 interface GraphInstance {
   id: string
   canvas: HTMLCanvasElement | null
-  display_config: GraphDisplayConfig
+  display_config: GraphDisplayConfigHTML
   artwork: GraphArtwork
   // UI state that may be ahead of artwork values
   pin_time: number | null
@@ -233,7 +233,7 @@ interface DelayedGraph {
   graph_load_container: HTMLElement | Node | null
   graph_recipe: GraphRecipe
   graph_time_range: GraphTimeRange
-  graph_display_config: GraphDisplayConfig
+  graph_display_config: GraphDisplayConfigHTML
   script_object: HTMLScriptElement
   graph_display_id: string
   additional_html: object | null
@@ -431,7 +431,7 @@ function get_current_script(): HTMLScriptElement {
 export function load_graph_content(
   graph_recipe: GraphRecipe,
   graph_time_range: GraphTimeRange,
-  graph_display_config: GraphDisplayConfig,
+  graph_display_config: GraphDisplayConfigHTML,
   graph_display_id: string,
   additional_html: object | null = null
 ) {
@@ -487,7 +487,7 @@ export function register_delayed_graph_listener() {
 function do_load_graph_content(
   graph_recipe: GraphRecipe,
   graph_time_range: GraphTimeRange,
-  graph_display_config: GraphDisplayConfig,
+  graph_display_config: GraphDisplayConfigHTML,
   script_object: HTMLScriptElement,
   graph_display_id: string,
   additional_html: object | null = null

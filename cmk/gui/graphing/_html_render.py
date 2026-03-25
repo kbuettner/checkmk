@@ -67,8 +67,8 @@ from ._artwork import (
 from ._fetch_time_series import fetch_augmented_time_series
 from ._from_api import metrics_from_api, RegisteredMetric
 from ._graph_display_config import (
-    GraphDisplayConfig,
     GraphDisplayConfigBase,
+    GraphDisplayConfigHTML,
     GraphRenderOptions,
     GraphTitleFormat,
 )
@@ -114,7 +114,7 @@ class GraphContext(BaseModel):
     graph_id: str = ""
     recipe: GraphRecipe
     time_range: GraphTimeRange
-    display_config: GraphDisplayConfig
+    display_config: GraphDisplayConfigHTML
     display_id: str = ""
 
 
@@ -260,7 +260,7 @@ def host_service_graph_popup_cmk(
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
 ) -> None:
-    graph_display_config = GraphDisplayConfig.from_user_context_and_options(
+    graph_display_config = GraphDisplayConfigHTML.from_user_context_and_options(
         user,
         theme.get(),
         GraphRenderOptions(
@@ -325,7 +325,7 @@ def _render_graph_html(
     display_id: str,
     graph_artwork: GraphArtwork,
     graph_time_range: GraphTimeRange,
-    graph_display_config: GraphDisplayConfig,
+    graph_display_config: GraphDisplayConfigHTML,
     expandable_legend_appearance: ExpandableLegendAppearance,
     additional_html: AdditionalGraphHTML | None = None,
 ) -> HTML:
@@ -449,7 +449,7 @@ def _show_graph_html_content(
     display_id: str,
     graph_artwork: GraphArtwork,
     graph_time_range: GraphTimeRange,
-    graph_display_config: GraphDisplayConfig,
+    graph_display_config: GraphDisplayConfigHTML,
     expandable_legend_appearance: ExpandableLegendAppearance,
     additional_html: AdditionalGraphHTML | None = None,
 ) -> None:
@@ -554,7 +554,7 @@ def _show_graph_html_content(
     html.close_div()
 
 
-def _show_pin_time(graph_artwork: GraphArtwork, config: GraphDisplayConfig) -> bool:
+def _show_pin_time(graph_artwork: GraphArtwork, config: GraphDisplayConfigHTML) -> bool:
     if not config.show_pin:
         return False
 
@@ -578,7 +578,9 @@ class _LegendTitle:
 
 
 def _compute_legend_titles(
-    graph_recipe: GraphRecipe, graph_artwork: GraphArtwork, graph_display_config: GraphDisplayConfig
+    graph_recipe: GraphRecipe,
+    graph_artwork: GraphArtwork,
+    graph_display_config: GraphDisplayConfigHTML,
 ) -> Generator[_LegendTitle]:
     consolidation_function = graph_recipe.consolidation_function
     yield _LegendTitle(
@@ -601,7 +603,7 @@ def _compute_legend_titles(
         yield _LegendTitle("pin", _render_pin_time_label(graph_artwork), False)
 
 
-def _compute_graph_legend_styles(graph_display_config: GraphDisplayConfig) -> Iterator[str]:
+def _compute_graph_legend_styles(graph_display_config: GraphDisplayConfigHTML) -> Iterator[str]:
     """Render legend that describe the metrics"""
     graph_width = graph_display_config.size[0] * html_size_per_ex
 
@@ -696,7 +698,7 @@ def _render_attributes(
 def _show_graph_legend(
     graph_recipe: GraphRecipe,
     graph_artwork: GraphArtwork,
-    graph_display_config: GraphDisplayConfig,
+    graph_display_config: GraphDisplayConfigHTML,
     expandable_legend_appearance: ExpandableLegendAppearance,
 ) -> None:
     font_size_style = "font-size: %dpt;" % graph_display_config.font_size
@@ -1084,7 +1086,7 @@ class UserGraphTimeRangeStore:
 def render_graphs_from_specification_html(
     graph_specification: GraphSpecification,
     graph_time_range: GraphTimeRange,
-    graph_display_config: GraphDisplayConfig,
+    graph_display_config: GraphDisplayConfigHTML,
     registered_metrics: Mapping[str, RegisteredMetric],
     registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],
     user_permissions: UserPermissions,
@@ -1176,7 +1178,7 @@ def render_graphs_from_specification_html(
 def _render_graph_container_html(
     graph_recipe: GraphRecipe,
     graph_time_range: GraphTimeRange,
-    graph_display_config: GraphDisplayConfig,
+    graph_display_config: GraphDisplayConfigHTML,
     *,
     graph_display_id: str,
     additional_html: AdditionalGraphHTML | None = None,
@@ -1221,7 +1223,7 @@ class AjaxRenderGraphContent(AjaxPage):
         api_request = ctx.request.get_request()
         graph_recipe = GraphRecipe.model_validate(api_request["graph_recipe"])
         graph_time_range = GraphTimeRange.model_validate(api_request["graph_time_range"])
-        graph_display_config = GraphDisplayConfig.model_validate(
+        graph_display_config = GraphDisplayConfigHTML.model_validate(
             api_request["graph_display_config"]
         )
         additional_html = (
@@ -1264,7 +1266,7 @@ def _render_graph_content_html(
     request: Request,
     graph_recipe: GraphRecipe,
     graph_time_range: GraphTimeRange,
-    graph_display_config: GraphDisplayConfig,
+    graph_display_config: GraphDisplayConfigHTML,
     registered_metrics: Mapping[str, RegisteredMetric],
     graph_artwork_or_errors: GraphArtworkOrErrors,
     *,
@@ -1377,7 +1379,7 @@ def _render_graph_content_html(
 def _render_time_range_selection(
     request: Request,
     graph_recipe: GraphRecipe,
-    graph_display_config: GraphDisplayConfig,
+    graph_display_config: GraphDisplayConfigHTML,
     registered_metrics: Mapping[str, RegisteredMetric],
     *,
     graph_timeranges: Sequence[GraphTimerange],
@@ -1580,7 +1582,7 @@ class GraphDestinations:
 def host_service_graph_dashlet_cmk(
     request: Request,
     graph_recipes: Sequence[GraphRecipeWithOverrides],
-    graph_display_config: GraphDisplayConfig,
+    graph_display_config: GraphDisplayConfigHTML,
     registered_metrics: Mapping[str, RegisteredMetric],
     *,
     debug: bool,

@@ -20,7 +20,7 @@ from cmk.gui.graphing import (
     FetchTimeSeries,
     get_temperature_unit,
     get_template_graph_specification,
-    GraphDisplayConfig,
+    GraphDisplayConfigHTML,
     GraphRenderOptions,
     graphs_from_api,
     make_graph_time_range,
@@ -210,7 +210,7 @@ def _paint_time_graph_cmk(
     if options is not None:
         graph_render_options.update(options)
 
-    graph_display_config = GraphDisplayConfig.from_user_context_and_options(
+    graph_display_config = GraphDisplayConfigHTML.from_user_context_and_options(
         user,
         theme.get(),
         GraphRenderOptions.from_graph_render_options_vs(graph_render_options),

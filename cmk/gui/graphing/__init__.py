@@ -13,7 +13,7 @@ from ._from_api import (
     RegisteredMetric,
 )
 from ._graph_display_config import (
-    GraphDisplayConfig,
+    GraphDisplayConfigHTML,
     GraphDisplayConfigImage,
     GraphRenderOptions,
 )
@@ -113,7 +113,7 @@ __all__ = [
     "GraphPluginChoice",
     "GraphRecipe",
     "GraphRecipeWithOverrides",
-    "GraphDisplayConfig",
+    "GraphDisplayConfigHTML",
     "GraphDisplayConfigImage",
     "GraphRenderOptions",
     "GraphSpec",
