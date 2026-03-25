@@ -1595,6 +1595,9 @@ allows = ["@crypto"]
 [components."tests.testlib"]
 allow_all = true
 
+[components."tests.unit.editions"]
+allow_all = true
+
 [components."tests.unit.cmk.legacy_checks"]
 allows = [
   "@plugin_apis",
