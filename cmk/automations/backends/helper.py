@@ -11,13 +11,16 @@ from typing import assert_never, Final
 
 import requests
 
+from cmk.automations.backends._base import (
+    arguments_with_timeout,
+    AutomationExecutor,
+    LocalAutomationResult,
+)
 from cmk.automations.helper_api import AutomationPayload, AutomationResponse
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.i18n import _
 from cmk.utils import paths
 from cmk.utils.unixsocket_http import make_session as make_unixsocket_session
-
-from .automation_executor import arguments_with_timeout, AutomationExecutor, LocalAutomationResult
 
 
 class AutomationHelperUnavailable(MKGeneralException):

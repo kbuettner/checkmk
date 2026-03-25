@@ -5,12 +5,9 @@ py_library(
     name = "cmk_automations",
     srcs = [
         "__init__.py",
-        "automation_executor.py",
-        "automation_helper.py",
-        "automation_subprocess.py",
         "helper_api.py",
         "results.py",
-    ],
+    ] + glob(["backends/*.py"]),
     imports = ["../.."],
     visibility = ["//cmk:__subpackages__"],
     deps = [

@@ -11,9 +11,12 @@ import subprocess
 from collections.abc import Sequence
 
 from cmk import trace
+from cmk.automations.backends._base import (
+    arguments_with_timeout,
+    AutomationExecutor,
+    LocalAutomationResult,
+)
 from cmk.utils.log import VERBOSE
-
-from .automation_executor import arguments_with_timeout, AutomationExecutor, LocalAutomationResult
 
 
 class SubprocessExecutor(AutomationExecutor):

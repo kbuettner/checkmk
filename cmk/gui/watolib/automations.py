@@ -32,9 +32,7 @@ from livestatus import SiteConfiguration
 
 import cmk.ccc.version as cmk_version
 from cmk import trace
-from cmk.automations.automation_executor import AutomationExecutor
-from cmk.automations.automation_helper import HelperExecutor
-from cmk.automations.automation_subprocess import SubprocessExecutor
+from cmk.automations.backends import AutomationExecutor, HelperExecutor, SubprocessExecutor
 from cmk.automations.results import SerializedResult
 from cmk.ccc.exceptions import MKGeneralException
 from cmk.ccc.hostaddress import HostName

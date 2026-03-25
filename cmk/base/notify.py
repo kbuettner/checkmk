@@ -46,7 +46,7 @@ from livestatus import MKLivestatusException
 import cmk.ccc.debug
 import cmk.utils.paths
 import cmk.utils.timeperiod
-from cmk.automations.automation_helper import AutomationHelperUnavailable, HelperExecutor
+from cmk.automations.backends.helper import AutomationHelperUnavailable, HelperExecutor
 from cmk.automations.results import (
     NotificationAnalyseResult,
     NotificationGetBulksResult,
