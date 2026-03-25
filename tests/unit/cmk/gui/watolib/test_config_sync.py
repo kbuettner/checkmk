@@ -145,6 +145,7 @@ def _get_expected_paths(user_id: UserId) -> list[str]:
         "var/check_mk/packages",
         "var/check_mk/packages_local",
         "var/check_mk/disabled_packages",
+        "var/check_mk/topology",
         "var/check_mk/topology/configs",
     ]
 
@@ -162,16 +163,15 @@ def test_generate_snapshot(
     tmp_path: Path,
     with_user_login: UserId,
     remote_site: SiteId,
+    test_edition: Edition,
 ) -> None:
-    ed = cmk_version.edition(cmk.utils.paths.omd_root)
-
     with get_activation_manager(monkeypatch, remote_site) as activation_manager:
         with create_sync_snapshot(
             activation_manager,
             monkeypatch,
             tmp_path,
             remote_site=remote_site,
-            edition=ed,
+            edition=test_edition,
         ) as snapshot_settings:
             expected_paths = _get_expected_paths(user_id=with_user_login)
 
@@ -188,14 +188,8 @@ def test_synchronize_site(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     mocker: MockerFixture,
+    test_edition: Edition,
 ) -> None:
-    # Unfortunately we can not use the edition fixture anymore, which parameterizes the test with
-    # all editions. The reason for this is that cmk.gui.main_modules now executes the registrations
-    # for the edition it detects. In the future we want be able to create edition specific
-    # application objects, which would make testing them independently possible. Until then we have
-    # to accept the smaller test scope.
-    ed = cmk_version.edition(cmk.utils.paths.omd_root)
-
     mocked_responses.add(
         method=responses.POST,
         url="http://localhost/unit_remote_1/check_mk/automation.py?command=get-config-sync-state",
@@ -232,7 +226,7 @@ def test_synchronize_site(
         body="True",
     )
 
-    monkeypatch.setattr(cmk_version, "edition", lambda *args, **kw: ed)
+    monkeypatch.setattr(cmk_version, "edition", lambda *args, **kw: test_edition)
 
     file_filter_func = None
     site_id = SiteId("unit_remote_1")
@@ -243,7 +237,7 @@ def test_synchronize_site(
             monkeypatch,
             tmp_path,
             remote_site=SiteId("unit_remote_1"),
-            edition=ed,
+            edition=test_edition,
         ) as snapshot_settings:
             _synchronize_site(
                 activation_manager,

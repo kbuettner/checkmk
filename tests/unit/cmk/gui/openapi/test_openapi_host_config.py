@@ -1782,11 +1782,11 @@ class TestHostsFilters:
         assert not resp.json["value"]
 
 
-def test_openapi_built_in_host_attributes_in_sync() -> None:
+def test_openapi_built_in_host_attributes_in_sync(test_edition: version.Edition) -> None:
     known_exceptions = ["meta_data", "network_scan_result"]
-    if version.edition(paths.omd_root) is version.Edition.COMMUNITY:
+    if test_edition is version.Edition.COMMUNITY:
         known_exceptions.append("bake_agent_package")
-    if version.edition(paths.omd_root) not in [
+    if test_edition not in [
         version.Edition.ULTIMATEMT,
         version.Edition.ULTIMATE,
     ]:

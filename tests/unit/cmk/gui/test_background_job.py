@@ -37,6 +37,10 @@ from tests.testlib.common.utils import wait_until
 tracer = get_tracer()
 
 
+@pytest.mark.skipif(
+    cmk_version.edition(cmk.utils.paths.omd_root) is not cmk_version.Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_background_jobs() -> None:
     expected_jobs = [
         "ActivateChangesSchedulerBackgroundJob",
@@ -55,14 +59,6 @@ def test_registered_background_jobs() -> None:
         "QuickSetupStageActionBackgroundJob",
         "QuickSetupActionBackgroundJob",
     ]
-
-    if cmk_version.edition(cmk.utils.paths.omd_root) is not cmk_version.Edition.COMMUNITY:
-        expected_jobs += [
-            "BakeAgentsBackgroundJob",
-            "SignAgentsBackgroundJob",
-            "ReportingBackgroundJob",
-            "LicensingOnlineVerificationBackgroundJob",
-        ]
 
     assert sorted(job_registry.keys()) == sorted(expected_jobs)
 

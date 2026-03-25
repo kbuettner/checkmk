@@ -199,13 +199,15 @@ class TestPageAutomation:
         automation.PageAutomation._authenticate()
 
 
-def test_automation_login(with_admin: tuple[UserId, str], flask_app: Flask) -> None:
+def test_automation_login(
+    with_admin: tuple[UserId, str], flask_app: Flask, test_edition: cmk_version.Edition
+) -> None:
     (paths.var_dir / "wato/automation_secret.mk").write_text(repr("pssst"))
 
     with flask_app.app_context():
         client = flask_app.test_client(use_cookies=True)
 
-        origtarget = f"automation_login.py?_version={cmk_version.__version__}&_edition_short={cmk_version.edition(paths.omd_root).short}"
+        origtarget = f"automation_login.py?_version={cmk_version.__version__}&_edition_short={test_edition.short}"
         login_resp = client.post(
             "/NO_SITE/check_mk/login.py",
             data={
@@ -222,6 +224,6 @@ def test_automation_login(with_admin: tuple[UserId, str], flask_app: Flask) -> N
         assert resp.status_code == 200
         assert ast.literal_eval(resp.text) == {
             "version": cmk_version.__version__,
-            "edition_short": cmk_version.edition(paths.omd_root).short,
+            "edition_short": test_edition.short,
             "login_secret": "pssst",
         }

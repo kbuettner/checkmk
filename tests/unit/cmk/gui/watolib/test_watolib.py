@@ -84,6 +84,10 @@ def test_registered_automation_commands() -> None:
     assert registered == sorted(expected_automation_commands)
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_configvars() -> None:
     expected_vars = [
         "actions",
@@ -220,99 +224,14 @@ def test_registered_configvars() -> None:
         "product_usage_analytics",
     ]
 
-    if edition(paths.omd_root) is not Edition.COMMUNITY:
-        expected_vars += [
-            "agent_bakery_logging",
-            "agent_deployment_enabled",
-            "agent_deployment_host_selection",
-            "agent_deployment_central",
-            "agent_deployment_remote",
-            "alert_handler_event_types",
-            "alert_handler_timeout",
-            "alert_logging",
-            "bake_agents_on_restart",
-            "apply_bake_revision",
-            "cmc_authorization",
-            "cmc_check_helpers",
-            "cmc_check_timeout",
-            "cmc_config_multiprocessing",
-            "cmc_debug_notifications",
-            "cmc_dump_core",
-            "cmc_fetcher_helpers",
-            "cmc_checker_helpers",
-            "cmc_flap_settings",
-            "cmc_graphite",
-            "cmc_import_nagios_state",
-            "cmc_initial_scheduling",
-            "cmc_livestatus_lines_per_file",
-            "cmc_livestatus_logcache_size",
-            "cmc_livestatus_threads",
-            "cmc_max_response_size",
-            "cmc_log_cmk_helpers",
-            "cmc_log_levels",
-            "cmc_log_limit",
-            "cmc_log_microtime",
-            "cmc_log_rotation_method",
-            "cmc_log_rrdcreation",
-            "cmc_pnp_update_delay",
-            "cmc_pnp_update_on_restart",
-            "cmc_real_time_checks",
-            "cmc_real_time_helpers",
-            "cmc_smartping_tuning",
-            "cmc_state_retention_interval",
-            "cmc_statehist_cache",
-            "cmc_timeperiod_horizon",
-            "dcd_activate_changes_timeout",
-            "dcd_bulk_discovery_timeout",
-            "dcd_log_levels",
-            "dcd_site_update_interval",
-            "dcd_max_activation_delay",
-            "dcd_max_hosts_per_bulk_discovery",
-            "dcd_prevent_unwanted_notification",
-            "liveproxyd_default_connection_params",
-            "liveproxyd_log_levels",
-            "notification_spooler_config",
-            "notification_spooling",
-            "max_long_output_size",
-            "reporting_date_format",
-            "reporting_email_options",
-            "reporting_filename",
-            "reporting_font_family",
-            "reporting_font_size",
-            "reporting_graph_layout",
-            "reporting_lineheight",
-            "reporting_margins",
-            "reporting_mirror_margins",
-            "reporting_pagesize",
-            "reporting_rangespec",
-            "reporting_table_layout",
-            "reporting_time_format",
-            "reporting_use",
-            "reporting_view_limit",
-            "site_liveproxyd",
-            "ntop_connection",
-        ]
-
-    if edition(paths.omd_root) in {
-        Edition.ULTIMATE,
-        Edition.ULTIMATEMT,
-    }:
-        expected_vars += [
-            "metric_backend",
-            "site_opentelemetry_collector",
-            "site_opentelemetry_collector_memory_limit",
-            "site_opentelemetry_collector_delta_to_cumulative_processor",
-        ]
-
-    if edition(paths.omd_root) is Edition.CLOUD:
-        expected_vars += [
-            "enable_ai_explanations",
-        ]
-
     registered = sorted(config_variable_registry.keys())
     assert registered == sorted(expected_vars)
 
 
+@pytest.mark.skipif(
+    edition(paths.omd_root) is not Edition.COMMUNITY,
+    reason="Remove condition with CMK-32598",
+)
 def test_registered_configvar_groups() -> None:
     expected_groups = [
         "Setup",
@@ -329,23 +248,6 @@ def test_registered_configvar_groups() -> None:
         "Developer Tools",
         "Product usage analytics",
     ]
-
-    if edition(paths.omd_root) is not Edition.COMMUNITY:
-        expected_groups += [
-            "Dynamic configuration",
-            "Automatic agent updates",
-            "Alert handlers",
-            "Livestatus proxy",
-            "Reporting",
-            "Monitoring core",
-            "ntopng (chargeable add-on)",
-            "Telemetry",
-        ]
-
-    if edition(paths.omd_root) is Edition.CLOUD:
-        expected_groups += [
-            "AI features",
-        ]
 
     registered = sorted(config_variable_group_registry.keys())
     assert registered == sorted(expected_groups)

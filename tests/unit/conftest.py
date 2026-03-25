@@ -164,6 +164,20 @@ def _fake_version_and_paths() -> None:
     )
 
 
+def _get_edition() -> cmk_version.Edition:
+    def guess_from_repo() -> str:
+        if is_non_free_repo():
+            return "ultimatemt"
+        return "community"
+
+    return cmk_version.Edition.from_long_edition(os.environ.get("EDITION") or guess_from_repo())
+
+
+@pytest.fixture(scope="session")
+def test_edition() -> cmk_version.Edition:
+    return _get_edition()
+
+
 # Cleanup temporary directory created above
 @pytest.fixture(scope="session", autouse=True)
 def cleanup_cmk() -> Generator[None]:

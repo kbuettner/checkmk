@@ -6,7 +6,7 @@
 import pytest
 
 from cmk.ccc.user import UserId
-from cmk.ccc.version import Edition, edition
+from cmk.ccc.version import Edition
 from cmk.gui.quick_setup.config_setups.aws.form_specs import quick_setup_aws_form_spec
 from cmk.gui.quick_setup.v0_unstable.definitions import (
     QSHostName,
@@ -25,7 +25,6 @@ from cmk.gui.session import UserContext
 from cmk.gui.utils.roles import UserPermissions
 from cmk.password_store.v1_unstable import Secret
 from cmk.server_side_calls_backend import load_special_agents
-from cmk.utils import paths
 
 ALL_FORM_SPEC_DATA: ParsedFormData = {
     FormSpecId(UniqueFormSpecIDStr): {
@@ -112,18 +111,20 @@ ALL_GLOBAL_SERVICES = {
         "route53": ("none", None),
     },
 }
-EXPECTED_PARAMS_WITH_DEFAULTS = {
-    **EXPECTED_PARAMS,
-    **{
-        "piggyback_naming_convention": "ip_region_instance",
-        "access": {},
-        "global_services": (
-            CRE_GLOBAL_SERVICES
-            if edition(paths.omd_root) is Edition.COMMUNITY
-            else ALL_GLOBAL_SERVICES
-        ),
-    },
-}
+
+
+def _expected_params_with_defaults(ed: Edition) -> dict[str, object]:
+    return {
+        **EXPECTED_PARAMS,
+        **{
+            "piggyback_naming_convention": "ip_region_instance",
+            "access": {},
+            "global_services": (
+                CRE_GLOBAL_SERVICES if ed is Edition.COMMUNITY else ALL_GLOBAL_SERVICES
+            ),
+        },
+    }
+
 
 EXPECTED_PASSWORDS = {"ca2f6299-622f-4339-80bb-14a4ae03bdda": Secret("my_secret_access_key")}
 
@@ -146,13 +147,10 @@ def test_quick_setup_collect_passwords_from_form_data() -> None:
 
 @pytest.mark.skip("There currently is no quick setup rule with defaults we could test with.")
 def test_quick_setup_collect_params_with_defaults_from_form_data(
-    with_user: tuple[UserId, str], patch_theme: None
+    with_user: tuple[UserId, str], patch_theme: None, test_edition: Edition
 ) -> None:
     load_special_agents(raise_errors=True)  # why?
     with UserContext(with_user[0], UserPermissions({}, {}, {}, [])):
-        assert (
-            collect_params_with_defaults_from_form_data(
-                ALL_FORM_SPEC_DATA, quick_setup_aws_form_spec()
-            )
-            == EXPECTED_PARAMS_WITH_DEFAULTS
-        )
+        assert collect_params_with_defaults_from_form_data(
+            ALL_FORM_SPEC_DATA, quick_setup_aws_form_spec()
+        ) == _expected_params_with_defaults(test_edition)

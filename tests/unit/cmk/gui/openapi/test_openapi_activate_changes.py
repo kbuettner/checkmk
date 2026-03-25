@@ -8,10 +8,9 @@ import pytest
 from pytest_mock import MockerFixture
 
 import cmk.ccc.resulttype as result
-from cmk.ccc.version import edition
+from cmk.ccc.version import Edition
 from cmk.gui.watolib import activate_changes
 from cmk.livestatus_client.testing import MockLiveStatusConnection
-from cmk.utils import paths
 from tests.testlib.unit.rest_api_client import ClientRegistry
 from tests.testlib.unit.utils import reset_registries
 
@@ -50,6 +49,7 @@ def test_activate_changes(
     is_licensed: bool,
     monkeypatch: pytest.MonkeyPatch,
     mock_livestatus: MockLiveStatusConnection,
+    test_edition: Edition,
 ) -> None:
     # NOTE: this test (or any other) must not leave behind a running background job! (even in case of failure)
 
@@ -67,7 +67,7 @@ def test_activate_changes(
     )
 
     with reset_registries([activate_changes.activation_features_registry]):
-        orig_features = activate_changes.activation_features_registry[str(edition(paths.omd_root))]
+        orig_features = activate_changes.activation_features_registry[str(test_edition)]
         activate_changes.activation_features_registry.register(
             activate_changes.ActivationFeatures(
                 orig_features.edition,
@@ -133,6 +133,7 @@ def test_list_activate_changes_star_etag(
     clients: ClientRegistry,
     is_licensed: bool,
     mock_livestatus: MockLiveStatusConnection,
+    test_edition: Edition,
 ) -> None:
     clients.HostConfig.create(host_name="foobar", folder="/")
 
@@ -143,7 +144,7 @@ def test_list_activate_changes_star_etag(
         "cmk.gui.watolib.activate_changes.rabbitmq.update_and_activate_rabbitmq_definitions",
     )
     with reset_registries([activate_changes.activation_features_registry]):
-        orig_features = activate_changes.activation_features_registry[str(edition(paths.omd_root))]
+        orig_features = activate_changes.activation_features_registry[str(test_edition)]
         activate_changes.activation_features_registry.register(
             activate_changes.ActivationFeatures(
                 orig_features.edition,
@@ -166,6 +167,7 @@ def test_list_activate_changes_valid_etag(
     clients: ClientRegistry,
     is_licensed: bool,
     mock_livestatus: MockLiveStatusConnection,
+    test_edition: Edition,
 ) -> None:
     clients.HostConfig.create(host_name="foobar", folder="/")
 
@@ -176,7 +178,7 @@ def test_list_activate_changes_valid_etag(
         "cmk.gui.watolib.activate_changes.rabbitmq.update_and_activate_rabbitmq_definitions",
     )
     with reset_registries([activate_changes.activation_features_registry]):
-        orig_features = activate_changes.activation_features_registry[str(edition(paths.omd_root))]
+        orig_features = activate_changes.activation_features_registry[str(test_edition)]
         activate_changes.activation_features_registry.register(
             activate_changes.ActivationFeatures(
                 orig_features.edition,
