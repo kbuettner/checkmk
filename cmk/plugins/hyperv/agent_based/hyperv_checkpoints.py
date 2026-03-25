@@ -52,6 +52,12 @@ def check_hyperv_checkpoints(params: Mapping[str, Any], section: StringTable) ->
         ("Last", "age", snapshots[-1]),
     ]:
         name, age = snapshot
+        if age < 0:
+            yield Result(
+                state=State.WARN,
+                summary=f"{title} ({name}): negative checkpoint age ({age}s), check for clock skew",
+            )
+            continue
         yield from check_levels(
             age,
             key,
