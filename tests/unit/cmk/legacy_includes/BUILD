@@ -13,7 +13,7 @@ py_pytest_main(
 )
 
 py_test(
-    name = "legacy_checks",
+    name = "legacy_includes",
     # https://bazel.build/reference/be/common-definitions#test.size
     size = "small",
     srcs = ["__test__.py"] + glob(["**/*.py"]),
