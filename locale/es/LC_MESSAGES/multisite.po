@@ -450,14 +450,6 @@ msgid "%d failed notifications"
 msgstr "%d notificaciones fallidas"
 
 #, python-format
-msgid "%d hour"
-msgstr "%d hora"
-
-#, python-format
-msgid "%d hours"
-msgstr "%d horas"
-
-#, python-format
 msgid "%d icons and actions"
 msgstr "%d íconos y acciones"
 
@@ -705,14 +697,6 @@ msgstr "%s es padre de %s."
 msgid "%s is required but not specified."
 msgstr ""
 
-#, python-format
-msgid "%s left in your Checkmk trial period"
-msgstr "%s días restantes en su periodo de prueba de Checkmk"
-
-#, python-format
-msgid "%s left in your free trial"
-msgstr "%s restantes en su prueba gratuita"
-
 #, fuzzy, python-format
 msgid "%s matching labels: "
 msgstr "%s etiquetas coincidentes: %s"
@@ -724,14 +708,6 @@ msgstr "%s podría faltar, no debe estar vacío si está configurado."
 #, fuzzy, python-format
 msgid "%s notification %s (%d global %s, %d user %s)"
 msgstr "Editar regla de notificación %d del usuario %s"
-
-#, python-format
-msgid ""
-"%s now to continue using Checkmk as you do today. If you already have a "
-"license, please enter your license details on the %s."
-msgstr ""
-"%s para seguir utilizando Checkmk como hace hasta ahora. Si ya dispone de "
-"una licencia, por favor inserte los detalles de su licencia en %s."
 
 #, python-format
 msgid "%s of %s%%"
@@ -800,19 +776,6 @@ msgid "%s%% OK"
 msgstr "%.2f%% OK"
 
 #, python-format
-msgid ""
-"%s. Checkmk is now unlicensed, and you are no longer able to 'Activate "
-"changes'."
-msgstr "%s. Checkmk está operando sin licencia, y no podrá 'Activar cambios'."
-
-#, python-format
-msgid ""
-"%s. Checkmk will become unlicensed %s and you will no longer be able to "
-"'Activate changes'."
-msgstr ""
-"%s. Checkmk está operando sin licencia %s y no podrá 'Activar cambios'."
-
-#, python-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
@@ -842,15 +805,6 @@ msgstr "%s: Usa SSL"
 
 msgid "&lt;None&gt;"
 msgstr "&lt;Ninguno&gt;"
-
-#, fuzzy
-msgid ""
-"'Activate changes' is blocked. Distributed monitoring is not available after "
-"trial expiration, including hosts added via CMCDump"
-msgstr ""
-"'Activar cambios' está bloqueado. La monitorización distribuida no está "
-"disponible tras la expiración del periodo de prueba, incluyendo los hosts "
-"añadidos mediante CMCDUmp"
 
 msgid "'Cleared' state"
 msgstr "estado 'Borrado'"
@@ -1149,6 +1103,9 @@ msgstr "Niveles inferiores de salida de 12 voltios"
 
 msgid "12 Volt output upper levels"
 msgstr "Niveles superiores de salida de 12 voltios"
+
+msgid "12.1 or newer"
+msgstr ""
 
 msgid "15 minutes"
 msgstr "15 minutos"
@@ -10545,10 +10502,6 @@ msgstr ""
 "Botones para cambiar globalmente de estado, como la activación de controles "
 "y notificaciones"
 
-#, fuzzy
-msgid "Buy a license"
-msgstr "Nombre de la licencia"
-
 msgid "By"
 msgstr "Por"
 
@@ -10966,6 +10919,15 @@ msgstr ""
 "versión de Python 3 disponible en el host.<br>Con esta regla, puede imponer "
 "el uso de la versión de Python 2 o Python 3.<br>Además, puede proporcionar "
 "un comando, que se utilizará para la ejecución del plugin de python."
+
+#, python-brace-format
+msgid ""
+"By default, all Azure tags for subscriptions, resource groups, and resources "
+"are imported as host labels with the format: cmk/azure/tag/{key}:{value}."
+"<br>Use this option to filter tags to be imported by entering a pattern to "
+"match against the Azure tag keys. You can also disable the importing of tags "
+"altogether."
+msgstr ""
 
 msgid ""
 "By default, all mailboxes are checked with these parameters. If you specify "
@@ -12541,13 +12503,6 @@ msgid "Certificate for encrypted authentication request responses (PEM)"
 msgstr "Certificado para firmar solicitudes (PEM)"
 
 #, fuzzy
-msgid "Certificate has no subject alternative name"
-msgstr "Nombre alternativo del asunto del certificado incorrecto"
-
-msgid "Certificate is not signed by trusted authority"
-msgstr "El certificado no está firmado por una autoridad de confianza"
-
-#, fuzzy
 msgid "Certificate overview"
 msgstr "Archivo de claves de certificado"
 
@@ -13463,10 +13418,6 @@ msgstr ""
 msgid "Checkmk overview of Checkmk server"
 msgstr "Checkmk Descripción general del servidor Checkmk"
 
-#, fuzzy
-msgid "Checkmk partner or reseller"
-msgstr "Comprobar parámetros"
-
 msgid "Checkmk server URL"
 msgstr "URL del servidor Checkmk"
 
@@ -13662,10 +13613,6 @@ msgid "Checkmk: Index: Secs"
 msgstr "Checkmk: BI"
 
 #, fuzzy
-msgid "Checkmk: License verification failed"
-msgstr "Verificación del certificado SSL"
-
-#, fuzzy
 msgid "Checkmk: Login: Bytes"
 msgstr "Checkmk: BI"
 
@@ -13748,10 +13695,6 @@ msgstr "Checkmk: Vistas"
 #, fuzzy
 msgid "Checkmk: Views: Secs"
 msgstr "Checkmk: Vistas"
-
-#, python-format
-msgid "Checkmk: Your license expires %s"
-msgstr "Checkmk: Su licencia expira %s"
 
 msgid ""
 "Checks <tt>fileinfo</tt> and <tt>sap_hana_fileinfo</tt> monitor the age and "
@@ -19028,62 +18971,6 @@ msgstr "Máquinas virtuales desasignadas"
 msgid "Deallocating VMs"
 msgstr "Desasignación de máquinas virtuales"
 
-#, fuzzy, python-format
-msgid ""
-"Dear Checkmk user,<br><br>The license for your Checkmk site '%s' will expire "
-"%s. After expiration, you will not be able to 'Activate changes'.<br><br>If "
-"you haven't extended your license yet, please contact the Checkmk sales team "
-"at %s to ensure that your license is extended in time.<br><br>If you "
-"purchased your license through a Checkmk partner or reseller, please contact "
-"them.<br><br>Sincerely, your Checkmk server"
-msgstr ""
-"Estimado usuario de Checkmk,<br><br>La licencia para su sitio Checkmk '%s' "
-"expirará %s. Tras la expiración, no podrá 'Activar cambios'.<br><br>Si aún "
-"no ha ampliado su licencia, póngase en contacto con el equipo de ventas de "
-"Checkmk en %s para asegurarse de que su licencia se amplía a tiempo."
-"<br><br>Si adquirió su licencia a través de un socio o revendedor de "
-"Checkmk, póngase en contacto con ellos.<br><br>Sinceramente, su servidor "
-"Checkmk"
-
-#, fuzzy, python-format
-msgid ""
-"Dear Checkmk user,<br><br>The license verification for your Checkmk site "
-"'%s' failed and as a result, the site will become unlicensed %s. After that, "
-"you will not be able to 'Activate changes'.<br><br>If you want to continue "
-"using Checkmk without restrictions, please contact your Checkmk support."
-"<br><br>Sincerely, your Checkmk server"
-msgstr ""
-"Estimado usuario de Checkmk,<br><br>La licencia para su sitio Checkmk '%s' "
-"expirará %s. Tras la expiración, no podrá 'Activar cambios'.<br><br>Si aún "
-"no ha ampliado su licencia, póngase en contacto con el equipo de ventas de "
-"Checkmk en %s para asegurarse de que su licencia se amplía a tiempo."
-"<br><br>Si adquirió su licencia a través de un socio o revendedor de "
-"Checkmk, póngase en contacto con ellos.<br><br>Sinceramente, su servidor "
-"Checkmk"
-
-#, fuzzy, python-format
-msgid ""
-"Dear Checkmk user,<br><br>You have %s left in your Checkmk trial period of "
-"site '%s'.<br><br>%s now to continue using Checkmk as you do today. If you "
-"already have a license, please enter your license details on the product's "
-"licensing page.<br><br>Otherwise, you will be automatically converted to the "
-"license state 'Free' after the trial period ends. In this license state, you "
-"have to reduce your number of services from %s to %s to meet the maximum "
-"service limit of Checkmk in license state 'Free'.<br><br>In a distributed "
-"monitoring setup, only services on the local site are counted, as remote "
-"sites are not included. Please note that distributed monitoring is not "
-"available in the license state 'Free'.<br><br>Sincerely, your Checkmk Server"
-msgstr ""
-"Estimado usuario de Checkmk,<br><br>Le quedan %d días en su período de "
-"prueba de Checkmk del sitio '%s'.<br><br>%s ahora para seguir utilizando "
-"Checkmk como hasta ahora. Si ya dispone de una licencia, introduzca los "
-"datos de su licencia en la página de licencias del producto.<br><br>De lo "
-"contrario, pasará automáticamente al estado de licencia \"Gratuita\" una vez "
-"finalizado el período de prueba. En este estado de licencia, deberá reducir "
-"el número de servicios de %s a %s para alcanzar el límite máximo de "
-"servicios de Checkmk en el estado de licencia \"Gratuito\"."
-"<br><br>Sinceramente, su servidor Checkmk"
-
 msgid "Debug"
 msgstr "Depurar"
 
@@ -20286,10 +20173,6 @@ msgid "Deploy plug-in for Ceph"
 msgstr "Implementar complemento para DAG"
 
 #, fuzzy
-msgid "Deploy plug-in for Citrix XenApp"
-msgstr "Implementar complemento para Citrix XenApp"
-
-#, fuzzy
 msgid "Deploy plug-in for DAG"
 msgstr "Implementar complemento para DAG"
 
@@ -20438,6 +20321,11 @@ msgstr "Implantar el plugin de Zypper"
 #, fuzzy
 msgid ""
 "Deploy the agent plug-in <tt>citrix_licenses</tt> on your target system."
+msgstr ""
+"Implemente el complemento de agente <tt>zorp</tt> en su sistema de destino."
+
+#, fuzzy
+msgid "Deploy the agent plug-in <tt>citrix_xenapp</tt> on your target system."
 msgstr ""
 "Implemente el complemento de agente <tt>zorp</tt> en su sistema de destino."
 
@@ -22017,10 +21905,6 @@ msgstr "No desplegar el plugin de usuarios registrados"
 #, fuzzy
 msgid "Do not deploy mk_mongodb.py plug-in"
 msgstr "No desplegar el plugin mk_mongodb.py"
-
-#, fuzzy
-msgid "Do not deploy plug-in for Citrix XenApp"
-msgstr "No implementar el plugin para Citrix XenApp"
 
 #, fuzzy
 msgid "Do not deploy plug-in for DAG"
@@ -24129,19 +24013,6 @@ msgstr ""
 
 #, python-brace-format
 msgid ""
-"Enable this option to import Azure tags as host/service labels. The imported "
-"tags are added as host labels for resource groups and VMs monitored as hosts "
-"and as service labels for resources monitored as services. The label syntax "
-"is 'cmk/azure/tag/{key}:{value}'.<br>Additionally, each host representing a "
-"resource group is given the host label 'cmk/azure/resource_group:{rg_name}', "
-"and VMs monitored as hosts are given the host label 'cmk/azure/vm:instance', "
-"which is done independent of this option.<br>You can further restrict the "
-"imported tags by specifying a pattern which Checkmk searches for in the key "
-"of the Azure tag, or you can disable the import of Azure tags altogether."
-msgstr ""
-
-#, python-brace-format
-msgid ""
 "Enable this option to import the AWS tags for EC2 and ELB instances as host "
 "labels for the respective piggyback hosts. The label syntax is 'cmk/aws/tag/"
 "{key}:{value}'.<br>Additionally, the piggyback hosts for EC2 instances are "
@@ -24171,6 +24042,11 @@ msgstr "Prefijo para el nombre de host piggyback"
 #, fuzzy
 msgid "Enable/Disable active checks"
 msgstr "Desactivar las comprobaciones activas"
+
+msgid ""
+"Enable/Disable logging to Windows debugging interface. Off by default. View "
+"with <i>WinDbg</i>"
+msgstr ""
 
 #, fuzzy
 msgid "Enable/Disable passive checks"
@@ -34788,11 +34664,6 @@ msgid ""
 "Registrations\"."
 msgstr ""
 
-#, python-format
-msgid "If you purchased your license through a %s, please contact them."
-msgstr ""
-"Si ha adquirido su licencia a través de %s, póngase en contacto con ellos."
-
 #, fuzzy
 msgid ""
 "If you select a contact group here, all notifications of hosts and services "
@@ -34995,32 +34866,6 @@ msgstr ""
 "lectura a ese archivo podrán utilizar Multisite como un webservice sin "
 "ninguna otra configuración."
 
-#, fuzzy, python-format
-msgid ""
-"If you want to continue to use Checkmk and keep your data, please contact "
-"the Checkmk sales team at %s."
-msgstr ""
-"Si desea seguir utilizando Checkmk, adquiera una licencia compatible con %s "
-"o póngase en contacto con el equipo de ventas de Checkmk en %s."
-
-#, python-format
-msgid ""
-"If you want to continue to use Checkmk without restrictions, please contact "
-"the Checkmk sales team at %s and renew your license. If you purchased your "
-"license through a %s, please contact them."
-msgstr ""
-"Si desea seguir utilizando Checkmk sin restricciones, póngase en contacto "
-"con el equipo de ventas de Checkmk en %s y renueve su licencia. Si adquirió "
-"su licencia a través de %s, póngase en contacto con ellos."
-
-#, python-format
-msgid ""
-"If you want to continue using Checkmk, please purchase a license supporting "
-"%s or contact the Checkmk sales team at %s."
-msgstr ""
-"Si desea seguir utilizando Checkmk, adquiera una licencia compatible con %s "
-"o póngase en contacto con el equipo de ventas de Checkmk en %s."
-
 #, fuzzy
 msgid ""
 "If you want to run your own custom agent plug-ins on Windows, simply put "
@@ -35050,23 +34895,6 @@ msgid ""
 "If you want to test service notifications, please provide a service to test "
 "with."
 msgstr ""
-
-#, python-format
-msgid ""
-"If you want to use Checkmk with all configured services, please enter the %s "
-"or %s."
-msgstr ""
-"Si desea utilizar Checkmk con todos los servicios configurados, por favor "
-"introduzca el %s o %s."
-
-#, fuzzy
-msgid ""
-"If you want to use Checkmk without restrictions, please contact your Checkmk "
-"support."
-msgstr ""
-"La verificación de su licencia no ha tenido éxito: %s, Checkmk ahora no "
-"tiene licencia.<br> Para seguir utilizando Checkmk, póngase en contacto con "
-"el servicio de asistencia de Checkmk."
 
 #, fuzzy
 msgid ""
@@ -35368,12 +35196,6 @@ msgstr ""
 
 msgid "In Downtime"
 msgstr "En inactividad"
-
-msgid ""
-"In a distributed monitoring setup, only services on the local site are "
-"counted, as remote sites are not included. Please note that distributed "
-"monitoring is not available in the license state 'Free'."
-msgstr ""
 
 msgid ""
 "In a distributed setup where the Event Console is not running in the same "
@@ -37159,10 +36981,6 @@ msgstr "Parámetro de comprobación no válido"
 msgid "Invalid request: %r"
 msgstr "Solicitud inválida: %r"
 
-#, fuzzy
-msgid "Invalid response"
-msgstr "Informe no válido"
-
 #, python-format
 msgid "Invalid response from event daemon: <pre>%s</pre>"
 msgstr "Respuesta no válida del demonio de eventos: <pre>%s</pre>"
@@ -37183,9 +37001,6 @@ msgstr "Acción no válida"
 #, python-format
 msgid "Invalid sidebar element %s"
 msgstr "Elemento de la barra lateral %s no válido"
-
-msgid "Invalid signature of response"
-msgstr "Firma no válida de la respuesta"
 
 msgid "Invalid site"
 msgstr "Sitio inválido"
@@ -39670,16 +39485,6 @@ msgstr "Detalles de la licencia"
 msgid "License end"
 msgstr "Fin de la licencia: %s"
 
-msgid "License expired: 'Activate changes' is blocked"
-msgstr "Licencia expirada: 'Activar cambios' está bloqueado"
-
-msgid "License expired: Renew license now"
-msgstr "Licencia expirada: Renovar licencia ahora"
-
-#, fuzzy
-msgid "License expired: Renew license now to avoid site deletion."
-msgstr "Licencia expirada: Renovar licencia ahora"
-
 #, fuzzy
 msgid "License key list"
 msgstr "Detalles de la licencia"
@@ -39695,25 +39500,6 @@ msgstr "Estado de la licencia"
 msgid "License state"
 msgstr "Estado de la licencia"
 
-msgid "License state: Free"
-msgstr "Estado de la licencia: Libre"
-
-msgid "License suspended: 'Activate changes' is blocked"
-msgstr "Licencia suspendida: 'Activar cambios' está bloqueado"
-
-msgid "License suspended: Contact Checkmk sales team now"
-msgstr "Licencia suspendida: Contacta con el equipo de ventas de Checkmk"
-
-#, fuzzy
-msgid "License suspended: Contact Checkmk sales team now."
-msgstr "Licencia suspendida: Contacta con el equipo de ventas de Checkmk"
-
-#, fuzzy, python-format
-msgid ""
-"License terminated. Your license expires in %d days. Renew license now to "
-"avoid site deletion."
-msgstr "Licencia expirada: Renovar licencia ahora"
-
 msgid "License usage"
 msgstr "Uso de la licencia"
 
@@ -39725,22 +39511,8 @@ msgid "License verification"
 msgstr "Verificación de licencias"
 
 #, fuzzy
-msgid "License verification failed"
-msgstr "Verificación del certificado SSL"
-
-msgid "License verification failed: 'Activate changes' is blocked"
-msgstr "Verificación de licencia fallida: 'Activar cambios' está bloquedo"
-
-msgid "Licensed"
-msgstr "Licencia"
-
-#, fuzzy
 msgid "Licensed custom metrics"
 msgstr "Servicios con licencia: %s"
-
-#, fuzzy
-msgid "Licensed phase: too many services."
-msgstr "Ver todos los hosts y servicios"
 
 #, fuzzy
 msgid "Licensed services"
@@ -46385,9 +46157,6 @@ msgstr ""
 msgid "No agent labels present."
 msgstr "No hay etiquetas de agentes presentes."
 
-msgid "No appropriate request ID"
-msgstr "No hay ID de solicitud adecuado"
-
 #, fuzzy
 msgid "No authentication"
 msgstr "Autenticación"
@@ -49080,11 +48849,6 @@ msgstr ""
 "aumentar el tiempo de ejecución de tu sincronización LDAP."
 
 msgid ""
-"Once you reach 100%, further change activations will be blocked. Avoid "
-"interruptions by upgrading your license to extend your service limit, "
-msgstr ""
-
-msgid ""
 "One Metric History painter time range is set to inherit from report, yet "
 "this a GUI view. Please edit your view and choose another time range for "
 "your metric history painter to fix this issue."
@@ -50833,24 +50597,6 @@ msgid ""
 msgstr ""
 "De lo contrario, el recuento comenzará desde uno con un nuevo evento para la "
 "siguiente coincidencia de reglas."
-
-#, fuzzy
-msgid ""
-"Otherwise, you will not be able to 'Activate changes' after your Checkmk "
-"license expires."
-msgstr "Lo sentimos, no está permitido activar los cambios de otros usuarios."
-
-#, fuzzy, python-format
-msgid ""
-"Otherwise, your system will be automatically converted to the license state "
-"'Free' after the trial period ends. In this license state, you have to "
-"reduce your number of services from %s to %s to meet the maximum service "
-"limit of Checkmk in license state 'Free'."
-msgstr ""
-"De lo contrario, pasará automáticamente al estado de licencia \"Gratuita\" "
-"una vez finalizado el periodo de prueba. En este estado de licencia, debe "
-"reducir el número de servicios de %s a %s para cumplir el límite máximo de "
-"servicios de Checkmk en el estado de licencia \"Gratuito\"."
 
 #, fuzzy
 msgid ""
@@ -53159,25 +52905,6 @@ msgstr ""
 "href=\"%s\">Escape HTML en la salida del host</a> en lugar de <a "
 "href=\"%s\">desactivar el escape globalmente</a>"
 
-#, python-format
-msgid ""
-"Please contact the Checkmk sales team at %s and renew your license. If you "
-"purchased your license through a %s, please contact them."
-msgstr ""
-"Póngase en contacto con el equipo de ventas de Checkmk en %s y renueve su "
-"licencia. Si adquirió su licencia a través de %s, póngase en contacto con "
-"ellos."
-
-#, python-format
-msgid ""
-"Please contact the Checkmk sales team at %s to ensure that your license is "
-"extended in time. If you purchased your license through a %s, please contact "
-"them."
-msgstr ""
-"Póngase en contacto con el equipo de ventas de Checkmk en %s para asegurarse "
-"de que su licencia se amplía a tiempo. Si adquirió su licencia a través de "
-"%s, póngase en contacto con ellos."
-
 msgid "Please contact your administrator."
 msgstr "Póngase en contacto con su administrador."
 
@@ -53340,9 +53067,6 @@ msgstr ""
 "Tenga en cuenta que debe establecer <tt>RequestHeader set X-Forwarded-Proto "
 "\"https\"</tt> en la configuración de su sistema Apache para indicar a la "
 "GUI de Checkmk la configuración SSL."
-
-msgid "Please note that your site will be deleted when the trial period ends. "
-msgstr ""
 
 #, fuzzy
 msgid ""
@@ -59262,10 +58986,6 @@ msgstr ""
 msgid "SYSOPER"
 msgstr ""
 
-#, fuzzy
-msgid "SaaS version: Skip request ID verification"
-msgstr "Licencia sin consolidar: Omitir solicitud de verificación de ID"
-
 msgid "Safenet HSM Event Stats"
 msgstr "Estadísticas de eventos de Safenet HSM"
 
@@ -60908,9 +60628,6 @@ msgstr "Nivel de servicio de los servicios"
 #, fuzzy
 msgid "Service levels"
 msgstr "Nivel de servicio"
-
-msgid "Service limit reached: Action required."
-msgstr ""
 
 msgid "Service limits"
 msgstr "Límites del servicio"
@@ -66173,12 +65890,6 @@ msgstr "Se ha almacenado con éxito el informe"
 msgid "Successfully updated user profile."
 msgstr "Se ha actualizado con éxito el perfil del usuario."
 
-msgid "Successfully verified request ID"
-msgstr "Identificador de solicitud verificado correctamente"
-
-msgid "Successfully verified signature"
-msgstr "Firma verificada correctamente"
-
 #, fuzzy
 msgid "Suggest a product improvement"
 msgstr "Mejoras en el rendimiento"
@@ -70506,19 +70217,6 @@ msgstr ""
 "La modificación se ha guardado, pero este cliente no tiene usuarios "
 "asignados. Es necesario crear un usuario global o asignar al menos un "
 "usuario al cliente configurado para poder acceder a los sitios asignados."
-
-msgid ""
-"The monitoring core cannot be reached and the current number of services "
-"cannot be determined. If you have more than 750 services, you need to apply "
-"a valid license before the 30-day trial ends."
-msgstr ""
-
-msgid ""
-"The monitoring core cannot be reached. This may be because the 30-day trial "
-"period ended and you are exceeding the limit of 750 services. In this case, "
-"please apply a valid license or reduce the number of services and restart "
-"the monitoring core."
-msgstr ""
 
 msgid ""
 "The monitoring state in case the version of a local check is unparsable."
@@ -75162,12 +74860,6 @@ msgstr ""
 "idioma localizado."
 
 #, fuzzy
-msgid "This plug-in monitors Citrix sessions and server load on Window hosts."
-msgstr ""
-"Este plugin supervisa las sesiones de Citrix y la carga del servidor en los "
-"hosts de Windows."
-
-#, fuzzy
 msgid ""
 "This plug-in monitors Exchange Mailbox Servers in a Database Availability "
 "Group on Window hosts."
@@ -78696,12 +78388,6 @@ msgid ""
 "registered manually."
 msgstr ""
 
-msgid "To unlock higher limits, purchase a license "
-msgstr ""
-
-msgid "To unlock higher limits, upgrade your license "
-msgstr ""
-
 msgid "To:"
 msgstr "Para:"
 
@@ -81816,33 +81502,9 @@ msgstr "Métrica"
 msgid "Trend of memory usage growth"
 msgstr "Tendencia de crecimiento del uso de la memoria"
 
-#, fuzzy
-msgid "Trial"
-msgstr "Serie"
-
-msgid "Trial expired"
-msgstr "La prueba ha caducado"
-
-#, fuzzy
-msgid "Trial period ended"
-msgstr "La prueba ha caducado"
-
-msgid "Trial period ended: 'Activate changes' is blocked"
-msgstr "Periodo de prueba finalizado: \"Activar cambios\" está bloqueado"
-
 msgid "Trial period ended: Distributed setup not allowed"
 msgstr ""
 "Periodo de prueba finalizado: No se permite la configuración distribuida"
-
-msgid "Trial period ended: Reduce your number of services"
-msgstr "Periodo de prueba finalizado: Reducir el número de servicios"
-
-#, fuzzy
-msgid "Trial phase: too many services."
-msgstr "Ver todos los hosts y servicios"
-
-msgid "Trial time left is visible in the user admin panel"
-msgstr ""
 
 #, python-format
 msgid "Tried to register incompatible rulespec: %r"
@@ -82524,9 +82186,6 @@ msgstr "Fragmentos sin asignar"
 msgid "Unblended costs"
 msgstr "Costes sin mezclar"
 
-msgid "Unbound license: Skip request ID verification"
-msgstr "Licencia sin consolidar: Omitir solicitud de verificación de ID"
-
 msgid "Unclassified"
 msgstr "Sin clasificar"
 
@@ -82811,16 +82470,6 @@ msgstr "Usuario desconocido: %s"
 
 msgid "Unknown/Unreach"
 msgstr "Desconocido/desconocido"
-
-msgid "Unlicensed"
-msgstr "Sin licencia"
-
-#, fuzzy
-msgid "Unlicensed Checkmk edition"
-msgstr "Edición de checkmk: %s"
-
-msgid "Unlicensed Checkmk edition: 'Activate changes' is blocked"
-msgstr "Edición Checkmk sin licencia: \"Activar cambios\" bloqueado"
 
 msgid "Unlocked"
 msgstr "Desbloqueado"
@@ -86542,10 +86191,6 @@ msgid "View timeline"
 msgstr "Ver cronología"
 
 #, fuzzy
-msgid "View trial details"
-msgstr "Opciones adicionales"
-
-#, fuzzy
 msgid "Viewport information"
 msgstr "Información sobre el host"
 
@@ -87190,10 +86835,6 @@ msgid ""
 "increase the load of your database. To see results, you also have to "
 "activate 'Create additional service for IO stats bytes' or 'Create "
 "additional service for IO stats requests' in 'Oracle performance discovery'."
-msgstr ""
-
-#, no-python-format
-msgid "Warning: You are over 90% of your service limit."
 msgstr ""
 
 msgid "Warnings:"
@@ -88639,6 +88280,10 @@ msgstr "Registro de agentes de Windows"
 msgid "Windows authentication"
 msgstr "Autenticación de Windows"
 
+#, fuzzy
+msgid "Windows debugging"
+msgstr "Registro de agentes de Windows"
+
 msgid "Windows files"
 msgstr "Archivos de Windows"
 
@@ -88710,12 +88355,6 @@ msgstr ""
 "actualizaciones de los agentes. Cuando se desactiva, los agentes pueden "
 "seguir consultando su configuración de destino y registrarse, pero no pueden "
 "descargar paquetes para su actualización."
-
-#, python-format
-msgid ""
-"With this activation you will have %s services activated which exceeds your "
-"limit of %s services."
-msgstr ""
 
 msgid ""
 "With this configuration, Checkmk will alert if the actual (not averaged) "
@@ -89330,9 +88969,6 @@ msgstr "Escrituras/seg"
 msgid "Writing connections"
 msgstr "Conexiones de escritura"
 
-msgid "Wrong certificate's subject alt name"
-msgstr "Nombre alternativo del asunto del certificado incorrecto"
-
 msgid "Wrong customer"
 msgstr "Cliente equivocado"
 
@@ -89559,14 +89195,6 @@ msgstr ""
 "Usted está tratando Checkmk junto con un módulo de multiprocesamiento de "
 "Apache roscado (MPM). Check_MK sólo funciona con el módulo prefork. Por "
 "favor, cambie el módulo MPM para que Check_MK funcione."
-
-#, fuzzy, python-format
-msgid ""
-"You are using %s, which is not included in the applied license (licensed "
-"edition: %s)."
-msgstr ""
-"'Activar cambios' está bloqueado. Está utilizando %s, que no está incluido "
-"en la licencia aplicada (edición con licencia: %s)."
 
 #, fuzzy, python-format
 msgid ""
@@ -89844,9 +89472,6 @@ msgstr ""
 "qué manera se puede llegar a un host. Simplemente configura las opciones de "
 "conexión que quieras probar en la parte derecha de la pantalla y pulsa el "
 "botón \"Probar\". Los resultados se mostrarán aquí."
-
-msgid "You can easily increase your site's capacity by upgrading your plan."
-msgstr ""
 
 msgid ""
 "You can have these tags automatically added if certain primary tags are set."
@@ -90769,10 +90394,6 @@ msgstr ""
 "Tiene %d usuarios configurados. Por favor, revise el número de usuarios que "
 "ha configurado en Checkmk."
 
-#, python-format
-msgid "You have a grace period of %d days before your site will be deleted. "
-msgstr ""
-
 msgid ""
 "You have an agent updater rule configured that enables use of plain text "
 "HTTP. Consider enabling HTTPS."
@@ -90881,10 +90502,6 @@ msgstr ""
 
 msgid "You have permission to this host."
 msgstr "Tienes permiso para este host."
-
-#, fuzzy, python-format
-msgid "You have reached your limit of %s. "
-msgstr "Ha seleccionado %d %s para la migración: %s"
 
 #, python-format
 msgid "You have selected %d %s for migration: %s"
@@ -91279,10 +90896,6 @@ msgstr "Tu %s ha sido borrado."
 msgid "Your %s has been saved."
 msgstr "Tu %s ha sido guardado."
 
-#, python-format
-msgid "Your Checkmk license expires %s"
-msgstr "Su licencia Checkmk expira %s"
-
 #, fuzzy
 msgid "Your Checkmk password has been changed"
 msgstr "Su tarea de programación se ha guardado."
@@ -91348,10 +90961,6 @@ msgstr ""
 "href=\"https://checkmk.com/checkmk_support_contract.html\" "
 "target=\"_blank\">nuestro sitio web</a>."
 
-#, fuzzy, python-format
-msgid "Your current service limit is %s. "
-msgstr "Controlar los límites del servicio"
-
 msgid "Your end date is before your start date."
 msgstr "Su fecha de finalización es anterior a su fecha de inicio."
 
@@ -91408,52 +91017,6 @@ msgstr ""
 "Su declaración de búsqueda no es válida. Necesita proporcionar una expresión "
 "regular (regex). Por ejemplo, tiene que utilizar <tt>\\año</tt> en lugar de "
 "<tt>\\año</tt> si quiere buscar una sola barra invertida."
-
-#, fuzzy, python-format
-msgid "Your license expires on %s. "
-msgstr "Tu %s ha sido guardado."
-
-#, python-format
-msgid ""
-"Your license has been suspended. Please contact the Checkmk sales team at %s."
-msgstr ""
-"Su licencia ha sido suspendida. Póngase en contacto con el equipo de ventas "
-"de Checkmk en %s."
-
-msgid ""
-"Your license has been suspended. Until it is reactivated, 'Activate changes' "
-"is blocked."
-msgstr ""
-"Su licencia ha sido suspendida. Hasta que se reactive, 'Activar cambios' "
-"está bloqueado."
-
-#, python-format
-msgid ""
-"Your license has expired for more than 60 days on %s. Until you renew your "
-"license, 'Activate changes' is blocked."
-msgstr ""
-"Su licencia ha caducado hace más de 60 días en %s. Hasta que renueve su "
-"licencia, 'Activar cambios' está bloqueado."
-
-#, fuzzy, python-format
-msgid "Your license has expired on %s."
-msgstr "Tu %s ha sido guardado."
-
-#, fuzzy, python-format
-msgid "Your license has expired on %s. "
-msgstr "Tu %s ha sido guardado."
-
-#, python-format
-msgid ""
-"Your license has expired on %s. You are no longer able to 'Activate changes'."
-msgstr "Su licencia ha caducado en %s. Ya no puede \"Activar cambios\"."
-
-msgid ""
-"Your license verification failed and Checkmk is currently unlicensed. Until "
-"you verify your license, 'Activate changes' is blocked."
-msgstr ""
-"La verificación de su licencia ha fallado y Checkmk no tiene licencia. Hasta "
-"que no verifique su licencia, \"Activar cambios\" estará bloqueado."
 
 msgid "Your logo has been uploaded."
 msgid_plural "Your logos have been uploaded"
@@ -91578,18 +91141,6 @@ msgstr ""
 "automáticamente en \"Gratuito\". En este estado de licencia, no se permite "
 "una configuración distribuida. En caso de que desee probar configuraciones "
 "distribuidas, póngase en contacto con nosotros en "
-
-#, python-format
-msgid ""
-"Your trial period has ended, and your license state is automatically "
-"converted to 'Free'. In this license state, your maximum total service limit "
-"is %s which you exceed with %s services. Until you reduce the number of "
-"services, 'Activate changes' is blocked."
-msgstr ""
-"Su periodo de prueba ha finalizado y su estado de licencia se convierte "
-"automáticamente en \"Gratuito\". En este estado de licencia, tu límite "
-"máximo total de servicios es %s, el cual excedes con %s servicios. Hasta que "
-"no reduzca el número de servicios, \"Activar cambios\" estará bloqueado."
 
 #, fuzzy
 msgid "ZFS file system usage"
@@ -92410,9 +91961,6 @@ msgstr "maneja"
 msgid "height"
 msgstr "altura"
 
-msgid "here"
-msgstr ""
-
 msgid "hide folder names"
 msgstr "ocultar los nombres de las carpetas"
 
@@ -92809,10 +92357,6 @@ msgstr "carrera heredada"
 
 msgid "legacy run"
 msgstr "carrera heredada"
-
-#, fuzzy
-msgid "license details"
-msgstr "Detalles de la licencia"
 
 msgid "local connect"
 msgstr "conexión local"
@@ -93404,15 +92948,8 @@ msgstr "se utiliza la llamada al procedimiento"
 msgid "processes"
 msgstr "procesa"
 
-msgid "product's licensing page"
-msgstr "Página de licencia del producto"
-
 msgid "pt"
 msgstr "pt"
-
-#, fuzzy
-msgid "purchase a license"
-msgstr "Nombre de la licencia"
 
 msgid "radial"
 msgstr "radial"
@@ -93522,9 +93059,6 @@ msgstr "corriendo"
 
 msgid "s"
 msgstr "s"
-
-msgid "sales@checkmk.com"
-msgstr "sales@checkmk.com"
 
 msgid "same day of the month"
 msgstr "el mismo día del mes"
@@ -93791,9 +93325,6 @@ msgstr "licencias no utilizadas"
 msgid "up"
 msgstr "Ok"
 
-msgid "upgrade here"
-msgstr ""
-
 msgid "upper limit"
 msgstr "límite superior"
 
@@ -93942,6 +93473,9 @@ msgstr "peor estado"
 msgid "wrap"
 msgstr "envolver"
 
+msgid "write log messages to the Windows debugging interface"
+msgstr ""
+
 msgid "x86 64-bit only"
 msgstr ""
 
@@ -94002,16 +93536,6 @@ msgid "{timePeriodName} - {timePeriodSpec['alias']}"
 msgstr ""
 
 msgid "{} - {}"
-msgstr ""
-
-msgid ""
-"‘Activate changes' is blocked until you go below your service limit by "
-"deleting one or more hosts from your config."
-msgstr ""
-
-msgid ""
-"‘Activate changes' is blocked until you go below your service limit. In case "
-"you want to increase your service limit, "
 msgstr ""
 
 #, fuzzy
@@ -95768,6 +95292,10 @@ msgid "The value of this rule is not valid."
 msgstr "El valor de esta regla no es válido. "
 
 #, fuzzy
+msgid "No results found"
+msgstr "No se han encontrado reglas."
+
+#, fuzzy
 msgid "Select operator"
 msgstr "Conexiones rechazadas"
 
@@ -96361,9 +95889,18 @@ msgstr "Guardar y probar"
 msgid "Download and install"
 msgstr "Agente descargado"
 
+msgid ""
+"To securely fetch the latest agent package via the command line, you must "
+"first generate a temporary authentication token. "
+msgstr ""
+
 #, fuzzy
-msgid "This requires the generation of a download token."
-msgstr "Este permiso permite el registro de cualquier host existente."
+msgid "Download agent"
+msgstr "Agente descargado"
+
+#, fuzzy
+msgid "Install agent"
+msgstr "Agente instalado"
 
 #, fuzzy
 msgid "Next step: Register agent"
@@ -96379,8 +95916,8 @@ msgid "Install the legacy Checkmk agent"
 msgstr "Contacte también con el agente de Checkmk"
 
 msgid ""
-"Run this command on your Windows host to download and install the Checkmk "
-"agent. Please make sure to run this command with sufficient permissions "
+"Run these commands on your Windows host to download and install the Checkmk "
+"agent. Please make sure to run these commands with sufficient permissions "
 "(e.g. \"Run as Administrator\")"
 msgstr ""
 
@@ -96495,8 +96032,8 @@ msgstr "Este permiso permite el registro de cualquier host existente."
 
 msgid ""
 "The agent receiver port could not be determined from the remote site. The "
-"command uses the default port (8000). Please adjust the --server port if "
-"your site uses a different agent receiver port."
+"command uses the default port (8000). Adjust the --server port if your site "
+"uses a different agent receiver port."
 msgstr ""
 
 msgid "Run this command to register the Checkmk agent controller."
@@ -96823,6 +96360,15 @@ msgstr ""
 "conexión."
 
 #, fuzzy
+msgid "opentelemetry_config_1"
+msgstr "Configuración de host"
+
+msgid ""
+"OpenTelemetry is already configured for this site. Select another site or "
+"update the existing configuration."
+msgstr ""
+
+#, fuzzy
 msgid "Configure OpenTelemetry collector"
 msgstr "Añadir configuración de estado"
 
@@ -96838,12 +96384,49 @@ msgstr "Configurar"
 msgid "Save & Go to Activate Changes"
 msgstr "No activar los cambios"
 
+#, fuzzy
+msgid "prometheus_config_1"
+msgstr "Añadir configuración de estado"
+
+msgid ""
+"Prometheus is already configured for this site. Select another site or "
+"update the existing configuration."
+msgstr ""
+
+#, fuzzy
+msgid "Configure scraper"
+msgstr "Configurar la barra lateral"
+
+#, fuzzy
+msgid "Specify the Prometheus target you want to scrape."
+msgstr "Seleccione el tipo de elemento de contenido"
+
+#, fuzzy
+msgid "Username is required but not specified."
+msgstr "Credenciales JSON para la cuenta de servicio"
+
+#, fuzzy
+msgid "Password is required but not specified."
+msgstr "Credenciales JSON para la cuenta de servicio"
+
 msgid "GRPC"
 msgstr ""
 
 msgid ""
 "Configure a GRPC-based OTLP receiver that will collect OpenTelemetry data."
 msgstr ""
+
+#, fuzzy
+msgid "username"
+msgstr "Nombre de usuario"
+
+#, fuzzy
+msgid "Select password"
+msgstr "Nueva contraseña"
+
+#, fuzzy
+msgid "+ Create"
+msgstr "Crear"
 
 msgid ""
 "Configure an HTTP-based OTLP receiver that will collect OpenTelemetry data."
@@ -96870,14 +96453,33 @@ msgid "Site is required but not specified."
 msgstr "Credenciales JSON para la cuenta de servicio"
 
 #, fuzzy
-msgid "opentelemetry_config_1"
-msgstr "Configuración de host"
+msgid "Failed to validate site configuration. Please try again."
+msgstr "Añadir elemento de la barra lateral"
 
 #, fuzzy
 msgid "Select the folder your host(s) will be created in."
 msgstr ""
 "Especifica en qué periodo de tiempo se creará un nuevo archivo para el "
 "historial de eventos."
+
+msgid "Enter a name for your job."
+msgstr ""
+
+#, fuzzy
+msgid "Metrics path is required but not specified."
+msgstr "Credenciales JSON para la cuenta de servicio"
+
+#, fuzzy
+msgid "Port is required but not specified."
+msgstr "Credenciales JSON para la cuenta de servicio"
+
+#, fuzzy
+msgid "Port must be a whole number."
+msgstr "La fecha debe ser un valor numérico"
+
+#, fuzzy
+msgid "Port must be between 1 and 65535."
+msgstr "El valor de %s debe estar entre %d y %d"
 
 msgid "Run the installation script"
 msgstr ""
@@ -97351,6 +96953,10 @@ msgstr "Trabajos en grupo de"
 #, fuzzy
 msgid "Add your first host"
 msgstr "Añadir regla para el host actual"
+
+#, fuzzy
+msgid "This requires the generation of a download token."
+msgstr "Este permiso permite el registro de cualquier host existente."
 
 msgid "View your newly added host"
 msgstr ""
@@ -97877,6 +97483,434 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, python-format
+#~ msgid "%d hour"
+#~ msgstr "%d hora"
+
+#, python-format
+#~ msgid "%d hours"
+#~ msgstr "%d horas"
+
+#, python-format
+#~ msgid "%s left in your Checkmk trial period"
+#~ msgstr "%s días restantes en su periodo de prueba de Checkmk"
+
+#, python-format
+#~ msgid "%s left in your free trial"
+#~ msgstr "%s restantes en su prueba gratuita"
+
+#, python-format
+#~ msgid ""
+#~ "%s now to continue using Checkmk as you do today. If you already have a "
+#~ "license, please enter your license details on the %s."
+#~ msgstr ""
+#~ "%s para seguir utilizando Checkmk como hace hasta ahora. Si ya dispone de "
+#~ "una licencia, por favor inserte los detalles de su licencia en %s."
+
+#, python-format
+#~ msgid ""
+#~ "%s. Checkmk is now unlicensed, and you are no longer able to 'Activate "
+#~ "changes'."
+#~ msgstr ""
+#~ "%s. Checkmk está operando sin licencia, y no podrá 'Activar cambios'."
+
+#, python-format
+#~ msgid ""
+#~ "%s. Checkmk will become unlicensed %s and you will no longer be able to "
+#~ "'Activate changes'."
+#~ msgstr ""
+#~ "%s. Checkmk está operando sin licencia %s y no podrá 'Activar cambios'."
+
+#, fuzzy
+#~ msgid ""
+#~ "'Activate changes' is blocked. Distributed monitoring is not available "
+#~ "after trial expiration, including hosts added via CMCDump"
+#~ msgstr ""
+#~ "'Activar cambios' está bloqueado. La monitorización distribuida no está "
+#~ "disponible tras la expiración del periodo de prueba, incluyendo los hosts "
+#~ "añadidos mediante CMCDUmp"
+
+#, fuzzy
+#~ msgid "Buy a license"
+#~ msgstr "Nombre de la licencia"
+
+#, fuzzy
+#~ msgid "Certificate has no subject alternative name"
+#~ msgstr "Nombre alternativo del asunto del certificado incorrecto"
+
+#~ msgid "Certificate is not signed by trusted authority"
+#~ msgstr "El certificado no está firmado por una autoridad de confianza"
+
+#, fuzzy
+#~ msgid "Checkmk partner or reseller"
+#~ msgstr "Comprobar parámetros"
+
+#, fuzzy
+#~ msgid "Checkmk: License verification failed"
+#~ msgstr "Verificación del certificado SSL"
+
+#, python-format
+#~ msgid "Checkmk: Your license expires %s"
+#~ msgstr "Checkmk: Su licencia expira %s"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "Dear Checkmk user,<br><br>The license for your Checkmk site '%s' will "
+#~ "expire %s. After expiration, you will not be able to 'Activate changes'."
+#~ "<br><br>If you haven't extended your license yet, please contact the "
+#~ "Checkmk sales team at %s to ensure that your license is extended in time."
+#~ "<br><br>If you purchased your license through a Checkmk partner or "
+#~ "reseller, please contact them.<br><br>Sincerely, your Checkmk server"
+#~ msgstr ""
+#~ "Estimado usuario de Checkmk,<br><br>La licencia para su sitio Checkmk "
+#~ "'%s' expirará %s. Tras la expiración, no podrá 'Activar cambios'."
+#~ "<br><br>Si aún no ha ampliado su licencia, póngase en contacto con el "
+#~ "equipo de ventas de Checkmk en %s para asegurarse de que su licencia se "
+#~ "amplía a tiempo.<br><br>Si adquirió su licencia a través de un socio o "
+#~ "revendedor de Checkmk, póngase en contacto con ellos."
+#~ "<br><br>Sinceramente, su servidor Checkmk"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "Dear Checkmk user,<br><br>The license verification for your Checkmk site "
+#~ "'%s' failed and as a result, the site will become unlicensed %s. After "
+#~ "that, you will not be able to 'Activate changes'.<br><br>If you want to "
+#~ "continue using Checkmk without restrictions, please contact your Checkmk "
+#~ "support.<br><br>Sincerely, your Checkmk server"
+#~ msgstr ""
+#~ "Estimado usuario de Checkmk,<br><br>La licencia para su sitio Checkmk "
+#~ "'%s' expirará %s. Tras la expiración, no podrá 'Activar cambios'."
+#~ "<br><br>Si aún no ha ampliado su licencia, póngase en contacto con el "
+#~ "equipo de ventas de Checkmk en %s para asegurarse de que su licencia se "
+#~ "amplía a tiempo.<br><br>Si adquirió su licencia a través de un socio o "
+#~ "revendedor de Checkmk, póngase en contacto con ellos."
+#~ "<br><br>Sinceramente, su servidor Checkmk"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "Dear Checkmk user,<br><br>You have %s left in your Checkmk trial period "
+#~ "of site '%s'.<br><br>%s now to continue using Checkmk as you do today. If "
+#~ "you already have a license, please enter your license details on the "
+#~ "product's licensing page.<br><br>Otherwise, you will be automatically "
+#~ "converted to the license state 'Free' after the trial period ends. In "
+#~ "this license state, you have to reduce your number of services from %s to "
+#~ "%s to meet the maximum service limit of Checkmk in license state 'Free'."
+#~ "<br><br>In a distributed monitoring setup, only services on the local "
+#~ "site are counted, as remote sites are not included. Please note that "
+#~ "distributed monitoring is not available in the license state 'Free'."
+#~ "<br><br>Sincerely, your Checkmk Server"
+#~ msgstr ""
+#~ "Estimado usuario de Checkmk,<br><br>Le quedan %d días en su período de "
+#~ "prueba de Checkmk del sitio '%s'.<br><br>%s ahora para seguir utilizando "
+#~ "Checkmk como hasta ahora. Si ya dispone de una licencia, introduzca los "
+#~ "datos de su licencia en la página de licencias del producto.<br><br>De lo "
+#~ "contrario, pasará automáticamente al estado de licencia \"Gratuita\" una "
+#~ "vez finalizado el período de prueba. En este estado de licencia, deberá "
+#~ "reducir el número de servicios de %s a %s para alcanzar el límite máximo "
+#~ "de servicios de Checkmk en el estado de licencia \"Gratuito\"."
+#~ "<br><br>Sinceramente, su servidor Checkmk"
+
+#, fuzzy
+#~ msgid "Deploy plug-in for Citrix XenApp"
+#~ msgstr "Implementar complemento para Citrix XenApp"
+
+#, fuzzy
+#~ msgid "Do not deploy plug-in for Citrix XenApp"
+#~ msgstr "No implementar el plugin para Citrix XenApp"
+
+#, python-format
+#~ msgid "If you purchased your license through a %s, please contact them."
+#~ msgstr ""
+#~ "Si ha adquirido su licencia a través de %s, póngase en contacto con ellos."
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "If you want to continue to use Checkmk and keep your data, please contact "
+#~ "the Checkmk sales team at %s."
+#~ msgstr ""
+#~ "Si desea seguir utilizando Checkmk, adquiera una licencia compatible con "
+#~ "%s o póngase en contacto con el equipo de ventas de Checkmk en %s."
+
+#, python-format
+#~ msgid ""
+#~ "If you want to continue to use Checkmk without restrictions, please "
+#~ "contact the Checkmk sales team at %s and renew your license. If you "
+#~ "purchased your license through a %s, please contact them."
+#~ msgstr ""
+#~ "Si desea seguir utilizando Checkmk sin restricciones, póngase en contacto "
+#~ "con el equipo de ventas de Checkmk en %s y renueve su licencia. Si "
+#~ "adquirió su licencia a través de %s, póngase en contacto con ellos."
+
+#, python-format
+#~ msgid ""
+#~ "If you want to continue using Checkmk, please purchase a license "
+#~ "supporting %s or contact the Checkmk sales team at %s."
+#~ msgstr ""
+#~ "Si desea seguir utilizando Checkmk, adquiera una licencia compatible con "
+#~ "%s o póngase en contacto con el equipo de ventas de Checkmk en %s."
+
+#, python-format
+#~ msgid ""
+#~ "If you want to use Checkmk with all configured services, please enter the "
+#~ "%s or %s."
+#~ msgstr ""
+#~ "Si desea utilizar Checkmk con todos los servicios configurados, por favor "
+#~ "introduzca el %s o %s."
+
+#, fuzzy
+#~ msgid ""
+#~ "If you want to use Checkmk without restrictions, please contact your "
+#~ "Checkmk support."
+#~ msgstr ""
+#~ "La verificación de su licencia no ha tenido éxito: %s, Checkmk ahora no "
+#~ "tiene licencia.<br> Para seguir utilizando Checkmk, póngase en contacto "
+#~ "con el servicio de asistencia de Checkmk."
+
+#, fuzzy
+#~ msgid "Invalid response"
+#~ msgstr "Informe no válido"
+
+#~ msgid "Invalid signature of response"
+#~ msgstr "Firma no válida de la respuesta"
+
+#~ msgid "License expired: 'Activate changes' is blocked"
+#~ msgstr "Licencia expirada: 'Activar cambios' está bloqueado"
+
+#~ msgid "License expired: Renew license now"
+#~ msgstr "Licencia expirada: Renovar licencia ahora"
+
+#, fuzzy
+#~ msgid "License expired: Renew license now to avoid site deletion."
+#~ msgstr "Licencia expirada: Renovar licencia ahora"
+
+#~ msgid "License state: Free"
+#~ msgstr "Estado de la licencia: Libre"
+
+#~ msgid "License suspended: 'Activate changes' is blocked"
+#~ msgstr "Licencia suspendida: 'Activar cambios' está bloqueado"
+
+#~ msgid "License suspended: Contact Checkmk sales team now"
+#~ msgstr "Licencia suspendida: Contacta con el equipo de ventas de Checkmk"
+
+#, fuzzy
+#~ msgid "License suspended: Contact Checkmk sales team now."
+#~ msgstr "Licencia suspendida: Contacta con el equipo de ventas de Checkmk"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "License terminated. Your license expires in %d days. Renew license now to "
+#~ "avoid site deletion."
+#~ msgstr "Licencia expirada: Renovar licencia ahora"
+
+#, fuzzy
+#~ msgid "License verification failed"
+#~ msgstr "Verificación del certificado SSL"
+
+#~ msgid "License verification failed: 'Activate changes' is blocked"
+#~ msgstr "Verificación de licencia fallida: 'Activar cambios' está bloquedo"
+
+#~ msgid "Licensed"
+#~ msgstr "Licencia"
+
+#, fuzzy
+#~ msgid "Licensed phase: too many services."
+#~ msgstr "Ver todos los hosts y servicios"
+
+#~ msgid "No appropriate request ID"
+#~ msgstr "No hay ID de solicitud adecuado"
+
+#, fuzzy
+#~ msgid ""
+#~ "Otherwise, you will not be able to 'Activate changes' after your Checkmk "
+#~ "license expires."
+#~ msgstr ""
+#~ "Lo sentimos, no está permitido activar los cambios de otros usuarios."
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "Otherwise, your system will be automatically converted to the license "
+#~ "state 'Free' after the trial period ends. In this license state, you have "
+#~ "to reduce your number of services from %s to %s to meet the maximum "
+#~ "service limit of Checkmk in license state 'Free'."
+#~ msgstr ""
+#~ "De lo contrario, pasará automáticamente al estado de licencia "
+#~ "\"Gratuita\" una vez finalizado el periodo de prueba. En este estado de "
+#~ "licencia, debe reducir el número de servicios de %s a %s para cumplir el "
+#~ "límite máximo de servicios de Checkmk en el estado de licencia "
+#~ "\"Gratuito\"."
+
+#, python-format
+#~ msgid ""
+#~ "Please contact the Checkmk sales team at %s and renew your license. If "
+#~ "you purchased your license through a %s, please contact them."
+#~ msgstr ""
+#~ "Póngase en contacto con el equipo de ventas de Checkmk en %s y renueve su "
+#~ "licencia. Si adquirió su licencia a través de %s, póngase en contacto con "
+#~ "ellos."
+
+#, python-format
+#~ msgid ""
+#~ "Please contact the Checkmk sales team at %s to ensure that your license "
+#~ "is extended in time. If you purchased your license through a %s, please "
+#~ "contact them."
+#~ msgstr ""
+#~ "Póngase en contacto con el equipo de ventas de Checkmk en %s para "
+#~ "asegurarse de que su licencia se amplía a tiempo. Si adquirió su licencia "
+#~ "a través de %s, póngase en contacto con ellos."
+
+#, fuzzy
+#~ msgid "SaaS version: Skip request ID verification"
+#~ msgstr "Licencia sin consolidar: Omitir solicitud de verificación de ID"
+
+#~ msgid "Successfully verified request ID"
+#~ msgstr "Identificador de solicitud verificado correctamente"
+
+#~ msgid "Successfully verified signature"
+#~ msgstr "Firma verificada correctamente"
+
+#, fuzzy
+#~ msgid ""
+#~ "This plug-in monitors Citrix sessions and server load on Window hosts."
+#~ msgstr ""
+#~ "Este plugin supervisa las sesiones de Citrix y la carga del servidor en "
+#~ "los hosts de Windows."
+
+#, fuzzy
+#~ msgid "Trial"
+#~ msgstr "Serie"
+
+#~ msgid "Trial expired"
+#~ msgstr "La prueba ha caducado"
+
+#, fuzzy
+#~ msgid "Trial period ended"
+#~ msgstr "La prueba ha caducado"
+
+#~ msgid "Trial period ended: 'Activate changes' is blocked"
+#~ msgstr "Periodo de prueba finalizado: \"Activar cambios\" está bloqueado"
+
+#~ msgid "Trial period ended: Reduce your number of services"
+#~ msgstr "Periodo de prueba finalizado: Reducir el número de servicios"
+
+#, fuzzy
+#~ msgid "Trial phase: too many services."
+#~ msgstr "Ver todos los hosts y servicios"
+
+#~ msgid "Unbound license: Skip request ID verification"
+#~ msgstr "Licencia sin consolidar: Omitir solicitud de verificación de ID"
+
+#~ msgid "Unlicensed"
+#~ msgstr "Sin licencia"
+
+#, fuzzy
+#~ msgid "Unlicensed Checkmk edition"
+#~ msgstr "Edición de checkmk: %s"
+
+#~ msgid "Unlicensed Checkmk edition: 'Activate changes' is blocked"
+#~ msgstr "Edición Checkmk sin licencia: \"Activar cambios\" bloqueado"
+
+#, fuzzy
+#~ msgid "View trial details"
+#~ msgstr "Opciones adicionales"
+
+#~ msgid "Wrong certificate's subject alt name"
+#~ msgstr "Nombre alternativo del asunto del certificado incorrecto"
+
+#, fuzzy, python-format
+#~ msgid ""
+#~ "You are using %s, which is not included in the applied license (licensed "
+#~ "edition: %s)."
+#~ msgstr ""
+#~ "'Activar cambios' está bloqueado. Está utilizando %s, que no está "
+#~ "incluido en la licencia aplicada (edición con licencia: %s)."
+
+#, fuzzy, python-format
+#~ msgid "You have reached your limit of %s. "
+#~ msgstr "Ha seleccionado %d %s para la migración: %s"
+
+#, python-format
+#~ msgid "Your Checkmk license expires %s"
+#~ msgstr "Su licencia Checkmk expira %s"
+
+#, fuzzy, python-format
+#~ msgid "Your current service limit is %s. "
+#~ msgstr "Controlar los límites del servicio"
+
+#, fuzzy, python-format
+#~ msgid "Your license expires on %s. "
+#~ msgstr "Tu %s ha sido guardado."
+
+#, python-format
+#~ msgid ""
+#~ "Your license has been suspended. Please contact the Checkmk sales team at "
+#~ "%s."
+#~ msgstr ""
+#~ "Su licencia ha sido suspendida. Póngase en contacto con el equipo de "
+#~ "ventas de Checkmk en %s."
+
+#~ msgid ""
+#~ "Your license has been suspended. Until it is reactivated, 'Activate "
+#~ "changes' is blocked."
+#~ msgstr ""
+#~ "Su licencia ha sido suspendida. Hasta que se reactive, 'Activar cambios' "
+#~ "está bloqueado."
+
+#, python-format
+#~ msgid ""
+#~ "Your license has expired for more than 60 days on %s. Until you renew "
+#~ "your license, 'Activate changes' is blocked."
+#~ msgstr ""
+#~ "Su licencia ha caducado hace más de 60 días en %s. Hasta que renueve su "
+#~ "licencia, 'Activar cambios' está bloqueado."
+
+#, fuzzy, python-format
+#~ msgid "Your license has expired on %s."
+#~ msgstr "Tu %s ha sido guardado."
+
+#, fuzzy, python-format
+#~ msgid "Your license has expired on %s. "
+#~ msgstr "Tu %s ha sido guardado."
+
+#, python-format
+#~ msgid ""
+#~ "Your license has expired on %s. You are no longer able to 'Activate "
+#~ "changes'."
+#~ msgstr "Su licencia ha caducado en %s. Ya no puede \"Activar cambios\"."
+
+#~ msgid ""
+#~ "Your license verification failed and Checkmk is currently unlicensed. "
+#~ "Until you verify your license, 'Activate changes' is blocked."
+#~ msgstr ""
+#~ "La verificación de su licencia ha fallado y Checkmk no tiene licencia. "
+#~ "Hasta que no verifique su licencia, \"Activar cambios\" estará bloqueado."
+
+#, python-format
+#~ msgid ""
+#~ "Your trial period has ended, and your license state is automatically "
+#~ "converted to 'Free'. In this license state, your maximum total service "
+#~ "limit is %s which you exceed with %s services. Until you reduce the "
+#~ "number of services, 'Activate changes' is blocked."
+#~ msgstr ""
+#~ "Su periodo de prueba ha finalizado y su estado de licencia se convierte "
+#~ "automáticamente en \"Gratuito\". En este estado de licencia, tu límite "
+#~ "máximo total de servicios es %s, el cual excedes con %s servicios. Hasta "
+#~ "que no reduzca el número de servicios, \"Activar cambios\" estará "
+#~ "bloqueado."
+
+#, fuzzy
+#~ msgid "license details"
+#~ msgstr "Detalles de la licencia"
+
+#~ msgid "product's licensing page"
+#~ msgstr "Página de licencia del producto"
+
+#, fuzzy
+#~ msgid "purchase a license"
+#~ msgstr "Nombre de la licencia"
+
+#~ msgid "sales@checkmk.com"
+#~ msgstr "sales@checkmk.com"
 
 #, fuzzy
 #~ msgid "Deploy plug-in for Citrix licenses"
