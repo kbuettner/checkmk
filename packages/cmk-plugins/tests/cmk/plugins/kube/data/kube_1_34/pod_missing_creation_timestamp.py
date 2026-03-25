@@ -89,7 +89,7 @@ DATA = {
                 "terminationMessagePath": "/dev/termination-log",
                 "terminationMessagePolicy": "File",
                 "volumeMounts": [
-                    {"mountPath": "/tmp", "name": "tmp"},
+                    {"mountPath": "/mnt/tmp", "name": "tmp"},
                     {
                         "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
                         "name": "kube-api-access-pf9dl",

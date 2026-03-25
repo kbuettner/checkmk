@@ -114,7 +114,7 @@ DATA = {
                         },
                         "terminationMessagePath": "/dev/termination-log",
                         "terminationMessagePolicy": "File",
-                        "volumeMounts": [{"mountPath": "/tmp", "name": "tmp"}],
+                        "volumeMounts": [{"mountPath": "/mnt/tmp", "name": "tmp"}],
                     }
                 ],
                 "dnsPolicy": "ClusterFirst",
