@@ -21,7 +21,12 @@ from cmk.gui.http import Request, response
 from cmk.gui.i18n import _
 from cmk.gui.logged_in import user
 from cmk.gui.page_menu import make_javascript_link, PageMenuEntry
-from cmk.gui.type_defs import DashboardEmbeddedViewSpec, IconNames, StaticIcon, VisualContext
+from cmk.gui.type_defs import (
+    DashboardEmbeddedViewSpec,
+    IconNames,
+    StaticIcon,
+    VisualContext,
+)
 from cmk.gui.utils.roles import UserPermissions
 from cmk.gui.visuals.type import VisualType
 
@@ -129,7 +134,7 @@ class VisualTypeDashboards(VisualType):
             # parameters = [ 'template', {'service_description': 'CPU load', 'site': 'mysite',
             #                         'graph_index': 0, 'host_name': 'server123'}])
             add_type, context, parameters = self._handle_add_graph(
-                parse_raw_graph_specification(parameters["definition"]["specification"])
+                parse_raw_graph_specification(parameters["recipe"]["specification"])
             )
 
         # the DashletConfig below doesn't take None for context, so at this point we should have one
