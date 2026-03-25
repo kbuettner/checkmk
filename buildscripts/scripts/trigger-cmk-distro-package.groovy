@@ -16,8 +16,7 @@ void main() {
         ["VERSION", true],
         "CIPARAM_OVERRIDE_DOCKER_TAG_BUILD",
         "DISABLE_CACHE",
-        // TODO: Rename to FAKE_AGENT_ARTIFACTS -> we're also faking the linux updaters now
-        "FAKE_WINDOWS_ARTIFACTS",
+        "FAKE_ARTIFACTS",
     ]);
 
     def distro = params.DISTRO;
@@ -78,7 +77,7 @@ void main() {
                 smart_stage(
                     name: "Trigger Build BOM",
                     raiseOnError: true,
-                    condition: ! params.FAKE_WINDOWS_ARTIFACTS,
+                    condition: ! params.FAKE_ARTIFACTS,
                 ) {
                     smart_build(
                         // see global-defaults.yml, needs to run in minimal container
@@ -101,7 +100,7 @@ void main() {
             },
         ];
 
-        if (!params.FAKE_WINDOWS_ARTIFACTS) {
+        if (!params.FAKE_ARTIFACTS) {
             stages += package_helper.provide_agent_binaries(
                 version: version,
                 cmk_version: cmk_version,
@@ -130,7 +129,7 @@ void main() {
                     EDITION: edition,
                     DISTRO: distro,
                     DISABLE_CACHE: disable_cache,
-                    FAKE_WINDOWS_ARTIFACTS: params.FAKE_WINDOWS_ARTIFACTS,
+                    FAKE_ARTIFACTS: params.FAKE_ARTIFACTS,
                     CIPARAM_OVERRIDE_DOCKER_TAG_BUILD: params.CIPARAM_OVERRIDE_DOCKER_TAG_BUILD,
                 ],
                 build_params_no_check: [
@@ -159,7 +158,7 @@ void main() {
                     EDITION: edition,
                     DISTRO: distro,
                     DISABLE_CACHE: disable_cache,
-                    FAKE_WINDOWS_ARTIFACTS: params.FAKE_WINDOWS_ARTIFACTS,
+                    FAKE_ARTIFACTS: params.FAKE_ARTIFACTS,
                 ],
                 build_params_no_check: [
                     CIPARAM_OVERRIDE_BUILD_NODE: params.CIPARAM_OVERRIDE_BUILD_NODE,

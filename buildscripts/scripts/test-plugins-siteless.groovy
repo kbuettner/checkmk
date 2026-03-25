@@ -88,7 +88,7 @@ void main() {
                             branch_name: setup_values.safe_branch_name,
                             make_target: make_target,
                             test_filter: params.TEST_FILTER,
-                            faked_artifacts: params.FAKE_WINDOWS_ARTIFACTS,
+                            faked_artifacts: params.FAKE_ARTIFACTS,
                             // can hit 5min during the heavy chain runs (without wait time)
                             // using FoS of 3
                             timeout: 15,

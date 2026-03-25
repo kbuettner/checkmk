@@ -12,7 +12,7 @@ void main() {
         ["EDITION", true],
         ["VERSION", true],
         ["DISABLE_CACHE", true],
-        ["FAKE_WINDOWS_ARTIFACTS", false],
+        ["FAKE_ARTIFACTS", false],
     ]);
 
     def versioning = load("${checkout_dir}/buildscripts/scripts/utils/versioning.groovy");
@@ -81,7 +81,7 @@ void main() {
         },
     ];
 
-    if (!params.FAKE_WINDOWS_ARTIFACTS) {
+    if (!params.FAKE_ARTIFACTS) {
         stages += package_helper.provide_agent_binaries(
             version: version,
             cmk_version: cmk_version,
@@ -132,7 +132,7 @@ void main() {
                 WORKSPACE,
                 checkout_dir,
                 cmk_version,
-                params.FAKE_WINDOWS_ARTIFACTS,
+                params.FAKE_ARTIFACTS,
             );
         }
 

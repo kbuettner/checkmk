@@ -13,8 +13,7 @@ void main() {
         ["VERSION", true],
         "CIPARAM_OVERRIDE_DOCKER_TAG_BUILD",
         "DISABLE_CACHE",
-        // TODO: Rename to FAKE_AGENT_ARTIFACTS -> we're also faking the linux updaters now
-        "FAKE_WINDOWS_ARTIFACTS",
+        "FAKE_ARTIFACTS",
     ]);
 
     check_environment_variables([
@@ -114,7 +113,7 @@ void main() {
             smart_stage(
                 name: "Build BOM",
                 raiseOnError: true,
-                condition: ! params.FAKE_WINDOWS_ARTIFACTS,
+                condition: ! params.FAKE_ARTIFACTS,
             ) {
                 build_instance = smart_build(
                     // see global-defaults.yml, needs to run in minimal container
@@ -151,7 +150,7 @@ void main() {
         },
     ];
 
-    if (!params.FAKE_WINDOWS_ARTIFACTS) {
+    if (!params.FAKE_ARTIFACTS) {
         stages += package_helper.provide_agent_binaries(
             version: version,
             cmk_version: cmk_version,
@@ -159,7 +158,7 @@ void main() {
             disable_cache: disable_cache,
             bisect_comment: params.CIPARAM_BISECT_COMMENT,
             artifacts_base_dir: "tmp_artifacts",
-            fake_artifacts: params.FAKE_WINDOWS_ARTIFACTS,
+            fake_artifacts: params.FAKE_ARTIFACTS,
         );
     }
 
@@ -199,7 +198,7 @@ void main() {
                         /// Don't use withEnv, see
                         /// https://issues.jenkins.io/browse/JENKINS-43632
                         def license_flag = ""
-                        def fake_artifacts = params.FAKE_WINDOWS_ARTIFACTS ? "--//:use_faked_artifacts=true" : ""
+                        def fake_artifacts = params.FAKE_ARTIFACTS ? "--//:use_faked_artifacts=true" : ""
                         if (edition == "community") {
                             license_flag = '--//:repo_license="gpl"'
                         }
