@@ -18,11 +18,11 @@ import CmkHeading from '@/components/typography/CmkHeading.vue'
 import CmkParagraph from '@/components/typography/CmkParagraph.vue'
 
 import ConfigureCollector from './otel-configuration-steps/ConfigureCollector.vue'
-import type { AuthConfig } from './otel-configuration-steps/ConfigureCollector.vue'
+import type { AuthConfig, EndpointConfig } from './otel-configuration-steps/ConfigureCollector.vue'
 import ConfigureGeneralProperties from './otel-configuration-steps/ConfigureGeneralProperties.vue'
 import ConfigureHosts from './otel-configuration-steps/ConfigureHosts.vue'
 
-const props = defineProps<{ no_auth_allowed: boolean }>()
+const props = defineProps<{ no_auth_allowed: boolean; endpoint_config_allowed: boolean }>()
 
 const { _t } = usei18n()
 const currentMode = ref<'guided' | 'overview'>('guided')
@@ -52,6 +52,8 @@ const httpAuth = ref<AuthConfig>({
   method: props.no_auth_allowed ? 'none' : 'basicauth',
   credential: null
 })
+const grpcEndpoint = ref<EndpointConfig>({ address: '', port: undefined })
+const httpEndpoint = ref<EndpointConfig>({ address: '', port: undefined })
 
 const close = () => {
   // TODO: trigger activate changes
@@ -104,7 +106,10 @@ const close = () => {
           ref="collector"
           v-model:grpc-auth="grpcAuth"
           v-model:http-auth="httpAuth"
+          v-model:grpc-endpoint="grpcEndpoint"
+          v-model:http-endpoint="httpEndpoint"
           :no-auth-allowed="no_auth_allowed"
+          :endpoint-config-allowed="endpoint_config_allowed"
         />
       </template>
       <template #actions>

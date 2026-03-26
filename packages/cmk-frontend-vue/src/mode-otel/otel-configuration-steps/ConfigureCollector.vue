@@ -15,6 +15,11 @@ export interface AuthConfig {
   method: AuthMethod
   credential: Credential | null
 }
+
+export interface EndpointConfig {
+  address: string
+  port: number | undefined
+}
 </script>
 
 <script setup lang="ts">
@@ -36,10 +41,13 @@ const { _t } = usei18n()
 
 const props = defineProps<{
   noAuthAllowed: boolean
+  endpointConfigAllowed: boolean
 }>()
 
 const grpcAuth = defineModel<AuthConfig>('grpcAuth', { required: true })
 const httpAuth = defineModel<AuthConfig>('httpAuth', { required: true })
+const grpcEndpoint = defineModel<EndpointConfig>('grpcEndpoint', { required: true })
+const httpEndpoint = defineModel<EndpointConfig>('httpEndpoint', { required: true })
 
 const activeTab = ref('grpc')
 const availablePasswords = ref<Suggestion[]>([])
@@ -124,6 +132,43 @@ const httpPasswordErrors = computed(() =>
   httpAuth.value.credential ? credentialPasswordErrors(httpAuth.value.credential) : []
 )
 
+const bothEndpointsEmpty = computed(
+  () => !grpcEndpoint.value.address.trim() && !httpEndpoint.value.address.trim()
+)
+
+const grpcAddressErrors = computed((): string[] => {
+  if (!displayErrors.value) {
+    return []
+  }
+  if (!grpcEndpoint.value.address.trim()) {
+    return bothEndpointsEmpty.value ? [_t('Enter a valid IP address or host name.')] : []
+  }
+  return validateAddress(grpcEndpoint.value.address)
+})
+const grpcPortErrors = computed((): string[] => {
+  if (!displayErrors.value) return []
+  if (grpcEndpoint.value.port !== undefined || grpcEndpoint.value.address.trim()) {
+    return validatePort(grpcEndpoint.value.port)
+  }
+  return []
+})
+const httpAddressErrors = computed((): string[] => {
+  if (!displayErrors.value) {
+    return []
+  }
+  if (!httpEndpoint.value.address.trim()) {
+    return bothEndpointsEmpty.value ? [_t('Enter a valid IP address or host name.')] : []
+  }
+  return validateAddress(httpEndpoint.value.address)
+})
+const httpPortErrors = computed((): string[] => {
+  if (!displayErrors.value) return []
+  if (httpEndpoint.value.port !== undefined || httpEndpoint.value.address.trim()) {
+    return validatePort(httpEndpoint.value.port)
+  }
+  return []
+})
+
 function tabHasErrors(auth: AuthConfig): boolean {
   if (auth.method !== 'basicauth') {
     return false
@@ -131,9 +176,63 @@ function tabHasErrors(auth: AuthConfig): boolean {
   return !auth.credential?.username.trim() || !auth.credential?.password
 }
 
+function isValidIpOrHostname(value: string): boolean {
+  const ipv4Match = value.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
+  if (ipv4Match) {
+    return ipv4Match.slice(1).every((p) => parseInt(p, 10) <= 255)
+  }
+  if (value.includes(':')) {
+    return /^[0-9a-fA-F:]+$/.test(value) && value.split(':').length >= 2
+  }
+  const h = value.endsWith('.') ? value.slice(0, -1) : value
+  if (!h || h.length > 253) {
+    return false
+  }
+  const labels = h.split('.')
+  if (/^\d+$/.test(labels[labels.length - 1] ?? '')) {
+    return false
+  }
+  return labels.every((l) => l.length > 0 && /^(?!-)[a-z0-9-]{1,63}(?<!-)$/i.test(l))
+}
+
+const validateAddress = (value: string): string[] => {
+  if (!value.trim()) {
+    return [_t('Enter a valid IP address or host name.')]
+  }
+  if (!isValidIpOrHostname(value)) {
+    return [_t('Your input is not a valid host name or IP address.')]
+  }
+  return []
+}
+
+const validatePort = (value: number | undefined): string[] => {
+  if (value === undefined || value < 1 || value > 65535) {
+    return [_t('Enter a valid port number (example: 1234).')]
+  }
+  return []
+}
+
+function endpointIsConfigured(endpoint: EndpointConfig): boolean {
+  return !!endpoint.address.trim()
+}
+
+function configuredEndpointHasErrors(endpoint: EndpointConfig): boolean {
+  return !isValidIpOrHostname(endpoint.address) || validatePort(endpoint.port).length > 0
+}
+
 function validate(): boolean {
   displayErrors.value = true
-  return !tabHasErrors(grpcAuth.value) && !tabHasErrors(httpAuth.value)
+  if (!props.endpointConfigAllowed) {
+    return !tabHasErrors(grpcAuth.value) && !tabHasErrors(httpAuth.value)
+  }
+  const grpcConfigured = endpointIsConfigured(grpcEndpoint.value)
+  const httpConfigured = endpointIsConfigured(httpEndpoint.value)
+  if (!grpcConfigured && !httpConfigured) {
+    return false
+  }
+  const grpcValid = !grpcConfigured || !configuredEndpointHasErrors(grpcEndpoint.value)
+  const httpValid = !httpConfigured || !configuredEndpointHasErrors(httpEndpoint.value)
+  return !tabHasErrors(grpcAuth.value) && !tabHasErrors(httpAuth.value) && grpcValid && httpValid
 }
 
 defineExpose({ validate })
@@ -152,48 +251,66 @@ defineExpose({ validate })
         }}</CmkParagraph>
 
         <div class="mode-otel-configure-collector__form">
-          <CmkLabel>{{ _t('Authentication method') }} <CmkLabelRequired /></CmkLabel>
+          <template v-if="endpointConfigAllowed">
+            <CmkLabel>{{ _t('IP address or host name') }} <CmkLabelRequired /></CmkLabel>
+            <CmkInput
+              v-model="grpcEndpoint.address"
+              type="text"
+              field-size="MEDIUM"
+              :placeholder="_t('0.0.0.0')"
+              :external-errors="grpcAddressErrors"
+            />
+            <CmkLabel>{{ _t('Port') }} <CmkLabelRequired /></CmkLabel>
+            <CmkInput
+              v-model="grpcEndpoint.port"
+              type="number"
+              :external-errors="grpcPortErrors"
+              :placeholder="_t('4317')"
+            />
+          </template>
+
+          <CmkLabel>{{ _t('Authentication method') }}</CmkLabel>
           <CmkDropdown
             v-model:selected-option="grpcAuth.method"
             :options="{ type: 'fixed', suggestions: authMethodOptions }"
             :label="_t('Authentication method')"
-            width="fill"
           />
-        </div>
 
-        <template v-if="grpcAuth.method === 'basicauth' && grpcAuth.credential !== null">
-          <div class="mode-otel-configure-collector__form">
-            <CmkLabel>{{ _t('Username') }} <CmkLabelRequired /></CmkLabel>
-            <CmkInput
-              v-model="grpcAuth.credential.username"
-              type="text"
-              field-size="FILL"
-              :placeholder="_t('username')"
-              :external-errors="grpcUsernameErrors"
-            />
-
-            <CmkLabel>{{ _t('Password') }} <CmkLabelRequired /></CmkLabel>
-            <div class="mode-otel-configure-collector__password-row">
-              <CmkDropdown
-                v-model:selected-option="grpcAuth.credential.password"
-                :options="{ type: 'fixed', suggestions: availablePasswords }"
-                :input-hint="_t('Select password')"
-                :label="_t('Password')"
-                width="fill"
-                :form-validation="grpcPasswordErrors.length > 0"
+          <template v-if="grpcAuth.method === 'basicauth' && grpcAuth.credential !== null">
+            <span />
+            <div class="mode-otel-configure-collector__sub-field">
+              <CmkLabel>{{ _t('Username') }} <CmkLabelRequired /></CmkLabel>
+              <CmkInput
+                v-model="grpcAuth.credential.username"
+                type="text"
+                field-size="MEDIUM"
+                :placeholder="_t('Username')"
+                :external-errors="grpcUsernameErrors"
               />
-              <!-- enable when password creation flow is implemented -->
-              <button type="button" disabled class="mode-otel-configure-collector__btn-create">
-                {{ _t('+ Create') }}
-              </button>
+
+              <CmkLabel>{{ _t('Password') }} <CmkLabelRequired /></CmkLabel>
+              <div class="mode-otel-configure-collector__password-row">
+                <CmkDropdown
+                  v-model:selected-option="grpcAuth.credential.password"
+                  :options="{ type: 'fixed', suggestions: availablePasswords }"
+                  :input-hint="_t('Select password')"
+                  :label="_t('Password')"
+                  :form-validation="grpcPasswordErrors.length > 0"
+                  :no-elements-text="_t('No passwords available')"
+                />
+                <!-- enable when password creation flow is implemented -->
+                <button type="button" disabled class="mode-otel-configure-collector__btn-create">
+                  {{ _t('+ Create') }}
+                </button>
+              </div>
+              <CmkInlineValidation
+                v-if="grpcPasswordErrors.length"
+                class="mode-otel-configure-collector__password-error"
+                :validation="grpcPasswordErrors"
+              />
             </div>
-            <CmkInlineValidation
-              v-if="grpcPasswordErrors.length"
-              class="mode-otel-configure-collector__password-error"
-              :validation="grpcPasswordErrors"
-            />
-          </div>
-        </template>
+          </template>
+        </div>
       </CmkTabContent>
 
       <CmkTabContent id="http">
@@ -202,48 +319,66 @@ defineExpose({ validate })
         }}</CmkParagraph>
 
         <div class="mode-otel-configure-collector__form">
-          <CmkLabel>{{ _t('Authentication method') }} <CmkLabelRequired /></CmkLabel>
+          <template v-if="endpointConfigAllowed">
+            <CmkLabel>{{ _t('IP address or host name') }} <CmkLabelRequired /></CmkLabel>
+            <CmkInput
+              v-model="httpEndpoint.address"
+              type="text"
+              field-size="MEDIUM"
+              :placeholder="_t('0.0.0.0')"
+              :external-errors="httpAddressErrors"
+            />
+            <CmkLabel>{{ _t('Port') }} <CmkLabelRequired /></CmkLabel>
+            <CmkInput
+              v-model="httpEndpoint.port"
+              type="number"
+              :external-errors="httpPortErrors"
+              :placeholder="_t('4318')"
+            />
+          </template>
+
+          <CmkLabel>{{ _t('Authentication method') }}</CmkLabel>
           <CmkDropdown
             v-model:selected-option="httpAuth.method"
             :options="{ type: 'fixed', suggestions: authMethodOptions }"
             :label="_t('Authentication method')"
-            width="fill"
           />
-        </div>
 
-        <template v-if="httpAuth.method === 'basicauth' && httpAuth.credential !== null">
-          <div class="mode-otel-configure-collector__form">
-            <CmkLabel>{{ _t('Username') }} <CmkLabelRequired /></CmkLabel>
-            <CmkInput
-              v-model="httpAuth.credential.username"
-              type="text"
-              field-size="FILL"
-              :placeholder="_t('username')"
-              :external-errors="httpUsernameErrors"
-            />
-
-            <CmkLabel>{{ _t('Password') }} <CmkLabelRequired /></CmkLabel>
-            <div class="mode-otel-configure-collector__password-row">
-              <CmkDropdown
-                v-model:selected-option="httpAuth.credential.password"
-                :options="{ type: 'fixed', suggestions: availablePasswords }"
-                :input-hint="_t('Select password')"
-                :label="_t('Password')"
-                width="fill"
-                :form-validation="httpPasswordErrors.length > 0"
+          <template v-if="httpAuth.method === 'basicauth' && httpAuth.credential !== null">
+            <span />
+            <div class="mode-otel-configure-collector__sub-field">
+              <CmkLabel>{{ _t('Username') }} <CmkLabelRequired /></CmkLabel>
+              <CmkInput
+                v-model="httpAuth.credential.username"
+                type="text"
+                field-size="MEDIUM"
+                :placeholder="_t('Username')"
+                :external-errors="httpUsernameErrors"
               />
-              <!-- enable when password creation flow is implemented -->
-              <button type="button" disabled class="mode-otel-configure-collector__btn-create">
-                {{ _t('+ Create') }}
-              </button>
+
+              <CmkLabel>{{ _t('Password') }} <CmkLabelRequired /></CmkLabel>
+              <div class="mode-otel-configure-collector__password-row">
+                <CmkDropdown
+                  v-model:selected-option="httpAuth.credential.password"
+                  :options="{ type: 'fixed', suggestions: availablePasswords }"
+                  :input-hint="_t('Select password')"
+                  :label="_t('Password')"
+                  :form-validation="httpPasswordErrors.length > 0"
+                  :no-elements-text="_t('No passwords available')"
+                />
+                <!-- enable when password creation flow is implemented -->
+                <button type="button" disabled class="mode-otel-configure-collector__btn-create">
+                  {{ _t('+ Create') }}
+                </button>
+              </div>
+              <CmkInlineValidation
+                v-if="httpPasswordErrors.length"
+                class="mode-otel-configure-collector__password-error"
+                :validation="httpPasswordErrors"
+              />
             </div>
-            <CmkInlineValidation
-              v-if="httpPasswordErrors.length"
-              class="mode-otel-configure-collector__password-error"
-              :validation="httpPasswordErrors"
-            />
-          </div>
-        </template>
+          </template>
+        </div>
       </CmkTabContent>
     </template>
   </CmkTabs>

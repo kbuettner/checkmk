@@ -9,7 +9,10 @@ import { defineComponent, ref } from 'vue'
 import * as cmkFetch from '@/lib/cmkFetch'
 
 import ConfigureCollector from '@/mode-otel/otel-configuration-steps/ConfigureCollector.vue'
-import type { AuthConfig } from '@/mode-otel/otel-configuration-steps/ConfigureCollector.vue'
+import type {
+  AuthConfig,
+  EndpointConfig
+} from '@/mode-otel/otel-configuration-steps/ConfigureCollector.vue'
 
 function mockPasswordsResponse(passwords: { id: string; title: string }[] = []) {
   return vi.spyOn(cmkFetch, 'fetchRestAPI').mockResolvedValue({
@@ -22,7 +25,7 @@ function mockPasswordsError() {
   vi.spyOn(cmkFetch, 'fetchRestAPI').mockRejectedValue(new Error('Network error'))
 }
 
-function renderComponent(noAuthAllowed = true) {
+function renderComponent(noAuthAllowed = true, endpointConfigAllowed = true) {
   const grpcAuth = ref<AuthConfig>({
     method: noAuthAllowed ? 'none' : 'basicauth',
     credential: null
@@ -31,17 +34,27 @@ function renderComponent(noAuthAllowed = true) {
     method: noAuthAllowed ? 'none' : 'basicauth',
     credential: null
   })
+  const grpcEndpoint = ref<EndpointConfig>({ address: '0.0.0.0', port: 4317 })
+  const httpEndpoint = ref<EndpointConfig>({ address: '0.0.0.0', port: 4318 })
   const compRef = ref<InstanceType<typeof ConfigureCollector>>()
 
   render(
     defineComponent({
       components: { ConfigureCollector },
-      setup: () => ({ grpcAuth, httpAuth, compRef, noAuthAllowed }),
-      template: `<ConfigureCollector ref="compRef" :no-auth-allowed="noAuthAllowed" v-model:grpc-auth="grpcAuth" v-model:http-auth="httpAuth" />`
+      setup: () => ({
+        grpcAuth,
+        httpAuth,
+        grpcEndpoint,
+        httpEndpoint,
+        compRef,
+        noAuthAllowed,
+        endpointConfigAllowed
+      }),
+      template: `<ConfigureCollector ref="compRef" :no-auth-allowed="noAuthAllowed" :endpoint-config-allowed="endpointConfigAllowed" v-model:grpc-auth="grpcAuth" v-model:http-auth="httpAuth" v-model:grpc-endpoint="grpcEndpoint" v-model:http-endpoint="httpEndpoint" />`
     })
   )
 
-  return { grpcAuth, httpAuth, compRef }
+  return { grpcAuth, httpAuth, grpcEndpoint, httpEndpoint, compRef }
 }
 
 describe('ConfigureCollector', () => {
@@ -179,6 +192,122 @@ describe('ConfigureCollector', () => {
 
       const result = compRef.value!.validate()
       expect(result).toBe(false)
+    })
+  })
+
+  describe('endpoint fields visibility', () => {
+    test('IP/port fields are shown when endpointConfigAllowed=true', async () => {
+      mockPasswordsResponse()
+      renderComponent(true, true)
+
+      await waitFor(() => {
+        expect(screen.getByPlaceholderText('0.0.0.0')).toBeInTheDocument()
+      })
+    })
+
+    test('IP/port fields are absent when endpointConfigAllowed=false', async () => {
+      mockPasswordsResponse()
+      renderComponent(true, false)
+
+      await waitFor(() => {
+        expect(screen.queryByPlaceholderText('0.0.0.0')).not.toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('endpoint validation', () => {
+    test('validate() returns true for valid address and port', async () => {
+      mockPasswordsResponse()
+      const { compRef } = renderComponent(true, true)
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(true)
+    })
+
+    test('validate() returns true when only GRPC address is set and HTTP is empty', async () => {
+      mockPasswordsResponse()
+      const { compRef, httpEndpoint } = renderComponent(true, true)
+
+      httpEndpoint.value.address = ''
+      httpEndpoint.value.port = undefined
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(true)
+    })
+
+    test('validate() returns true when only HTTP address is set and GRPC is empty', async () => {
+      mockPasswordsResponse()
+      const { compRef, grpcEndpoint } = renderComponent(true, true)
+
+      grpcEndpoint.value.address = ''
+      grpcEndpoint.value.port = undefined
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(true)
+    })
+
+    test('validate() returns false when both addresses are empty', async () => {
+      mockPasswordsResponse()
+      const { compRef, grpcEndpoint, httpEndpoint } = renderComponent(true, true)
+
+      grpcEndpoint.value.address = ''
+      httpEndpoint.value.address = ''
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(false)
+      await screen.findByText('Enter a valid IP address or host name.')
+    })
+
+    test('validate() returns false when HTTP address is invalid', async () => {
+      mockPasswordsResponse()
+      const { compRef, httpEndpoint } = renderComponent(true, true)
+
+      httpEndpoint.value.address = 'not..valid'
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(false)
+    })
+
+    test('validate() returns false when configured GRPC endpoint has undefined port', async () => {
+      mockPasswordsResponse()
+      const { compRef, grpcEndpoint } = renderComponent(true, true)
+
+      grpcEndpoint.value.port = undefined
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(false)
+    })
+
+    test('validate() returns true when endpointConfigAllowed=false regardless of endpoint values', async () => {
+      mockPasswordsResponse()
+      const { compRef, grpcEndpoint } = renderComponent(true, false)
+
+      grpcEndpoint.value.address = ''
+      grpcEndpoint.value.port = undefined
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(true)
     })
   })
 })
