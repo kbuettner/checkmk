@@ -11,6 +11,7 @@ from pathlib import Path
 import cmk.ccc.store
 from cmk.ccc.hostaddress import HostName
 from cmk.inventory.structured_data import (
+    deserialize_delta_tree,
     deserialize_tree,
     HistoryStore,
     InventoryStore,
@@ -20,6 +21,7 @@ from cmk.inventory.structured_data import (
     SDKey,
     SDMetaAndRawTree,
     SDNodeName,
+    SDRawDeltaTree,
     SDRawTree,
 )
 
@@ -364,3 +366,50 @@ def test_rename(tmp_path: Path) -> None:
         assert (
             tmp_path / f"var/check_mk/inventory_delta_cache/{new_host_name}/{prev}_{cur}.json"
         ).exists()
+
+
+def test_deserialize_delta_tree_with_attributes_key() -> None:
+    """Regression test for crash groups 3652/3629.
+
+    The old ImmutableDeltaTree._deserialize class method accessed raw_tree["Attributes"]
+    which raised KeyError when old cached delta tree files lacked that key.  That class
+    method was removed in favour of the standalone deserialize_delta_tree() function which
+    is the sole public entry point.  The current serialisation always produces an
+    "Attributes" key, so roundtripping through serialize/deserialize must never raise
+    KeyError.
+    """
+    raw_delta_tree = SDRawDeltaTree(
+        Attributes={"Pairs": {SDKey("k"): (None, "v")}},
+        Table={},
+        Nodes={},
+    )
+    delta_tree = deserialize_delta_tree(raw_delta_tree)
+    assert delta_tree.attributes.pairs[SDKey("k")].old is None
+    assert delta_tree.attributes.pairs[SDKey("k")].new == "v"
+
+
+def test_load_history_only_from_archive_files(tmp_path: Path) -> None:
+    """Regression test for crash groups 3652/3629.
+
+    The former _CachedDeltaTreeLoader.get_cached_entry() code path tried to deserialise
+    old delta-cache files via ImmutableDeltaTree.deserialize() which raised
+    KeyError: Attributes for pre-WK-18319 files.  That class and method were removed by
+    WK-18319 which also introduced HistoryArchivePath so that history entries can be
+    computed directly from archive trees without requiring a pre-existing delta cache.
+    """
+    host_name = HostName("hostname")
+    for idx in range(3):
+        raw_tree = _raw_tree(f"val-{idx}")
+        cmk.ccc.store.save_object_to_file(
+            tmp_path / f"var/check_mk/inventory_archive/hostname/{idx}", raw_tree
+        )
+
+    # No delta cache files — history must still be computed from archives alone.
+    history = load_history(
+        HistoryStore(tmp_path),
+        host_name,
+        history_paths_filter=lambda paths: paths,
+        delta_tree_filters=None,
+    )
+    assert len(history.entries) == 3
+    assert not history.corrupted
