@@ -27,7 +27,8 @@ from cmk.gui.graphing import (
     metric_backend_registry,
     metrics_from_api,
     RegisteredMetric,
-    render_graphs_from_specification_html,
+    render_deferred_graphs_html,
+    render_graphs_html,
     vs_graph_render_options,
 )
 from cmk.gui.http import Request, Response, response
@@ -260,32 +261,44 @@ def _paint_time_graph_cmk(
             "Maybe metrics processing is disabled."
         )
 
-    render_async = not request.has_var("cmk-token")
+    # Ideally, we would use 2-dim. coordinates: (row_idx, col_idx).
+    # Unfortunately, we have no access to this information here. Regarding the rows, we could
+    # use (site, host, service) as identifier, but for the columns, there does not seem to be
+    # any unique information. The view rendering is designed st. individuals cells are rendered
+    # completely independently of each other, based solely on the livestatus data and on the
+    # painter settings (which makes sense). The caching in graph.ts breaks this assumption. So
+    # for now, we randomize. See also CMK-13840.
+    display_id = str(uuid4())
+    spec = get_template_graph_specification(
+        site_id=row["site"],
+        host_name=row["host_name"],
+        service_name=row.get("service_description", "_HOST_"),
+    )
 
-    return "", render_graphs_from_specification_html(
-        get_template_graph_specification(
-            site_id=row["site"],
-            host_name=row["host_name"],
-            service_name=row.get("service_description", "_HOST_"),
-        ),
+    if request.has_var("cmk-token"):
+        return "", render_graphs_html(
+            spec,
+            time_range,
+            display_config,
+            registered_metrics,
+            registered_graphs,
+            user_permissions,
+            debug=debug,
+            graph_timeranges=graph_timeranges,
+            temperature_unit=temperature_unit,
+            backend_time_series_fetcher=backend_time_series_fetcher,
+            display_id=display_id,
+        )
+    return "", render_deferred_graphs_html(
+        spec,
         time_range,
         display_config,
         registered_metrics,
         registered_graphs,
         user_permissions,
         debug=debug,
-        graph_timeranges=graph_timeranges,
         temperature_unit=temperature_unit,
-        backend_time_series_fetcher=backend_time_series_fetcher,
-        render_async=render_async,
-        # Ideally, we would use 2-dim. coordinates: (row_idx, col_idx).
-        # Unfortunately, we have no access to this information here. Regarding the rows, we could
-        # use (site, host, service) as identifier, but for the columns, there does not seem to be
-        # any unique information. The view rendering is designed st. individuals cells are rendered
-        # completely independently of each other, based solely on the livestatus data and on the
-        # painter settings (which makes sense). The caching in graph.ts breaks this assumption. So
-        # for now, we randomize. See also CMK-13840.
-        display_id=str(uuid4()),
+        display_id=display_id,
     )
 
 

@@ -280,7 +280,7 @@ def host_service_graph_popup_cmk(
     )
 
     html.write_html(
-        render_graphs_from_specification_html(
+        render_graphs_html(
             get_template_graph_specification(
                 site_id=site,
                 host_name=host_name,
@@ -295,7 +295,6 @@ def host_service_graph_popup_cmk(
             graph_timeranges=graph_timeranges,
             temperature_unit=temperature_unit,
             backend_time_series_fetcher=backend_time_series_fetcher,
-            render_async=False,
         )
     )
 
@@ -1095,8 +1094,8 @@ class UserGraphTimeRangeStore:
 
 
 # TODO: still relies on the global request object because painters also use this function.
-@tracer.instrument("graphing.render_graphs_from_specification_html")
-def render_graphs_from_specification_html(
+@tracer.instrument("graphing.render_deferred_graphs_html")
+def render_deferred_graphs_html(
     graph_specification: GraphSpecification,
     time_range: GraphTimeRange,
     display_config: GraphDisplayConfigHTML,
@@ -1105,12 +1104,10 @@ def render_graphs_from_specification_html(
     user_permissions: UserPermissions,
     *,
     debug: bool,
-    graph_timeranges: Sequence[GraphTimerange],
     temperature_unit: TemperatureUnit,
-    backend_time_series_fetcher: FetchTimeSeries | None,
-    render_async: bool = True,
     display_id: str = "",
 ) -> HTML:
+    """Render async AJAX loading containers. JavaScript fills them via ajax_render_graph_content."""
     try:
         recipes = graph_specification.recipes(
             registered_metrics,
@@ -1142,41 +1139,88 @@ def render_graphs_from_specification_html(
 
     output = HTML.empty()
     for recipe_with_overrides in recipes:
-        recipe = recipe_with_overrides.recipe
+        output += _render_graph_container_html(
+            recipe_with_overrides.recipe,
+            recipe_with_overrides.time_range or time_range,
+            display_config.update_from_options(recipe_with_overrides.render_options),
+            display_id=display_id,
+            additional_html=recipe_with_overrides.additional_html,
+        )
+    return output
+
+
+@tracer.instrument("graphing.render_graphs_html")
+def render_graphs_html(
+    graph_specification: GraphSpecification,
+    time_range: GraphTimeRange,
+    display_config: GraphDisplayConfigHTML,
+    registered_metrics: Mapping[str, RegisteredMetric],
+    registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],
+    user_permissions: UserPermissions,
+    *,
+    debug: bool,
+    graph_timeranges: Sequence[GraphTimerange],
+    temperature_unit: TemperatureUnit,
+    backend_time_series_fetcher: FetchTimeSeries | None,
+    display_id: str = "",
+) -> HTML:
+    """Render graph content synchronously without AJAX."""
+    try:
+        recipes = graph_specification.recipes(
+            registered_metrics,
+            registered_graphs,
+            user_permissions,
+            consolidation_function="max",
+            debug=debug,
+            temperature_unit=temperature_unit,
+        )
+    except MKLivestatusNotFoundError:
+        return render_graph_error_html(
+            title=_("Cannot calculate graph recipes"),
+            msg_or_exc=(
+                "%s\n\n%s: %r"
+                % (
+                    _("Cannot fetch data via Livestatus"),
+                    _("The graph specification is"),
+                    graph_specification,
+                )
+            ),
+            debug=debug,
+        )
+    except Exception as e:
+        return render_graph_error_html(
+            title=_("Cannot calculate graph recipes"),
+            msg_or_exc=e,
+            debug=debug,
+        )
+
+    output = HTML.empty()
+    for recipe_with_overrides in recipes:
         effective_time_range = recipe_with_overrides.time_range or time_range
         effective_config = display_config.update_from_options(recipe_with_overrides.render_options)
-        if render_async:
-            output += _render_graph_container_html(
-                recipe,
+        output += _render_graph_content_html(
+            request,
+            recipe_with_overrides.recipe,
+            effective_time_range,
+            effective_config,
+            compute_graph_artwork(
+                recipe_with_overrides.recipe,
                 effective_time_range,
-                effective_config,
-                display_id=display_id,
-                additional_html=recipe_with_overrides.additional_html,
-            )
-        else:
-            output += _render_graph_content_html(
-                request,
-                recipe,
-                effective_time_range,
-                effective_config,
-                compute_graph_artwork(
-                    recipe,
-                    effective_time_range,
-                    effective_config.size,
-                    metrics_from_api,
-                    temperature_unit=temperature_unit,
-                    backend_time_series_fetcher=backend_time_series_fetcher,
-                    pin_time=_load_graph_pin(),
-                ),
-                debug=debug,
-                graph_timeranges=graph_timeranges,
+                effective_config.size,
+                metrics_from_api,
                 temperature_unit=temperature_unit,
                 backend_time_series_fetcher=backend_time_series_fetcher,
-                display_id=display_id,
-                expandable_legend_appearance=ExpandableLegendAppearance.FOLDABLE,
-                show_limits_if_reached=False,
-                additional_html=recipe_with_overrides.additional_html,
-            )
+                pin_time=_load_graph_pin(),
+            ),
+            debug=debug,
+            graph_timeranges=graph_timeranges,
+            temperature_unit=temperature_unit,
+            backend_time_series_fetcher=backend_time_series_fetcher,
+            display_id=display_id,
+            expandable_legend_appearance=ExpandableLegendAppearance.FOLDABLE,
+            show_limits_if_reached=False,
+            additional_html=recipe_with_overrides.additional_html,
+        )
     return output
 
 

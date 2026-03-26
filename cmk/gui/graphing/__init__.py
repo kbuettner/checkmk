@@ -52,7 +52,8 @@ from ._html_render import (
     host_service_graph_dashlet_cmk,
     host_service_graph_popup_cmk,
     make_graph_time_range,
-    render_graphs_from_specification_html,
+    render_deferred_graphs_html,
+    render_graphs_html,
     render_plain_graph_title,
 )
 from ._legacy import check_metrics, CheckMetricEntry
@@ -165,7 +166,8 @@ __all__ = [
     "perfometers_from_api",
     "registered_metric_ids_and_titles",
     "render_graph_pdf",
-    "render_graphs_from_specification_html",
+    "render_deferred_graphs_html",
+    "render_graphs_html",
     "render_plain_graph_title",
     "translate_and_merge_rrd_columns",
     "translate_metrics",
