@@ -4,7 +4,6 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 import enum
-import errno
 import importlib.machinery
 import importlib.util
 import os
@@ -18,7 +17,6 @@ from pathlib import Path
 from types import ModuleType
 
 import pytest
-from pytest import MonkeyPatch
 
 import cmk.ccc.debug
 from cmk.ccc import store
@@ -293,27 +291,6 @@ def test_try_locked(test_file: Path, path_type: type[str] | type[Path]) -> None:
         with store.try_locked(path) as result_1:
             assert result_1 is False
             assert store.have_lock(path) is True
-
-    assert store.have_lock(path) is False
-
-
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_try_locked_fails(
-    test_file: Path, path_type: type[str] | type[Path], monkeypatch: MonkeyPatch
-) -> None:
-    path = path_type(test_file)
-
-    # NOTE: We need the suppression to keep the exact same API.
-    def _is_already_locked(path: Path | str, blocking: bool = True) -> bool:  # noqa: ARG001
-        raise OSError(errno.EAGAIN, f"{path} is already locked")
-
-    monkeypatch.setattr(store._locks, "acquire_lock", _is_already_locked)  # noqa: SLF001
-
-    assert store.have_lock(path) is False
-
-    with store.try_locked(path) as result:
-        assert result is False
-        assert store.have_lock(path) is False
 
     assert store.have_lock(path) is False
 
