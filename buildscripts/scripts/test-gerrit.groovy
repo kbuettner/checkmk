@@ -134,9 +134,6 @@ void main() {
                                 CUSTOM_GIT_REF: GERRIT_PATCHSET_REVISION,
                             ];
                             break;
-                        case "Package cmk-relay-engine":
-                        // "cmk-relay-engine" does not work with the default container of the pod used for test-gerrit-single
-                        // 'testing-ubuntu-2204-checkmk-master' works 'ubuntu-2404-master-latest' does not
                         case "Package mk-oracle":
                             relative_job_name = "${branch_base_folder}/builders/build-cmk-package-k8s";
                             build_params = [
@@ -146,9 +143,6 @@ void main() {
                                 DISTRO: "REFERENCE_IMAGE",
                                 SECRET_VARS: item.SEC_VAR_LIST ? item.SEC_VAR_LIST.join(" ") : "",
                             ];
-                            break;
-                        case "Package cmk-agent-receiver":  // Tries to start docker containers, CMK-29585
-                            relative_job_name = "${branch_base_folder}/cv/test-gerrit-single";
                             break;
                         default:
                             break;

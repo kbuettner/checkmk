@@ -128,9 +128,6 @@ VARIABLES:
     - NAME: CHANGED_MK_ORACLE_FILES
       SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/mk-oracle/\\|^packages/[^/]*$' || true"
 
-    - NAME: CHANGED_CMK_AGENT_RECEIVER_FILES
-      SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/cmk-agent-receiver/' || true"
-
     - NAME: CHANGED_CMK_CCC_FILES
       SH: "echo '${CHANGED_FILES_REL}' | grep '^packages/cmk-ccc/' || true"
 

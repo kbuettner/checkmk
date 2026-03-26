@@ -50,16 +50,7 @@ void main() {
     }
 
     dir(checkout_dir) {
-        // to be fixed with CMK-29585
-        if (params.PACKAGE_PATH in [
-            "packages/cmk-agent-receiver",
-        ]) {
-            inside_container(inside_container_args) {
-                this_call_site(safe_branch_name, output_file);
-            }
-        } else {
-            this_call_site(safe_branch_name, output_file);
-        }
+        this_call_site(safe_branch_name, output_file);
 
         // Can be removed once ci-artifacts doesn't fail anymore on empty files
         def is_empty = sh(script:"[[ -s ${output_file} ]]", returnStatus:true);
