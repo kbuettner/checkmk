@@ -143,10 +143,6 @@ def _del_lock(name: str) -> None:
     _acquired_locks().pop(name, None)
 
 
-def _del_all_locks() -> None:
-    _acquired_locks().clear()
-
-
 def _get_lock_keys() -> list[str]:
     return list(_acquired_locks())
 
@@ -228,13 +224,10 @@ def release_lock(path: Path | str) -> None:
     if not isinstance(path, Path):
         path = Path(path)
 
-    if not have_lock(path):
-        return  # no unlocking needed
-
-    logger.debug("Releasing lock on %s", path)
     if (fd := _get_lock(str(path))) is None:
         return
 
+    logger.debug("Releasing lock on %s", path)
     try:
         os.close(fd)
     except OSError as e:
@@ -250,11 +243,9 @@ def have_lock(path: str | Path) -> bool:
 
 
 def release_all_locks() -> None:
-    logger.debug("Releasing all locks")
-    logger.debug("Acquired locks: %r", _acquired_locks())
+    logger.debug("Releasing all acquired locks: %r", _acquired_locks())
     for path in _get_lock_keys():
         release_lock(path)
-    _del_all_locks()
 
 
 @contextmanager
