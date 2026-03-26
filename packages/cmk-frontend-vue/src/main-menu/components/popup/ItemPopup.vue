@@ -85,22 +85,56 @@ mainMenu.onNavigate((item: NavItem) => {
       :header="props.item.header"
       :small="props.item.popup_small"
     >
-      <div v-if="showAllTopic" class="mm-item-popup__show-topic">
-        <ItemTopic :topic="showAllTopic" :nav-item-id="item.id" :is-show-all="true" />
-      </div>
-      <div v-else class="mm-item-popup__topics">
-        <template v-for="topic in item.topics" :key="topic.title">
-          <ItemTopic
-            v-if="
-              (!topic.is_show_more && topic.entries.filter((e) => !e.is_show_more).length > 0) ||
-              mainMenu.showMoreIsActive(item.id)
-            "
-            :topic="topic"
-            :nav-item-id="item.id"
-            :class="{ 'mm-item-popup__topics-small': props.item.popup_small }"
-          />
-        </template>
-      </div>
+      <template v-if="props.item.popup_small">
+        <div class="mm-item-popup__switch">
+          <div
+            class="mm-item-popup__show-topic"
+            :class="{ 'mm-item-popup__view--hidden': !showAllTopic }"
+          >
+            <ItemTopic
+              v-if="showAllTopic"
+              :topic="showAllTopic"
+              :nav-item-id="item.id"
+              :is-show-all="true"
+            />
+          </div>
+          <div
+            class="mm-item-popup__topics mm-item-popup__topics-small"
+            :class="{ 'mm-item-popup__view--hidden': !!showAllTopic }"
+          >
+            <template v-for="topic in item.topics" :key="topic.title">
+              <ItemTopic
+                v-if="
+                  (!topic.is_show_more &&
+                    topic.entries.filter((e) => !e.is_show_more).length > 0) ||
+                  mainMenu.showMoreIsActive(item.id)
+                "
+                :topic="topic"
+                :nav-item-id="item.id"
+                class="mm-item-popup__topics-small"
+              />
+            </template>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div v-if="showAllTopic" class="mm-item-popup__show-topic">
+          <ItemTopic :topic="showAllTopic" :nav-item-id="item.id" :is-show-all="true" />
+        </div>
+        <div v-else class="mm-item-popup__topics">
+          <template v-for="topic in item.topics" :key="topic.title">
+            <ItemTopic
+              v-if="
+                (!topic.is_show_more && topic.entries.filter((e) => !e.is_show_more).length > 0) ||
+                mainMenu.showMoreIsActive(item.id)
+              "
+              :topic="topic"
+              :nav-item-id="item.id"
+              :class="{ 'mm-item-popup__topics-small': props.item.popup_small }"
+            />
+          </template>
+        </div>
+      </template>
     </DefaultPopup>
   </div>
 </template>
@@ -131,5 +165,19 @@ mainMenu.onNavigate((item: NavItem) => {
 
 .mm-item-popup__topics-small {
   min-width: 290px;
+}
+
+.mm-item-popup__switch {
+  display: grid;
+
+  .mm-item-popup__show-topic,
+  .mm-item-popup__topics {
+    grid-area: 1 / 1;
+  }
+}
+
+.mm-item-popup__view--hidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 </style>
