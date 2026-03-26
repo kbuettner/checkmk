@@ -29,6 +29,7 @@ const isPublicDashboard = useInjectIsPublicDashboard()
 .db-content-static-text__wrapper {
   position: relative;
   padding: var(--spacing);
+  padding-bottom: 0;
 }
 
 .db-content-static-text__click-shield {
