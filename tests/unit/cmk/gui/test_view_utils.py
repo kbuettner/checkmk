@@ -4,11 +4,14 @@
 # conditions defined in the file COPYING, which is part of this source code package.
 
 
+from typing import Any, cast
+
 import pytest
 
+from cmk.gui.config import Config
 from cmk.gui.http import request
 from cmk.gui.utils.html import HTML
-from cmk.gui.view_utils import format_plugin_output
+from cmk.gui.view_utils import determine_must_escape, format_plugin_output
 
 
 @pytest.mark.usefixtures("patch_theme")
@@ -75,3 +78,46 @@ from cmk.gui.view_utils import format_plugin_output
 )
 def test_button_url(args: str, expected: HTML, request_context: None) -> None:
     assert format_plugin_output(args, request=request, must_escape=False) == expected
+
+
+def _fake_config(sites: dict[str, Any]) -> Config:
+    class _FC:
+        pass
+
+    obj = _FC()
+    obj.sites = sites  # type: ignore[attr-defined]
+    return cast(Config, obj)
+
+
+class TestDetermineMustEscape:
+    """Regression tests for crash groups 4410 / 4421.
+
+    Before the fix, ``determine_must_escape`` accessed ``active_config.sites[row["site"]]``
+    directly, raising ``KeyError`` when the site ID stored in the row was no longer present
+    in the site configuration (e.g. after a remote site was removed).
+    """
+
+    def test_no_site_key_in_row_returns_true(self) -> None:
+        # Row has no "site" key at all — we must escape to stay safe.
+        assert determine_must_escape(_fake_config({}), {}) is True
+
+    def test_unknown_site_id_returns_true(self) -> None:
+        # Site ID is present in the row but not in the configuration — must escape and
+        # must not raise KeyError (the original crash).
+        assert determine_must_escape(_fake_config({}), {"site": "nonexistent_site"}) is True
+
+    def test_untrusted_site_returns_true(self) -> None:
+        assert (
+            determine_must_escape(
+                _fake_config({"mysite": {"is_trusted": False}}), {"site": "mysite"}
+            )
+            is True
+        )
+
+    def test_trusted_site_returns_false(self) -> None:
+        assert (
+            determine_must_escape(
+                _fake_config({"mysite": {"is_trusted": True}}), {"site": "mysite"}
+            )
+            is False
+        )
