@@ -43,7 +43,6 @@ interface GraphDisplayConfigHTML {
   foreground_color: string
   interaction: boolean
   legend_max_height_px: number | null
-  onclick: string | null
   preview: boolean
   resizable: boolean
   show_controls: boolean
@@ -71,6 +70,7 @@ export interface GraphContext {
   time_range: GraphTimeRange
   display_config: GraphDisplayConfigHTML
   display_id: string
+  onclick: string | null
 }
 
 export interface AjaxGraph {
@@ -1503,9 +1503,10 @@ function global_graph_mouse_up(event: Event) {
 }
 
 function handle_graph_clicked(graph: GraphInstance) {
-  if (graph.display_config.onclick) {
+  const onclick = g_ajax_contexts[graph.id]?.onclick
+  if (onclick) {
     /* eslint-disable-next-line no-eval -- Highlight existing violations CMK-17846 */
-    eval(graph.display_config.onclick)
+    eval(onclick)
   }
 }
 

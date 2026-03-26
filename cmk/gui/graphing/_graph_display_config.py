@@ -107,7 +107,6 @@ class GraphDisplayConfigBase(BaseModel):
 class GraphDisplayConfigHTML(GraphDisplayConfigBase):
     explicit_title: str | None = None
     foreground_color: str
-    onclick: str | None = None
 
     @classmethod
     def from_user_context_and_options(

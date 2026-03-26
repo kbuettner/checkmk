@@ -115,6 +115,7 @@ class GraphContext(BaseModel):
     time_range: GraphTimeRange
     display_config: GraphDisplayConfigHTML
     display_id: str = ""
+    onclick: str | None = None
 
 
 def _load_graph_pin() -> int | None:
@@ -352,6 +353,8 @@ def _render_graph_html(
     display_config: GraphDisplayConfigHTML,
     expandable_legend_appearance: ExpandableLegendAppearance,
     additional_html: AdditionalGraphHTML | None = None,
+    *,
+    onclick: str | None = None,
 ) -> HTML:
     html_code = _collect_graph_html(
         request,
@@ -374,6 +377,7 @@ def _render_graph_html(
                     time_range=time_range,
                     display_config=display_config,
                     display_id=display_id,
+                    onclick=onclick,
                 ).model_dump()
             ),
         )
@@ -1398,7 +1402,6 @@ def _render_time_range_selection(
             update={
                 "size": (20, 4),
                 "font_size": SizePT(6.0),
-                "onclick": "cmk.graphs.change_graph_timerange(graph, %d)" % duration,
                 "fixed_timerange": True,  # Do not follow timerange changes of other graphs
                 "explicit_title": timerange_attrs["title"],
                 "show_legend": False,
@@ -1408,6 +1411,7 @@ def _render_time_range_selection(
                 "interaction": False,
             }
         )
+        onclick = "cmk.graphs.change_graph_timerange(graph, %d)" % duration
 
         timerange = now - duration, now
         time_range = GraphTimeRange(
@@ -1435,6 +1439,7 @@ def _render_time_range_selection(
                     time_range,
                     preview_config,
                     expandable_legend_appearance,
+                    onclick=onclick,
                 ),
                 title=_("Change graph time range to: %s") % timerange_attrs["title"],
             )
