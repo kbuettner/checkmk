@@ -69,7 +69,7 @@ function getEntries2Render() {
 
     <CmkHeading type="h3" class="mm-nav-item-topic__header">
       <span v-if="topic.icon" class="mm-nav-item-topic__icon">
-        <CmkDynamicIcon :spec="topic.icon"
+        <CmkDynamicIcon :spec="topic.icon" :size="'xlarge'"
       /></span>
       <span>{{ topic.title }}</span>
     </CmkHeading>
