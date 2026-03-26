@@ -5,10 +5,7 @@
 
 import base64
 import copy
-import itertools
 import json
-import struct
-import uuid
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, TypedDict
@@ -203,18 +200,6 @@ def test_crash_report_local_crash_report_url(crash: UnitTestCrashReport) -> None
     assert crash.local_crash_report_url() == url
 
 
-@pytest.fixture
-def patch_uuid1(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Generate a uuid1 with known values."""
-    c = itertools.count()
-
-    # NOTE: We need the suppression to keep the exact same API.
-    def uuid1(node: int | None = None, clock_seq: int | None = None) -> uuid.UUID:  # noqa: ARG001
-        return uuid.UUID(bytes=struct.pack(b">I", next(c)) + 12 * b"\0")
-
-    monkeypatch.setattr("uuid.uuid1", uuid1)
-
-
 def _make_unique_crash(tmp_path: Path, num: int, timestamp: float = 0.0) -> UnitTestCrashReport:
     """Create a crash with a unique fingerprint by using a distinct exception type per num."""
     UniqueExc: type[Exception] = type(f"UniqueError{num}", (Exception,), {})
@@ -238,7 +223,6 @@ def _make_unique_crash(tmp_path: Path, num: int, timestamp: float = 0.0) -> Unit
         )
 
 
-@pytest.mark.usefixtures("patch_uuid1")
 @pytest.mark.parametrize("n_crashes", [2, 4, 6])
 def test_crash_report_store_cleanup(tmp_path: Path, n_crashes: int) -> None:
     crash_store = CrashReportStore(
