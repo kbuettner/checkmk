@@ -54,15 +54,6 @@ filegroup(
     name = "srcs",
     srcs = glob(
         include = ["**/*.rst"],
-        exclude = ["**/nonfree/**"],
-    ),
-)
-
-filegroup(
-    name = "srcs_nonfree",
-    srcs = glob(
-        include = ["**/nonfree/**/*.rst"],
-        allow_empty = True,
     ),
 )
 
@@ -70,7 +61,7 @@ sphinx_html(
     name = "plugin-api",
     srcs = glob(["_static/**/*"]) + [":srcs"] + select({
         "@cmk//edition:community": [],
-        "//conditions:default": [":srcs_nonfree"],
+        "//conditions:default": ["//doc/plugin-api/source/nonfree/pro"],
     }),
     args = ["--fail-on-warning"],
     config = "conf.py",
