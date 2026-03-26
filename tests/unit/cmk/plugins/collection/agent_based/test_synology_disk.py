@@ -5,7 +5,7 @@
 
 import pytest
 
-from cmk.agent_based.v2 import Metric, Result, State, StringTable
+from cmk.agent_based.v2 import IgnoreResultsError, Metric, Result, State, StringTable
 from cmk.plugins.collection.agent_based import synology_disks
 
 
@@ -128,3 +128,15 @@ def test_hotspare(empty_value_store: None) -> None:
         Result(state=State.OK, summary="Model: WD40000000-6666666"),
         Result(state=State.OK, summary="Health: Not provided (available with DSM 7.1 and above)"),
     ]
+
+
+def test_check_missing_item_raises_ignore_results_error() -> None:
+    # Regression test for CMK-25285 / Werk 18134:
+    # When a discovered item (e.g. "Drive 1") is no longer present in the section
+    # (section only contains "Disk 1"), the check used to raise KeyError.
+    # Now it raises IgnoreResultsError so the service goes stale instead of crashing.
+    section = synology_disks.parse_synology(
+        [["Disk 1", "WD81PURZ-85LWMY0", "1", "32", "data", "1"]]
+    )
+    with pytest.raises(IgnoreResultsError):
+        list(synology_disks.check_synology_disks(item="Drive 1", section=section, params={}))
