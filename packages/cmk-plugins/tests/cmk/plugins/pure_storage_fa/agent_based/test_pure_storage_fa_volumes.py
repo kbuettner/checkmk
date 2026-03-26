@@ -130,3 +130,27 @@ def test_check_volume_capacity(
     expected_result: CheckResult,
 ) -> None:
     assert list(check_volume_capacity(item, params, section)) == expected_result
+
+
+def test_parse_volume_excludes_protocol_endpoint() -> None:
+    # Regression test for Werk 16893 / SUP-20140:
+    # Volumes with subtype "protocol_endpoint" have total_provisioned=0 which caused a
+    # ZeroDivisionError in check_filesystem_levels.  The fix filters these out during parsing.
+    string_table: StringTable = [
+        [
+            '{"items": ['
+            '{"name": "pure-protocol-endpoint", "subtype": "protocol_endpoint",'
+            ' "space": {"virtual": 0.0, "total_provisioned": 0.0, "data_reduction": null,'
+            ' "unique": 0.0, "snapshots": 0.0}},'
+            '{"name": "real-vol", "subtype": "regular",'
+            ' "space": {"virtual": 1024.0, "total_provisioned": 10240.0, "data_reduction": 2.0,'
+            ' "unique": 512.0, "snapshots": 0.0}}'
+            "]}"
+        ]
+    ]
+    section = parse_volume(string_table)
+    assert section is not None
+    assert "pure-protocol-endpoint" not in section, (
+        "protocol_endpoint volumes must be excluded to avoid ZeroDivisionError"
+    )
+    assert "real-vol" in section
