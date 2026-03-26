@@ -3,10 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="arg-type"
-# mypy: disable-error-code="no-untyped-def"
-# mypy: disable-error-code="var-annotated"
-
 # <<<elasticsearch_nodes>>>
 # mynode1 open_file_descriptors 434
 # mynode1 max_file_descriptors 4096
@@ -20,10 +16,22 @@
 # mynode2 mem_total_virtual_in_bytes 7107313664
 
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import render
+from collections.abc import Callable, Mapping
+from typing import Any
 
-check_info = {}
+from cmk.agent_based.legacy.conversion import (
+    # Temporary compatibility layer untile we migrate the corresponding ruleset.
+    check_levels_legacy_compatible as check_levels,
+)
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    render,
+    Service,
+    StringTable,
+)
 
 nodes_info = {
     "open_file_descriptors": "Open file descriptors",
@@ -34,16 +42,15 @@ nodes_info = {
 }
 
 
-def parse_elasticsearch_nodes(string_table):
-    parsed = {}
+Section = dict[str, dict[str, tuple[int | float, str]]]
+
+
+def parse_elasticsearch_nodes(string_table: StringTable) -> Section:
+    parsed: Section = {}
 
     for name, desc, value_str in string_table:
         try:
-            if desc == "cpu_percent":
-                value = float(value_str)
-            else:
-                value = int(value_str)
-
+            value: int | float = float(value_str) if desc == "cpu_percent" else int(value_str)
             parsed.setdefault(name, {}).setdefault(desc, (value, nodes_info[desc]))
 
         except (IndexError, ValueError):
@@ -52,30 +59,38 @@ def parse_elasticsearch_nodes(string_table):
     return parsed
 
 
-def check_elasticsearch_nodes(item, params, parsed):
-    if not (item_data := parsed.get(item)):
+def check_elasticsearch_nodes(
+    item: str, params: Mapping[str, Any], section: Section
+) -> CheckResult:
+    if not (item_data := section.get(item)):
         return
-    for data_key, params_key, hr_func in [
+    metrics: list[tuple[str, str, Callable[..., Any]]] = [
         ("cpu_percent", "cpu_levels", render.percent),
         ("cpu_total_in_millis", "cpu_total_in_millis", int),
         ("mem_total_virtual_in_bytes", "mem_total_virtual_in_bytes", render.bytes),
         ("open_file_descriptors", "open_file_descriptors", int),
         ("max_file_descriptors", "max_file_descriptors", int),
-    ]:
+    ]
+    for data_key, params_key, hr_func in metrics:
         value, infotext = item_data[data_key]
 
-        yield check_levels(
+        yield from check_levels(
             value, data_key, params.get(params_key), human_readable_func=hr_func, infoname=infotext
         )
 
 
-def discover_elasticsearch_nodes(section):
-    yield from ((item, {}) for item in section)
+def discover_elasticsearch_nodes(section: Section) -> DiscoveryResult:
+    yield from (Service(item=item) for item in section)
 
 
-check_info["elasticsearch_nodes"] = LegacyCheckDefinition(
+agent_section_elasticsearch_nodes = AgentSection(
     name="elasticsearch_nodes",
     parse_function=parse_elasticsearch_nodes,
+)
+
+
+check_plugin_elasticsearch_nodes = CheckPlugin(
+    name="elasticsearch_nodes",
     service_name="Elasticsearch Node %s",
     discovery_function=discover_elasticsearch_nodes,
     check_function=check_elasticsearch_nodes,
