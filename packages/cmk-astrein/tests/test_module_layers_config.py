@@ -320,19 +320,22 @@ def _find_repo_root() -> Path:
     raise AssertionError("unreachable")
 
 
-def test_real_config_loads_without_error() -> None:
+@pytest.fixture(scope="module")
+def real_config() -> ModuleLayersConfig:
     repo_root = _find_repo_root()
-    config = load_config(repo_root / "module_layers.toml")
+    return load_config(repo_root / "module_layers.toml")
+
+
+def test_real_config_loads_without_error(real_config: ModuleLayersConfig) -> None:
     # Should have a substantial number of components
-    assert len(config.components) > 100
-    assert len(config.file_components) > 10
-    assert len(config.file_dependencies) > 5
+    assert len(real_config.components) > 100
+    assert len(real_config.file_components) > 10
+    assert len(real_config.file_dependencies) > 5
 
 
-def test_real_config_has_expected_core_components_smoke_test() -> None:
-    repo_root = _find_repo_root()
-    config = load_config(repo_root / "module_layers.toml")
-
+def test_real_config_has_expected_core_components_smoke_test(
+    real_config: ModuleLayersConfig,
+) -> None:
     expected = [
         "cmk.agent_based",
         "cmk.base",
@@ -343,16 +346,13 @@ def test_real_config_has_expected_core_components_smoke_test() -> None:
         "cmk.checkengine",
         "cmk.ec",
     ]
-    comp_names = {str(c) for c in config.components}
+    comp_names = {str(c) for c in real_config.components}
     for name in expected:
         assert name in comp_names, f"Expected component {name} not found"
 
 
-def test_real_config_has_plugin_families_smoke_test() -> None:
-    repo_root = _find_repo_root()
-    config = load_config(repo_root / "module_layers.toml")
-
-    comp_names = {str(c) for c in config.components}
+def test_real_config_has_plugin_families_smoke_test(real_config: ModuleLayersConfig) -> None:
+    comp_names = {str(c) for c in real_config.components}
     # Some known clean families
     assert "cmk.plugins.aws" in comp_names
     assert "cmk.plugins.azure" in comp_names
@@ -361,22 +361,16 @@ def test_real_config_has_plugin_families_smoke_test() -> None:
     assert "cmk.plugins.datadog" in comp_names
 
 
-def test_real_config_file_components_present_smoke_test() -> None:
-    repo_root = _find_repo_root()
-    config = load_config(repo_root / "module_layers.toml")
-
-    assert config.file_components[ModulePath("bin/check_mk")] == Component("cmk.base")
-    assert config.file_components[ModulePath("bin/mkeventd")] == Component("cmk.ec")
+def test_real_config_file_components_present_smoke_test(real_config: ModuleLayersConfig) -> None:
+    assert real_config.file_components[ModulePath("bin/check_mk")] == Component("cmk.base")
+    assert real_config.file_components[ModulePath("bin/mkeventd")] == Component("cmk.ec")
 
 
-def test_real_config_checker_behavior_smoke_test() -> None:
-    repo_root = _find_repo_root()
-    config = load_config(repo_root / "module_layers.toml")
-
+def test_real_config_checker_behavior_smoke_test(real_config: ModuleLayersConfig) -> None:
     gui = Component("cmk.gui")
     ccc = Component("cmk.ccc")
-    gui_checker = config.components[gui]
-    ccc_checker = config.components[ccc]
+    gui_checker = real_config.components[gui]
+    ccc_checker = real_config.components[ccc]
 
     # GUI can import from ccc
     assert gui_checker(imported=ModuleName("cmk.ccc.version"), component=gui)
