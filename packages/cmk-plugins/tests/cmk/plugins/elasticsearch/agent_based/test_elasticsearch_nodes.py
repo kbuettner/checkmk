@@ -11,7 +11,7 @@ from typing import Any
 import pytest
 
 from cmk.agent_based.v2 import Metric, Result, Service, State, StringTable
-from cmk.legacy_checks.elasticsearch_nodes import (
+from cmk.plugins.elasticsearch.agent_based.elasticsearch_nodes import (
     check_elasticsearch_nodes,
     discover_elasticsearch_nodes,
     parse_elasticsearch_nodes,
