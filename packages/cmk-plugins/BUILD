@@ -381,6 +381,7 @@ py_test(
         ":__test__",
         ":prism",
         requirement("pytest"),
+        requirement("requests"),
     ],
 )
 
