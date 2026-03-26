@@ -24,15 +24,21 @@
 from collections.abc import Mapping
 from typing import Any
 
-from cmk.agent_based.legacy.v0_unstable import (
-    check_levels,
-    LegacyCheckDefinition,
-    LegacyCheckResult,
-    LegacyDiscoveryResult,
+from cmk.agent_based.legacy.conversion import (
+    # Temporary compatibility layer untile we migrate the corresponding ruleset.
+    check_levels_legacy_compatible as check_levels,
 )
-from cmk.agent_based.v2 import render, StringTable
-
-check_info = {}
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    render,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 cluster_info = {
     "status": "Status",
@@ -92,29 +98,32 @@ def parse_elasticsearch_cluster_health(string_table: StringTable) -> dict[str, A
     return parsed
 
 
-def discover_elasticsearch_cluster_health(parsed: dict[str, Any]) -> LegacyDiscoveryResult:
-    yield None, {}
+def discover_elasticsearch_cluster_health(section: dict[str, Any]) -> DiscoveryResult:
+    yield Service()
 
 
 def check_elasticsearch_cluster_health(
-    _no_item: None, params: Mapping[str, Any], parsed: dict[str, Any]
-) -> LegacyCheckResult:
-    for info, values in sorted(parsed["Info"].items()):
+    params: Mapping[str, Any], section: dict[str, Any]
+) -> CheckResult:
+    for info, values in sorted(section["Info"].items()):
         value = values[0]
         infotext = values[1]
 
         if info == "cluster_name":
-            yield 0, f"{infotext}: {value}"
+            yield Result(state=State.OK, summary=f"{infotext}: {value}")
         elif info == "status":
             default_state = infotext
             infotext = "Status:"
             if value in params:
-                yield params[value], f"{infotext} {value} (State changed by rule)"
+                yield Result(
+                    state=State(params[value]),
+                    summary=f"{infotext} {value} (State changed by rule)",
+                )
             else:
-                yield default_state, f"{infotext} {value}"
+                yield Result(state=State(default_state), summary=f"{infotext} {value}")
         else:
             warn, crit = params.get(info) or (None, None)
-            yield check_levels(
+            yield from check_levels(
                 int(value),
                 info,
                 (None, None, warn, crit),
@@ -123,20 +132,26 @@ def check_elasticsearch_cluster_health(
             )
 
 
-check_info["elasticsearch_cluster_health"] = LegacyCheckDefinition(
+agent_section_elasticsearch_cluster_health = AgentSection(
     name="elasticsearch_cluster_health",
     parse_function=parse_elasticsearch_cluster_health,
+)
+
+
+check_plugin_elasticsearch_cluster_health = CheckPlugin(
+    name="elasticsearch_cluster_health",
     service_name="Elasticsearch Cluster Health",
     discovery_function=discover_elasticsearch_cluster_health,
     check_function=check_elasticsearch_cluster_health,
     check_ruleset_name="elasticsearch_cluster_health",
+    check_default_parameters={},
 )
 
 
 def check_elasticsearch_cluster_health_shards(
-    _no_item: None, params: Mapping[str, Any], parsed: dict[str, Any]
-) -> LegacyCheckResult:
-    if (shards := parsed.get("Shards")) is None:
+    params: Mapping[str, Any], section: dict[str, Any]
+) -> CheckResult:
+    if (shards := section.get("Shards")) is None:
         return
 
     for shard, values in sorted(shards.items()):
@@ -145,7 +160,7 @@ def check_elasticsearch_cluster_health_shards(
         warn, crit = params.get(shard) or (None, None)
 
         if shard in {"active_primary_shards", "active_shards"}:
-            yield check_levels(
+            yield from check_levels(
                 int(value),
                 shard,
                 (None, None, warn, crit),
@@ -153,7 +168,7 @@ def check_elasticsearch_cluster_health_shards(
                 infoname=infotext,
             )
         elif shard == "active_shards_percent_as_number":
-            yield check_levels(
+            yield from check_levels(
                 float(value),
                 shard,
                 (None, None, warn, crit),
@@ -161,7 +176,7 @@ def check_elasticsearch_cluster_health_shards(
                 infoname=infotext,
             )
         else:
-            yield check_levels(
+            yield from check_levels(
                 int(value),
                 shard,
                 (warn, crit, None, None),
@@ -170,7 +185,7 @@ def check_elasticsearch_cluster_health_shards(
             )
 
 
-check_info["elasticsearch_cluster_health.shards"] = LegacyCheckDefinition(
+check_plugin_elasticsearch_cluster_health_shards = CheckPlugin(
     name="elasticsearch_cluster_health_shards",
     service_name="Elasticsearch Cluster Shards",
     sections=["elasticsearch_cluster_health"],
@@ -182,9 +197,9 @@ check_info["elasticsearch_cluster_health.shards"] = LegacyCheckDefinition(
 
 
 def check_elasticsearch_cluster_health_tasks(
-    _no_item: None, params: Mapping[str, Any], parsed: dict[str, Any]
-) -> LegacyCheckResult:
-    if (tasks := parsed.get("Tasks")) is None:
+    params: Mapping[str, Any], section: dict[str, Any]
+) -> CheckResult:
+    if (tasks := section.get("Tasks")) is None:
         return
 
     for task, values in sorted(tasks.items()):
@@ -192,21 +207,20 @@ def check_elasticsearch_cluster_health_tasks(
         infotext = values[1]
 
         if task == "timed_out":
-            state = 0
-            if value != "False":
-                state = 1
-            yield state, f"{infotext}: {value}"
+            state = State.OK if value == "False" else State.WARN
+            yield Result(state=state, summary=f"{infotext}: {value}")
         else:
             value = int(value)
             warn, crit = params.get(task) or (None, None)
-            yield check_levels(value, task, (warn, crit, None, None), infoname=infotext)
+            yield from check_levels(value, task, (warn, crit, None, None), infoname=infotext)
 
 
-check_info["elasticsearch_cluster_health.tasks"] = LegacyCheckDefinition(
+check_plugin_elasticsearch_cluster_health_tasks = CheckPlugin(
     name="elasticsearch_cluster_health_tasks",
     service_name="Elasticsearch Cluster Tasks",
     sections=["elasticsearch_cluster_health"],
     discovery_function=discover_elasticsearch_cluster_health,
     check_function=check_elasticsearch_cluster_health_tasks,
     check_ruleset_name="elasticsearch_cluster_tasks",
+    check_default_parameters={},
 )
