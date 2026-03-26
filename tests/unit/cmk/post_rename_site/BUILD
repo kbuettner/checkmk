@@ -59,22 +59,5 @@ py_test(
         requirement("werkzeug"),
         requirement("flask"),
         requirement("pytest-random-order"),
-    ] + select({
-        # FIXME
-        "@//:gpl+nonfree_repo": [
-            "//non-free/packages/cmk-bakery",
-            "//non-free/packages/cmk-dcd:gui",
-            "//non-free/packages/cmk-liveproxyd:gui",
-            "//non-free/packages/cmk-metric-backend",
-            "//non-free/packages/cmk-mknotifyd",
-            "//non-free/packages/cmk-otel-collector",
-            "//non-free/packages/cmk-robotmk",
-            "//non-free/packages/cmk-robotmk:gui",
-            requirement("numpy"),
-            requirement("pypdf"),
-            requirement("pysaml2"),
-            requirement("roman"),
-        ],
-        "@//:gpl_repo": [],
-    }),
+    ],
 )
