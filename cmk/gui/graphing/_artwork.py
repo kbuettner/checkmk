@@ -310,14 +310,7 @@ def iter_graph_artworks(
     Combines spec.recipes() + compute_graph_artwork() into a single iterator,
     applying per-recipe time_range overrides automatically.
     """
-    for recipe_with_overrides in graph_specification.recipes(
-        context.registered_metrics,
-        context.registered_graphs,
-        context.user_permissions,
-        consolidation_function=context.consolidation_function,
-        debug=context.debug,
-        temperature_unit=context.temperature_unit,
-    ):
+    for recipe_with_overrides in graph_specification.recipes(context):
         yield (
             recipe_with_overrides,
             compute_graph_artwork(

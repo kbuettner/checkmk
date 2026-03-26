@@ -76,6 +76,7 @@ from ._graph_specification import (
     AdditionalGraphHTML,
     GraphRecipe,
     GraphRecipeWithOverrides,
+    GraphRenderContext,
     GraphSpecification,
     GraphTimeRange,
 )
@@ -288,13 +289,16 @@ def host_service_graph_popup_cmk(
             ),
             time_range,
             display_config,
-            registered_metrics,
-            registered_graphs,
-            user_permissions,
-            debug=debug,
+            GraphRenderContext(
+                registered_metrics=registered_metrics,
+                registered_graphs=registered_graphs,
+                user_permissions=user_permissions,
+                consolidation_function="max",
+                temperature_unit=temperature_unit,
+                backend_time_series_fetcher=backend_time_series_fetcher,
+                debug=debug,
+            ),
             graph_timeranges=graph_timeranges,
-            temperature_unit=temperature_unit,
-            backend_time_series_fetcher=backend_time_series_fetcher,
         )
     )
 
@@ -1140,24 +1144,13 @@ def render_deferred_graphs_html(
     graph_specification: GraphSpecification,
     time_range: GraphTimeRange,
     display_config: GraphDisplayConfigHTML,
-    registered_metrics: Mapping[str, RegisteredMetric],
-    registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],
-    user_permissions: UserPermissions,
+    context: GraphRenderContext,
     *,
-    debug: bool,
-    temperature_unit: TemperatureUnit,
     display_id: str = "",
 ) -> HTML:
     """Render async AJAX loading containers. JavaScript fills them via ajax_render_graph_content."""
     try:
-        recipes = graph_specification.recipes(
-            registered_metrics,
-            registered_graphs,
-            user_permissions,
-            consolidation_function="max",
-            debug=debug,
-            temperature_unit=temperature_unit,
-        )
+        recipes = graph_specification.recipes(context)
     except MKLivestatusNotFoundError:
         return render_graph_error_html(
             title=_("Cannot calculate graph recipes"),
@@ -1169,13 +1162,13 @@ def render_deferred_graphs_html(
                     graph_specification,
                 )
             ),
-            debug=debug,
+            debug=context.debug,
         )
     except Exception as e:
         return render_graph_error_html(
             title=_("Cannot calculate graph recipes"),
             msg_or_exc=e,
-            debug=debug,
+            debug=context.debug,
         )
 
     output = HTML.empty()
@@ -1195,26 +1188,14 @@ def render_graphs_html(
     graph_specification: GraphSpecification,
     time_range: GraphTimeRange,
     display_config: GraphDisplayConfigHTML,
-    registered_metrics: Mapping[str, RegisteredMetric],
-    registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],
-    user_permissions: UserPermissions,
+    context: GraphRenderContext,
     *,
-    debug: bool,
     graph_timeranges: Sequence[GraphTimerange],
-    temperature_unit: TemperatureUnit,
-    backend_time_series_fetcher: FetchTimeSeries | None,
     display_id: str = "",
 ) -> HTML:
     """Render graph content synchronously without AJAX."""
     try:
-        recipes = graph_specification.recipes(
-            registered_metrics,
-            registered_graphs,
-            user_permissions,
-            consolidation_function="max",
-            debug=debug,
-            temperature_unit=temperature_unit,
-        )
+        recipes = graph_specification.recipes(context)
     except MKLivestatusNotFoundError:
         return render_graph_error_html(
             title=_("Cannot calculate graph recipes"),
@@ -1226,13 +1207,13 @@ def render_graphs_html(
                     graph_specification,
                 )
             ),
-            debug=debug,
+            debug=context.debug,
         )
     except Exception as e:
         return render_graph_error_html(
             title=_("Cannot calculate graph recipes"),
             msg_or_exc=e,
-            debug=debug,
+            debug=context.debug,
         )
 
     output = HTML.empty()
@@ -1249,14 +1230,14 @@ def render_graphs_html(
                 effective_time_range,
                 effective_config.size,
                 metrics_from_api,
-                temperature_unit=temperature_unit,
-                backend_time_series_fetcher=backend_time_series_fetcher,
+                temperature_unit=context.temperature_unit,
+                backend_time_series_fetcher=context.backend_time_series_fetcher,
                 pin_time=_load_graph_pin(),
             ),
-            debug=debug,
+            debug=context.debug,
             graph_timeranges=graph_timeranges,
-            temperature_unit=temperature_unit,
-            backend_time_series_fetcher=backend_time_series_fetcher,
+            temperature_unit=context.temperature_unit,
+            backend_time_series_fetcher=context.backend_time_series_fetcher,
             display_id=display_id,
             expandable_legend_appearance=ExpandableLegendAppearance.FOLDABLE,
             show_limits_if_reached=False,

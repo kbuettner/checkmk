@@ -17,6 +17,7 @@ from cmk.gui.graphing._graph_metric_expressions import GraphMetricRRDSource
 from cmk.gui.graphing._graph_specification import (
     GraphMetric,
     GraphRecipe,
+    GraphRenderContext,
     HorizontalRule,
     MinimalVerticalRange,
 )
@@ -825,42 +826,45 @@ def test_template_recipes_matching(
             graph_id=graph_id,
             graph_index=graph_index,
         ).recipes(
-            {
-                "metric1": RegisteredMetric(
-                    name="metric1",
-                    title_localizer=lambda _localizer: "Metric1",
-                    unit_spec=ConvertibleUnitSpecification(
-                        notation=DecimalNotation(symbol=""),
-                        precision=AutoPrecision(digits=2),
+            GraphRenderContext(
+                registered_metrics={
+                    "metric1": RegisteredMetric(
+                        name="metric1",
+                        title_localizer=lambda _localizer: "Metric1",
+                        unit_spec=ConvertibleUnitSpecification(
+                            notation=DecimalNotation(symbol=""),
+                            precision=AutoPrecision(digits=2),
+                        ),
+                        color="#0080c0",
                     ),
-                    color="#0080c0",
-                ),
-                "metric2": RegisteredMetric(
-                    name="metric2",
-                    title_localizer=lambda _localizer: "Metric2",
-                    unit_spec=ConvertibleUnitSpecification(
-                        notation=DecimalNotation(symbol=""),
-                        precision=AutoPrecision(digits=2),
+                    "metric2": RegisteredMetric(
+                        name="metric2",
+                        title_localizer=lambda _localizer: "Metric2",
+                        unit_spec=ConvertibleUnitSpecification(
+                            notation=DecimalNotation(symbol=""),
+                            precision=AutoPrecision(digits=2),
+                        ),
+                        color="#0080c0",
                     ),
-                    color="#0080c0",
-                ),
-            },
-            {
-                "graph1": graphs_api.Graph(
-                    name="graph1",
-                    title=Title("Graph 1"),
-                    simple_lines=["metric1"],
-                ),
-                "graph2": graphs_api.Graph(
-                    name="graph2",
-                    title=Title("Graph 2"),
-                    simple_lines=["metric2"],
-                ),
-            },
-            UserPermissions({}, {}, {}, []),
-            consolidation_function="max",
-            debug=False,
-            temperature_unit=TemperatureUnit.CELSIUS,
+                },
+                registered_graphs={
+                    "graph1": graphs_api.Graph(
+                        name="graph1",
+                        title=Title("Graph 1"),
+                        simple_lines=["metric1"],
+                    ),
+                    "graph2": graphs_api.Graph(
+                        name="graph2",
+                        title=Title("Graph 2"),
+                        simple_lines=["metric2"],
+                    ),
+                },
+                user_permissions=UserPermissions({}, {}, {}, []),
+                consolidation_function="max",
+                temperature_unit=TemperatureUnit.CELSIUS,
+                backend_time_series_fetcher=None,
+                debug=False,
+            )
         )
     ] == expected
 
@@ -2098,71 +2102,74 @@ def test_template_recipes_fs() -> None:
             host_name=HostName("host_name"),
             service_description="service_name",
         ).recipes(
-            {
-                "fs_growth": RegisteredMetric(
-                    name="fs_growth",
-                    title_localizer=lambda _localizer: "Growth",
-                    unit_spec=ConvertibleUnitSpecification(
-                        notation=IECNotation(symbol="B/d"),
-                        precision=AutoPrecision(digits=2),
-                    ),
-                    color="#1ee6e6",
-                ),
-                "fs_used": RegisteredMetric(
-                    name="fs_used",
-                    title_localizer=lambda _localizer: "Used space",
-                    unit_spec=ConvertibleUnitSpecification(
-                        notation=IECNotation(symbol="B"),
-                        precision=AutoPrecision(digits=2),
-                    ),
-                    color="#1e90ff",
-                ),
-                "fs_free": RegisteredMetric(
-                    name="fs_free",
-                    title_localizer=lambda _localizer: "Free space",
-                    unit_spec=ConvertibleUnitSpecification(
-                        notation=IECNotation(symbol="B"),
-                        precision=AutoPrecision(digits=2),
-                    ),
-                    color="#d28df6",
-                ),
-                "fs_size": RegisteredMetric(
-                    name="fs_size",
-                    title_localizer=lambda _localizer: "Total size",
-                    unit_spec=ConvertibleUnitSpecification(
-                        notation=IECNotation(symbol="B"),
-                        precision=AutoPrecision(digits=2),
-                    ),
-                    color="#37fa37",
-                ),
-            },
-            {
-                "fs_used": graphs.Graph(
-                    name="fs_used",
-                    title=Title("Size and used space"),
-                    minimal_range=graphs.MinimalRange(
-                        0,
-                        metrics.MaximumOf(
-                            "fs_used",
-                            metrics.Color.GRAY,
+            GraphRenderContext(
+                registered_metrics={
+                    "fs_growth": RegisteredMetric(
+                        name="fs_growth",
+                        title_localizer=lambda _localizer: "Growth",
+                        unit_spec=ConvertibleUnitSpecification(
+                            notation=IECNotation(symbol="B/d"),
+                            precision=AutoPrecision(digits=2),
                         ),
+                        color="#1ee6e6",
                     ),
-                    compound_lines=[
-                        "fs_used",
-                        "fs_free",
-                    ],
-                    simple_lines=[
-                        "fs_size",
-                        metrics.WarningOf("fs_used"),
-                        metrics.CriticalOf("fs_used"),
-                    ],
-                    conflicting=["reserved"],
-                ),
-            },
-            UserPermissions({}, {}, {}, []),
-            consolidation_function="max",
-            debug=False,
-            temperature_unit=TemperatureUnit.CELSIUS,
+                    "fs_used": RegisteredMetric(
+                        name="fs_used",
+                        title_localizer=lambda _localizer: "Used space",
+                        unit_spec=ConvertibleUnitSpecification(
+                            notation=IECNotation(symbol="B"),
+                            precision=AutoPrecision(digits=2),
+                        ),
+                        color="#1e90ff",
+                    ),
+                    "fs_free": RegisteredMetric(
+                        name="fs_free",
+                        title_localizer=lambda _localizer: "Free space",
+                        unit_spec=ConvertibleUnitSpecification(
+                            notation=IECNotation(symbol="B"),
+                            precision=AutoPrecision(digits=2),
+                        ),
+                        color="#d28df6",
+                    ),
+                    "fs_size": RegisteredMetric(
+                        name="fs_size",
+                        title_localizer=lambda _localizer: "Total size",
+                        unit_spec=ConvertibleUnitSpecification(
+                            notation=IECNotation(symbol="B"),
+                            precision=AutoPrecision(digits=2),
+                        ),
+                        color="#37fa37",
+                    ),
+                },
+                registered_graphs={
+                    "fs_used": graphs.Graph(
+                        name="fs_used",
+                        title=Title("Size and used space"),
+                        minimal_range=graphs.MinimalRange(
+                            0,
+                            metrics.MaximumOf(
+                                "fs_used",
+                                metrics.Color.GRAY,
+                            ),
+                        ),
+                        compound_lines=[
+                            "fs_used",
+                            "fs_free",
+                        ],
+                        simple_lines=[
+                            "fs_size",
+                            metrics.WarningOf("fs_used"),
+                            metrics.CriticalOf("fs_used"),
+                        ],
+                        conflicting=["reserved"],
+                    ),
+                },
+                user_permissions=UserPermissions({}, {}, {}, []),
+                consolidation_function="max",
+                temperature_unit=TemperatureUnit.CELSIUS,
+                backend_time_series_fetcher=None,
+                debug=False,
+            )
         )
     ] == [
         GraphRecipe(

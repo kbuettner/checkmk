@@ -299,12 +299,15 @@ def graph_recipes_for_api_request(
 
     try:
         recipes = graph_specification.recipes(
-            registered_metrics,
-            registered_graphs,
-            user_permissions,
-            consolidation_function=api_request.get("consolidation_function", "max"),
-            debug=debug,
-            temperature_unit=temperature_unit,
+            GraphRenderContext(
+                registered_metrics=registered_metrics,
+                registered_graphs=registered_graphs,
+                user_permissions=user_permissions,
+                consolidation_function=api_request.get("consolidation_function", "max"),
+                temperature_unit=temperature_unit,
+                backend_time_series_fetcher=None,
+                debug=debug,
+            )
         )
 
     except MKGraphNotFound:

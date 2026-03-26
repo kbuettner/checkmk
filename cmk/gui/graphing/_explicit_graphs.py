@@ -3,20 +3,16 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from typing import Literal
 
-from cmk.graphing.v1 import graphs as graphs_api
-from cmk.gui.utils.roles import UserPermissions
-from cmk.gui.utils.temperate_unit import TemperatureUnit
-
-from ._from_api import RegisteredMetric
 from ._graph_metric_expressions import GraphConsolidationFunction
 from ._graph_specification import (
     FixedVerticalRange,
     GraphMetric,
     GraphRecipe,
     GraphRecipeWithOverrides,
+    GraphRenderContext,
     GraphSpecification,
     HorizontalRule,
 )
@@ -37,16 +33,7 @@ class ExplicitGraphSpecification(GraphSpecification, frozen=True):
     def graph_type_name() -> Literal["explicit"]:
         return "explicit"
 
-    def recipes(
-        self,
-        registered_metrics: Mapping[str, RegisteredMetric],
-        registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],
-        user_permissions: UserPermissions,
-        *,
-        consolidation_function: GraphConsolidationFunction,
-        debug: bool,
-        temperature_unit: TemperatureUnit,
-    ) -> Sequence[GraphRecipeWithOverrides]:
+    def recipes(self, context: GraphRenderContext) -> Sequence[GraphRecipeWithOverrides]:
         return [
             GraphRecipeWithOverrides(
                 recipe=GraphRecipe(

@@ -45,6 +45,7 @@ from ._graph_specification import (
     GraphMetric,
     GraphRecipe,
     GraphRecipeWithOverrides,
+    GraphRenderContext,
     GraphSpecification,
     HorizontalRule,
     MinimalVerticalRange,
@@ -387,23 +388,14 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
         )
 
     @tracer.instrument("graphing.TemplateGraphSpecification.recipes")
-    def recipes(
-        self,
-        registered_metrics: Mapping[str, RegisteredMetric],
-        registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],
-        user_permissions: UserPermissions,
-        *,
-        consolidation_function: GraphConsolidationFunction,
-        debug: bool,
-        temperature_unit: TemperatureUnit,
-    ) -> Sequence[GraphRecipeWithOverrides]:
+    def recipes(self, context: GraphRenderContext) -> Sequence[GraphRecipeWithOverrides]:
         row = self._get_graph_data_from_livestatus()
         if not (
             translated_metrics := translated_metrics_from_row(
                 row,
-                registered_metrics,
-                debug=debug,
-                temperature_unit=temperature_unit,
+                context.registered_metrics,
+                debug=context.debug,
+                temperature_unit=context.temperature_unit,
             )
         ):
             return []
@@ -431,10 +423,10 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
                         site_id,
                         host_name,
                         service_name,
-                        consolidation_function,
+                        context.consolidation_function,
                         translated_metrics[self.graph_id[7:]],
                         self,  # does not matter here, it will be overwritten in _post_process_recipe
-                        temperature_unit=temperature_unit,
+                        temperature_unit=context.temperature_unit,
                     ),
                 )
             ]
@@ -443,15 +435,15 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
                 (graph_recipe_index, graph_recipe_id, recipe)
                 for graph_recipe_index, (graph_recipe_id, recipe) in enumerate(
                     _compute_graph_recipes(
-                        registered_metrics,
-                        registered_graphs,
+                        context.registered_metrics,
+                        context.registered_graphs,
                         site_id,
                         host_name,
                         service_name,
                         translated_metrics,
                         self,  # does not matter here, it will be overwritten in _post_process_recipe
-                        consolidation_function=consolidation_function,
-                        temperature_unit=temperature_unit,
+                        consolidation_function=context.consolidation_function,
+                        temperature_unit=context.temperature_unit,
                     )
                 )
                 if (self.graph_index is None or self.graph_index == graph_recipe_index)
@@ -462,7 +454,7 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
             for graph_index, graph_id, recipe in recipes
             if (
                 post_processed_recipe := self._post_process_recipe(
-                    user_permissions,
+                    context.user_permissions,
                     site_id,
                     host_name,
                     service_name,

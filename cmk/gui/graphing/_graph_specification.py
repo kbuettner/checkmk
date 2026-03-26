@@ -142,16 +142,7 @@ class GraphSpecification(BaseModel, ABC, frozen=True):
     def graph_type_name() -> str: ...
 
     @abstractmethod
-    def recipes(
-        self,
-        registered_metrics: Mapping[str, RegisteredMetric],
-        registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional],
-        user_permissions: UserPermissions,
-        *,
-        consolidation_function: GraphConsolidationFunction,
-        debug: bool,
-        temperature_unit: TemperatureUnit,
-    ) -> Sequence[GraphRecipeWithOverrides]: ...
+    def recipes(self, context: GraphRenderContext) -> Sequence[GraphRecipeWithOverrides]: ...
 
     # mypy does not support other decorators on top of @property:
     # https://github.com/python/mypy/issues/14461

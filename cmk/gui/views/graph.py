@@ -21,6 +21,7 @@ from cmk.gui.graphing import (
     get_temperature_unit,
     get_template_graph_specification,
     GraphDisplayConfigHTML,
+    GraphRenderContext,
     GraphRenderOptions,
     graphs_from_api,
     make_graph_time_range,
@@ -275,29 +276,29 @@ def _paint_time_graph_cmk(
         service_name=row.get("service_description", "_HOST_"),
     )
 
+    context = GraphRenderContext(
+        registered_metrics=registered_metrics,
+        registered_graphs=registered_graphs,
+        user_permissions=user_permissions,
+        consolidation_function="max",
+        temperature_unit=temperature_unit,
+        backend_time_series_fetcher=backend_time_series_fetcher,
+        debug=debug,
+    )
     if request.has_var("cmk-token"):
         return "", render_graphs_html(
             spec,
             time_range,
             display_config,
-            registered_metrics,
-            registered_graphs,
-            user_permissions,
-            debug=debug,
+            context,
             graph_timeranges=graph_timeranges,
-            temperature_unit=temperature_unit,
-            backend_time_series_fetcher=backend_time_series_fetcher,
             display_id=display_id,
         )
     return "", render_deferred_graphs_html(
         spec,
         time_range,
         display_config,
-        registered_metrics,
-        registered_graphs,
-        user_permissions,
-        debug=debug,
-        temperature_unit=temperature_unit,
+        context,
         display_id=display_id,
     )
 
