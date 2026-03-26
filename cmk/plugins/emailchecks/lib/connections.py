@@ -25,7 +25,7 @@ from contextlib import suppress
 from dataclasses import dataclass
 from datetime import datetime
 from email.message import Message as POPIMAPMessage
-from typing import assert_never, final, Literal, Self, TypedDict
+from typing import assert_never, final, Literal, Self, TypedDict, TypeGuard
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -774,47 +774,63 @@ def _mutf_7_encode(string: str) -> bytes:
     return b"".join(res)
 
 
+def _is_list_of_str(data: Sequence[object]) -> TypeGuard[list[str]]:
+    return all(isinstance(e, str) for e in data)
+
+
+def _is_list_of_bytes_or_tuples(
+    data: Sequence[object],
+) -> TypeGuard[list[bytes | tuple[bytes, bytes]]]:
+    return all(isinstance(e, bytes | tuple) for e in data)
+
+
 def verified_result(data: object) -> Sequence[bytes | tuple[bytes, bytes]] | Sequence[str]:
     """Return the payload part of the (badly typed) result of IMAP/POP functions or eventually
     raise an exception if the result is not "OK"
     """
-
-    if isinstance(data, tuple):
-        if len(data) == 2:
-            status, result = data
-        elif len(data) == 3:
+    match data:
+        case (status, result):
+            pass
+        case (status, result, _octets):
             # POP3 methods (list, retr, ...) return 3-element tuples:
             # (response, ['line', ...], octets) — the third element is ignored.
-            status, result, _octets = data
-        else:
+            pass
+        case tuple():
             raise AssertionError(f"Expected tuple with two or three elements, got {data!r}")
+        case bytes() if not data.startswith(b"+OK"):
+            raise RuntimeError("Server responded %r" % data)
+        case bytes():
+            return []
+        case _:
+            raise TypeError(f"can not handle {data}")
 
-        if (isinstance(status, str) and status not in {"OK", "BYE"}) or (
-            isinstance(status, bytes) and not status.startswith(b"+OK")
-        ):
+    match status:
+        case str() if status not in {"OK", "BYE"}:
             raise RuntimeError(f"Server responded {data!r}")
-        assert isinstance(result, list)
-        if not result:
-            return result  # empty list
-        if not isinstance(result[0], str | bytes | tuple):
-            raise TypeError(f"Can not handle this datatype {result}")
-        type_first_element: tuple[type, type] | type = type(result[0])
-        if type_first_element in {tuple, bytes}:
+        case bytes() if not status.startswith(b"+OK"):
+            raise RuntimeError(f"Server responded {data!r}")
+        case str() | bytes():
+            pass
+        case _:
+            raise TypeError(f"Unexpected status type: {status!r}")
+
+    match result:
+        case []:
+            return result
+        case [str(), *_]:
+            if not _is_list_of_str(result):
+                raise TypeError(f"Detected mixed types in {result}")
+            return result
+        case [bytes() | tuple(), *_]:
             # > Each [element] is either a bytes, or a tuple. If a tuple,
             # > then the first part is the header of the response, and
             # > the second part contains the data
             # https://docs.python.org/3/library/imaplib.html#imap4-objects
-            type_first_element = (tuple, bytes)
-        if not all(isinstance(e, type_first_element) for e in result):
-            raise TypeError(f"Detected mixed types in {result}")
-        return result
-
-    if isinstance(data, bytes):
-        if not data.startswith(b"+OK"):
-            raise RuntimeError("Server responded %r" % data)
-        return []
-
-    raise TypeError(f"can not handle {data}")
+            if not _is_list_of_bytes_or_tuples(result):
+                raise TypeError(f"Detected mixed types in {result}")
+            return result
+        case _:
+            raise TypeError(f"Can not handle this datatype {result}")
 
 
 def make_send_connection(config: TRXConfig, timeout: int) -> SMTP | EWS | GraphApi:
