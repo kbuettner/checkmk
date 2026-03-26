@@ -14,21 +14,24 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::platform::registry;
+use crate::platform::registry::get_instances;
 use crate::types::Sid;
 use anyhow::Result;
 use regex::Regex;
 use std::collections::HashSet;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use sysinfo::System;
 
-/// Regex pattern to match Oracle SID prefixes for PMON processes.
-const SID_MASK: &str = r"^(asm_pmon_|ora_pmon_|xe_pmon_|db_pmon_)";
+/// Regex pattern to match Oracle PMON processes and capture the SID.
+///
+/// Group 1: the prefix (e.g. `ora_pmon_`)
+/// Group 2: the SID name (e.g. `TEST19`)
+const SID_MASK: &str = r"^(asm_pmon_|ora_pmon_|xe_pmon_|db_pmon_)(.+)";
 
 /// Retrieves local Oracle SIDs from the registry and running processes.
 /// On Windows, it checks the registry for Oracle instances and also looks for PMON processes.
 pub fn get_local_sid_names() -> Vec<String> {
-    let instances = registry::get_instances(None).unwrap_or_default();
+    let instances = get_instances(None).unwrap_or_default();
     let registry_sids = instances
         .into_iter()
         .map(|i| i.name.to_string())
@@ -68,46 +71,22 @@ pub fn find_sids_by_processes(match_string: Option<&str>) -> Result<HashSet<Stri
     Ok(result)
 }
 
-/// Finds the oratab file in standard locations.
-/// Linux only
-/// Returns the Result with path to oratab file or error if not found.
-pub fn find_oratab_file(oratab_paths: Option<&[&str]>) -> Result<PathBuf> {
-    if cfg!(windows) {
-        anyhow::bail!("ORA-99999 oratab is not supported on Windows") // ORA-99999 is a code from legacy plugin, we keep it for backward compatibility of error handling
-    } else {
-        oratab_paths
-            .unwrap_or(&["/etc/oratab", "/var/opt/oracle/oratab"])
-            .iter()
-            .find(|p| Path::new(p).is_file())
-            .map(PathBuf::from)
-            .ok_or(anyhow::anyhow!("ORA-99999 oratab not found in local mode")) // ORA-99999 is a code from legacy plugin, we keep it for backward compatibility of error handling
-    }
-}
-
-/// Finds ORACLE_HOME for a given SID by parsing oratab file.
-/// Searches for oratab in standard locations (/etc/oratab, /var/opt/oracle/oratab).
+/// Finds ORACLE_HOME for a given SID using the platform's instance registry.
+/// On Unix: parses oratab (standard locations: /etc/oratab, /var/opt/oracle/oratab).
+/// On Windows: queries the Windows registry under SOFTWARE\Oracle.
 /// Comparison of SID is case-insensitive.
 /// Returns the Result with optional ORACLE_HOME.
-/// None means "SID is not found in oratab", it's not an error, rather misconfiguration.
-/// Error means a problem with reading oratab file: lack of Oracle, permissions problem, etc.
-pub fn find_oracle_home_from_oratab(
+/// None means "SID is not found in registry | oratab". It's not an error, rather misconfiguration.
+/// Error means a problem with reading registry | oratab file: lack of Oracle, bad permissions, etc.
+pub fn find_oracle_home(
     sid: &Sid,
-    oratab_paths: Option<&[&str]>,
+    custom_path: Option<String>, // can be a registry branch for Windows or a path for Linux
 ) -> Result<Option<PathBuf>> {
-    let oratab_path = find_oratab_file(oratab_paths)?;
+    let locals = get_instances(custom_path)?;
 
-    let content = std::fs::read_to_string(oratab_path)
-        .map_err(|e| anyhow::anyhow!("Failed to read oratab: {}", e))?;
-
-    for l in content.lines() {
-        let line = l.split('#').next().unwrap_or("").trim();
-        if line.is_empty() {
-            continue;
-        }
-
-        let parts: Vec<&str> = line.split(':').collect();
-        if parts.len() >= 2 && parts[0].eq_ignore_ascii_case(sid.as_ref()) {
-            return Ok(Some(PathBuf::from(parts[1])));
+    for local in locals {
+        if local.name.to_string().eq_ignore_ascii_case(sid.as_ref()) {
+            return Ok(Some(local.home));
         }
     }
 
@@ -129,7 +108,10 @@ fn dump_local_instances() -> String {
                 "{:16} {:60} {:60}",
                 i.name,
                 i.home.display().to_string(),
-                i.base.display().to_string()
+                i.base
+                    .as_deref()
+                    .map(|p| p.display().to_string())
+                    .unwrap_or_else(|| "N/A".to_string())
             )
         })
         .collect::<Vec<String>>()
@@ -151,10 +133,26 @@ pub fn dump_detected_sids() -> Result<String> {
     return find_sids_by_processes(None)
         .map(|list| {
             log::info!("Found SIDs: {:?}", list);
-            list.iter().cloned().collect::<Vec<_>>().join("\n")
+            list.iter().cloned().collect::<Vec<_>>().join("\n") + "\n"
         })
         .or_else(|e| {
             log::info!("Error while detecting SIDs: {:?}", e);
             anyhow::bail!(e)
         });
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::ora_sql::detect::SID_MASK;
+    use regex::Regex;
+
+    #[test]
+    fn test_find_sids_by_processes() {
+        let re = Regex::new(SID_MASK).expect("Failed to compile regex");
+        let x = re
+            .captures("ora_pmon_TEST19")
+            .and_then(|c| c.get(2))
+            .map(|m| m.as_str().to_string());
+        assert_eq!(x, Some("TEST19".to_string()));
+    }
 }
