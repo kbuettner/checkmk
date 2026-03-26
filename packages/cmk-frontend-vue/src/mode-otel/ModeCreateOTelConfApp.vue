@@ -18,7 +18,11 @@ import CmkHeading from '@/components/typography/CmkHeading.vue'
 import CmkParagraph from '@/components/typography/CmkParagraph.vue'
 
 import ConfigureCollector from './otel-configuration-steps/ConfigureCollector.vue'
-import type { AuthConfig, EndpointConfig } from './otel-configuration-steps/ConfigureCollector.vue'
+import type {
+  AuthConfig,
+  EndpointConfig,
+  EventConsoleConfig
+} from './otel-configuration-steps/ConfigureCollector.vue'
 import ConfigureGeneralProperties from './otel-configuration-steps/ConfigureGeneralProperties.vue'
 import ConfigureHosts from './otel-configuration-steps/ConfigureHosts.vue'
 
@@ -26,6 +30,7 @@ const props = defineProps<{
   no_auth_allowed: boolean
   endpoint_config_allowed: boolean
   encryption_allowed: boolean
+  event_console_allowed: boolean
 }>()
 
 const { _t } = usei18n()
@@ -60,6 +65,8 @@ const grpcEndpoint = ref<EndpointConfig>({ address: '', port: undefined })
 const httpEndpoint = ref<EndpointConfig>({ address: '', port: undefined })
 const grpcEncryption = ref<boolean>(false)
 const httpEncryption = ref<boolean>(false)
+const grpcEventConsole = ref<EventConsoleConfig | null>(null)
+const httpEventConsole = ref<EventConsoleConfig | null>(null)
 
 const close = () => {
   // TODO: trigger activate changes
@@ -116,9 +123,12 @@ const close = () => {
           v-model:http-endpoint="httpEndpoint"
           v-model:grpc-encryption="grpcEncryption"
           v-model:http-encryption="httpEncryption"
+          v-model:grpc-event-console="grpcEventConsole"
+          v-model:http-event-console="httpEventConsole"
           :no-auth-allowed="no_auth_allowed"
           :endpoint-config-allowed="endpoint_config_allowed"
           :encryption-allowed="encryption_allowed"
+          :event-console-allowed="event_console_allowed"
         />
       </template>
       <template #actions>

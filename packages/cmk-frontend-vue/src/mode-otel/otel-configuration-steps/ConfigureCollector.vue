@@ -20,6 +20,10 @@ export interface EndpointConfig {
   address: string
   port: number | undefined
 }
+
+export interface EventConsoleConfig {
+  resourceAttribute: string
+}
 </script>
 
 <script setup lang="ts">
@@ -44,6 +48,7 @@ const props = defineProps<{
   noAuthAllowed: boolean
   endpointConfigAllowed: boolean
   encryptionAllowed: boolean
+  eventConsoleAllowed: boolean
 }>()
 
 const grpcAuth = defineModel<AuthConfig>('grpcAuth', { required: true })
@@ -52,6 +57,12 @@ const grpcEndpoint = defineModel<EndpointConfig>('grpcEndpoint', { required: tru
 const httpEndpoint = defineModel<EndpointConfig>('httpEndpoint', { required: true })
 const grpcEncryption = defineModel<boolean>('grpcEncryption', { required: true })
 const httpEncryption = defineModel<boolean>('httpEncryption', { required: true })
+const grpcEventConsole = defineModel<EventConsoleConfig | null>('grpcEventConsole', {
+  required: true
+})
+const httpEventConsole = defineModel<EventConsoleConfig | null>('httpEventConsole', {
+  required: true
+})
 
 const activeTab = ref('grpc')
 const availablePasswords = ref<Suggestion[]>([])
@@ -135,6 +146,33 @@ const httpUsernameErrors = computed(() =>
 const httpPasswordErrors = computed(() =>
   httpAuth.value.credential ? credentialPasswordErrors(httpAuth.value.credential) : []
 )
+
+const grpcEventConsoleErrors = computed((): string[] => {
+  if (!displayErrors.value) {
+    return []
+  }
+  if (grpcEventConsole.value !== null && !grpcEventConsole.value.resourceAttribute.trim()) {
+    return [
+      _t(
+        'You must set a resource attribute (e.g., service.name) so the system can determine the host name.'
+      )
+    ]
+  }
+  return []
+})
+const httpEventConsoleErrors = computed((): string[] => {
+  if (!displayErrors.value) {
+    return []
+  }
+  if (httpEventConsole.value !== null && !httpEventConsole.value.resourceAttribute.trim()) {
+    return [
+      _t(
+        'You must set a resource attribute (e.g., service.name) so the system can determine the host name.'
+      )
+    ]
+  }
+  return []
+})
 
 const bothEndpointsEmpty = computed(
   () => !grpcEndpoint.value.address.trim() && !httpEndpoint.value.address.trim()
@@ -224,19 +262,64 @@ function configuredEndpointHasErrors(endpoint: EndpointConfig): boolean {
   return !isValidIpOrHostname(endpoint.address) || validatePort(endpoint.port).length > 0
 }
 
+function tabHasValidationErrors(tab: 'grpc' | 'http'): boolean {
+  const authErrors = tab === 'grpc' ? tabHasErrors(grpcAuth.value) : tabHasErrors(httpAuth.value)
+  const ecErrors =
+    tab === 'grpc'
+      ? grpcEventConsoleErrors.value.length > 0
+      : httpEventConsoleErrors.value.length > 0
+  if (!props.endpointConfigAllowed) {
+    return authErrors || ecErrors
+  }
+  const addrErrors =
+    tab === 'grpc' ? grpcAddressErrors.value.length > 0 : httpAddressErrors.value.length > 0
+  const portErrors =
+    tab === 'grpc' ? grpcPortErrors.value.length > 0 : httpPortErrors.value.length > 0
+  return authErrors || ecErrors || addrErrors || portErrors
+}
+
 function validate(): boolean {
   displayErrors.value = true
+  const eventConsoleValid =
+    grpcEventConsoleErrors.value.length === 0 && httpEventConsoleErrors.value.length === 0
+
+  let isValid: boolean
   if (!props.endpointConfigAllowed) {
-    return !tabHasErrors(grpcAuth.value) && !tabHasErrors(httpAuth.value)
+    isValid = !tabHasErrors(grpcAuth.value) && !tabHasErrors(httpAuth.value) && eventConsoleValid
+  } else {
+    const grpcConfigured = endpointIsConfigured(grpcEndpoint.value)
+    const httpConfigured = endpointIsConfigured(httpEndpoint.value)
+    if (!grpcConfigured && !httpConfigured) {
+      isValid = false
+    } else {
+      const grpcValid = !grpcConfigured || !configuredEndpointHasErrors(grpcEndpoint.value)
+      const httpValid = !httpConfigured || !configuredEndpointHasErrors(httpEndpoint.value)
+      isValid =
+        !tabHasErrors(grpcAuth.value) &&
+        !tabHasErrors(httpAuth.value) &&
+        grpcValid &&
+        httpValid &&
+        eventConsoleValid
+    }
   }
-  const grpcConfigured = endpointIsConfigured(grpcEndpoint.value)
-  const httpConfigured = endpointIsConfigured(httpEndpoint.value)
-  if (!grpcConfigured && !httpConfigured) {
-    return false
+
+  if (!isValid) {
+    if (
+      activeTab.value === 'grpc' &&
+      !tabHasValidationErrors('grpc') &&
+      tabHasValidationErrors('http')
+    ) {
+      activeTab.value = 'http'
+    } else if (
+      activeTab.value === 'http' &&
+      !tabHasValidationErrors('http') &&
+      tabHasValidationErrors('grpc')
+    ) {
+      activeTab.value = 'grpc'
+    }
   }
-  const grpcValid = !grpcConfigured || !configuredEndpointHasErrors(grpcEndpoint.value)
-  const httpValid = !httpConfigured || !configuredEndpointHasErrors(httpEndpoint.value)
-  return !tabHasErrors(grpcAuth.value) && !tabHasErrors(httpAuth.value) && grpcValid && httpValid
+
+  return isValid
 }
 
 defineExpose({ validate })
@@ -319,6 +402,30 @@ defineExpose({ validate })
             <CmkLabel>{{ _t('Encryption') }}</CmkLabel>
             <CmkCheckbox v-model="grpcEncryption" :label="_t('Encrypt communication with TLS')" />
           </template>
+
+          <template v-if="eventConsoleAllowed">
+            <CmkLabel>{{ _t('Event Console') }}</CmkLabel>
+            <CmkCheckbox
+              :model-value="grpcEventConsole !== null"
+              :label="_t('Send log messages to event console')"
+              @update:model-value="grpcEventConsole = $event ? { resourceAttribute: '' } : null"
+            />
+            <template v-if="grpcEventConsole !== null">
+              <span />
+              <div class="mode-otel-configure-collector__sub-field">
+                <CmkLabel
+                  >{{ _t('Resource attribute for host name lookup') }} <CmkLabelRequired
+                /></CmkLabel>
+                <CmkInput
+                  v-model="grpcEventConsole.resourceAttribute"
+                  type="text"
+                  field-size="MEDIUM"
+                  :placeholder="_t('service.name')"
+                  :external-errors="grpcEventConsoleErrors"
+                />
+              </div>
+            </template>
+          </template>
         </div>
       </CmkTabContent>
 
@@ -392,6 +499,30 @@ defineExpose({ validate })
             <CmkLabel>{{ _t('Encryption') }}</CmkLabel>
             <CmkCheckbox v-model="httpEncryption" :label="_t('Encrypt communication with TLS')" />
           </template>
+
+          <template v-if="eventConsoleAllowed">
+            <CmkLabel>{{ _t('Event Console') }}</CmkLabel>
+            <CmkCheckbox
+              :model-value="httpEventConsole !== null"
+              :label="_t('Send log messages to event console')"
+              @update:model-value="httpEventConsole = $event ? { resourceAttribute: '' } : null"
+            />
+            <template v-if="httpEventConsole !== null">
+              <span />
+              <div class="mode-otel-configure-collector__sub-field">
+                <CmkLabel
+                  >{{ _t('Resource attribute for host name lookup') }} <CmkLabelRequired
+                /></CmkLabel>
+                <CmkInput
+                  v-model="httpEventConsole.resourceAttribute"
+                  type="text"
+                  field-size="MEDIUM"
+                  :placeholder="_t('service.name')"
+                  :external-errors="httpEventConsoleErrors"
+                />
+              </div>
+            </template>
+          </template>
         </div>
       </CmkTabContent>
     </template>
@@ -424,5 +555,14 @@ defineExpose({ validate })
 .mode-otel-configure-collector__btn-create:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.mode-otel-configure-collector__sub-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing) var(--dimension-6);
+  margin-left: var(--spacing);
+  border-left: var(--button-form-border-color) 1px solid;
+  padding-left: var(--spacing);
 }
 </style>

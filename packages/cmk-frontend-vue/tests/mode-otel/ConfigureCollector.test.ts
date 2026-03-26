@@ -11,7 +11,8 @@ import * as cmkFetch from '@/lib/cmkFetch'
 import ConfigureCollector from '@/mode-otel/otel-configuration-steps/ConfigureCollector.vue'
 import type {
   AuthConfig,
-  EndpointConfig
+  EndpointConfig,
+  EventConsoleConfig
 } from '@/mode-otel/otel-configuration-steps/ConfigureCollector.vue'
 
 function mockPasswordsResponse(passwords: { id: string; title: string }[] = []) {
@@ -28,7 +29,8 @@ function mockPasswordsError() {
 function renderComponent(
   noAuthAllowed = true,
   endpointConfigAllowed = true,
-  encryptionAllowed = true
+  encryptionAllowed = true,
+  eventConsoleAllowed = true
 ) {
   const grpcAuth = ref<AuthConfig>({
     method: noAuthAllowed ? 'none' : 'basicauth',
@@ -42,6 +44,8 @@ function renderComponent(
   const httpEndpoint = ref<EndpointConfig>({ address: '0.0.0.0', port: 4318 })
   const grpcEncryption = ref<boolean>(false)
   const httpEncryption = ref<boolean>(false)
+  const grpcEventConsole = ref<EventConsoleConfig | null>(null)
+  const httpEventConsole = ref<EventConsoleConfig | null>(null)
   const compRef = ref<InstanceType<typeof ConfigureCollector>>()
 
   render(
@@ -54,16 +58,29 @@ function renderComponent(
         httpEndpoint,
         grpcEncryption,
         httpEncryption,
+        grpcEventConsole,
+        httpEventConsole,
         compRef,
         noAuthAllowed,
         endpointConfigAllowed,
-        encryptionAllowed
+        encryptionAllowed,
+        eventConsoleAllowed
       }),
-      template: `<ConfigureCollector ref="compRef" :no-auth-allowed="noAuthAllowed" :endpoint-config-allowed="endpointConfigAllowed" :encryption-allowed="encryptionAllowed" v-model:grpc-auth="grpcAuth" v-model:http-auth="httpAuth" v-model:grpc-endpoint="grpcEndpoint" v-model:http-endpoint="httpEndpoint" v-model:grpc-encryption="grpcEncryption" v-model:http-encryption="httpEncryption" />`
+      template: `<ConfigureCollector ref="compRef" :no-auth-allowed="noAuthAllowed" :endpoint-config-allowed="endpointConfigAllowed" :encryption-allowed="encryptionAllowed" :event-console-allowed="eventConsoleAllowed" v-model:grpc-auth="grpcAuth" v-model:http-auth="httpAuth" v-model:grpc-endpoint="grpcEndpoint" v-model:http-endpoint="httpEndpoint" v-model:grpc-encryption="grpcEncryption" v-model:http-encryption="httpEncryption" v-model:grpc-event-console="grpcEventConsole" v-model:http-event-console="httpEventConsole" />`
     })
   )
 
-  return { grpcAuth, httpAuth, grpcEndpoint, httpEndpoint, grpcEncryption, httpEncryption, compRef }
+  return {
+    grpcAuth,
+    httpAuth,
+    grpcEndpoint,
+    httpEndpoint,
+    grpcEncryption,
+    httpEncryption,
+    grpcEventConsole,
+    httpEventConsole,
+    compRef
+  }
 }
 
 describe('ConfigureCollector', () => {
@@ -221,6 +238,93 @@ describe('ConfigureCollector', () => {
       await waitFor(() => {
         expect(screen.queryByText('Encrypt communication with TLS')).not.toBeInTheDocument()
       })
+    })
+  })
+
+  describe('event console field visibility', () => {
+    test('event console checkbox is shown when eventConsoleAllowed=true', async () => {
+      mockPasswordsResponse()
+      renderComponent(true, true, true, true)
+
+      await waitFor(() => {
+        expect(screen.getByText('Send log messages to event console')).toBeInTheDocument()
+      })
+    })
+
+    test('event console checkbox is absent when eventConsoleAllowed=false', async () => {
+      mockPasswordsResponse()
+      renderComponent(true, true, true, false)
+
+      await waitFor(() => {
+        expect(screen.queryByText('Send log messages to event console')).not.toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('event console sub-field', () => {
+    test('resource attribute field is hidden when event console is disabled', async () => {
+      mockPasswordsResponse()
+      renderComponent(true, true, true, true)
+
+      await waitFor(() => {
+        expect(
+          screen.queryByText('Resource attribute for host name lookup')
+        ).not.toBeInTheDocument()
+      })
+    })
+
+    test('resource attribute field appears when event console is enabled', async () => {
+      mockPasswordsResponse()
+      const { grpcEventConsole } = renderComponent(true, true, true, true)
+
+      grpcEventConsole.value = { resourceAttribute: '' }
+
+      await waitFor(() => {
+        expect(screen.getByText('Resource attribute for host name lookup')).toBeInTheDocument()
+        expect(screen.getByPlaceholderText('service.name')).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('event console validation', () => {
+    test('validate() returns false when event console enabled with empty resource attribute', async () => {
+      mockPasswordsResponse()
+      const { compRef, grpcEventConsole } = renderComponent(true, true, true, true)
+
+      grpcEventConsole.value = { resourceAttribute: '' }
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(false)
+      await screen.findByText(
+        'You must set a resource attribute (e.g., service.name) so the system can determine the host name.'
+      )
+    })
+
+    test('validate() returns true when event console enabled with non-empty resource attribute', async () => {
+      mockPasswordsResponse()
+      const { compRef, grpcEventConsole } = renderComponent(true, true, true, true)
+
+      grpcEventConsole.value = { resourceAttribute: 'service.name' }
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(true)
+    })
+
+    test('validate() returns true when event console is disabled (null)', async () => {
+      mockPasswordsResponse()
+      const { compRef } = renderComponent(true, true, true, true)
+
+      await waitFor(() => expect(compRef.value).toBeDefined())
+      await new Promise((r) => setTimeout(r, 0))
+
+      const result = compRef.value!.validate()
+      expect(result).toBe(true)
     })
   })
 
