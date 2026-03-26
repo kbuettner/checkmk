@@ -161,8 +161,18 @@ function navigateUrl(url: string) {
     min-width: 250px;
 
     .mm-default-popup__header {
-      height: 36px;
+      height: auto;
       justify-content: flex-end;
+      padding: 0 var(--dimension-5);
+
+      .mm-default-popup__header-left {
+        flex: 1;
+      }
+
+      .mm-default-popup__header-left-info {
+        width: 100%;
+        padding: var(--dimension-5) 0;
+      }
     }
   }
 }
