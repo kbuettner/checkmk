@@ -22,7 +22,11 @@ import type { AuthConfig, EndpointConfig } from './otel-configuration-steps/Conf
 import ConfigureGeneralProperties from './otel-configuration-steps/ConfigureGeneralProperties.vue'
 import ConfigureHosts from './otel-configuration-steps/ConfigureHosts.vue'
 
-const props = defineProps<{ no_auth_allowed: boolean; endpoint_config_allowed: boolean }>()
+const props = defineProps<{
+  no_auth_allowed: boolean
+  endpoint_config_allowed: boolean
+  encryption_allowed: boolean
+}>()
 
 const { _t } = usei18n()
 const currentMode = ref<'guided' | 'overview'>('guided')
@@ -54,6 +58,8 @@ const httpAuth = ref<AuthConfig>({
 })
 const grpcEndpoint = ref<EndpointConfig>({ address: '', port: undefined })
 const httpEndpoint = ref<EndpointConfig>({ address: '', port: undefined })
+const grpcEncryption = ref<boolean>(false)
+const httpEncryption = ref<boolean>(false)
 
 const close = () => {
   // TODO: trigger activate changes
@@ -108,8 +114,11 @@ const close = () => {
           v-model:http-auth="httpAuth"
           v-model:grpc-endpoint="grpcEndpoint"
           v-model:http-endpoint="httpEndpoint"
+          v-model:grpc-encryption="grpcEncryption"
+          v-model:http-encryption="httpEncryption"
           :no-auth-allowed="no_auth_allowed"
           :endpoint-config-allowed="endpoint_config_allowed"
+          :encryption-allowed="encryption_allowed"
         />
       </template>
       <template #actions>

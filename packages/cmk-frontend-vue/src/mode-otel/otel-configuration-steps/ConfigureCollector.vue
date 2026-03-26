@@ -33,6 +33,7 @@ import CmkLabel from '@/components/CmkLabel.vue'
 import type { Suggestion } from '@/components/CmkSuggestions'
 import CmkTabs, { CmkTab, CmkTabContent } from '@/components/CmkTabs'
 import CmkParagraph from '@/components/typography/CmkParagraph.vue'
+import CmkCheckbox from '@/components/user-input/CmkCheckbox.vue'
 import CmkInlineValidation from '@/components/user-input/CmkInlineValidation.vue'
 import CmkInput from '@/components/user-input/CmkInput.vue'
 import CmkLabelRequired from '@/components/user-input/CmkLabelRequired.vue'
@@ -42,12 +43,15 @@ const { _t } = usei18n()
 const props = defineProps<{
   noAuthAllowed: boolean
   endpointConfigAllowed: boolean
+  encryptionAllowed: boolean
 }>()
 
 const grpcAuth = defineModel<AuthConfig>('grpcAuth', { required: true })
 const httpAuth = defineModel<AuthConfig>('httpAuth', { required: true })
 const grpcEndpoint = defineModel<EndpointConfig>('grpcEndpoint', { required: true })
 const httpEndpoint = defineModel<EndpointConfig>('httpEndpoint', { required: true })
+const grpcEncryption = defineModel<boolean>('grpcEncryption', { required: true })
+const httpEncryption = defineModel<boolean>('httpEncryption', { required: true })
 
 const activeTab = ref('grpc')
 const availablePasswords = ref<Suggestion[]>([])
@@ -310,6 +314,11 @@ defineExpose({ validate })
               />
             </div>
           </template>
+
+          <template v-if="encryptionAllowed">
+            <CmkLabel>{{ _t('Encryption') }}</CmkLabel>
+            <CmkCheckbox v-model="grpcEncryption" :label="_t('Encrypt communication with TLS')" />
+          </template>
         </div>
       </CmkTabContent>
 
@@ -377,6 +386,11 @@ defineExpose({ validate })
                 :validation="httpPasswordErrors"
               />
             </div>
+          </template>
+
+          <template v-if="encryptionAllowed">
+            <CmkLabel>{{ _t('Encryption') }}</CmkLabel>
+            <CmkCheckbox v-model="httpEncryption" :label="_t('Encrypt communication with TLS')" />
           </template>
         </div>
       </CmkTabContent>

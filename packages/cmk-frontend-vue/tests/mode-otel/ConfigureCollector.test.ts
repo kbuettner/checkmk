@@ -25,7 +25,11 @@ function mockPasswordsError() {
   vi.spyOn(cmkFetch, 'fetchRestAPI').mockRejectedValue(new Error('Network error'))
 }
 
-function renderComponent(noAuthAllowed = true, endpointConfigAllowed = true) {
+function renderComponent(
+  noAuthAllowed = true,
+  endpointConfigAllowed = true,
+  encryptionAllowed = true
+) {
   const grpcAuth = ref<AuthConfig>({
     method: noAuthAllowed ? 'none' : 'basicauth',
     credential: null
@@ -36,6 +40,8 @@ function renderComponent(noAuthAllowed = true, endpointConfigAllowed = true) {
   })
   const grpcEndpoint = ref<EndpointConfig>({ address: '0.0.0.0', port: 4317 })
   const httpEndpoint = ref<EndpointConfig>({ address: '0.0.0.0', port: 4318 })
+  const grpcEncryption = ref<boolean>(false)
+  const httpEncryption = ref<boolean>(false)
   const compRef = ref<InstanceType<typeof ConfigureCollector>>()
 
   render(
@@ -46,15 +52,18 @@ function renderComponent(noAuthAllowed = true, endpointConfigAllowed = true) {
         httpAuth,
         grpcEndpoint,
         httpEndpoint,
+        grpcEncryption,
+        httpEncryption,
         compRef,
         noAuthAllowed,
-        endpointConfigAllowed
+        endpointConfigAllowed,
+        encryptionAllowed
       }),
-      template: `<ConfigureCollector ref="compRef" :no-auth-allowed="noAuthAllowed" :endpoint-config-allowed="endpointConfigAllowed" v-model:grpc-auth="grpcAuth" v-model:http-auth="httpAuth" v-model:grpc-endpoint="grpcEndpoint" v-model:http-endpoint="httpEndpoint" />`
+      template: `<ConfigureCollector ref="compRef" :no-auth-allowed="noAuthAllowed" :endpoint-config-allowed="endpointConfigAllowed" :encryption-allowed="encryptionAllowed" v-model:grpc-auth="grpcAuth" v-model:http-auth="httpAuth" v-model:grpc-endpoint="grpcEndpoint" v-model:http-endpoint="httpEndpoint" v-model:grpc-encryption="grpcEncryption" v-model:http-encryption="httpEncryption" />`
     })
   )
 
-  return { grpcAuth, httpAuth, grpcEndpoint, httpEndpoint, compRef }
+  return { grpcAuth, httpAuth, grpcEndpoint, httpEndpoint, grpcEncryption, httpEncryption, compRef }
 }
 
 describe('ConfigureCollector', () => {
@@ -192,6 +201,26 @@ describe('ConfigureCollector', () => {
 
       const result = compRef.value!.validate()
       expect(result).toBe(false)
+    })
+  })
+
+  describe('encryption field visibility', () => {
+    test('encryption checkbox is shown when encryptionAllowed=true', async () => {
+      mockPasswordsResponse()
+      renderComponent(true, true, true)
+
+      await waitFor(() => {
+        expect(screen.getByText('Encrypt communication with TLS')).toBeInTheDocument()
+      })
+    })
+
+    test('encryption checkbox is absent when encryptionAllowed=false', async () => {
+      mockPasswordsResponse()
+      renderComponent(true, true, false)
+
+      await waitFor(() => {
+        expect(screen.queryByText('Encrypt communication with TLS')).not.toBeInTheDocument()
+      })
     })
   })
 
