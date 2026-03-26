@@ -175,7 +175,7 @@ Create a minimal `xfail` unit test that reproduces the crashing call from the tr
 
 1. **Test only the crashing call.** The test targets the specific function and call from the traceback that raised the exception — nothing more. Do not test the full workflow or surrounding logic.
 
-2. **Mark as `@pytest.mark.xfail`.** The test documents the known bug. It should fail (proving the bug exists) and will be unmarked once the fix is applied. Use `reason="Crash report <crash_id>: <ExcType>"` in the xfail marker.
+2. **Mark as `@pytest.mark.xfail(strict=True)`.** The test documents the known bug. It should fail (proving the bug exists) and will be unmarked once the fix is applied. `strict=True` ensures CI fails if the test unexpectedly passes without a fix. Use `reason="Crash report <crash_id>: <ExcType>"` in the xfail marker.
 
 3. **Reconstruct minimal inputs.** Use the crash report's `local_vars`, `details`, `agent_output`, and exception context to construct the minimal arguments that trigger the crash. Use anonymized/synthetic values — never embed real customer data.
 
@@ -190,10 +190,12 @@ Create a minimal `xfail` unit test that reproduces the crashing call from the tr
 
 6. **Run the test** using the `/bazel` skill to verify it fails as expected (xfail).
 
+7. **Commit the test immediately** as the first commit. This commit contains **only** the xfail test file — no fix, no werk. Commit message: `Add xfail test for crash group <group_id>`
+
 **Example test structure:**
 
 ```python
-@pytest.mark.xfail(reason="Crash report <id>: ValueError in parse_output")
+@pytest.mark.xfail(strict=True, reason="Crash report <id>: ValueError in parse_output")
 def test_parse_output_crashes_on_empty_input() -> None:
     # Minimal reproduction from crash report local_vars/details
     result = parse_output("")  # triggers ValueError from traceback
@@ -203,17 +205,17 @@ def test_parse_output_crashes_on_empty_input() -> None:
 
 ### Step 7: Fix the Issue
 
-After the explain step (and optionally the unit test), implement a fix:
+After the explain step and the unit test commit, implement the fix:
 
 1. **Minimal change only.** Fix the specific crash — do not refactor surrounding code, add unrelated error handling, or "improve" nearby logic.
 
-2. **If an xfail test exists from Step 6:** Remove the `@pytest.mark.xfail` marker so the test now asserts the correct behavior. Update the test assertion if the fix changes the expected output.
+2. **Remove the `@pytest.mark.xfail(strict=True, ...)` marker** from the test created in Step 6 so the test now asserts the correct behavior. Update the test assertion if the fix changes the expected output.
 
 3. **Run tests and lint** using the `/bazel` skill to verify the fix passes.
 
-4. **Offer to finalize:**
-   - Create a werk (changelog entry) via `/werk`
-   - Commit the changes
+4. **Create a werk** (changelog entry) via `/werk`.
+
+5. **Create the second commit** containing the fix, the unmarked test, and the werk. This is the only content in this commit — the xfail test was already committed in Step 6.
 
 ---
 
@@ -254,24 +256,30 @@ The arguments after `auto-fix` are passed directly to the `popular` or `search` 
 
    d. **Analyze.** Execute Step 5 (Explain the Issue) silently — do not prompt the user for next steps.
 
-   e. **Unit test.** Execute Step 6 (Create Unit Test) — create an `xfail` test reproducing the crash.
+   e. **Unit test.** Execute Step 6 (Create Unit Test) — create an `xfail(strict=True)` test reproducing the crash.
 
-   f. **Fix.** Execute Step 7 (Fix the Issue) — implement the fix, remove `xfail`, run tests and lint via `/bazel`.
+   f. **Commit 1 (test only).** Stage and commit only the xfail test file:
 
-   g. **Werk.** Create a werk via `/werk` with class `fix`, level `1`, and the appropriate component inferred from the crash type and file path.
+   ```
+   Add xfail test for crash group <group_id>
+   ```
 
-   h. **Confidence check.** Before committing, self-assess the fix confidence as **high**, **medium**, or **low**:
+   g. **Fix.** Execute Step 7 (Fix the Issue) — implement the fix, remove `xfail(strict=True)`, run tests and lint via `/bazel`.
+
+   h. **Werk.** Create a werk via `/werk` with class `fix`, level `1`, and the appropriate component inferred from the crash type and file path.
+
+   i. **Confidence check.** Before committing, self-assess the fix confidence as **high**, **medium**, or **low**:
    - **High:** The crash has a clear root cause, the fix is a small localized change, and all tests pass.
    - **Medium:** The fix is reasonable but touches non-trivial logic, or the crash context is ambiguous.
    - **Low:** The fix is speculative, involves multiple files, or the agent is unsure about side effects.
 
-   i. **Commit.** Stage all changes and commit:
+   j. **Commit 2 (fix + unmarked test + werk).** Stage the fix, the unmarked test, and the werk, then commit:
 
    ```
    <werk_id>: Fix crash in <component> (<crash_type>)
    ```
 
-   j. **Push (high confidence only).** If confidence is **high**, push to Gerrit:
+   k. **Push (high confidence only).** If confidence is **high**, push to Gerrit:
 
    ```bash
    git push -u origin <branch>
@@ -279,7 +287,7 @@ The arguments after `auto-fix` are passed directly to the `popular` or `search` 
 
    If confidence is **medium** or **low**, do NOT push. The branch is committed locally. The summary table reports these as "Local only (medium confidence)" or "Local only (low confidence)" so the user can review before pushing.
 
-   k. **Return.** Switch back to master for the next group:
+   l. **Return.** Switch back to master for the next group:
 
    ```bash
    git checkout master
