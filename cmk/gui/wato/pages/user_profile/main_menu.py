@@ -26,6 +26,7 @@ from cmk.shared_typing.main_menu import (
     ChipModeEnum,
     ColorEnum,
     DefaultIcon,
+    NavItemHeader,
     NavItemIdEnum,
     NavItemShortcut,
     NavItemTopic,
@@ -57,6 +58,7 @@ def register(
             shortcut=NavItemShortcut(key="u", alt=True),
             info_line=lambda: f"{user.id} ({'+'.join(user.role_ids)})",
             popup_small=True,
+            header=NavItemHeader(),
             hint=_l("Manage personal settings"),
         )
     )
