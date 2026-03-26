@@ -109,8 +109,8 @@ const navigationPages = [new Page('CmkLinkCard', UclCmkLinkCard)]
 
 const systemFeedbackPages = [
   new Page('CmkAlertBox', UclCmkAlertBox),
-  new Page('CmkCopyButton', UclCmkCopyButton),
-  new Page('CmkCopyIcon', UclCmkCopyIcon),
+  new Page('CmkCopy (Button)', UclCmkCopyButton),
+  new Page('CmkCopy (Icon)', UclCmkCopyIcon),
   new Page('CmkDialog', UclCmkDialog),
   new Page('CmkErrorBoundary', UclErrorBoundary),
   new Page('CmkHelpText', UclHelp),
