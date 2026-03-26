@@ -9,7 +9,7 @@ py_library(
     deps = [
         "//cmk/gui",
         "//cmk/utils",
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
         requirement("flask"),
         requirement("pytest"),
         requirement("pytest-mock"),
@@ -73,6 +73,6 @@ py_test(
         "//omd/packages/omd:omdlib",
         "//tests/testlib/common:empty_config",
         "//tests/testlib/common:utils",
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
     ],
 )

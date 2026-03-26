@@ -7,7 +7,7 @@ py_library(
     srcs = ["conftest.py"],
     visibility = [":__subpackages__"],
     deps = [
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
         requirement("flask"),
         requirement("pytest"),
         requirement("pytest-mock"),
@@ -44,7 +44,7 @@ py_test(
         ":__test__",
         ":conftest",
         "//cmk/update_config",
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
         "//tests/unit:conftest",
         requirement("flask"),
         requirement("pytest"),

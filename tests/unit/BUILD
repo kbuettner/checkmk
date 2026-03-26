@@ -145,6 +145,6 @@ py_test(
         requirement("time-machine"),
         requirement("vcrpy"),
         requirement("werkzeug"),
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
     ],
 )

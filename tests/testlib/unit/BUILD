@@ -2,22 +2,14 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 
 py_library(
-    name = "unit_free",
+    name = "unit",
     testonly = True,
-    srcs = glob(
-        include = ["**/*.py"],
-    ),
-    data = glob(
-        include = ["**"],
-        allow_empty = True,
-        exclude = [
-            "**/*.py",
-        ],
-    ),
+    srcs = glob(["**/*.py"]),
     imports = ["../../.."],
     visibility = [
         "//non-free/packages/cmk-robotmk:__pkg__",
-        "//tests:__subpackages__",
+        "//tests:__pkg__",
+        "//tests/unit:__subpackages__",
     ],
     deps = [
         "//cmk/base:app",

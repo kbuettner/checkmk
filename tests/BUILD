@@ -423,7 +423,7 @@ py_library(
         "//packages/cmk-plugins:rabbitmq",
         "//packages/cmk-plugins:redfish",
         "//packages/cmk-plugins:splunk",
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
         requirement("pytest"),
     ],
 )

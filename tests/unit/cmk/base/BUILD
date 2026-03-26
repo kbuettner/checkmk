@@ -37,7 +37,7 @@ py_test(
         "//tests/unit:conftest",
         "//tests/testlib/common:empty_config",
         "//tests/testlib/common:utils",
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
         # -----------------------------------------
         # TODO: some base tests rely on plugins
         # being discoverable.

@@ -37,7 +37,7 @@ py_test(
         "//packages/cmk-plugin-apis:discover_plugins",
         "//tests/testlib/common:empty_config",
         "//tests/testlib/common:utils",
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
         "//tests/unit:conftest",
         requirement("fakeredis"),
         requirement("time-machine"),

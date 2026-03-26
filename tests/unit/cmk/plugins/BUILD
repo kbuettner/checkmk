@@ -35,7 +35,7 @@ py_test(
         "//cmk/legacy_checks",
         "//cmk/plugins",
         "//tests/testlib/common:repo",
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
         requirement("exchangelib"),
         requirement("feedparser"),
         requirement("google-cloud-asset"),

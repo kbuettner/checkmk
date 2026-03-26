@@ -11,7 +11,7 @@ py_library(
     deps = [
         "//cmk/gui",
         "//packages/cmk-ccc:user",
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
         requirement("flask"),
         requirement("pytest"),
         requirement("pytest-mock"),
@@ -51,7 +51,7 @@ py_test(
         ":conftest",
         "//cmk/post_rename_site",
         "//cmk/post_rename_site/plugins",
-        "//tests/testlib/unit:unit_free",
+        "//tests/testlib/unit",
         "//tests/unit:conftest",
         requirement("pytest"),
         requirement("pytest-asyncio"),
