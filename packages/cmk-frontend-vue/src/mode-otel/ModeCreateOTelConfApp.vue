@@ -108,7 +108,7 @@ const close = () => {
     <CmkWizardStep :index="2" :is-completed="() => currentStep > 2">
       <template #header>
         <CmkHeading>
-          {{ _t('Configure OpenTelemetry collector') }}
+          {{ _t('Configure OpenTelemetry Collector') }}
         </CmkHeading>
         <CmkParagraph>{{
           _t('Configure at least one OpenTelemetry Collector receiver.')
