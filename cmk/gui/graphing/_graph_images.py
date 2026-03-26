@@ -8,6 +8,7 @@ This is needed for the graphs sent with mail notifications."""
 # mypy: disable-error-code="no-untyped-call"
 
 import base64
+import itertools
 import json
 import time
 import traceback
@@ -37,8 +38,8 @@ from cmk.gui.utils.temperate_unit import TemperatureUnit
 from cmk.utils import paths
 
 from ._artwork import (
-    compute_graph_artwork,
     GraphArtwork,
+    iter_graph_artworks,
 )
 from ._fetch_time_series import fetch_augmented_time_series
 from ._from_api import graphs_from_api, metrics_from_api, RegisteredMetric
@@ -57,6 +58,7 @@ from ._graph_pdf import (
 from ._graph_specification import (
     AugmentedTimeSeriesOfGraphMetric,
     GraphRecipeWithOverrides,
+    GraphRenderContext,
     GraphTimeRange,
     parse_raw_graph_specification,
 )
@@ -148,35 +150,36 @@ def _answer_graph_image_request(
         )
 
         time_range = graph_image_time_range(display_config, start_time, end_time)
-        recipes = get_template_graph_specification(
-            site_id=SiteId(site) if site else None,
-            host_name=host_name,
-            service_name=service_description,
-            graph_index=None,  # all graphs
-            destination=GraphDestinations.notification,
-        ).recipes(
-            registered_metrics,
-            registered_graphs,
-            user_permissions,
-            consolidation_function="max",
-            debug=debug,
-            temperature_unit=temperature_unit,
-        )
-        num_graphs = request.get_integer_input("num_graphs") or len(recipes)
+        num_graphs = request.get_integer_input("num_graphs")
 
+        render_context = GraphRenderContext(
+            registered_metrics=registered_metrics,
+            registered_graphs=registered_graphs,
+            user_permissions=user_permissions,
+            consolidation_function="max",
+            temperature_unit=temperature_unit,
+            backend_time_series_fetcher=backend_time_series_fetcher,
+            debug=debug,
+        )
         graphs = []
-        for recipe_with_overrides in recipes[:num_graphs]:
-            artwork = compute_graph_artwork(
-                recipe_with_overrides.recipe,
+        for _rwo, result in itertools.islice(
+            iter_graph_artworks(
+                get_template_graph_specification(
+                    site_id=SiteId(site) if site else None,
+                    host_name=host_name,
+                    service_name=service_description,
+                    graph_index=None,  # all graphs
+                    destination=GraphDestinations.notification,
+                ),
                 time_range,
                 display_config.size,
-                registered_metrics,
-                temperature_unit=temperature_unit,
-                backend_time_series_fetcher=backend_time_series_fetcher,
-            ).artwork
-            graph_png = render_graph_image(artwork, display_config)
-
-            graphs.append(base64.b64encode(graph_png).decode("ascii"))
+                render_context,
+            ),
+            num_graphs,
+        ):
+            graphs.append(
+                base64.b64encode(render_graph_image(result.artwork, display_config)).decode("ascii")
+            )
 
         response.set_data(json.dumps(graphs))
 

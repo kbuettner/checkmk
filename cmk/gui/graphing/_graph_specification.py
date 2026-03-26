@@ -38,12 +38,26 @@ from ._graph_metric_expressions import (
     LineType,
     parse_graph_metric_expression,
 )
+from ._metric_backend_registry import FetchTimeSeries
 from ._translated_metrics import TranslatedMetric
 from ._unit import (
     ConvertibleUnitSpecification,
     NonConvertibleUnitSpecification,
     UserSpecificUnit,
 )
+
+
+@dataclass(frozen=True)
+class GraphRenderContext:
+    """Bundles the server-side environment passed unchanged through every rendering path."""
+
+    registered_metrics: Mapping[str, RegisteredMetric]
+    registered_graphs: Mapping[str, graphs_api.Graph | graphs_api.Bidirectional]
+    user_permissions: UserPermissions
+    consolidation_function: GraphConsolidationFunction
+    temperature_unit: TemperatureUnit
+    backend_time_series_fetcher: FetchTimeSeries | None
+    debug: bool = False
 
 
 @dataclass(frozen=True)

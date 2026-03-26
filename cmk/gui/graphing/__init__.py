@@ -3,7 +3,7 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-from ._artwork import compute_graph_artwork, GraphArtwork
+from ._artwork import compute_graph_artwork, GraphArtwork, iter_graph_artworks
 from ._explicit_graphs import ExplicitGraphSpecification
 from ._from_api import (
     graphs_from_api,
@@ -34,6 +34,7 @@ from ._graph_specification import (
     GraphMetric,
     GraphRecipe,
     GraphRecipeWithOverrides,
+    GraphRenderContext,
     GraphSpecification,
     GraphTimeRange,
     parse_raw_graph_specification,
@@ -115,6 +116,7 @@ __all__ = [
     "GraphPluginChoice",
     "GraphRecipe",
     "GraphRecipeWithOverrides",
+    "GraphRenderContext",
     "GraphDisplayConfigHTML",
     "GraphDisplayConfigImage",
     "GraphRenderOptions",
@@ -136,6 +138,7 @@ __all__ = [
     "check_metrics",
     "check_metrics",
     "compute_graph_artwork",
+    "iter_graph_artworks",
     "compute_pdf_graph_time_range",
     "get_first_matching_perfometer",
     "get_graph_data_from_livestatus",

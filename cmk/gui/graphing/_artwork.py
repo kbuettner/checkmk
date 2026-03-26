@@ -44,6 +44,9 @@ from ._graph_specification import (
     FixedVerticalRange,
     GraphMetricLimit,
     GraphRecipe,
+    GraphRecipeWithOverrides,
+    GraphRenderContext,
+    GraphSpecification,
     GraphTimeRange,
     HorizontalRule,
     MinimalVerticalRange,
@@ -292,6 +295,41 @@ class GraphArtworkOrErrors:
     artwork: GraphArtwork
     errors: Sequence[QueryDataError]
     graph_metric_limits_reached: Sequence[GraphMetricLimit]
+
+
+def iter_graph_artworks(
+    graph_specification: GraphSpecification,
+    time_range: GraphTimeRange,
+    size: tuple[float, float],
+    context: GraphRenderContext,
+    *,
+    pin_time: int | None = None,
+) -> Iterator[tuple[GraphRecipeWithOverrides, GraphArtworkOrErrors]]:
+    """Iterate over artworks for all recipes of a graph specification.
+
+    Combines spec.recipes() + compute_graph_artwork() into a single iterator,
+    applying per-recipe time_range overrides automatically.
+    """
+    for recipe_with_overrides in graph_specification.recipes(
+        context.registered_metrics,
+        context.registered_graphs,
+        context.user_permissions,
+        consolidation_function=context.consolidation_function,
+        debug=context.debug,
+        temperature_unit=context.temperature_unit,
+    ):
+        yield (
+            recipe_with_overrides,
+            compute_graph_artwork(
+                recipe_with_overrides.recipe,
+                recipe_with_overrides.time_range or time_range,
+                size,
+                context.registered_metrics,
+                temperature_unit=context.temperature_unit,
+                backend_time_series_fetcher=context.backend_time_series_fetcher,
+                pin_time=pin_time,
+            ),
+        )
 
 
 @tracer.instrument("graphing.compute_graph_artwork")

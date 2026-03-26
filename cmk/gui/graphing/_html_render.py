@@ -3,7 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-import copy
 import json
 import time
 import traceback
@@ -1120,11 +1119,13 @@ def render_graphs_from_specification_html(
     output = HTML.empty()
     for recipe_with_overrides in recipes:
         recipe = recipe_with_overrides.recipe
+        effective_time_range = recipe_with_overrides.time_range or time_range
+        effective_config = display_config.update_from_options(recipe_with_overrides.render_options)
         if render_async:
             output += _render_graph_container_html(
                 recipe,
-                time_range.model_copy(update=dict(recipe_with_overrides.time_range or {})),
-                display_config.update_from_options(recipe_with_overrides.render_options),
+                effective_time_range,
+                effective_config,
                 display_id=display_id,
                 additional_html=recipe_with_overrides.additional_html,
             )
@@ -1132,13 +1133,12 @@ def render_graphs_from_specification_html(
             output += _render_graph_content_html(
                 request,
                 recipe,
-                time_range.model_copy(update=dict(recipe_with_overrides.time_range or {})),
-                display_config.update_from_options(recipe_with_overrides.render_options),
-                registered_metrics,
+                effective_time_range,
+                effective_config,
                 compute_graph_artwork(
                     recipe,
-                    time_range,
-                    display_config.size,
+                    effective_time_range,
+                    effective_config.size,
                     metrics_from_api,
                     temperature_unit=temperature_unit,
                     backend_time_series_fetcher=backend_time_series_fetcher,
@@ -1221,7 +1221,6 @@ class AjaxRenderGraphContent(AjaxPage):
             recipe,
             time_range,
             display_config,
-            metrics_from_api,
             compute_graph_artwork(
                 recipe,
                 time_range,
@@ -1247,7 +1246,6 @@ def _render_graph_content_html(
     recipe: GraphRecipe,
     time_range: GraphTimeRange,
     display_config: GraphDisplayConfigHTML,
-    registered_metrics: Mapping[str, RegisteredMetric],
     artwork_or_errors: GraphArtworkOrErrors,
     *,
     debug: bool,
@@ -1327,7 +1325,6 @@ def _render_graph_content_html(
                     request,
                     recipe,
                     display_config,
-                    registered_metrics,
                     graph_timeranges=graph_timeranges,
                     temperature_unit=temperature_unit,
                     backend_time_series_fetcher=backend_time_series_fetcher,
@@ -1360,7 +1357,6 @@ def _render_time_range_selection(
     request: Request,
     recipe: GraphRecipe,
     display_config: GraphDisplayConfigHTML,
-    registered_metrics: Mapping[str, RegisteredMetric],
     *,
     graph_timeranges: Sequence[GraphTimerange],
     temperature_unit: TemperatureUnit,
@@ -1369,35 +1365,38 @@ def _render_time_range_selection(
     expandable_legend_appearance: ExpandableLegendAppearance,
 ) -> HTML:
     now = int(time.time())
-    display_config = copy.deepcopy(display_config)
     rows = []
     for timerange_attrs in graph_timeranges:
         duration = timerange_attrs["duration"]
         assert isinstance(duration, int)
 
-        display_config.size = (20, 4)
-        display_config.font_size = SizePT(6.0)
-        display_config.onclick = "cmk.graphs.change_graph_timerange(graph, %d)" % duration
-        display_config.fixed_timerange = True  # Do not follow timerange changes of other graphs
-        display_config.explicit_title = timerange_attrs["title"]
-        display_config.show_legend = False
-        display_config.show_controls = False
-        display_config.preview = True
-        display_config.resizable = False
-        display_config.interaction = False
+        preview_config = display_config.model_copy(
+            update={
+                "size": (20, 4),
+                "font_size": SizePT(6.0),
+                "onclick": "cmk.graphs.change_graph_timerange(graph, %d)" % duration,
+                "fixed_timerange": True,  # Do not follow timerange changes of other graphs
+                "explicit_title": timerange_attrs["title"],
+                "show_legend": False,
+                "show_controls": False,
+                "preview": True,
+                "resizable": False,
+                "interaction": False,
+            }
+        )
 
         timerange = now - duration, now
         time_range = GraphTimeRange(
             start=timerange[0],
             end=timerange[1],
-            step=2 * estimate_graph_step_for_html(timerange, display_config.size[1]),
+            step=2 * estimate_graph_step_for_html(timerange, preview_config.size[1]),
         )
 
         artwork = compute_graph_artwork(
             recipe,
             time_range,
-            display_config.size,
-            registered_metrics,
+            preview_config.size,
+            metrics_from_api,
             temperature_unit=temperature_unit,
             backend_time_series_fetcher=backend_time_series_fetcher,
             pin_time=_load_graph_pin(),
@@ -1410,7 +1409,7 @@ def _render_time_range_selection(
                     display_id,
                     artwork,
                     time_range,
-                    display_config,
+                    preview_config,
                     expandable_legend_appearance,
                 ),
                 title=_("Change graph time range to: %s") % timerange_attrs["title"],
@@ -1659,9 +1658,8 @@ def host_service_graph_dashlet_cmk(
     return _render_graph_content_html(
         request,
         recipe,
-        graph_time_range.model_copy(update=dict(recipe_with_overrides.time_range or {})),
+        recipe_with_overrides.time_range or graph_time_range,
         display_config.update_from_options(recipe_with_overrides.render_options),
-        registered_metrics,
         artwork_or_errors,
         debug=debug,
         graph_timeranges=graph_timeranges,
