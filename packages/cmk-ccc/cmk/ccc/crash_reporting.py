@@ -163,8 +163,10 @@ def _save_fingerprint_index(base_dir: Path, index: dict[str, str]) -> None:
 
 
 class CrashReportStore:
-    keep_num_crashes: Final = 200
     """Caring about the persistance of crash reports in the local site"""
+
+    def __init__(self, *, keep_num_crashes: int = 200) -> None:
+        self.keep_num_crashes: Final = keep_num_crashes
 
     def save(self, crash: ABCCrashReport[Any]) -> None:
         """Save the crash report instance to it's crash report directory"""

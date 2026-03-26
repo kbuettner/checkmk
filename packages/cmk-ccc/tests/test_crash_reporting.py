@@ -239,9 +239,11 @@ def _make_unique_crash(tmp_path: Path, num: int, timestamp: float = 0.0) -> Unit
 
 
 @pytest.mark.usefixtures("patch_uuid1")
-@pytest.mark.parametrize("n_crashes", [15, 45, 210])
+@pytest.mark.parametrize("n_crashes", [2, 4, 6])
 def test_crash_report_store_cleanup(tmp_path: Path, n_crashes: int) -> None:
-    crash_store = CrashReportStore()
+    crash_store = CrashReportStore(
+        keep_num_crashes=4  # use a sane small number for performance reasons
+    )
     crashes = tmp_path / "var/check_mk/crashes" / UnitTestCrashReport.type()
     assert not set(crashes.glob("*"))
 
