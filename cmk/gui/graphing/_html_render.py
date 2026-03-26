@@ -1093,6 +1093,47 @@ class UserGraphTimeRangeStore:
         ).unlink(missing_ok=True)
 
 
+# cmk.graphs.load_graph_content will call ajax_render_graph_content() via JSON to finally load the graph
+def _render_deferred_graph_html(
+    recipe: GraphRecipe,
+    time_range: GraphTimeRange,
+    display_config: GraphDisplayConfigHTML,
+    *,
+    display_id: str,
+    additional_html: AdditionalGraphHTML | None = None,
+) -> HTML:
+    # Estimate size of graph. This will not be the exact size of the graph, because
+    # this does calculate the size of the canvas area and does not take e.g. the legend
+    # into account. We would need the artwork to calculate that, but this is something
+    # we don't have in this early stage.
+    graph_width = display_config.size[0] * html_size_per_ex
+    graph_height = display_config.size[1] * html_size_per_ex
+
+    content = HTMLWriter.render_div("", class_="title") + HTMLWriter.render_div(
+        "", class_="content", style="width:%dpx;height:%dpx" % (graph_width, graph_height)
+    )
+
+    output = HTMLWriter.render_div(
+        HTMLWriter.render_div(content, class_=["graph", "loading_graph"]),
+        class_="graph_load_container",
+    )
+    output += HTMLWriter.render_javascript(
+        "cmk.graphs.load_graph_content(%s, %s, %s, %s, %s)"
+        % (
+            json.dumps(recipe.model_dump()),
+            json.dumps(time_range.model_dump()),
+            json.dumps(display_config.model_dump()),
+            json.dumps(display_id),
+            json.dumps(additional_html.model_dump() if additional_html else None),
+        )
+    )
+
+    if "cmk.graphs.register_delayed_graph_listener" not in html.final_javascript_code():
+        html.final_javascript("cmk.graphs.register_delayed_graph_listener()")
+
+    return output
+
+
 # TODO: still relies on the global request object because painters also use this function.
 @tracer.instrument("graphing.render_deferred_graphs_html")
 def render_deferred_graphs_html(
@@ -1139,7 +1180,7 @@ def render_deferred_graphs_html(
 
     output = HTML.empty()
     for recipe_with_overrides in recipes:
-        output += _render_graph_container_html(
+        output += _render_deferred_graph_html(
             recipe_with_overrides.recipe,
             recipe_with_overrides.time_range or time_range,
             display_config.update_from_options(recipe_with_overrides.render_options),
@@ -1221,47 +1262,6 @@ def render_graphs_html(
             show_limits_if_reached=False,
             additional_html=recipe_with_overrides.additional_html,
         )
-    return output
-
-
-# cmk.graphs.load_graph_content will call ajax_render_graph_content() via JSON to finally load the graph
-def _render_graph_container_html(
-    recipe: GraphRecipe,
-    time_range: GraphTimeRange,
-    display_config: GraphDisplayConfigHTML,
-    *,
-    display_id: str,
-    additional_html: AdditionalGraphHTML | None = None,
-) -> HTML:
-    # Estimate size of graph. This will not be the exact size of the graph, because
-    # this does calculate the size of the canvas area and does not take e.g. the legend
-    # into account. We would need the artwork to calculate that, but this is something
-    # we don't have in this early stage.
-    graph_width = display_config.size[0] * html_size_per_ex
-    graph_height = display_config.size[1] * html_size_per_ex
-
-    content = HTMLWriter.render_div("", class_="title") + HTMLWriter.render_div(
-        "", class_="content", style="width:%dpx;height:%dpx" % (graph_width, graph_height)
-    )
-
-    output = HTMLWriter.render_div(
-        HTMLWriter.render_div(content, class_=["graph", "loading_graph"]),
-        class_="graph_load_container",
-    )
-    output += HTMLWriter.render_javascript(
-        "cmk.graphs.load_graph_content(%s, %s, %s, %s, %s)"
-        % (
-            json.dumps(recipe.model_dump()),
-            json.dumps(time_range.model_dump()),
-            json.dumps(display_config.model_dump()),
-            json.dumps(display_id),
-            json.dumps(additional_html.model_dump() if additional_html else None),
-        )
-    )
-
-    if "cmk.graphs.register_delayed_graph_listener" not in html.final_javascript_code():
-        html.final_javascript("cmk.graphs.register_delayed_graph_listener()")
-
     return output
 
 
