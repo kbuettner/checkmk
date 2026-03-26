@@ -19,10 +19,14 @@ PodmanSocketDetectionMethod = (
 
 PodmanPiggybackNameMethod = Literal["name", "nodename_name", "name_id"]
 
+PodmanConnectionMethod = (
+    tuple[Literal["api"], PodmanSocketDetectionMethod] | tuple[Literal["cli"], None]
+)
+
 
 class PodmanConfig(BaseModel, frozen=True):
     deploy: bool
-    socket_detection: PodmanSocketDetectionMethod
+    connection_method: PodmanConnectionMethod = ("api", ("auto", None))
     piggyback_name_method: PodmanPiggybackNameMethod = "nodename_name"
 
 
@@ -46,11 +50,15 @@ def get_mk_podman_files(
 def _get_mk_podman_config(conf: PodmanConfig) -> Iterable[str]:
     yield "[PODMAN]"
 
-    method, socket_list = conf.socket_detection
-    yield f"socket_detection_method: {method}"
+    method, method_params = conf.connection_method
+    yield f"connection_method: {method}"
 
-    if method == "manual" and socket_list:
-        yield f"socket_paths: {','.join(socket_list)}"
+    if method == "api" and method_params is not None:
+        socket_method, socket_list = method_params
+        yield f"socket_detection_method: {socket_method}"
+
+        if socket_method == "manual" and socket_list:
+            yield f"socket_paths: {','.join(socket_list)}"
 
     yield f"piggyback_name_method: {conf.piggyback_name_method}"
 
