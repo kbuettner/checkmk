@@ -1614,6 +1614,12 @@ class PainterSvcGroupMemberlist(Painter):
             links.append(link)
         return "", HTML.without_escaping(", ").join(links)
 
+    def export_for_csv(self, row: Row, cell: Cell, user: LoggedInUser) -> str:
+        return ", ".join(row["service_groups"])
+
+    def export_for_json(self, row: Row, cell: Cell, user: LoggedInUser) -> object:
+        return row["service_groups"]
+
 
 class PainterCheckManpage(Painter):
     @property
@@ -3264,6 +3270,12 @@ class PainterHostGroupMemberlist(Painter):
             )
             links.append(link)
         return "", HTML.without_escaping(", ").join(links)
+
+    def export_for_csv(self, row: Row, cell: Cell, user: LoggedInUser) -> str:
+        return ", ".join(row["host_groups"])
+
+    def export_for_json(self, row: Row, cell: Cell, user: LoggedInUser) -> object:
+        return row["host_groups"]
 
 
 class PainterHostContacts(Painter):
