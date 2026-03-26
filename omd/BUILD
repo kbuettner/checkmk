@@ -319,7 +319,9 @@ pkg_mkdirs(
 pkg_tar(
     name = "omd_global_dirs_tar",
     srcs = [":omd_global_dirs"],
+    mtime = 1767744000,
     package_dir = "/",
+    portable_mtime = False,
 )
 
 _EDITION_SELECT = select({
@@ -507,6 +509,8 @@ pkg_tar(
     srcs = ["//packages/cmk-agent-ctl:cmk-agent-ctl-musl-aarch64"],
     out = "cmk-agent-ctl-aarch64.gz",
     extension = "tar.gz",
+    mtime = 1767744000,
+    portable_mtime = False,
     remap_paths = {
         "/cmk-agent-ctl-musl-aarch64": "cmk-agent-ctl-aarch64",
     },
@@ -762,7 +766,9 @@ pkg_tar(
 
 pkg_tar(
     name = "deps_install",
+    mtime = 1767744000,
     package_dir_file = ":omd_root_dir",
+    portable_mtime = False,
     tags = ["manual"],
     deps = [
         ":deps_packages",
@@ -771,6 +777,8 @@ pkg_tar(
 
 pkg_tar(
     name = "complete_install",
+    mtime = 1767744000,
+    portable_mtime = False,
     tags = ["manual"],
     deps = [
         ":deps_install",
@@ -783,6 +791,8 @@ pkg_tar(
     compressor = "@zstd//:zstd_cli",
     compressor_args = "-19",
     extension = "tar.zst",
+    mtime = 1767744000,
+    portable_mtime = False,
     tags = ["manual"],
     deps = [
         ":complete_install",
@@ -791,6 +801,8 @@ pkg_tar(
 
 pkg_tar(
     name = "complete_install_uncompressed",
+    mtime = 1767744000,
+    portable_mtime = False,
     tags = ["manual"],
     deps = [
         ":complete_install",
@@ -1016,7 +1028,9 @@ pkg_rpm_from_tar(
 pkg_tar(
     name = "appliance",
     extension = "tar.gz",
+    mtime = 1767744000,
     package_dir_file = "//omd:omd_root_dir_appliance",
+    portable_mtime = False,
     target_compatible_with = select({
         "@cmk//edition:pro": [],
         "@cmk//edition:ultimate": [],

@@ -6,7 +6,9 @@ pkg_tar(
         "**/*",
     ]),
     extension = "tar.gz",
+    mtime = 1767744000,
     package_dir = "Crypt-SSLeay-0.72",
+    portable_mtime = False,
     strip_prefix = "external/Crypt-SSLeay",
     visibility = ["//visibility:public"],
 )
