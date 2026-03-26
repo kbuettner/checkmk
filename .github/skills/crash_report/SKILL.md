@@ -51,6 +51,7 @@ The user provides a natural language request or a direct command. Examples:
 - `/crash-report auto-fix popular --limit 3` — auto-fix top 3 popular crash groups
 - `/crash-report auto-fix search --type check --unsolved --limit 5` — auto-fix top 5 unsolved check crashes
 - `/crash-report auto-fix --dry-run popular --limit 3` — analyze and fix but don't commit/push
+- `/crash-report resolved --since 30d` — list crash groups fixed in the last 30 days
 
 ## Workflow
 
@@ -71,6 +72,8 @@ Translate the user's request into one of these commands:
 | "Fix all unsolved check crashes"     | `auto-fix search --type check --unsolved`      |
 | "What crashes are on my local site?" | `local`                                        |
 | "Show local GUI crashes"             | `local --type gui`                             |
+| "What crash groups did we fix?"      | `resolved --since 30d`                         |
+| "Show resolved crashes this quarter" | `resolved --since 90d`                         |
 
 ### Step 1.5: Check Authentication
 
@@ -215,7 +218,13 @@ After the explain step and the unit test commit, implement the fix:
 
 4. **Create a werk** (changelog entry) via `/werk`.
 
-5. **Create the second commit** containing the fix, the unmarked test, and the werk. This is the only content in this commit — the xfail test was already committed in Step 6.
+5. **Create the second commit** containing the fix, the unmarked test, and the werk. This is the only content in this commit — the xfail test was already committed in Step 6. Use a `Crash-Group-ID:` trailer in the commit body:
+
+   ```
+   <werk_id>: Fix crash in <component> (<crash_type>)
+
+   Crash-Group-ID: <group_id>
+   ```
 
 ---
 
@@ -240,7 +249,7 @@ The arguments after `auto-fix` are passed directly to the `popular` or `search` 
    a. **Duplicate check.** Before starting work, check if this crash group has already been addressed:
    - Check for an existing local branch: `git branch --list '*crash-group-<group_id>'`
    - Check for an existing remote branch: `git branch -r --list '*crash-group-<group_id>'`
-   - Check for an open Gerrit change: `git log --all --oneline --grep='crash-group-<group_id>'`
+   - Check for an existing commit (branch name or trailer): `git log --all --oneline --grep='crash-group-<group_id>\|Crash-Group-ID: <group_id>'`
 
    If any match is found, skip this group with status "Skipped: existing branch/change found" and continue to the next group.
 
@@ -273,10 +282,12 @@ The arguments after `auto-fix` are passed directly to the `popular` or `search` 
    - **Medium:** The fix is reasonable but touches non-trivial logic, or the crash context is ambiguous.
    - **Low:** The fix is speculative, involves multiple files, or the agent is unsure about side effects.
 
-   j. **Commit 2 (fix + unmarked test + werk).** Stage the fix, the unmarked test, and the werk, then commit:
+   j. **Commit 2 (fix + unmarked test + werk).** Stage the fix, the unmarked test, and the werk, then commit with a `Crash-Group-ID:` trailer:
 
    ```
    <werk_id>: Fix crash in <component> (<crash_type>)
+
+   Crash-Group-ID: <group_id>
    ```
 
    k. **Push (high confidence only).** If confidence is **high**, push to Gerrit:
@@ -314,6 +325,62 @@ The agent should **skip** a crash group (and report it in the summary) if:
 - **Tests fail after fix:** If tests still fail after the fix attempt, commit the work-in-progress on the branch (with message `WIP: crash-group-<group_id> — tests failing`), switch back to master, and report the group as "Failed: tests fail, branch kept". Do NOT delete the branch — the user may want to inspect or continue the partial fix.
 
 When a group is skipped, log the reason and continue to the next group. Do not prompt the user.
+
+---
+
+### Resolved Crash Groups
+
+The `resolved` command lists crash groups that have been fixed by searching git history for `Crash-Group-ID:` trailers in commit messages.
+
+**Syntax:**
+
+```
+resolved [--since DATE] [--branch BRANCH]
+```
+
+- `--since`: How far back to search (default: `90d`). Accepts ISO dates or relative dates like `30d`.
+- `--branch`: Git branch to search (default: current branch). Use `--branch --all` to search all branches.
+
+**This is an agent-executed workflow, not a helper script subcommand.** The agent performs these steps:
+
+1. **Search git log** for commits containing the `Crash-Group-ID:` trailer:
+
+   ```bash
+   git log [<branch>] --grep='Crash-Group-ID:' --format='%H' [--since=<date>]
+   ```
+
+2. **Extract group IDs** from each matching commit by reading the trailer:
+
+   ```bash
+   git log --format='%(trailers:key=Crash-Group-ID,valueonly)' -1 <commit_hash>
+   ```
+
+3. **Get Gerrit change link** for each commit. Extract the `Change-Id` trailer and look up the change number:
+
+   ```bash
+   git log --format='%(trailers:key=Change-Id,valueonly)' -1 <commit_hash>
+   ```
+
+   Construct the Gerrit URL: `https://review.lan.tribe29.com/c/check_mk/+/<change_number>`
+
+   If the Gerrit lookup fails, fall back to the short commit hash.
+
+4. **Fetch crash group details** for each unique group ID using the helper script:
+
+   ```bash
+   PYTHONPATH=.github/skills .venv/bin/python -m crash_report group <group_id>
+   ```
+
+   Extract the crash group URL, crash type, and solved versions from the output.
+
+5. **Present a summary table:**
+
+   | Group ID | Type  | Crash Group                           | Gerrit                                                            | Solved Versions   |
+   | -------- | ----- | ------------------------------------- | ----------------------------------------------------------------- | ----------------- |
+   | 42       | check | [Link](https://crash.checkmk.com/...) | [Change 12345](https://review.lan.tribe29.com/c/check_mk/+/12345) | 2.4.0p7, 2.3.0p25 |
+   | 57       | gui   | [Link](https://crash.checkmk.com/...) | [Change 12400](https://review.lan.tribe29.com/c/check_mk/+/12400) | 2.4.0p7           |
+
+**Note:** This command only finds crash groups fixed using the `Crash-Group-ID:` commit trailer convention. Older fixes without this trailer will not appear.
 
 ---
 
