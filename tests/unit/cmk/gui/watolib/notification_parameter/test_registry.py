@@ -32,8 +32,6 @@ def test_registered_notification_parameters() -> None:
         "sms_api",
         "spectrum",
         "victorops",
-        "jira_issues",
-        "servicenow",
     ]
 
     registered_plugins = sorted(notification_parameter_registry.keys())

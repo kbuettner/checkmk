@@ -74,18 +74,5 @@ py_test(
         "//tests/testlib/common:empty_config",
         "//tests/testlib/common:utils",
         "//tests/testlib/unit:unit_free",
-    ] + select({
-        "@//:gpl+nonfree_repo": [
-            "//cmk/gui:pro",
-            "//non-free/packages/cmc-protocols:py_config_proto",
-            "//non-free/packages/cmc-protocols:py_state_proto",
-            "//non-free/packages/cmk-core-helpers:fetcher-helper",
-            "//non-free/packages/cmk-dcd:gui",  # FIXME
-            "//non-free/packages/cmk-metric-backend",  # FIXME
-            "//non-free/packages/cmk-notification-plugins-nonfree:rulesets",
-            "//non-free/packages/cmk-otel-collector",  # FIXME
-            "//packages/cmk-ccc:observer",
-        ],
-        "@//:gpl_repo": [],
-    }),
+    ],
 )
