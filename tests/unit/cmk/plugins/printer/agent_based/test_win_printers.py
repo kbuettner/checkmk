@@ -11,7 +11,7 @@ from typing import Any
 import pytest
 
 from cmk.agent_based.v2 import Result, Service, State, StringTable
-from cmk.legacy_checks.win_printers import (
+from cmk.plugins.printer.agent_based.win_printers import (
     check_win_printers,
     discover_win_printers,
     parse_win_printers,
