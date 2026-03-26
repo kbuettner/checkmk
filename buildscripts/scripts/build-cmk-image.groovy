@@ -90,7 +90,7 @@ void main() {
             ) {
                 build_instance = smart_build(
                     // see global-defaults.yml, needs to run in minimal container
-                    use_upstream_build: true,
+                    use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                     relative_job_name: "${branch_base_folder}/builders/build-cmk-source_tgz",
                     build_params: [
                         CUSTOM_GIT_REF: effective_git_ref,
@@ -134,7 +134,7 @@ void main() {
             ) {
                 build_instance = smart_build(
                     // see global-defaults.yml, needs to run in minimal container
-                    use_upstream_build: true,
+                    use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                     relative_job_name: "${branch_base_folder}/builders/trigger-cmk-distro-package",
                     build_params: [
                         CUSTOM_GIT_REF: effective_git_ref,

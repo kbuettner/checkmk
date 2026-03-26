@@ -60,7 +60,7 @@ void main() {
                 condition: true,
                 raiseOnError: false,) {
             smart_build(
-                use_upstream_build: true,
+                use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                 relative_job_name: "${branch_base_folder}/fips/test-composition-fips",
                 build_params: job_parameters,
                 build_params_no_check: job_parameters_no_check,
@@ -73,7 +73,7 @@ void main() {
                 condition: true,
                 raiseOnError: false,) {
             smart_build(
-                use_upstream_build: true,
+                use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                 relative_job_name: "${branch_base_folder}/fips/test-gui-e2e-fips",
                 build_params: job_parameters,
                 build_params_no_check: job_parameters_no_check,
@@ -86,7 +86,7 @@ void main() {
                 condition: true,
                 raiseOnError: false,) {
             smart_build(
-                use_upstream_build: true,
+                use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                 relative_job_name: "${branch_base_folder}/fips/test-integration-fips",
                 build_params: job_parameters,
                 build_params_no_check: job_parameters_no_check,

@@ -97,7 +97,7 @@ void main() {
                 condition: true,
                 raiseOnError: false,) {
             smart_build(
-                use_upstream_build: true,
+                use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                 relative_job_name: "${edition_base_folder}/build-cmk-deliverables",
                 build_params: job_parameters,
                 build_params_no_check: job_parameters_no_check,
@@ -110,7 +110,7 @@ void main() {
                 condition: build_image,
                 raiseOnError: false,) {
             smart_build(
-                use_upstream_build: true,
+                use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                 relative_job_name: "${edition_base_folder}/build-cmk-image",
                 build_params: job_parameters,
                 build_params_no_check: job_parameters_no_check,
@@ -126,7 +126,7 @@ void main() {
                         condition: run_image_tests,
                         raiseOnError: false,) {
                     smart_build(
-                        use_upstream_build: true,
+                        use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                         relative_job_name: "${edition_base_folder}/test-integration-docker",
                         build_params: job_parameters,
                         build_params_no_check: job_parameters_no_check,
@@ -140,7 +140,7 @@ void main() {
                         condition: run_int_tests,
                         raiseOnError: false,) {
                     smart_build(
-                        use_upstream_build: true,
+                        use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                         relative_job_name: "${edition_base_folder}/test-integration-packages",
                         build_params: job_parameters,
                         build_params_no_check: job_parameters_no_check,
@@ -154,7 +154,7 @@ void main() {
                         condition: run_comp_tests,
                         raiseOnError: false,) {
                     smart_build(
-                        use_upstream_build: true,
+                        use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                         relative_job_name: "${edition_base_folder}/test-composition",
                         build_params: job_parameters,
                         build_params_no_check: job_parameters_no_check,
@@ -168,7 +168,7 @@ void main() {
                         condition: run_update_tests,
                         raiseOnError: false,) {
                     smart_build(
-                        use_upstream_build: true,
+                        use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                         relative_job_name: "${edition_base_folder}/test-update",
                         build_params: job_parameters,
                         build_params_no_check: job_parameters_no_check,
@@ -183,7 +183,7 @@ void main() {
                     condition: edition == "ultimatemt",
                     raiseOnError: false,) {
                     smart_build(
-                        use_upstream_build: true,
+                        use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                         relative_job_name: "${builders_base_folder}/test-component-mk-oracle",
                         build_params: job_parameters,
                         build_params_no_check: job_parameters_no_check,
@@ -198,7 +198,7 @@ void main() {
                 condition: true,
                 raiseOnError: false,) {
             smart_build(
-                use_upstream_build: true,
+                use_upstream_build: !env.DISABLE_JENKINS_CACHE,
                 relative_job_name: "${edition_base_folder}/build-cmk-deliverables",
                 build_params: job_parameters,
                 build_params_no_check: job_parameters_no_check,
