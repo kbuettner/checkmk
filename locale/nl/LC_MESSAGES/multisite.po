@@ -12270,8 +12270,9 @@ msgstr "Verenigbaarheid"
 msgid "Capabilities supported"
 msgstr "Verenigbaarheid"
 
-msgid "Capacity filled"
-msgstr "Capaciteit gevuld"
+#, fuzzy
+msgid "Capacity"
+msgstr "UPS-capaciteit"
 
 msgid "Capacity providers per cluster"
 msgstr "Capaciteitsleveranciers per cluster"
@@ -14007,10 +14008,6 @@ msgid "Cisco Meraki appliance performance"
 msgstr "Checkmk automatisering"
 
 #, fuzzy
-msgid "Cisco Meraki appliance performance utilization"
-msgstr "Checkmk automatisering"
-
-#, fuzzy
 msgid "Cisco Meraki appliance uplinks"
 msgstr "Cisco Meraki"
 
@@ -14155,6 +14152,10 @@ msgstr "Klasse van gastheren"
 
 msgid "Classes"
 msgstr "Klassen"
+
+#, fuzzy
+msgid "Classic"
+msgstr "Klassiek"
 
 msgid "Classic Load Balancing (ELB)"
 msgstr "Klassieke taakverdeling (ELB)"
@@ -16313,6 +16314,10 @@ msgid ""
 msgstr ""
 
 msgid "Controller"
+msgstr "Controller"
+
+#, fuzzy
+msgid "Controller ID"
 msgstr "Controller"
 
 #, fuzzy
@@ -21029,7 +21034,15 @@ msgid "Discovery settings"
 msgstr "Ontdekkingsinstellingen"
 
 #, fuzzy
+msgid "Discovery settings for physical drives"
+msgstr "Ontdekkingsinstellingen"
+
+#, fuzzy
 msgid "Discovery settings for physical ports"
+msgstr "Ontdekkingsinstellingen"
+
+#, fuzzy
+msgid "Discovery settings for volumes"
 msgstr "Ontdekkingsinstellingen"
 
 msgid "Discovery state"
@@ -26835,6 +26848,10 @@ msgstr "Firmware"
 msgid "Firmware Versions"
 msgstr "Kernel Versie"
 
+#, fuzzy
+msgid "Firmware version"
+msgstr "Kernel Versie"
+
 msgid "First"
 msgstr "Eerste"
 
@@ -27805,6 +27822,10 @@ msgstr "Volledige toegang"
 #, fuzzy
 msgid "Full activation page"
 msgstr "Activering van de regel"
+
+#, fuzzy
+msgid "Full controller status"
+msgstr "Volledige statistieken"
 
 msgid "Full dump of all variables"
 msgstr "Volledige dump van alle variabelen"
@@ -42606,6 +42627,10 @@ msgstr "Fouten in de integriteit van media en gegevens"
 msgid "Media connectivity check failure"
 msgstr "Media connectiviteitscontrole mislukt"
 
+#, fuzzy
+msgid "Media type"
+msgstr "Wedstrijd type"
+
 #, python-format
 msgid "Median %s"
 msgstr "Mediaan %s"
@@ -52169,6 +52194,10 @@ msgstr "Fysiek adres (MAC)"
 msgid "Physical components"
 msgstr "Fysieke componenten"
 
+#, fuzzy
+msgid "Physical port"
+msgstr "Fysiek"
+
 msgid "Physical port states to discover"
 msgstr "Fysieke poort toestanden om te ontdekken"
 
@@ -55240,8 +55269,32 @@ msgid "Redfish Compatible Power Equipment (PDU)"
 msgstr ""
 
 #, fuzzy
+msgid "Redfish Ethernet Interface"
+msgstr "In afwachting van dienstontdekking"
+
+#, fuzzy
 msgid "Redfish Ethernet Interface discovery"
 msgstr "In afwachting van dienstontdekking"
+
+#, fuzzy
+msgid "Redfish Physical Drive discovery"
+msgstr "Fysieke poort toestanden om te ontdekken"
+
+#, fuzzy
+msgid "Redfish Power Consumption"
+msgstr "Stroomverbruik"
+
+#, fuzzy
+msgid "Redfish Storage Controller"
+msgstr "Controller uitschakelen"
+
+#, fuzzy
+msgid "Redfish Volume discovery"
+msgstr "MSSQL teller ontdekking"
+
+#, fuzzy
+msgid "Redfish drives"
+msgstr "MSSQL teller ontdekking"
 
 #, fuzzy
 msgid "Redfish outlet discovery"
@@ -57396,6 +57449,9 @@ msgstr "Beheer van de site"
 #, fuzzy
 msgid "Rollovers Asserts"
 msgstr "%s Verklaart"
+
+msgid "Rollup check only"
+msgstr ""
 
 #, fuzzy
 msgid "Root delay"
@@ -63190,6 +63246,24 @@ msgstr ""
 "standaard opgegeven:<br>%s"
 
 msgid ""
+"Specify how the storage controller should be checked:\n"
+"\n"
+" Full: Report detailed controller status including RAID levels and device "
+"protocols\n"
+"\n"
+" Rollup: Only report overall health state"
+msgstr ""
+
+msgid ""
+"Specify how to name drives during discovery:\n"
+"\n"
+" Classic: Use the drive ID and name (e.g., '0-1.2TB 12G SAS HDD')\n"
+"\n"
+" Controller ID: Use a structured format from the OData path (e.g., '0:1:4' "
+"for system:storage:drive)"
+msgstr ""
+
+msgid ""
 "Specify how to name the outlets during discovery:\n"
 "\n"
 " Port ID: Use the ID of the port as name\n"
@@ -63199,6 +63273,15 @@ msgid ""
 "\n"
 " Zero padded port ID: Use the zero padded port ID (to the length of the "
 "highest port ID)"
+msgstr ""
+
+msgid ""
+"Specify how to name volumes during discovery:\n"
+"\n"
+" Classic: Use the volume ID\n"
+"\n"
+" Controller ID: Use a structured format from the OData path (e.g., '0:1:4' "
+"for system:storage:volume)"
 msgstr ""
 
 #, fuzzy
@@ -64286,6 +64369,14 @@ msgstr "Staat als ingang AAN is"
 
 msgid "State if license is expired"
 msgstr "Vermeld of de vergunning verlopen is"
+
+#, fuzzy
+msgid "State if link speed changed"
+msgstr "Bewakingstoestand als de dienst mislukt"
+
+#, fuzzy
+msgid "State if link status changed"
+msgstr "Bewakingstoestand als de dienst actief is"
 
 msgid "State if mode is Active-Active"
 msgstr "Staat als de modus Actief-Actief is"
@@ -65700,6 +65791,42 @@ msgstr "Syslog-achtige berichtenregistratie"
 
 msgid "System"
 msgstr "Systeem"
+
+msgid "System 0 average consumed watts"
+msgstr ""
+
+msgid "System 0 maximum consumed watts"
+msgstr ""
+
+msgid "System 0 minimum consumed watts"
+msgstr ""
+
+msgid "System 1 average consumed watts"
+msgstr ""
+
+msgid "System 1 maximum consumed watts"
+msgstr ""
+
+msgid "System 1 minimum consumed watts"
+msgstr ""
+
+msgid "System 2 average consumed watts"
+msgstr ""
+
+msgid "System 2 maximum consumed watts"
+msgstr ""
+
+msgid "System 2 minimum consumed watts"
+msgstr ""
+
+msgid "System 3 average consumed watts"
+msgstr ""
+
+msgid "System 3 maximum consumed watts"
+msgstr ""
+
+msgid "System 3 minimum consumed watts"
+msgstr ""
 
 msgid "System Events on APX Inrow Devices"
 msgstr "Systeem Gebeurtenissen op APX Inrow Toestellen"
@@ -68316,9 +68443,6 @@ msgstr ""
 "De %s is alleen voor jou zichtbaar omdat je'geen toestemming hebt om hem te "
 "delen."
 
-msgid "The dashboard element does not exist."
-msgstr "Het dashboard element bestaat niet."
-
 msgid ""
 "The data for the background checks is recomputed at most in this interval."
 msgstr ""
@@ -70522,9 +70646,6 @@ msgstr "De gevraagde verbinding bestaat niet."
 
 msgid "The requested connection does not exist."
 msgstr "De gevraagde verbinding bestaat niet."
-
-msgid "The requested dashboard does not exist."
-msgstr "Het gevraagde dashboard bestaat niet."
 
 msgid "The requested global setting does not exist."
 msgstr "De gevraagde globale instelling bestaat niet."
@@ -92823,15 +92944,27 @@ msgstr ""
 msgid "{} - {}"
 msgstr ""
 
+msgid ""
+"The feature \"Explain with AI\" uses a Large Language Model (LLM) [$"
+"{aiTemplate.value.info.models.join(', ')}] of [$"
+"{aiTemplate.value.info.provider}] to generate its output. "
+msgstr ""
+
+msgid "Generated content (output) may contain errors or inaccuracies. "
+msgstr ""
+
+msgid ""
+"Ensure all output generated is carefully reviewed and checked by a human for "
+"factual correctness before being used in any way. "
+msgstr ""
+
+#, fuzzy
+msgid "For further information visit our "
+msgstr "Verzamel informatie over..."
+
 #, fuzzy
 msgid "Checkmk AI feature usage notice"
 msgstr "Checkmk fetcher gebruik"
-
-msgid ""
-"The feature \"Explain with AI\" uses a Large Language Model (LLM) [$"
-"{aiTemplate?.info?.models.join(', ')}] of [${aiTemplate?.info?.provider}] to "
-"generate its output. "
-msgstr ""
 
 #, fuzzy
 msgid "Privacy Policy"
@@ -92850,6 +92983,10 @@ msgstr ""
 #, fuzzy
 msgid "Generating response..."
 msgstr "Het genereren van rapport..."
+
+#, fuzzy
+msgid "Thinking..."
+msgstr "Shrinking"
 
 msgid "Please review to ensure factual correctness."
 msgstr ""
@@ -95283,18 +95420,18 @@ msgid "This token remains valid for %{duration}."
 msgstr ""
 
 #, fuzzy
-msgid "Generate token"
+msgid "Generate one-time token"
 msgstr "Genereer"
 
 #, fuzzy
-msgid "Generating token"
+msgid "Generating one-time token"
 msgstr "Algemene opties"
 
-msgid "Error on generating token: ${ottError.message}"
+msgid "Error generating one-time token: ${ottError.message}"
 msgstr ""
 
 #, fuzzy
-msgid "Successfully generated token"
+msgid "Successfully generated one-time token"
 msgstr "Wachtwoord succesvol gewijzigd."
 
 msgid "(Expires: ${ottExpiry?.toLocaleString() || 'never'})"
@@ -95743,8 +95880,8 @@ msgid "Metrics path is required but not specified."
 msgstr "JSON inloggegevens voor dienstaccount"
 
 #, fuzzy
-msgid "Port is required but not specified."
-msgstr "JSON inloggegevens voor dienstaccount"
+msgid "Your input is not a valid host name or IP address."
+msgstr "alle gebruikers met en emailadres"
 
 #, fuzzy
 msgid "Port must be a whole number."
@@ -95753,6 +95890,16 @@ msgstr "Datum moet een getalswaarde zijn"
 #, fuzzy
 msgid "Port must be between 1 and 65535."
 msgstr "De waarde voor %s moet tussen %d en %d liggen"
+
+msgid ""
+"The IP address or host name the OpenTelemetry Collector should listen on. To "
+"listen only locally, use '127.0.0.1' or '::1'. To listen on all interfaces, "
+"use '0.0.0.0' or '::'."
+msgstr ""
+
+#, fuzzy
+msgid "IP address or hostname"
+msgstr "IP-adres van gastheer"
 
 msgid "Run the installation script"
 msgstr ""
@@ -95788,6 +95935,10 @@ msgid ""
 "Run the command below to make the Relay installation script available to the "
 "machine on which the Relay will be running."
 msgstr ""
+
+#, fuzzy
+msgid "Download relay install script command"
+msgstr "De docker container plugin implementeren"
 
 #, fuzzy
 msgid "A relay alias is required"
@@ -96755,6 +96906,23 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#~ msgid "Capacity filled"
+#~ msgstr "Capaciteit gevuld"
+
+#, fuzzy
+#~ msgid "Cisco Meraki appliance performance utilization"
+#~ msgstr "Checkmk automatisering"
+
+#~ msgid "The dashboard element does not exist."
+#~ msgstr "Het dashboard element bestaat niet."
+
+#~ msgid "The requested dashboard does not exist."
+#~ msgstr "Het gevraagde dashboard bestaat niet."
+
+#, fuzzy
+#~ msgid "Port is required but not specified."
+#~ msgstr "JSON inloggegevens voor dienstaccount"
 
 #, fuzzy, python-format
 #~ msgid "%d hour"
@@ -99098,14 +99266,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Name + ID - Use the name of the container plus the container ID"
 #~ msgstr "Naam - Gebruik de naam van de container"
-
-#, fuzzy
-#~ msgid "IP address or hostname"
-#~ msgstr "IP-adres van gastheer"
-
-#, fuzzy
-#~ msgid "Your input is not a valid hostname or IP address."
-#~ msgstr "alle gebruikers met en emailadres"
 
 #, fuzzy
 #~ msgid "German"
@@ -104393,9 +104553,6 @@ msgstr ""
 
 #~ msgid "Shrinkage"
 #~ msgstr "Krimp"
-
-#~ msgid "Shrinking"
-#~ msgstr "Shrinking"
 
 #~ msgid "Total RAM installed"
 #~ msgstr "Totaal geïnstalleerd RAM"

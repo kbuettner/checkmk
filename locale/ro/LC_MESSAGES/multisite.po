@@ -12290,8 +12290,9 @@ msgstr "Compatibilitate"
 msgid "Capabilities supported"
 msgstr "Compatibilitate"
 
-msgid "Capacity filled"
-msgstr "Capacitate umplută"
+#, fuzzy
+msgid "Capacity"
+msgstr "Capacitate UPS"
 
 msgid "Capacity providers per cluster"
 msgstr "Furnizori de capacitate per cluster"
@@ -14021,10 +14022,6 @@ msgid "Cisco Meraki appliance performance"
 msgstr "Automatizare Checkmk"
 
 #, fuzzy
-msgid "Cisco Meraki appliance performance utilization"
-msgstr "Automatizare Checkmk"
-
-#, fuzzy
 msgid "Cisco Meraki appliance uplinks"
 msgstr "Cisco Meraki"
 
@@ -14169,6 +14166,10 @@ msgstr "Clasa de gazde"
 
 msgid "Classes"
 msgstr "Clase"
+
+#, fuzzy
+msgid "Classic"
+msgstr "Clasică"
 
 msgid "Classic Load Balancing (ELB)"
 msgstr "Echilibrarea încărcării clasice (ELB)"
@@ -16320,6 +16321,10 @@ msgid ""
 msgstr ""
 
 msgid "Controller"
+msgstr "Controler"
+
+#, fuzzy
+msgid "Controller ID"
 msgstr "Controler"
 
 #, fuzzy
@@ -21042,7 +21047,15 @@ msgid "Discovery settings"
 msgstr "Setări de descoperire"
 
 #, fuzzy
+msgid "Discovery settings for physical drives"
+msgstr "Setări de descoperire"
+
+#, fuzzy
 msgid "Discovery settings for physical ports"
+msgstr "Setări de descoperire"
+
+#, fuzzy
+msgid "Discovery settings for volumes"
 msgstr "Setări de descoperire"
 
 msgid "Discovery state"
@@ -26891,6 +26904,10 @@ msgstr "Firmware"
 msgid "Firmware Versions"
 msgstr "Versiunea Kernel"
 
+#, fuzzy
+msgid "Firmware version"
+msgstr "Versiunea Kernel"
+
 msgid "First"
 msgstr "Prima"
 
@@ -27857,6 +27874,10 @@ msgstr "Acces complet"
 #, fuzzy
 msgid "Full activation page"
 msgstr "Activarea regulii"
+
+#, fuzzy
+msgid "Full controller status"
+msgstr "Statistici complete"
 
 msgid "Full dump of all variables"
 msgstr "Descărcarea completă a tuturor variabilelor"
@@ -42682,6 +42703,10 @@ msgstr "Erori de integritate a mediilor și a datelor"
 msgid "Media connectivity check failure"
 msgstr "Eșecul verificării conectivității media"
 
+#, fuzzy
+msgid "Media type"
+msgstr "Tipul de meci"
+
 #, python-format
 msgid "Median %s"
 msgstr "Median %s"
@@ -52233,6 +52258,10 @@ msgstr "Adresa fizică (MAC)"
 msgid "Physical components"
 msgstr "Componente fizice"
 
+#, fuzzy
+msgid "Physical port"
+msgstr "Fizic"
+
 msgid "Physical port states to discover"
 msgstr "Stări de port fizic de descoperit"
 
@@ -55314,8 +55343,32 @@ msgid "Redfish Compatible Power Equipment (PDU)"
 msgstr ""
 
 #, fuzzy
+msgid "Redfish Ethernet Interface"
+msgstr "Descoperirea serviciilor în așteptare"
+
+#, fuzzy
 msgid "Redfish Ethernet Interface discovery"
 msgstr "Descoperirea serviciilor în așteptare"
+
+#, fuzzy
+msgid "Redfish Physical Drive discovery"
+msgstr "Stări de port fizic de descoperit"
+
+#, fuzzy
+msgid "Redfish Power Consumption"
+msgstr "Consumul de energie electrică"
+
+#, fuzzy
+msgid "Redfish Storage Controller"
+msgstr "Dezactivați controlerul"
+
+#, fuzzy
+msgid "Redfish Volume discovery"
+msgstr "Descoperirea contorului MSSQL"
+
+#, fuzzy
+msgid "Redfish drives"
+msgstr "Descoperirea contorului MSSQL"
 
 #, fuzzy
 msgid "Redfish outlet discovery"
@@ -57471,6 +57524,9 @@ msgstr "Gestionarea sesiunii"
 #, fuzzy
 msgid "Rollovers Asserts"
 msgstr "%s Afirmă"
+
+msgid "Rollup check only"
+msgstr ""
 
 #, fuzzy
 msgid "Root delay"
@@ -63306,6 +63362,24 @@ msgstr ""
 "vedea <i>%s</i> )."
 
 msgid ""
+"Specify how the storage controller should be checked:\n"
+"\n"
+" Full: Report detailed controller status including RAID levels and device "
+"protocols\n"
+"\n"
+" Rollup: Only report overall health state"
+msgstr ""
+
+msgid ""
+"Specify how to name drives during discovery:\n"
+"\n"
+" Classic: Use the drive ID and name (e.g., '0-1.2TB 12G SAS HDD')\n"
+"\n"
+" Controller ID: Use a structured format from the OData path (e.g., '0:1:4' "
+"for system:storage:drive)"
+msgstr ""
+
+msgid ""
 "Specify how to name the outlets during discovery:\n"
 "\n"
 " Port ID: Use the ID of the port as name\n"
@@ -63315,6 +63389,15 @@ msgid ""
 "\n"
 " Zero padded port ID: Use the zero padded port ID (to the length of the "
 "highest port ID)"
+msgstr ""
+
+msgid ""
+"Specify how to name volumes during discovery:\n"
+"\n"
+" Classic: Use the volume ID\n"
+"\n"
+" Controller ID: Use a structured format from the OData path (e.g., '0:1:4' "
+"for system:storage:volume)"
 msgstr ""
 
 #, fuzzy
@@ -64405,6 +64488,14 @@ msgstr "Stare dacă intrarea este ON"
 
 msgid "State if license is expired"
 msgstr "Indicați dacă licența este expirată"
+
+#, fuzzy
+msgid "State if link speed changed"
+msgstr "Starea de monitorizare în cazul în care serviciul este eșuat"
+
+#, fuzzy
+msgid "State if link status changed"
+msgstr "Starea de monitorizare dacă serviciul este activ"
 
 msgid "State if mode is Active-Active"
 msgstr "Stare dacă modul este Activ-Activ"
@@ -65821,6 +65912,42 @@ msgstr "Înregistrarea mesajelor de tip Syslog"
 
 msgid "System"
 msgstr "Sistem"
+
+msgid "System 0 average consumed watts"
+msgstr ""
+
+msgid "System 0 maximum consumed watts"
+msgstr ""
+
+msgid "System 0 minimum consumed watts"
+msgstr ""
+
+msgid "System 1 average consumed watts"
+msgstr ""
+
+msgid "System 1 maximum consumed watts"
+msgstr ""
+
+msgid "System 1 minimum consumed watts"
+msgstr ""
+
+msgid "System 2 average consumed watts"
+msgstr ""
+
+msgid "System 2 maximum consumed watts"
+msgstr ""
+
+msgid "System 2 minimum consumed watts"
+msgstr ""
+
+msgid "System 3 average consumed watts"
+msgstr ""
+
+msgid "System 3 maximum consumed watts"
+msgstr ""
+
+msgid "System 3 minimum consumed watts"
+msgstr ""
 
 msgid "System Events on APX Inrow Devices"
 msgstr "Evenimente de sistem pe dispozitivele APX Inrow"
@@ -68427,9 +68554,6 @@ msgstr ""
 "%s este vizibil doar pentru dvs. deoarece nu aveți permisiunea de a-l "
 "partaja."
 
-msgid "The dashboard element does not exist."
-msgstr "Elementul de tablou de bord nu există."
-
 msgid ""
 "The data for the background checks is recomputed at most in this interval."
 msgstr ""
@@ -70641,9 +70765,6 @@ msgstr "Conexiunea solicitată nu există."
 
 msgid "The requested connection does not exist."
 msgstr "Conexiunea solicitată nu există."
-
-msgid "The requested dashboard does not exist."
-msgstr "Tabloul de bord solicitat nu există."
 
 msgid "The requested global setting does not exist."
 msgstr "Setarea globală solicitată nu există."
@@ -92954,15 +93075,27 @@ msgstr ""
 msgid "{} - {}"
 msgstr ""
 
+msgid ""
+"The feature \"Explain with AI\" uses a Large Language Model (LLM) [$"
+"{aiTemplate.value.info.models.join(', ')}] of [$"
+"{aiTemplate.value.info.provider}] to generate its output. "
+msgstr ""
+
+msgid "Generated content (output) may contain errors or inaccuracies. "
+msgstr ""
+
+msgid ""
+"Ensure all output generated is carefully reviewed and checked by a human for "
+"factual correctness before being used in any way. "
+msgstr ""
+
+#, fuzzy
+msgid "For further information visit our "
+msgstr "Colectați informații despre..."
+
 #, fuzzy
 msgid "Checkmk AI feature usage notice"
 msgstr "Utilizarea Checkmk fetcher"
-
-msgid ""
-"The feature \"Explain with AI\" uses a Large Language Model (LLM) [$"
-"{aiTemplate?.info?.models.join(', ')}] of [${aiTemplate?.info?.provider}] to "
-"generate its output. "
-msgstr ""
 
 #, fuzzy
 msgid "Privacy Policy"
@@ -92981,6 +93114,10 @@ msgstr ""
 #, fuzzy
 msgid "Generating response..."
 msgstr "Generarea de rapoarte..."
+
+#, fuzzy
+msgid "Thinking..."
+msgstr "Micșorarea"
 
 msgid "Please review to ensure factual correctness."
 msgstr ""
@@ -95426,18 +95563,18 @@ msgid "This token remains valid for %{duration}."
 msgstr ""
 
 #, fuzzy
-msgid "Generate token"
+msgid "Generate one-time token"
 msgstr "Generarea cheii"
 
 #, fuzzy
-msgid "Generating token"
+msgid "Generating one-time token"
 msgstr "Opțiuni generale"
 
-msgid "Error on generating token: ${ottError.message}"
+msgid "Error generating one-time token: ${ottError.message}"
 msgstr ""
 
 #, fuzzy
-msgid "Successfully generated token"
+msgid "Successfully generated one-time token"
 msgstr "Copiat cu succes în clipboard."
 
 msgid "(Expires: ${ottExpiry?.toLocaleString() || 'never'})"
@@ -95892,8 +96029,8 @@ msgid "Metrics path is required but not specified."
 msgstr "credențiale JSON pentru contul de servicii"
 
 #, fuzzy
-msgid "Port is required but not specified."
-msgstr "credențiale JSON pentru contul de servicii"
+msgid "Your input is not a valid host name or IP address."
+msgstr "Datele introduse nu sunt o adresă de e-mail validă."
 
 #, fuzzy
 msgid "Port must be a whole number."
@@ -95902,6 +96039,16 @@ msgstr "Data trebuie să fie o valoare numerică"
 #, fuzzy
 msgid "Port must be between 1 and 65535."
 msgstr "Valoarea pentru %s trebuie să fie cuprinsă între %d și %d."
+
+msgid ""
+"The IP address or host name the OpenTelemetry Collector should listen on. To "
+"listen only locally, use '127.0.0.1' or '::1'. To listen on all interfaces, "
+"use '0.0.0.0' or '::'."
+msgstr ""
+
+#, fuzzy
+msgid "IP address or hostname"
+msgstr "Adresa IP a gazdei"
 
 msgid "Run the installation script"
 msgstr ""
@@ -95937,6 +96084,10 @@ msgid ""
 "Run the command below to make the Relay installation script available to the "
 "machine on which the Relay will be running."
 msgstr ""
+
+#, fuzzy
+msgid "Download relay install script command"
+msgstr "Implementați plugin-ul containerului docker"
 
 #, fuzzy
 msgid "A relay alias is required"
@@ -96911,6 +97062,23 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#~ msgid "Capacity filled"
+#~ msgstr "Capacitate umplută"
+
+#, fuzzy
+#~ msgid "Cisco Meraki appliance performance utilization"
+#~ msgstr "Automatizare Checkmk"
+
+#~ msgid "The dashboard element does not exist."
+#~ msgstr "Elementul de tablou de bord nu există."
+
+#~ msgid "The requested dashboard does not exist."
+#~ msgstr "Tabloul de bord solicitat nu există."
+
+#, fuzzy
+#~ msgid "Port is required but not specified."
+#~ msgstr "credențiale JSON pentru contul de servicii"
 
 #, python-format
 #~ msgid "%d hour"
@@ -99736,14 +99904,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Name + ID - Use the name of the container plus the container ID"
 #~ msgstr "Nume - Folosiți numele containerului"
-
-#, fuzzy
-#~ msgid "IP address or hostname"
-#~ msgstr "Adresa IP a gazdei"
-
-#, fuzzy
-#~ msgid "Your input is not a valid hostname or IP address."
-#~ msgstr "Datele introduse nu sunt o adresă de e-mail validă."
 
 #, fuzzy
 #~ msgid "German"
@@ -105142,9 +105302,6 @@ msgstr ""
 
 #~ msgid "Shrinkage"
 #~ msgstr "Contracția"
-
-#~ msgid "Shrinking"
-#~ msgstr "Micșorarea"
 
 #~ msgid "Total RAM installed"
 #~ msgstr "Total RAM instalat"

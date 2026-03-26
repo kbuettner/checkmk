@@ -11451,8 +11451,9 @@ msgstr "機能マップのサポート"
 msgid "Capabilities supported"
 msgstr "サポートされた機能"
 
-msgid "Capacity filled"
-msgstr "容量がいっぱい"
+#, fuzzy
+msgid "Capacity"
+msgstr "UPS容量"
 
 msgid "Capacity providers per cluster"
 msgstr "クラスタごとのキャパシティプロバイダ"
@@ -13053,10 +13054,6 @@ msgstr "Cisco Meraki アプライアンスVPN"
 msgid "Cisco Meraki appliance performance"
 msgstr "Checkmkアプライアンス情報"
 
-#, fuzzy
-msgid "Cisco Meraki appliance performance utilization"
-msgstr "Checkmkアプライアンス情報"
-
 msgid "Cisco Meraki appliance uplinks"
 msgstr "Cisco Meraki アプライアンスアップリンク"
 
@@ -13190,6 +13187,10 @@ msgstr "ホストのクラス"
 
 msgid "Classes"
 msgstr "クラス"
+
+#, fuzzy
+msgid "Classic"
+msgstr "クラシック"
 
 msgid "Classic Load Balancing (ELB)"
 msgstr "クラシックロードバランシング(ELB)"
@@ -15223,6 +15224,10 @@ msgstr ""
 "成するには、このボックスをオンにします。"
 
 msgid "Controller"
+msgstr "コントローラー"
+
+#, fuzzy
+msgid "Controller ID"
 msgstr "コントローラー"
 
 msgid "Controller version"
@@ -19617,8 +19622,16 @@ msgstr "ディスカバリールール"
 msgid "Discovery settings"
 msgstr "ディスカバリー設定"
 
+#, fuzzy
+msgid "Discovery settings for physical drives"
+msgstr "物理ポートの検出設定"
+
 msgid "Discovery settings for physical ports"
 msgstr "物理ポートの検出設定"
+
+#, fuzzy
+msgid "Discovery settings for volumes"
+msgstr "ディスカバリー設定"
 
 msgid "Discovery state"
 msgstr "ディスカバリ状態"
@@ -25131,6 +25144,10 @@ msgstr "ファームウェア"
 msgid "Firmware Versions"
 msgstr "Firmwareのバージョン"
 
+#, fuzzy
+msgid "Firmware version"
+msgstr "Firmwareのバージョン"
+
 msgid "First"
 msgstr "最初"
 
@@ -26052,6 +26069,10 @@ msgstr "フルアクセス"
 #, fuzzy
 msgid "Full activation page"
 msgstr "ルールのアクティブ化"
+
+#, fuzzy
+msgid "Full controller status"
+msgstr "完全な統計"
 
 msgid "Full dump of all variables"
 msgstr "すべての変数の完全なダンプ"
@@ -40015,6 +40036,10 @@ msgstr "メディアとデータの整合性エラー"
 msgid "Media connectivity check failure"
 msgstr "メディア接続チェックの失敗"
 
+#, fuzzy
+msgid "Media type"
+msgstr "マッチタイプ"
+
 #, python-format
 msgid "Median %s"
 msgstr "中央値 %s"
@@ -48917,6 +48942,10 @@ msgstr "物理アドレス(MAC)"
 msgid "Physical components"
 msgstr "物理コンポーネント"
 
+#, fuzzy
+msgid "Physical port"
+msgstr "物理的"
+
 msgid "Physical port states to discover"
 msgstr "検出する物理ポートの状態"
 
@@ -51795,8 +51824,32 @@ msgstr "Redfish 対応管理コントローラー"
 msgid "Redfish Compatible Power Equipment (PDU)"
 msgstr "Redfish 対応電源装置（PDU）"
 
+#, fuzzy
+msgid "Redfish Ethernet Interface"
+msgstr "Redfish Ethernet Interface の検出"
+
 msgid "Redfish Ethernet Interface discovery"
 msgstr "Redfish Ethernet Interface の検出"
+
+#, fuzzy
+msgid "Redfish Physical Drive discovery"
+msgstr "Redfish 物理ポート検出"
+
+#, fuzzy
+msgid "Redfish Power Consumption"
+msgstr "消費電力"
+
+#, fuzzy
+msgid "Redfish Storage Controller"
+msgstr "Redfish 対応管理コントローラー"
+
+#, fuzzy
+msgid "Redfish Volume discovery"
+msgstr "Redfish のアウトレット検出"
+
+#, fuzzy
+msgid "Redfish drives"
+msgstr "Redfish"
 
 msgid "Redfish outlet discovery"
 msgstr "Redfish のアウトレット検出"
@@ -53890,6 +53943,9 @@ msgstr "Roles: 役割ロールの管理"
 
 msgid "Rollovers Asserts"
 msgstr "ロールオーバーアサート"
+
+msgid "Rollup check only"
+msgstr ""
 
 #, fuzzy
 msgid "Root delay"
@@ -59431,6 +59487,24 @@ msgstr ""
 " デフォルトはcheckmkのマニュアルページに記載されています(<i>%s</i>)。"
 
 msgid ""
+"Specify how the storage controller should be checked:\n"
+"\n"
+" Full: Report detailed controller status including RAID levels and device "
+"protocols\n"
+"\n"
+" Rollup: Only report overall health state"
+msgstr ""
+
+msgid ""
+"Specify how to name drives during discovery:\n"
+"\n"
+" Classic: Use the drive ID and name (e.g., '0-1.2TB 12G SAS HDD')\n"
+"\n"
+" Controller ID: Use a structured format from the OData path (e.g., '0:1:4' "
+"for system:storage:drive)"
+msgstr ""
+
+msgid ""
 "Specify how to name the outlets during discovery:\n"
 "\n"
 " Port ID: Use the ID of the port as name\n"
@@ -59450,6 +59524,15 @@ msgstr ""
 "\n"
 " ゼロパディングされたポートID: 最高位のポートIDの長さに合わせてゼロパディング"
 "されたポートIDを使用します"
+
+msgid ""
+"Specify how to name volumes during discovery:\n"
+"\n"
+" Classic: Use the volume ID\n"
+"\n"
+" Controller ID: Use a structured format from the OData path (e.g., '0:1:4' "
+"for system:storage:volume)"
+msgstr ""
 
 msgid "Specify if port state UP, DOWN or booth should be discovered"
 msgstr "ポート状態がUP, DOWN, またはBOOTH であるかどうかを確認してください"
@@ -60458,6 +60541,14 @@ msgstr "入力がONの場合の状態"
 
 msgid "State if license is expired"
 msgstr "ライセンスの有効期限が切れているかどうかを記載する"
+
+#, fuzzy
+msgid "State if link speed changed"
+msgstr "サービスが失敗した場合の状態の監視"
+
+#, fuzzy
+msgid "State if link status changed"
+msgstr "デバイス状態 \"警告中 \"の監視状態"
 
 msgid "State if mode is Active-Active"
 msgstr "モードActive-Activeの場合の状態"
@@ -61793,6 +61884,42 @@ msgstr "Syslogのようなメッセージログ"
 
 msgid "System"
 msgstr "システム"
+
+msgid "System 0 average consumed watts"
+msgstr ""
+
+msgid "System 0 maximum consumed watts"
+msgstr ""
+
+msgid "System 0 minimum consumed watts"
+msgstr ""
+
+msgid "System 1 average consumed watts"
+msgstr ""
+
+msgid "System 1 maximum consumed watts"
+msgstr ""
+
+msgid "System 1 minimum consumed watts"
+msgstr ""
+
+msgid "System 2 average consumed watts"
+msgstr ""
+
+msgid "System 2 maximum consumed watts"
+msgstr ""
+
+msgid "System 2 minimum consumed watts"
+msgstr ""
+
+msgid "System 3 average consumed watts"
+msgstr ""
+
+msgid "System 3 maximum consumed watts"
+msgstr ""
+
+msgid "System 3 minimum consumed watts"
+msgstr ""
 
 msgid "System Events on APX Inrow Devices"
 msgstr "APX Inrowデバイスのシステムイベント"
@@ -64300,9 +64427,6 @@ msgid ""
 "The dashboard '%s' does not exist or you do not have permission to view it."
 msgstr "%sはあなただけに表示されます。共有する権限はありません。"
 
-msgid "The dashboard element does not exist."
-msgstr "ダッシュボード要素が存在しません。"
-
 msgid ""
 "The data for the background checks is recomputed at most in this interval."
 msgstr "バックグラウンドチェックのデータは、最大でこの間隔で再計算されます。"
@@ -66476,9 +66600,6 @@ msgstr "要求された接続%sは存在しません"
 
 msgid "The requested connection does not exist."
 msgstr "要求された接続は存在しません。"
-
-msgid "The requested dashboard does not exist."
-msgstr "要求されたダッシュボードは存在しません。"
 
 msgid "The requested global setting does not exist."
 msgstr "要求されたグローバル設定は存在しません。"
@@ -87507,17 +87628,30 @@ msgid "{} - {}"
 msgstr "{} - {}"
 
 #, fuzzy
-msgid "Checkmk AI feature usage notice"
-msgstr "Checkmkフェッチャーの使用量"
-
 msgid ""
 "The feature \"Explain with AI\" uses a Large Language Model (LLM) [$"
-"{aiTemplate?.info?.models.join(', ')}] of [${aiTemplate?.info?.provider}] to "
-"generate its output. "
+"{aiTemplate.value.info.models.join(', ')}] of [$"
+"{aiTemplate.value.info.provider}] to generate its output. "
 msgstr ""
 "「AIで説明」機能は、[${aiTemplate?.info?.models.join(『, 』)}]の[$"
 "{aiTemplate?.info?.provider}]による大規模言語モデル（LLM）を使用して出力を生"
 "成します。 "
+
+msgid "Generated content (output) may contain errors or inaccuracies. "
+msgstr ""
+
+msgid ""
+"Ensure all output generated is carefully reviewed and checked by a human for "
+"factual correctness before being used in any way. "
+msgstr ""
+
+#, fuzzy
+msgid "For further information visit our "
+msgstr "...に関する情報を取得しています..."
+
+#, fuzzy
+msgid "Checkmk AI feature usage notice"
+msgstr "Checkmkフェッチャーの使用量"
 
 #, fuzzy
 msgid "Privacy Policy"
@@ -87536,6 +87670,10 @@ msgstr "AIが生成した回答"
 #, fuzzy
 msgid "Generating response..."
 msgstr "レポートを生成しています..."
+
+#, fuzzy
+msgid "Thinking..."
+msgstr "収縮"
 
 msgid "Please review to ensure factual correctness."
 msgstr "事実関係が正しいことを確認してください。"
@@ -89945,17 +90083,18 @@ msgid "This token remains valid for %{duration}."
 msgstr ""
 
 #, fuzzy
-msgid "Generate token"
+msgid "Generate one-time token"
 msgstr "キーを生成する"
 
 #, fuzzy
-msgid "Generating token"
+msgid "Generating one-time token"
 msgstr "一般的なオプション"
 
-msgid "Error on generating token: ${ottError.message}"
+msgid "Error generating one-time token: ${ottError.message}"
 msgstr ""
 
-msgid "Successfully generated token"
+#, fuzzy
+msgid "Successfully generated one-time token"
 msgstr "トークンを生成しました"
 
 msgid "(Expires: ${ottExpiry?.toLocaleString() || 'never'})"
@@ -90395,8 +90534,8 @@ msgid "Metrics path is required but not specified."
 msgstr "%s は必須だが指定はない。"
 
 #, fuzzy
-msgid "Port is required but not specified."
-msgstr "%s は必須だが指定はない。"
+msgid "Your input is not a valid host name or IP address."
+msgstr "入力された内容は、有効なホスト名またはIPアドレスではありません。"
 
 #, fuzzy
 msgid "Port must be a whole number."
@@ -90405,6 +90544,19 @@ msgstr "日付は数値である必要があります"
 #, fuzzy
 msgid "Port must be between 1 and 65535."
 msgstr "ポートは0から65535の間でなければならない。"
+
+#, fuzzy
+msgid ""
+"The IP address or host name the OpenTelemetry Collector should listen on. To "
+"listen only locally, use '127.0.0.1' or '::1'. To listen on all interfaces, "
+"use '0.0.0.0' or '::'."
+msgstr ""
+"受信側がリッスンするIPアドレスまたはホスト名。ローカルのみをリッスンする場合"
+"は'127.0.0.1'または'::1'を使用します。すべてのインターフェースをリッスンする"
+"場合は'0.0.0.0'または'::'を使用します。"
+
+msgid "IP address or hostname"
+msgstr "IPアドレスまたはホスト名"
 
 msgid "Run the installation script"
 msgstr ""
@@ -90440,6 +90592,10 @@ msgid ""
 "Run the command below to make the Relay installation script available to the "
 "machine on which the Relay will be running."
 msgstr ""
+
+#, fuzzy
+msgid "Download relay install script command"
+msgstr "Dockerコンテナプラグインをデプロイする"
 
 #, fuzzy
 msgid "A relay alias is required"
@@ -91388,6 +91544,23 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#~ msgid "Capacity filled"
+#~ msgstr "容量がいっぱい"
+
+#, fuzzy
+#~ msgid "Cisco Meraki appliance performance utilization"
+#~ msgstr "Checkmkアプライアンス情報"
+
+#~ msgid "The dashboard element does not exist."
+#~ msgstr "ダッシュボード要素が存在しません。"
+
+#~ msgid "The requested dashboard does not exist."
+#~ msgstr "要求されたダッシュボードは存在しません。"
+
+#, fuzzy
+#~ msgid "Port is required but not specified."
+#~ msgstr "%s は必須だが指定はない。"
 
 #, python-format
 #~ msgid "%d hour"
@@ -94557,9 +94730,6 @@ msgstr ""
 #~ "ノード名 + 名前 - Podmanノード名とコンテナ名を結合します。Podmanノード名が"
 #~ "特定できない場合、代わりにホスト名を使用します"
 
-#~ msgid "IP address or hostname"
-#~ msgstr "IPアドレスまたはホスト名"
-
 #, fuzzy
 #~ msgid ""
 #~ "Missing hostname attribute. Please configure a resource attribute (e.g., "
@@ -94567,9 +94737,6 @@ msgstr ""
 #~ msgstr ""
 #~ "ホスト名属性が不足しています。システムがホスト名を判別できるよう、リソース"
 #~ "属性（例: host.name）を設定してください。"
-
-#~ msgid "Your input is not a valid hostname or IP address."
-#~ msgstr "入力された内容は、有効なホスト名またはIPアドレスではありません。"
 
 #, fuzzy
 #~ msgid "German"
@@ -100091,9 +100258,6 @@ msgstr ""
 #~ msgstr "成長している"
 
 #~ msgid "Shrinkage"
-#~ msgstr "収縮"
-
-#~ msgid "Shrinking"
 #~ msgstr "収縮"
 
 #~ msgid "Total RAM installed"
