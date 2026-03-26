@@ -316,6 +316,31 @@ def render_graph_error_html(*, title: str, msg_or_exc: Exception | str, debug: b
     )
 
 
+def _collect_graph_html(
+    request: Request,
+    recipe: GraphRecipe,
+    display_id: str,
+    artwork: GraphArtwork,
+    time_range: GraphTimeRange,
+    display_config: GraphDisplayConfigHTML,
+    expandable_legend_appearance: ExpandableLegendAppearance,
+    additional_html: AdditionalGraphHTML | None = None,
+) -> HTML:
+    """Capture _show_graph_html_content output as an HTML fragment."""
+    with output_funnel.plugged():
+        _show_graph_html_content(
+            request,
+            recipe,
+            display_id,
+            artwork,
+            time_range,
+            display_config,
+            expandable_legend_appearance,
+            additional_html,
+        )
+        return HTML.without_escaping(output_funnel.drain())
+
+
 # Render the complete HTML code of a graph - including its <div> container.
 # Later updates will just replace the content of that container.
 def _render_graph_html(
@@ -328,19 +353,16 @@ def _render_graph_html(
     expandable_legend_appearance: ExpandableLegendAppearance,
     additional_html: AdditionalGraphHTML | None = None,
 ) -> HTML:
-    with output_funnel.plugged():
-        _show_graph_html_content(
-            request,
-            recipe,
-            display_id,
-            artwork,
-            time_range,
-            display_config,
-            expandable_legend_appearance,
-            additional_html,
-        )
-        html_code = HTML.without_escaping(output_funnel.drain())
-
+    html_code = _collect_graph_html(
+        request,
+        recipe,
+        display_id,
+        artwork,
+        time_range,
+        display_config,
+        expandable_legend_appearance,
+        additional_html,
+    )
     return HTMLWriter.render_javascript(
         "cmk.graphs.create_graph(%s, %s, %s);"
         % (
@@ -997,17 +1019,15 @@ def render_ajax_graph(
     else:
         warning_msg = ""
 
-    with output_funnel.plugged():
-        _show_graph_html_content(
-            request,
-            recipe,
-            display_id,
-            artwork_or_errors.artwork,
-            time_range,
-            display_config,
-            ExpandableLegendAppearance.FOLDABLE,
-        )
-        html_code = HTML.without_escaping(output_funnel.drain())
+    html_code = _collect_graph_html(
+        request,
+        recipe,
+        display_id,
+        artwork_or_errors.artwork,
+        time_range,
+        display_config,
+        ExpandableLegendAppearance.FOLDABLE,
+    )
 
     return {
         "html": str(html_code),
