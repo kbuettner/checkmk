@@ -44,6 +44,11 @@ from cmk.plugins.emailchecks.lib.connections import (
         (b"-ERR no such message", RuntimeError),
         # probably just for making mypy happy
         (None, TypeError),
+        # BYE is an accepted status (IMAP logout response)
+        (("BYE", [b"server is going away"]), [b"server is going away"]),
+        (("BYE", []), []),
+        # tuple with wrong number of elements
+        (("OK", [], "extra", "stuff"), AssertionError),
         # not sure if this really can happen
         (("OK", []), []),
         (("OK", [None]), TypeError),
