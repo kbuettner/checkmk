@@ -13,9 +13,10 @@ void main() {
     def container_safe_branch_name = safe_branch_name.replace(".", "-");
 
     dir("${checkout_dir}") {
-        test_jenkins_helper.execute_test([
-            name: "test-unit-all",
-            cmd: """\
+        withCredentials([string(credentialsId: "CI_TEST_SQL_DB_ENDPOINT", variable: "CI_TEST_SQL_DB_ENDPOINT")]) {
+            test_jenkins_helper.execute_test([
+                name: "test-unit-all",
+                cmd: """\
 set +e
 cd tests
 BAZEL_TEST_LOGS_DEST=../results/unit ../buildscripts/scripts/bazel_test_non_cpp.sh
@@ -23,9 +24,10 @@ make_rc=\$?
 set -e
 ../buildscripts/scripts/bazel_test_post_archive_xunit.sh || :
 exit \$make_rc""",
-            container_name: "ubuntu-2404-${container_safe_branch_name}-latest",
-            disable_hot_cache: true,
-        ]);
+                container_name: "ubuntu-2404-${container_safe_branch_name}-latest",
+                disable_hot_cache: true,
+            ]);
+        }
 
         archiveArtifacts(
             allowEmptyArchive: true,
