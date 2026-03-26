@@ -31,7 +31,7 @@ function toggle(f: NavFolder) {
     :aria-expanded="isOpen"
     @click="toggle(folder)"
   >
-    <CmkIcon name="tree-closed" size="xxsmall" :rotate="isOpen ? 90 : 0" />
+    <CmkIcon name="tree-closed" size="xxsmall" :rotate="isOpen ? 90 : 0" aria-hidden="true" />
     {{ folder.name }}
   </button>
 

@@ -33,7 +33,7 @@ watch(
     </header>
 
     <div class="ucl-app__body">
-      <aside class="ucl-app__sidebar">
+      <aside class="ucl-app__sidebar" aria-label="Component navigation">
         <UclNavigation />
       </aside>
 

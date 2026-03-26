@@ -20,7 +20,12 @@ const isDeveloperOpen = computed(() => openedItems.value.includes('developer-pla
     <CmkAccordion v-model="openedItems" :max-open="1" :min-open="0">
       <CmkAccordionItem value="developer-playground">
         <template #header>
-          <CmkIcon name="tree-closed" size="xsmall" :rotate="isDeveloperOpen ? 90 : 0" />
+          <CmkIcon
+            name="tree-closed"
+            size="xsmall"
+            :rotate="isDeveloperOpen ? 90 : 0"
+            aria-hidden="true"
+          />
           <CmkSpace size="small" />
           <span> Developer Playground </span>
         </template>

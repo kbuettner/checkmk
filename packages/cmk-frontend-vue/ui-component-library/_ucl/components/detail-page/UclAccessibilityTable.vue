@@ -24,18 +24,19 @@ const normalizedData = computed(() =>
 </script>
 
 <template>
-  <div class="ucl-accessibility-table__table">
-    <div class="ucl-accessibility-table__table-header">
-      <CmkHeading type="h4">Key</CmkHeading>
-      <CmkHeading type="h4">Description</CmkHeading>
+  <div class="ucl-accessibility-table__table" role="table" aria-label="Keyboard accessibility">
+    <div class="ucl-accessibility-table__table-header" role="row">
+      <CmkHeading type="h4" role="columnheader">Key</CmkHeading>
+      <CmkHeading type="h4" role="columnheader">Description</CmkHeading>
     </div>
     <template v-if="normalizedData.length">
       <div
         v-for="item in normalizedData"
         :key="item.description"
         class="ucl-accessibility-table__table-row"
+        role="row"
       >
-        <div class="ucl-accessibility-table__table-cell">
+        <div class="ucl-accessibility-table__table-cell" role="cell">
           <span
             v-for="(group, groupIdx) in item.keys"
             :key="`${groupIdx}-${group.join('+')}`"
@@ -49,13 +50,13 @@ const normalizedData = computed(() =>
             </template>
           </span>
         </div>
-        <div class="ucl-accessibility-table__table-cell">
+        <div class="ucl-accessibility-table__table-cell" role="cell">
           {{ item.description }}
         </div>
       </div>
     </template>
-    <div v-else class="ucl-accessibility-table__empty-message">
-      No keyboard accessibility available for this component
+    <div v-else class="ucl-accessibility-table__empty-message" role="row">
+      <div role="cell" colspan="2">No keyboard accessibility available for this component</div>
     </div>
   </div>
 </template>

@@ -54,6 +54,7 @@ watch(searchResults, (results) => {
         v-model="searchQuery"
         type="text"
         placeholder="Search..."
+        aria-label="Search components"
         class="ucl-search__input-field"
       />
     </div>
@@ -62,6 +63,7 @@ watch(searchResults, (results) => {
       class="ucl-search__input-reset"
       name="close"
       size="small"
+      aria-label="Clear Search"
       @click.stop="clearSearch"
     />
   </div>
