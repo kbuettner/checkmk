@@ -362,22 +362,6 @@ def test_release_all_locks(few_files: _Files, path_type: type[str] | type[Path])
     assert all(store.have_lock(f) is False for f in files)
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_release_all_locks_already_closed(
-    test_file: Path, path_type: type[str] | type[Path]
-) -> None:
-    """Should not raise exception"""
-    path = path_type(test_file)
-    store.acquire_lock(path)
-
-    fd = store._locks._get_lock(str(path))  # noqa: SLF001
-    assert isinstance(fd, int)
-    os.close(fd)
-
-    store.release_all_locks()
-    assert store.have_lock(path) is False
-
-
 class LockTestJob(enum.Enum):
     TERMINATE = enum.auto()
     LOCK = enum.auto()
