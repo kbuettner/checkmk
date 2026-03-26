@@ -10,42 +10,49 @@ from typing import Any
 
 import pytest
 
-from cmk.agent_based.v2 import StringTable
+from cmk.agent_based.v2 import Result, Service, State, StringTable
 from cmk.legacy_checks.win_printers import (
     check_win_printers,
     discover_win_printers,
     parse_win_printers,
 )
 
+_STRING_TABLE: list[list[str]] = [
+    ["PrinterStockholm", "3", "4", "0"],
+    ["Printer", "Berlin", "3", "4", "0"],
+    ["WH1_BC_O3_UPS", "0", "3", "8"],
+    [
+        '"printerstatus","detectederrorstate"',
+        "-Type",
+        "OnlyIfInBoth",
+        "|",
+        "format-table",
+        "-HideTableHeaders",
+    ],
+]
+
 
 @pytest.mark.parametrize(
     "string_table, expected_discoveries",
     [
         (
+            _STRING_TABLE,
             [
-                ["PrinterStockholm", "3", "4", "0"],
-                ["Printer", "Berlin", "3", "4", "0"],
-                ["WH1_BC_O3_UPS", "0", "3", "8"],
-                [
-                    '"printerstatus","detectederrorstate"',
-                    "-Type",
-                    "OnlyIfInBoth",
-                    "|",
-                    "format-table",
-                    "-HideTableHeaders",
-                ],
+                Service(item="PrinterStockholm"),
+                Service(item="Printer Berlin"),
+                Service(item="WH1_BC_O3_UPS"),
             ],
-            [("PrinterStockholm", {}), ("Printer Berlin", {}), ("WH1_BC_O3_UPS", {})],
         ),
     ],
 )
 def test_discover_win_printers(
-    string_table: StringTable, expected_discoveries: Sequence[tuple[str, Mapping[str, Any]]]
+    string_table: StringTable, expected_discoveries: Sequence[Service]
 ) -> None:
-    """Test discovery function for win_printers check."""
     parsed = parse_win_printers(string_table)
     result = list(discover_win_printers(parsed))
-    assert sorted(result) == sorted(expected_discoveries)
+    assert sorted(result, key=lambda s: s.item or "") == sorted(
+        expected_discoveries, key=lambda s: s.item or ""
+    )
 
 
 @pytest.mark.parametrize(
@@ -54,63 +61,39 @@ def test_discover_win_printers(
         (
             "PrinterStockholm",
             {"crit_states": [9, 10], "warn_states": [8, 11]},
+            _STRING_TABLE,
             [
-                ["PrinterStockholm", "3", "4", "0"],
-                ["Printer", "Berlin", "3", "4", "0"],
-                ["WH1_BC_O3_UPS", "0", "3", "8"],
-                [
-                    '"printerstatus","detectederrorstate"',
-                    "-Type",
-                    "OnlyIfInBoth",
-                    "|",
-                    "format-table",
-                    "-HideTableHeaders",
-                ],
+                Result(state=State.OK, summary="Current jobs: 3"),
+                Result(state=State.OK, summary="State: Printing"),
             ],
-            [(0, "Current jobs: 3", []), (0, "State: Printing")],
         ),
         (
             "Printer Berlin",
             {"crit_states": [9, 10], "warn_states": [8, 11]},
+            _STRING_TABLE,
             [
-                ["PrinterStockholm", "3", "4", "0"],
-                ["Printer", "Berlin", "3", "4", "0"],
-                ["WH1_BC_O3_UPS", "0", "3", "8"],
-                [
-                    '"printerstatus","detectederrorstate"',
-                    "-Type",
-                    "OnlyIfInBoth",
-                    "|",
-                    "format-table",
-                    "-HideTableHeaders",
-                ],
+                Result(state=State.OK, summary="Current jobs: 3"),
+                Result(state=State.OK, summary="State: Printing"),
             ],
-            [(0, "Current jobs: 3", []), (0, "State: Printing")],
         ),
         (
             "WH1_BC_O3_UPS",
             {"crit_states": [9, 10], "warn_states": [8, 11]},
+            _STRING_TABLE,
             [
-                ["PrinterStockholm", "3", "4", "0"],
-                ["Printer", "Berlin", "3", "4", "0"],
-                ["WH1_BC_O3_UPS", "0", "3", "8"],
-                [
-                    '"printerstatus","detectederrorstate"',
-                    "-Type",
-                    "OnlyIfInBoth",
-                    "|",
-                    "format-table",
-                    "-HideTableHeaders",
-                ],
+                Result(state=State.OK, summary="Current jobs: 0"),
+                Result(state=State.OK, summary="State: Idle"),
+                Result(state=State.WARN, summary="Error state: Jammed"),
             ],
-            [(0, "Current jobs: 0", []), (0, "State: Idle"), (1, "Error state: Jammed")],
         ),
     ],
 )
 def test_check_win_printers(
-    item: str, params: Mapping[str, Any], string_table: StringTable, expected_results: Sequence[Any]
+    item: str,
+    params: Mapping[str, Any],
+    string_table: StringTable,
+    expected_results: Sequence[Result],
 ) -> None:
-    """Test check function for win_printers check."""
     parsed = parse_win_printers(string_table)
     result = list(check_win_printers(item, params, parsed))
     assert result == expected_results

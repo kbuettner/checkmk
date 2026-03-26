@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-# mypy: disable-error-code="type-arg"
-
 # Example output from agent:
 # Put here the example output from your TCP-Based agent. If the
 # <<<win_printers>>>
@@ -12,13 +10,23 @@
 # WH1_BC_O3_UPS                         0                   3                   0
 
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Mapping
 from typing import Any, Final, NamedTuple
 
-from cmk.agent_based.legacy.v0_unstable import check_levels, LegacyCheckDefinition
-from cmk.agent_based.v2 import StringTable
-
-check_info = {}
+from cmk.agent_based.legacy.conversion import (
+    # Temporary compatibility layer untile we migrate the corresponding ruleset.
+    check_levels_legacy_compatible as check_levels,
+)
+from cmk.agent_based.v2 import (
+    AgentSection,
+    CheckPlugin,
+    CheckResult,
+    DiscoveryResult,
+    Result,
+    Service,
+    State,
+    StringTable,
+)
 
 
 class PrinterQueue(NamedTuple):
@@ -69,18 +77,16 @@ def parse_win_printers(string_table: StringTable) -> Section:
     return parsed
 
 
-def discover_win_printers(section: Section) -> Iterable[tuple[str, dict]]:
+def discover_win_printers(section: Section) -> DiscoveryResult:
     # Do not discover offline printers
-    yield from ((item, {}) for item, queue in section.items() if queue.error != 9)
+    yield from (Service(item=item) for item, queue in section.items() if queue.error != 9)
 
 
-def check_win_printers(
-    item: str, params: Mapping[str, Any], section: Section
-) -> Iterable[tuple[int, str, list] | tuple[int, str]]:
+def check_win_printers(item: str, params: Mapping[str, Any], section: Section) -> CheckResult:
     if (queue := section.get(item)) is None:
         return
 
-    yield check_levels(
+    yield from check_levels(
         queue.jobs,
         None,
         params.get("levels"),
@@ -88,17 +94,22 @@ def check_win_printers(
         infoname="Current jobs",
     )
 
-    yield 0, f"State: {_STATUS_MAP[queue.status]}"
+    yield Result(state=State.OK, summary=f"State: {_STATUS_MAP[queue.status]}")
 
     if queue.error in params["crit_states"]:
-        yield 2, f"Error state: {_ERROR_MAP[queue.error]}"
+        yield Result(state=State.CRIT, summary=f"Error state: {_ERROR_MAP[queue.error]}")
     elif queue.error in params["warn_states"]:
-        yield 1, f"Error state: {_ERROR_MAP[queue.error]}"
+        yield Result(state=State.WARN, summary=f"Error state: {_ERROR_MAP[queue.error]}")
 
 
-check_info["win_printers"] = LegacyCheckDefinition(
+agent_section_win_printers = AgentSection(
     name="win_printers",
     parse_function=parse_win_printers,
+)
+
+
+check_plugin_win_printers = CheckPlugin(
+    name="win_printers",
     service_name="Printer %s",
     discovery_function=discover_win_printers,
     check_function=check_win_printers,
