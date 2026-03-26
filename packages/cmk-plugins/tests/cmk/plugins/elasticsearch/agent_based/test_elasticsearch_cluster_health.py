@@ -9,7 +9,7 @@
 import pytest
 
 from cmk.agent_based.v2 import Metric, Result, State
-from cmk.legacy_checks.elasticsearch_cluster_health import (
+from cmk.plugins.elasticsearch.agent_based.elasticsearch_cluster_health import (
     check_elasticsearch_cluster_health,
     check_elasticsearch_cluster_health_shards,
     check_elasticsearch_cluster_health_tasks,
