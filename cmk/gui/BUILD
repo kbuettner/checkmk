@@ -223,7 +223,7 @@ py_library(
             ":pro",
             ":ultimate",
             "//cmk/utils:pro",
-            "//non-free/packages/cmk-cloud",
+            "//non-free/packages/cmk-cloud/cmk/cloud",
         ],
         "@//:gpl_repo": [],
     }),
