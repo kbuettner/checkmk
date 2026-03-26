@@ -918,7 +918,7 @@ def render_ajax_graph(
         size_x = max(min_resize_width, float(resize_x_var) / html_size_per_ex + render_opt_x)
         size_y = max(min_resize_height, float(resize_y_var) / html_size_per_ex + render_opt_y)
         user.save_file("graph_size", (size_x, size_y))
-        display_config.size = (size_x, size_y)
+        display_config = display_config.model_copy(update={"size": (size_x, size_y)})
 
     range_from_var = request.var("range_from")
     range_to_var = request.var("range_to")
@@ -1271,7 +1271,9 @@ def _render_graph_content_html(
                 _("Cannot render complete graph"),
                 class_="error",
             )
-        display_config.size = (display_config.size[0], display_config.size[1] - 6)
+        display_config = display_config.model_copy(
+            update={"size": (display_config.size[0], display_config.size[1] - 6)}
+        )
     else:
         output = HTML.empty()
 
@@ -1305,7 +1307,9 @@ def _render_graph_content_html(
                 ),
                 class_="warning",
             )
-        display_config.size = (display_config.size[0], display_config.size[1] - 8)
+        display_config = display_config.model_copy(
+            update={"size": (display_config.size[0], display_config.size[1] - 8)}
+        )
 
     try:
         output += _render_graph_html(
@@ -1589,7 +1593,7 @@ def host_service_graph_dashlet_cmk(
     else:
         raise MKGraphRecipeNotFoundError(_("Failed to calculate a graph recipe."))
 
-    display_config.size = (width, height)
+    display_config = display_config.model_copy(update={"size": (width, height)})
 
     time_range = (
         json.loads(request.get_str_input_mandatory("timerange"))
@@ -1652,8 +1656,12 @@ def host_service_graph_dashlet_cmk(
         max_legend_height_ex = min(height // 3, max(height - min_widget_height_ex, 0))
         legend_height_ex = min(estimated_legend_height_ex, max_legend_height_ex)
         height -= legend_height_ex
-        display_config.size = (width, height)
-        display_config.legend_max_height_px = int(legend_height_ex * html_size_per_ex)
+        display_config = display_config.model_copy(
+            update={
+                "size": (width, height),
+                "legend_max_height_px": int(legend_height_ex * html_size_per_ex),
+            }
+        )
 
     return _render_graph_content_html(
         request,

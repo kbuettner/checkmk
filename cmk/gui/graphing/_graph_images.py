@@ -218,8 +218,8 @@ def graph_image_render_options(api_request: dict[str, Any] | None = None) -> Gra
         border_width=0.05,
     )
     # Enforce settings optionally setable via request
-    if api_request and api_request.get("render_options"):
-        graph_render_options.model_copy(update=api_request["render_options"])
+    if api_request and (render_opts := api_request.get("render_options")):
+        graph_render_options = graph_render_options.model_copy(update=render_opts)
 
     return graph_render_options
 
