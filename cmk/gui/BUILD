@@ -18,6 +18,7 @@ py_library(
         "//cmk:__subpackages__",
         "//non-free/packages/cmk-dcd:__pkg__",
         "//non-free/packages/cmk-liveproxyd:__pkg__",
+        "//non-free/packages/cmk-otel-collector:__pkg__",
         "//non-free/packages/cmk-robotmk:__pkg__",
         "//omd/packages:__subpackages__",
         "//tests:__subpackages__",
