@@ -67,11 +67,6 @@ DOCKERABLE_TESTS := \
 	test-werks \
 	test-medium-chain
 
-# Since the unit tests (that are written for Python 3) are executed with Python
-# 2.7, we need to convert them, just like it is done for the agent plugins (see
-# agents/plugins/Makefile)
-AGENT_PLUGIN_UNIT_TEST_FILES := $(wildcard agent-plugin-unit/test_*.py)
-
 .PHONY: clean help prepare-playwright  \
 	$(foreach VERS,$(AGENT_PLUGIN_PYTHON_VERSIONS_DOCKER),test-agent-plugin-unit-py$(VERS)-docker) \
 	test-code-quality test-code-quality-docker
