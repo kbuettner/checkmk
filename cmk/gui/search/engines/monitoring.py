@@ -82,7 +82,7 @@ class FilterBehaviour(Enum):
     FINISHED = "finished"
 
 
-def _to_regex(s: str) -> str:
+def _sanitize_and_validate_regex(s: str) -> str:
     """Ensures the provided search string is a regex, does some basic conversion
     and then tries to verify it is a regex"""
     s = s.replace("*", ".*")
@@ -605,7 +605,7 @@ class QuicksearchManager:
         return [
             self._make_conductor(
                 filter_name,
-                {filter_name: [_to_regex(query)]},
+                {filter_name: [_sanitize_and_validate_regex(query)]},
                 FilterBehaviour[filter_behaviour_str.upper()],
                 user_permissions,
             )
@@ -644,7 +644,7 @@ class QuicksearchManager:
         current_string = query
         for filter_type, offset in found_filters[-1::-1]:
             filter_query = current_string[offset + len(filter_type) :]
-            filter_text = _to_regex(filter_query).strip()
+            filter_text = _sanitize_and_validate_regex(filter_query).strip()
             filter_name = filter_type.strip().rstrip(":")
             used_filters.setdefault(filter_name, []).append(filter_text)
             current_string = current_string[:offset]
