@@ -100,7 +100,7 @@ void main() {
             ) {
                 smart_build(
                     // see global-defaults.yml, needs to run in minimal container
-                    use_upstream_build: !env.DISABLE_JENKINS_CACHE,
+                    use_upstream_build: true,
                     relative_job_name: relative_job_name,
                     build_params: [
                         DISTRO: distro,

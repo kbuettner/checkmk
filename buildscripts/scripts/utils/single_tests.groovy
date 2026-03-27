@@ -59,7 +59,6 @@ void fetch_package(Map args) {
 
     inside_container_minimal(safe_branch_name: args.safe_branch_name) {
         def this_parameters = [
-            use_upstream_build: !env.DISABLE_JENKINS_CACHE,
             relative_job_name: relative_job_name,
             build_params: [
                 /// currently CUSTOM_GIT_REF must match, but in the future
@@ -89,7 +88,7 @@ void fetch_package(Map args) {
             this_parameters.build_params += [CIPARAM_PATH_HASH: args.dependency_paths];
             this_parameters.build_params_no_check += [CUSTOM_GIT_REF: cmd_output("git rev-parse HEAD")];
         }
-        smart_build(this_parameters);
+        upstream_build(this_parameters);
     }
 }
 
