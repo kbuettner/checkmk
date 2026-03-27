@@ -83,8 +83,9 @@ class FilterBehaviour(Enum):
 
 
 def _sanitize_and_validate_regex(s: str) -> str:
-    """Ensures the provided search string is a regex, does some basic conversion
-    and then tries to verify it is a regex"""
+    """Validate and return sanitized regex string."""
+    # Regex sanitization:
+    #  * convert glob patterns to valid regex wildcard pattern
     s = s.replace("*", ".*")
     validate_regex(s, varname=None)
 
