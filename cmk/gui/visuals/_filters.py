@@ -188,7 +188,7 @@ def register_host_and_service_basic_filters(filter_registry: FilterRegistry) -> 
 
     filter_registry.register(
         RegexAjaxDropdownFilter(
-            title=_l("Service (regex)"),
+            title=_l("Service name (regex)"),
             sort_index=200,
             info="service",
             autocompleter=AutocompleterConfig(
@@ -208,7 +208,7 @@ def register_host_and_service_basic_filters(filter_registry: FilterRegistry) -> 
 
     filter_registry.register(
         AjaxDropdownFilter(
-            title=_l("Service (exact match)"),
+            title=_l("Service name (exact match)"),
             sort_index=201,
             info="service",
             autocompleter=AutocompleterConfig(ident="monitored_service_description", strict=True),
