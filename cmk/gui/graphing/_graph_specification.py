@@ -212,7 +212,6 @@ class GraphRecipe(BaseModel, frozen=True):
     omit_zero_metrics: bool
     consolidation_function: GraphConsolidationFunction | None
     metrics: Sequence[GraphMetric]
-    mark_requested_end_time: bool = False
     # https://docs.pydantic.dev/2.4/concepts/serialization/#subclass-instances-for-fields-of-basemodel-dataclasses-typeddict
     # https://docs.pydantic.dev/2.4/concepts/serialization/#serializing-with-duck-typing
     specification: SerializeAsAny[GraphSpecification]
@@ -237,3 +236,4 @@ class GraphRecipeWithOverrides:
     time_range: GraphTimeRange | None = None
     render_options: GraphRenderOptions = field(default_factory=GraphRenderOptions)
     additional_html: AdditionalGraphHTML | None = None
+    mark_requested_end_time: bool = False

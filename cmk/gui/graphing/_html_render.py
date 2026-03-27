@@ -1233,6 +1233,7 @@ def render_graphs_html(
                 temperature_unit=context.temperature_unit,
                 backend_time_series_fetcher=context.backend_time_series_fetcher,
                 pin_time=_load_graph_pin(),
+                mark_requested_end_time=recipe_with_overrides.mark_requested_end_time,
             ),
             debug=context.debug,
             graph_timeranges=graph_timeranges,
@@ -1675,6 +1676,7 @@ def host_service_graph_dashlet_cmk(
         temperature_unit=temperature_unit,
         backend_time_series_fetcher=backend_time_series_fetcher,
         pin_time=_load_graph_pin(),
+        mark_requested_end_time=recipe_with_overrides.mark_requested_end_time,
     )
 
     # When the legend is enabled, we need to reduce the height by the height of the legend to

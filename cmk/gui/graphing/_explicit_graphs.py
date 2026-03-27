@@ -48,7 +48,7 @@ class ExplicitGraphSpecification(GraphSpecification, frozen=True):
                     horizontal_rules=self.horizontal_rules,
                     metrics=self.metrics,
                     specification=self,
-                    mark_requested_end_time=self.mark_requested_end_time,
-                )
+                ),
+                mark_requested_end_time=self.mark_requested_end_time,
             )
         ]

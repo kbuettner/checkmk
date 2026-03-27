@@ -321,6 +321,7 @@ def iter_graph_artworks(
                 temperature_unit=context.temperature_unit,
                 backend_time_series_fetcher=context.backend_time_series_fetcher,
                 pin_time=pin_time,
+                mark_requested_end_time=recipe_with_overrides.mark_requested_end_time,
             ),
         )
 
@@ -335,6 +336,7 @@ def compute_graph_artwork(
     temperature_unit: TemperatureUnit,
     backend_time_series_fetcher: FetchTimeSeries | None,
     pin_time: int | None = None,
+    mark_requested_end_time: bool = False,
 ) -> GraphArtworkOrErrors:
     unit_spec = user_specific_unit(recipe.unit_spec, temperature_unit)
 
@@ -383,7 +385,7 @@ def compute_graph_artwork(
                 mirrored,
             ),
             x_axis=_compute_graph_t_axis(start_time, end_time, width, step),
-            mark_requested_end_time=recipe.mark_requested_end_time,
+            mark_requested_end_time=mark_requested_end_time,
             # Displayed range
             actual_time=ActualTimeRange(start=int(start_time), end=int(end_time), step=int(step)),
             requested_time=RequestedTimeRange(
