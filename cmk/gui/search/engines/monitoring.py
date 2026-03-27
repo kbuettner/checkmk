@@ -86,10 +86,9 @@ def _sanitize_and_validate_regex(s: str) -> str:
     """Validate and return sanitized regex string."""
     # Regex sanitization:
     #  * convert glob patterns to valid regex wildcard pattern
-    s = s.replace("*", ".*")
-    validate_regex(s, varname=None)
-
-    return s
+    sanitized = s.replace("*", ".*")
+    validate_regex(sanitized, varname=None)
+    return sanitized
 
 
 class TooManyRowsError(MKException):
