@@ -69,7 +69,6 @@ from ._graph_display_config import (
     GraphDisplayConfigBase,
     GraphDisplayConfigHTML,
     GraphRenderOptions,
-    GraphTitleFormat,
 )
 from ._graph_metric_expressions import GraphMetricExpression
 from ._graph_specification import (
@@ -429,57 +428,61 @@ def _render_graph_title_elements(
     artwork: GraphArtwork,
     display_config: GraphDisplayConfigBase,
     explicit_title: str | None = None,
-) -> Sequence[_TitleElement]:
+) -> Iterator[_TitleElement]:
     if not display_config.show_title:
-        return []
+        return
 
     # Hard override of the graph title. This is e.g. needed for the graph previews
     if explicit_title is not None:
-        return [_TitleElement(text=explicit_title, url=None)]
-
-    title_elements: list[_TitleElement] = []
+        yield _TitleElement(text=explicit_title, url=None)
+        return
 
     if display_config.title_format.plain and artwork.title:
-        title_elements.append(_TitleElement(text=artwork.title, url=None))
+        yield _TitleElement(text=artwork.title, url=None)
 
     # Only add host/service information for template based graphs
     if not isinstance(specification, TemplateGraphSpecification):
-        return title_elements
+        return
 
-    title_elements.extend(_title_info_elements(request, specification, display_config.title_format))
-
-    return title_elements
-
-
-def _title_info_elements(
-    request: Request, spec_info: TemplateGraphSpecification, title_format: GraphTitleFormat
-) -> Iterable[_TitleElement]:
-    if title_format.add_host_name or title_format.add_host_alias:
-        host_url = makeuri_contextless(
-            request,
-            [("view_name", "hoststatus"), ("host", spec_info.host_name)],
-            filename="view.py",
+    if display_config.title_format.add_host_name:
+        yield _TitleElement(
+            text=specification.host_name,
+            url=makeuri_contextless(
+                request,
+                [("view_name", "hoststatus"), ("host", specification.host_name)],
+                filename="view.py",
+            ),
         )
-        if title_format.add_host_name:
-            yield _TitleElement(text=spec_info.host_name, url=host_url)
-        if title_format.add_host_alias:
-            yield _TitleElement(
-                text=get_alias_of_host(spec_info.site, spec_info.host_name), url=host_url
-            )
 
-    if title_format.add_service_description:
-        service_description = spec_info.service_description
-        if service_description != "_HOST_":
-            service_url = makeuri_contextless(
+    if display_config.title_format.add_host_alias:
+        yield _TitleElement(
+            text=get_alias_of_host(specification.site, specification.host_name),
+            url=makeuri_contextless(
+                request,
+                [
+                    ("view_name", "hoststatus"),
+                    ("host", specification.host_name),
+                ],
+                filename="view.py",
+            ),
+        )
+
+    if (
+        display_config.title_format.add_service_description
+        and specification.service_description != "_HOST_"
+    ):
+        yield _TitleElement(
+            text=specification.service_description,
+            url=makeuri_contextless(
                 request,
                 [
                     ("view_name", "service"),
-                    ("host", spec_info.host_name),
-                    ("service", service_description),
+                    ("host", specification.host_name),
+                    ("service", specification.service_description),
                 ],
                 filename="view.py",
-            )
-            yield _TitleElement(text=service_description, url=service_url)
+            ),
+        )
 
 
 def _show_graph_html_content(
