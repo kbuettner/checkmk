@@ -57,7 +57,7 @@ py_library(
     ],
     deps = [
         ":cmk_update_config",
-        "//cmk/gui:pro",
+        "//cmk/gui/nonfree/pro",
         "//cmk/utils:pro",
     ] + select({
         "@//:gpl+nonfree_repo": [
@@ -80,8 +80,8 @@ py_library(
     ],
     deps = [
         ":cmk_update_config",
-        "//cmk/gui:pro",
-        "//cmk/gui:ultimate",
+        "//cmk/gui/nonfree/pro",
+        "//cmk/gui/nonfree/ultimate",
     ] + select({
         "@//:gpl+nonfree_repo": [
             "//non-free/packages/cmk-metric-backend",

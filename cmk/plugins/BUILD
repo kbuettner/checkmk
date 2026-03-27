@@ -100,7 +100,7 @@ py_library(
         "@//:gpl_repo": ["@platforms//:incompatible"],
     }),
     deps = [
-        "//cmk/gui:ultimate",
+        "//cmk/gui/nonfree/ultimate",
         "//cmk/utils",
         "//non-free/packages/cmk-metric-backend",
         "//non-free/packages/cmk-metric-backend:cmk-metric-backend-fetcher",
