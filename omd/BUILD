@@ -32,7 +32,6 @@ py_binary(
 # * nagvis should be added to all editions EXCEPT cloud - see CMK-14926
 edition_deps = select({
     "@cmk//edition:cloud": [
-        "//cmk:cmk_tar",
         "//non-free/packages/cmk-bakery:pkg_tar",
         "//non-free/packages/cmk-cloud:pkg_tar",
         "//non-free/packages/cmc-protocols:pkg_tar",
@@ -58,12 +57,10 @@ edition_deps = select({
         "//non-free/packages/cmk-relay-engine:relay_install_pkg",
     ],
     "@cmk//edition:community": [
-        "//cmk:cmk_tar",
         "//omd/packages/jaeger:pkg_tar",
         "//omd/packages/nagvis:pkg_tar",
     ],
     "@cmk//edition:pro": [
-        "//cmk:cmk_tar",
         "//non-free/packages/cmk-bakery:pkg_tar",
         "//non-free/packages/cmc-protocols:pkg_tar",
         "//non-free/packages/cmk-core-helpers:pkg_tar",
@@ -85,7 +82,6 @@ edition_deps = select({
         "//omd/packages/nagvis:pkg_tar",
     ],
     "@cmk//edition:ultimate": [
-        "//cmk:cmk_tar",
         "//non-free/packages/cmk-bakery:pkg_tar",
         "//non-free/packages/cmc-protocols:pkg_tar",
         "//non-free/packages/cmk-core-helpers:pkg_tar",
@@ -116,7 +112,6 @@ edition_deps = select({
         "//non-free/packages/otel-collector",
     ],
     "@cmk//edition:ultimatemt": [
-        "//cmk:cmk_tar",
         "//non-free/packages/cmk-bakery:pkg_tar",
         "//non-free/packages/cmc-protocols:pkg_tar",
         "//non-free/packages/cmk-core-helpers:pkg_tar",
@@ -687,8 +682,9 @@ pkg_tar(
     stamp = 1,
     tags = ["manual"],
     deps = [
-        "//bin:pkg_tar",
         "//active_checks:pkg_tar",
+        "//bin:pkg_tar",
+        "//cmk:cmk_tar",
         "//doc/plugin-api/source:pkg_tar",
         "//locale",
         "//packages/cmk-notification-plugins:pkg_tar",
