@@ -21,7 +21,7 @@ py_library(
         "//cmk/base/errorhandling",
         "//cmk/base/sources",
         "//cmk/checkengine:cmk_checkengine",
-        "//cmk/core_client:cmk_core_client",
+        "//cmk/core_client",
         "//cmk/inventory:cmk_inventory",
         "//cmk/piggyback:backend",
         "//cmk/server_side_calls_backend",
