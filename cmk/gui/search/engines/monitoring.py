@@ -74,12 +74,12 @@ class LivestatusResult:
 
 @unique
 class FilterBehaviour(Enum):
-    # Continue search
     CONTINUE = "continue"
-    # Search finished: Only show results of this filter
+    """Continue search."""
     FINISHED_DISTINCT = "finished_distinct"
-    # Search finished: Also show all results of previous filters
+    """Search finished, showing only results of this filter."""
     FINISHED = "finished"
+    """Search finished, showing all results of previous filters."""
 
 
 def _sanitize_and_validate_regex(query: str) -> str:
