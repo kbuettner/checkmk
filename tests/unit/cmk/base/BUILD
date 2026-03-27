@@ -44,8 +44,8 @@ py_test(
         # As long as these tests are not cleaned
         # up (== work with dedicated plugins)
         # we need to add the required plugins here.
-        "//cmk/plugins:cmk_plugins",
-        "//cmk/legacy_checks:cmk_legacy_checks",
+        "//cmk/plugins",
+        "//cmk/legacy_checks",
         "//packages/cmk-plugins:graylog",
         "//packages/cmk-logwatch:plugins",
         # -----------------------------------------

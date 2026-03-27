@@ -2,7 +2,7 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 
 py_library(
-    name = "cmk_update_config",
+    name = "update_config",
     srcs = glob(
         include = ["**/*.py"],
         exclude = [
@@ -20,7 +20,7 @@ py_library(
         "//cmk:validate_config",
         "//cmk/base:app",
         "//cmk/base:config",
-        "//cmk/checkengine:cmk_checkengine",
+        "//cmk/checkengine",
         "//cmk/gui",
         "//cmk/utils",
         "//packages/cmk-ccc:debug",

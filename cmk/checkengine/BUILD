@@ -1,7 +1,7 @@
 load("@aspect_rules_py//py:defs.bzl", "py_library")
 
 py_library(
-    name = "cmk_checkengine",
+    name = "checkengine",
     srcs = glob(["**/*.py"]),
     imports = ["../.."],
     visibility = [
@@ -12,7 +12,7 @@ py_library(
         "//tests:__subpackages__",
     ],
     deps = [
-        "//cmk/inventory:cmk_inventory",
+        "//cmk/inventory",
         "//cmk/piggyback:backend",
         "//cmk/utils",
         "//packages/cmk-ccc:cpu-tracking",

@@ -2,7 +2,7 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 
 py_library(
-    name = "cmk_legacy_includes",
+    name = "legacy_includes",
     srcs = glob(["**/*.py"]),
     imports = ["../.."],
     visibility = [
@@ -11,7 +11,7 @@ py_library(
         "//tests:__subpackages__",
     ],
     deps = [
-        "//cmk/plugins:cmk_plugins",
+        "//cmk/plugins",
         "//packages/cmk-plugin-apis:agent_based",
         "//packages/cmk-plugins:aws",
         "//packages/cmk-plugins:graylog",

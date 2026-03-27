@@ -2,7 +2,7 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 
 py_library(
-    name = "cmk_fields",
+    name = "fields",
     srcs = [
         "__init__.py",
         "base.py",

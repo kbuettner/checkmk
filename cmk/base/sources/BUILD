@@ -9,7 +9,7 @@ py_library(
         "//cmk/base:__subpackages__",
     ],
     deps = [
-        "//cmk/checkengine:cmk_checkengine",
+        "//cmk/checkengine",
         "//cmk/server_side_calls_backend",
         "//cmk/utils",
         "//packages/cmk-ccc:hostaddress",

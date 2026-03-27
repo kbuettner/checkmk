@@ -2,7 +2,7 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 
 py_library(
-    name = "cmk_automations",
+    name = "automations",
     srcs = [
         "__init__.py",
     ] + glob([
@@ -14,7 +14,7 @@ py_library(
     imports = ["../.."],
     visibility = ["//cmk:__subpackages__"],
     deps = [
-        "//cmk/checkengine:cmk_checkengine",
+        "//cmk/checkengine",
         "//cmk/utils",
         "//packages/cmk-ccc:exceptions",
         "//packages/cmk-ccc:i18n",

@@ -10,11 +10,11 @@ py_library(
         "//cmk/base:__subpackages__",
     ],
     deps = [
-        "//cmk/automations:cmk_automations",
+        "//cmk/automations",
         "//cmk/base:app",
         "//cmk/base:config",
         "//cmk/base/automations",
-        "//cmk/checkengine:cmk_checkengine",
+        "//cmk/checkengine",
         "//cmk/utils",
         "//packages/cmk-ccc:daemon",
         "//packages/cmk-ccc:site",

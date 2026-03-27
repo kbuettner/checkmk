@@ -43,7 +43,7 @@ py_test(
     deps = [
         ":__test__",
         ":conftest",
-        "//cmk/update_config:cmk_update_config",
+        "//cmk/update_config",
         "//tests/testlib/unit:unit_free",
         "//tests/unit:conftest",
         requirement("flask"),

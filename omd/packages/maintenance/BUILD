@@ -82,7 +82,7 @@ py_library(
         "diskspace.py",
     ],
     deps = [
-        "//cmk/diskspace:cmk_diskspace",
+        "//cmk/diskspace",
         "//cmk/utils",
         "//omd/packages/omd:omdlib",
     ],

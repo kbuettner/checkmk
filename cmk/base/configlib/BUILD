@@ -12,9 +12,9 @@ py_library(
     ],
     deps = [
         "//cmk/base/default_config:default-config",
-        "//cmk/checkengine:cmk_checkengine",
+        "//cmk/checkengine",
         "//cmk/piggyback:backend",
-        "//cmk/rrd:cmk_rrd",
+        "//cmk/rrd",
         "//cmk/utils",
         "//packages/cmk-ccc:exceptions",
         "//packages/cmk-ccc:hostaddress",

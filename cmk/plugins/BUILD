@@ -7,7 +7,7 @@ package(default_visibility = [
 ])
 
 py_library(
-    name = "cmk_plugins",
+    name = "plugins",
     srcs = glob(
         include = ["**/*.py"],
         exclude = [
@@ -21,7 +21,7 @@ py_library(
         "//tests:__subpackages__",
     ],
     deps = [
-        "//cmk/bi:cmk_bi",
+        "//cmk/bi",
         "//cmk/utils",
         "//packages/cmk-ccc:debug",
         "//packages/cmk-ccc:exceptions",
@@ -86,7 +86,7 @@ py_library(
 # cmk.otel_collector.*, etc. - their sources are added directly to //cmk:ultimate
 # so type checking happens with the nonfree packages available.
 py_library(
-    name = "cmk_plugins_otel_nonfree_srcs",
+    name = "plugins_otel_nonfree_srcs",
     srcs = glob(
         [
             "otel/**/nonfree/**/*.py",
@@ -116,18 +116,18 @@ py_library(
 )
 
 py_library(
-    name = "cmk_plugins_community",
+    name = "plugins_community",
     srcs = glob(
         include = ["**/community/**/*.py"],
         allow_empty = True,
         exclude = ["**/nonfree/**"],
     ),
     imports = ["../.."],
-    deps = [":cmk_plugins"],
+    deps = [":plugins"],
 )
 
 py_library(
-    name = "cmk_plugins_pro",
+    name = "plugins_pro",
     srcs = glob(
         include = [
             "**/nonfree/**/pro/**/*.py",
@@ -142,14 +142,14 @@ py_library(
     ),
     imports = ["../.."],
     deps = [
-        ":cmk_plugins",
-        ":cmk_plugins_community",
+        ":plugins",
+        ":plugins_community",
         requirement("robotframework"),
     ],
 )
 
 py_library(
-    name = "cmk_plugins_ultimate",
+    name = "plugins_ultimate",
     srcs = glob(
         include = [
             "**/nonfree/**/ultimate/**/*.py",
@@ -165,14 +165,14 @@ py_library(
     ),
     imports = ["../.."],
     deps = [
-        ":cmk_plugins",
-        ":cmk_plugins_community",
-        ":cmk_plugins_pro",
+        ":plugins",
+        ":plugins_community",
+        ":plugins_pro",
     ],
 )
 
 py_library(
-    name = "cmk_plugins_cloud",
+    name = "plugins_cloud",
     srcs = glob(
         include = [
             "**/nonfree/**/cloud/**/*.py",
@@ -182,15 +182,15 @@ py_library(
     ),
     imports = ["../.."],
     deps = [
-        ":cmk_plugins",
-        ":cmk_plugins_community",
-        ":cmk_plugins_pro",
-        ":cmk_plugins_ultimate",
+        ":plugins",
+        ":plugins_community",
+        ":plugins_pro",
+        ":plugins_ultimate",
     ],
 )
 
 py_library(
-    name = "cmk_plugins_ultimatemt",
+    name = "plugins_ultimatemt",
     srcs = glob(
         include = [
             "**/nonfree/**/ultimatemt/**/*.py",
@@ -200,10 +200,10 @@ py_library(
     ),
     imports = ["../.."],
     deps = [
-        ":cmk_plugins",
-        ":cmk_plugins_community",
-        ":cmk_plugins_pro",
-        ":cmk_plugins_ultimate",
+        ":plugins",
+        ":plugins_community",
+        ":plugins_pro",
+        ":plugins_ultimate",
     ],
 )
 

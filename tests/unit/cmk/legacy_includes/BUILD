@@ -30,7 +30,7 @@ py_test(
     visibility = ["//visibility:private"],
     deps = [
         ":__test__",
-        "//cmk/legacy_includes:cmk_legacy_includes",
+        "//cmk/legacy_includes",
         "//tests/unit:conftest",
         requirement("marshmallow"),
         requirement("pytest-asyncio"),

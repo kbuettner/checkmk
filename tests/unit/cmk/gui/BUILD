@@ -68,7 +68,7 @@ py_test(
         requirement("time-machine"),
         requirement("werkzeug"),
         "//cmk:validate_config",
-        "//cmk/bi:cmk_bi",
+        "//cmk/bi",
         "//cmk/gui",
         "//omd/packages/omd:omdlib",
         "//tests/testlib/common:empty_config",

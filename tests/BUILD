@@ -19,7 +19,7 @@ py_library(
     visibility = ["//:__subpackages__"],
     deps = [
         "//cmk/base",
-        "//cmk/checkengine:cmk_checkengine",
+        "//cmk/checkengine",
         "//cmk/gui",
         "//cmk/utils",
         "//packages/cmk-relay-protocols",
@@ -81,7 +81,7 @@ py_library(
     imports = [".."],
     deps = [
         "//cmk/base",
-        "//cmk/checkengine:cmk_checkengine",
+        "//cmk/checkengine",
         "//cmk/gui",
         "//cmk/utils",
         "//packages/cmk-relay-protocols",

@@ -14,7 +14,7 @@ py_library(
     deps = [
         "//cmk/base:config",
         "//cmk/base/configlib",
-        "//cmk/checkengine:cmk_checkengine",
+        "//cmk/checkengine",
         "//cmk/core_client",
         "//cmk/utils",
         "//packages/cmk-ccc:config-path",
@@ -46,7 +46,7 @@ py_library(
         "//cmk/base:app",
         "//cmk/base:config",
         "//cmk/base/modes",
-        "//cmk/checkengine:cmk_checkengine",
+        "//cmk/checkengine",
         "//cmk/server_side_calls_backend",
         "//cmk/utils",
         "//packages/cmk-ccc:config-path",

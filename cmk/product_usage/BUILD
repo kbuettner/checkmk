@@ -7,7 +7,7 @@ exports_files(
 )
 
 py_library(
-    name = "cmk_product_usage",
+    name = "product_usage",
     srcs = glob(
         ["**/*.py"],
         exclude = ["cli.py"],
@@ -31,7 +31,7 @@ py_library(
     deps = [
         "//cmk/base:app",
         "//cmk/base:config",
-        "//cmk/product_usage:cmk_product_usage",
+        "//cmk/product_usage",
         "//cmk/utils",
         "//packages/cmk-ccc:version",
     ],

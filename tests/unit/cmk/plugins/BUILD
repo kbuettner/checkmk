@@ -32,8 +32,8 @@ py_test(
     visibility = ["//visibility:private"],
     deps = [
         ":__test__",
-        "//cmk/legacy_checks:cmk_legacy_checks",
-        "//cmk/plugins:cmk_plugins",
+        "//cmk/legacy_checks",
+        "//cmk/plugins",
         "//tests/testlib/common:repo",
         "//tests/testlib/unit:unit_free",
         requirement("exchangelib"),

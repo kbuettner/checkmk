@@ -2,7 +2,7 @@ load("@aspect_rules_py//py:defs.bzl", "py_library")
 load("@cmk_requirements//:requirements.bzl", "requirement")
 
 py_library(
-    name = "cmk_bi",
+    name = "bi",
     srcs = glob(["**/*.py"]),
     imports = ["../.."],
     visibility = [
@@ -10,8 +10,8 @@ py_library(
         "//tests/unit:__subpackages__",
     ],
     deps = [
-        "//cmk/checkengine:cmk_checkengine",
-        "//cmk/fields:cmk_fields",
+        "//cmk/checkengine",
+        "//cmk/fields",
         "//cmk/utils",
         "//packages/cmk-ccc:plugin-registry",
         "//packages/cmk-livestatus-client:py_livestatus",
