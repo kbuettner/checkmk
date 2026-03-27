@@ -643,7 +643,8 @@ class QuicksearchManager:
         used_filters: dict[str, list[str]] = {}
         current_string = query
         for filter_type, offset in found_filters[-1::-1]:
-            filter_text = _to_regex(current_string[offset + len(filter_type) :]).strip()
+            filter_query = current_string[offset + len(filter_type) :]
+            filter_text = _to_regex(filter_query).strip()
             filter_name = filter_type.strip().rstrip(":")
             used_filters.setdefault(filter_name, []).append(filter_text)
             current_string = current_string[:offset]
