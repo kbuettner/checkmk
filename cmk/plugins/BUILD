@@ -82,39 +82,6 @@ py_library(
     ],
 )
 
-# Otel and custom_query_metric_backend nonfree files import from cmk.metric_backend.*,
-# cmk.otel_collector.*, etc. - their sources are added directly to //cmk:ultimate
-# so type checking happens with the nonfree packages available.
-py_library(
-    name = "plugins_otel_nonfree_srcs",
-    srcs = glob(
-        [
-            "otel/**/nonfree/**/*.py",
-            "custom_query_metric_backend/**/nonfree/**/*.py",
-        ],
-        allow_empty = True,
-    ),
-    imports = ["../.."],
-    target_compatible_with = select({
-        "@//:gpl+nonfree_repo": [],
-        "@//:gpl_repo": ["@platforms//:incompatible"],
-    }),
-    deps = [
-        "//cmk/gui/nonfree/ultimate",
-        "//cmk/utils",
-        "//non-free/packages/cmk-metric-backend",
-        "//non-free/packages/cmk-metric-backend:cmk-metric-backend-fetcher",
-        "//non-free/packages/cmk-otel-collector",
-        "//packages/cmk-plugin-apis:agent_based",
-        "//packages/cmk-plugin-apis:graphing",
-        "//packages/cmk-plugin-apis:rulesets",
-        "//packages/cmk-plugin-apis:server_side_calls",
-        "//packages/cmk-shared-typing:cmk_shared_typing_py",
-        requirement("opentelemetry-proto"),
-        requirement("protobuf"),
-    ],
-)
-
 py_library(
     name = "plugins_community",
     srcs = glob(
@@ -156,12 +123,6 @@ py_library(
             "**/nonfree/__init__.py",
         ],
         allow_empty = True,
-        exclude = [
-            # Exclude otel and custom_query_metric_backend nonfree files - they import from
-            # cmk.metric_backend.*, cmk.otel_collector.*, etc. which are in //cmk:ultimate
-            "otel/**/nonfree/**",
-            "custom_query_metric_backend/**/nonfree/**",
-        ],
     ),
     imports = ["../.."],
     deps = [
