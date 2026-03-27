@@ -407,22 +407,18 @@ def _render_title_elements_plain(elements: Iterable[str]) -> str:
 
 # TODO: still relies on the global request object because painters also use this function.
 def render_plain_graph_title(
-    recipe: GraphRecipe,
     specification: GraphSpecification,
     artwork: GraphArtwork,
     display_config: GraphDisplayConfigBase,
 ) -> str:
     return _render_title_elements_plain(
         element[0]
-        for element in _render_graph_title_elements(
-            request, recipe, specification, artwork, display_config
-        )
+        for element in _render_graph_title_elements(request, specification, artwork, display_config)
     )
 
 
 def _render_graph_title_elements(
     request: Request,
-    recipe: GraphRecipe,
     specification: GraphSpecification,
     artwork: GraphArtwork,
     display_config: GraphDisplayConfigBase,
@@ -452,22 +448,16 @@ def _render_graph_title_elements(
 def _title_info_elements(
     request: Request, spec_info: TemplateGraphSpecification, title_format: GraphTitleFormat
 ) -> Iterable[tuple[str, str]]:
-    if title_format.add_host_name:
+    if title_format.add_host_name or title_format.add_host_alias:
         host_url = makeuri_contextless(
             request,
             [("view_name", "hoststatus"), ("host", spec_info.host_name)],
             filename="view.py",
         )
-        yield spec_info.host_name, host_url
-
-    if title_format.add_host_alias:
-        host_alias = get_alias_of_host(spec_info.site, spec_info.host_name)
-        host_url = makeuri_contextless(
-            request,
-            [("view_name", "hoststatus"), ("host", spec_info.host_name)],
-            filename="view.py",
-        )
-        yield host_alias, host_url
+        if title_format.add_host_name:
+            yield spec_info.host_name, host_url
+        if title_format.add_host_alias:
+            yield get_alias_of_host(spec_info.site, spec_info.host_name), host_url
 
     if title_format.add_service_description:
         service_description = spec_info.service_description
@@ -550,7 +540,6 @@ def _show_graph_html_content(
     title = text_with_links_to_user_translated_html(
         _render_graph_title_elements(
             request,
-            recipe,
             specification,
             artwork,
             display_config,
