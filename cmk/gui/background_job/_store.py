@@ -78,7 +78,7 @@ class JobStatusStore:
         try:
             data: JobStatusSpec = JobStatusSpec.model_validate(raw_status_spec)
         finally:
-            store.release_lock(str(self._jobstatus_path))
+            store.release_lock(self._jobstatus_path)
 
         def _log_lines(path: Path) -> list[str]:
             try:
@@ -113,4 +113,4 @@ class JobStatusStore:
             try:
                 self.write(JobStatusSpec.model_validate({**self.read_raw(), **params}))
             finally:
-                store.release_lock(str(self._jobstatus_path))
+                store.release_lock(self._jobstatus_path)

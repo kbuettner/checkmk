@@ -76,7 +76,7 @@ def lock_with_pid_file(path: Path) -> None:
     Use this after daemonizing or in foreground mode to ensure there is only
     one process running.
     """
-    if not store.try_acquire_lock(str(path)):
+    if not store.try_acquire_lock(path):
         raise MKGeneralException(
             "Failed to acquire PID file lock: Another process is already running"
         )
@@ -89,10 +89,10 @@ def lock_with_pid_file(path: Path) -> None:
 
 def _cleanup_locked_pid_file(path: Path) -> None:
     """Cleanup the lock + file acquired by the function above"""
-    if not store.have_lock(str(path)):
+    if not store.have_lock(path):
         return
 
-    store.release_lock(str(path))
+    store.release_lock(path)
 
     with suppress(OSError):
         path.unlink()

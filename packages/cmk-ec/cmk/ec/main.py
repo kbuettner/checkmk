@@ -3628,7 +3628,7 @@ def main(omd_root: Path, argv: Sequence[str]) -> None:
         bail_out(logger, traceback.format_exc())
 
     finally:
-        if pid_path and store.have_lock(str(pid_path)):
+        if pid_path and store.have_lock(pid_path):
             with contextlib.suppress(OSError):
                 pid_path.unlink()
 

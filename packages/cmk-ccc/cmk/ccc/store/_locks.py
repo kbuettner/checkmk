@@ -109,13 +109,11 @@ def activation_lock(main_mk_file: Path, mode: Literal["abort", "wait"] | None) -
 #   | wait forever.                                                        |
 #   '----------------------------------------------------------------------'
 
-LockDict = dict[str, int]
-
-# This will hold our path to file descriptor dicts in acquired_locks: dict[str, int].
+# This will hold our path to file descriptor dicts in acquired_locks
 _locks = threading.local()
 
 
-def _acquired_locks() -> dict[str, int]:
+def _acquired_locks() -> dict[Path, int]:
     """Make access to global locking dict thread-safe.
 
     Only the thread which acquired the lock should see the file descriptor in the locking
@@ -127,32 +125,32 @@ def _acquired_locks() -> dict[str, int]:
     """
     if not hasattr(_locks, "acquired_locks"):
         _locks.acquired_locks = {}
-    acquired_locks: dict[str, int] = _locks.acquired_locks
+    acquired_locks: dict[Path, int] = _locks.acquired_locks
     return acquired_locks
 
 
-def _set_lock(name: str, fd: int) -> None:
-    _acquired_locks()[name] = fd
+def _set_lock(path: Path, fd: int) -> None:
+    _acquired_locks()[path] = fd
 
 
-def _get_lock(name: str) -> int | None:
-    return _acquired_locks().get(name)
+def _get_lock(path: Path) -> int | None:
+    return _acquired_locks().get(path)
 
 
-def _del_lock(name: str) -> None:
-    _acquired_locks().pop(name, None)
+def _del_lock(path: Path) -> None:
+    _acquired_locks().pop(path, None)
 
 
-def _get_lock_keys() -> list[str]:
+def _get_lock_keys() -> list[Path]:
     return list(_acquired_locks())
 
 
-def _has_lock(name: str) -> bool:
-    return name in _acquired_locks()
+def have_lock(path: Path) -> bool:
+    return path in _acquired_locks()
 
 
 @contextmanager
-def locked(path: Path | str, blocking: bool = True) -> Iterator[None]:
+def locked(path: Path, blocking: bool = True) -> Iterator[None]:
     acquired = acquire_lock(path, blocking)
     try:
         yield
@@ -164,13 +162,10 @@ def locked(path: Path | str, blocking: bool = True) -> Iterator[None]:
 # Important: This function is NOT THREAD SAFE if used without an appropriate release_lock()
 #            call inside the thread. Use locked() instead. If multiple threads work on the
 #            same file, the entire process will hang indefinitely.
-def acquire_lock(path: Path | str, blocking: bool = True) -> bool:
+def acquire_lock(path: Path, blocking: bool = True) -> bool:
     """Obtain physical file lock on a file.
     If the file is already registered, then  done do nothing and return False.
     Otherwise, locks file physically, register file in global variable and returns True"""
-    if not isinstance(path, Path):
-        path = Path(path)
-
     if have_lock(path):
         return False
 
@@ -185,13 +180,13 @@ def acquire_lock(path: Path | str, blocking: bool = True) -> bool:
             # Handle the case where the file has been renamed in the meantime
             with _open_lock_file(path) as fd_new:
                 if os.path.sameopenfile(fd, fd_new):
-                    _set_lock(str(path), os.dup(fd))
+                    _set_lock(path, os.dup(fd))
                     logger.debug("Got lock on %s", path)
                     return True
 
 
 @contextmanager
-def _open_lock_file(path: os.PathLike[str]) -> Iterator[int]:
+def _open_lock_file(path: Path) -> Iterator[int]:
     fd = None
     try:
         fd = os.open(path, os.O_RDONLY | os.O_CREAT, 0o660)
@@ -202,7 +197,7 @@ def _open_lock_file(path: os.PathLike[str]) -> Iterator[int]:
 
 
 @contextmanager
-def try_locked(path: Path | str) -> Iterator[bool]:
+def try_locked(path: Path) -> Iterator[bool]:
     acquired = try_acquire_lock(path)
     try:
         yield acquired
@@ -211,7 +206,7 @@ def try_locked(path: Path | str) -> Iterator[bool]:
             release_lock(path)
 
 
-def try_acquire_lock(path: Path | str) -> bool:
+def try_acquire_lock(path: Path) -> bool:
     try:
         return acquire_lock(path, blocking=False)
     except OSError as e:
@@ -220,11 +215,8 @@ def try_acquire_lock(path: Path | str) -> bool:
         return False
 
 
-def release_lock(path: Path | str) -> None:
-    if not isinstance(path, Path):
-        path = Path(path)
-
-    if (fd := _get_lock(str(path))) is None:
+def release_lock(path: Path) -> None:
+    if (fd := _get_lock(path)) is None:
         return
 
     logger.debug("Releasing lock on %s", path)
@@ -234,12 +226,8 @@ def release_lock(path: Path | str) -> None:
         if e.errno != errno.EBADF:  # Bad file number
             raise
     finally:
-        _del_lock(str(path))
+        _del_lock(path)
         logger.debug("Released lock on %s", path)
-
-
-def have_lock(path: str | Path) -> bool:
-    return _has_lock(str(path))
 
 
 def release_all_locks() -> None:
@@ -249,7 +237,7 @@ def release_all_locks() -> None:
 
 
 @contextmanager
-def leave_locked_unless_exception(path: str | Path) -> Iterator[None]:
+def leave_locked_unless_exception(path: Path) -> Iterator[None]:
     """Contextmanager to lock a file, and release the lock if an exception occurs.
 
     If no exception occurs, the file is left behind locked.

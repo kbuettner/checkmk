@@ -11,7 +11,7 @@ import queue
 import sys
 import threading
 import time
-from collections.abc import Generator, Iterator, Sequence
+from collections.abc import Iterator, Sequence
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from types import ModuleType
@@ -257,19 +257,16 @@ def test_acquire_lock_not_existing(tmp_path: Path) -> None:
     assert store.acquire_lock(tmp_path / "asd") is True
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_locked(test_file: Path, path_type: type[str] | type[Path]) -> None:
-    path = path_type(test_file)
+def test_locked(test_file: Path) -> None:
+    assert store.have_lock(test_file) is False
 
-    assert store.have_lock(path) is False
+    with store.locked(test_file):
+        assert store.have_lock(test_file) is True
+        with store.locked(test_file):
+            assert store.have_lock(test_file) is True
+        assert store.have_lock(test_file) is True
 
-    with store.locked(path):
-        assert store.have_lock(path) is True
-        with store.locked(path):
-            assert store.have_lock(path) is True
-        assert store.have_lock(path) is True
-
-    assert store.have_lock(path) is False
+    assert store.have_lock(test_file) is False
 
 
 @pytest.fixture(name="test_file")
@@ -279,83 +276,57 @@ def fixture_test_file(tmp_path: Path) -> Path:
     return test_file
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_try_locked(test_file: Path, path_type: type[str] | type[Path]) -> None:
-    path = path_type(test_file)
+def test_try_locked(test_file: Path) -> None:
+    assert store.have_lock(test_file) is False
 
-    assert store.have_lock(path) is False
-
-    with store.try_locked(path) as result:
+    with store.try_locked(test_file) as result:
         assert result is True
-        assert store.have_lock(path) is True
-        with store.try_locked(path) as result_1:
+        assert store.have_lock(test_file) is True
+        with store.try_locked(test_file) as result_1:
             assert result_1 is False
-            assert store.have_lock(path) is True
+            assert store.have_lock(test_file) is True
 
-    assert store.have_lock(path) is False
-
-
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_acquire_lock(test_file: Path, path_type: type[str] | type[Path]) -> None:
-    path = path_type(test_file)
-
-    assert store.have_lock(path) is False
-    assert store.acquire_lock(path)
-    assert store.have_lock(path) is True
+    assert store.have_lock(test_file) is False
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_acquire_lock_twice(test_file: Path, path_type: type[str] | type[Path]) -> None:
-    path = path_type(test_file)
-
-    assert store.acquire_lock(path) is True
-    assert store.have_lock(path) is True
-    assert store.acquire_lock(path) is False
-    assert store.have_lock(path) is True
+def test_acquire_lock(test_file: Path) -> None:
+    assert store.have_lock(test_file) is False
+    assert store.acquire_lock(test_file)
+    assert store.have_lock(test_file) is True
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_release_lock_not_locked_no_exception(path_type: type[str] | type[Path]) -> None:
-    store.release_lock(path_type("/asdasd/aasdasd"))
+def test_acquire_lock_twice(test_file: Path) -> None:
+    assert store.acquire_lock(test_file) is True
+    assert store.have_lock(test_file) is True
+    assert store.acquire_lock(test_file) is False
+    assert store.have_lock(test_file) is True
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_release_lock(test_file: Path, path_type: type[str] | type[Path]) -> None:
-    path = path_type(test_file)
-
-    store.acquire_lock(path)
-    assert store.have_lock(path) is True
-    store.release_lock(path)
-    assert store.have_lock(path) is False
+def test_release_lock_not_locked_no_exception() -> None:
+    store.release_lock(Path("/asdasd/aasdasd"))
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_release_lock_already_closed(test_file: Path, path_type: type[str] | type[Path]) -> None:
+def test_release_lock(test_file: Path) -> None:
+    store.acquire_lock(test_file)
+    assert store.have_lock(test_file) is True
+    store.release_lock(test_file)
+    assert store.have_lock(test_file) is False
+
+
+def test_release_lock_already_closed(test_file: Path) -> None:
     """Should not raise exception"""
-    path = path_type(test_file)
-
-    store.acquire_lock(path)
-    fd = store._locks._get_lock(str(path))  # noqa: SLF001
+    store.acquire_lock(test_file)
+    fd = store._locks._get_lock(test_file)  # noqa: SLF001
     assert isinstance(fd, int)
     os.close(fd)
-    store.release_lock(path)
-    assert store.have_lock(path) is False
+    store.release_lock(test_file)
+    assert store.have_lock(test_file) is False
 
 
-_Files = Generator[Path]
-
-
-@pytest.fixture(name="few_files")
-def fixture_few_files(tmp_path: Path) -> _Files:
-    files = (tmp_path / name for name in ("locked_file1", "locked_file2"))
+def test_release_all_locks(tmp_path: Path) -> None:
+    files = [tmp_path / name for name in ("locked_file1", "locked_file2")]
     for f in files:
         f.write_text("", encoding="utf-8")
-    return files
-
-
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_release_all_locks(few_files: _Files, path_type: type[str] | type[Path]) -> None:
-    files = (path_type(f) for f in few_files)
 
     assert all(store.acquire_lock(f) for f in files)
     store.release_all_locks()
@@ -505,16 +476,11 @@ def _wait_for_waiting_lock() -> None:
     raise TimeoutError("Timeout waiting for 'has_waiting_lock' to finish (Timeout: 1 sec)")
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_blocking_context_manager_from_multiple_threads(
-    test_file: Path, path_type: type[str] | type[Path]
-) -> None:
-    path = path_type(test_file)
-
+def test_blocking_context_manager_from_multiple_threads(test_file: Path) -> None:
     acquired = []
 
     def acquire(_n: int) -> None:
-        with store.locked(path):
+        with store.locked(test_file):
             acquired.append(1)
             assert len(acquired) == 1
             acquired.pop()
@@ -525,19 +491,14 @@ def test_blocking_context_manager_from_multiple_threads(
     pool.join()
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_blocking_lock_from_multiple_threads(
-    test_file: Path, path_type: type[str] | type[Path]
-) -> None:
-    path = path_type(test_file)
-
+def test_blocking_lock_from_multiple_threads(test_file: Path) -> None:
     acquired = []
     saw_someone_wait: list[int] = []
 
     def acquire(_n: int) -> None:
-        assert not store.have_lock(path)
-        store.acquire_lock(path, blocking=True)
-        assert store.have_lock(path)
+        assert not store.have_lock(test_file)
+        store.acquire_lock(test_file, blocking=True)
+        assert store.have_lock(test_file)
 
         # We check to see if the other threads are actually waiting.
         if not saw_someone_wait:
@@ -550,8 +511,8 @@ def test_blocking_lock_from_multiple_threads(
         assert len(acquired) == 1
 
         acquired.pop()
-        store.release_lock(path)
-        assert not store.have_lock(path)
+        store.release_lock(test_file)
+        assert not store.have_lock(test_file)
 
     # We try to append 100 ints to `acquired` in 20 threads simultaneously. As it is guarded by
     # the lock, we only ever can have one entry in the list at the same time.
@@ -564,24 +525,19 @@ def test_blocking_lock_from_multiple_threads(
     assert len(acquired) == 0
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_non_blocking_lock_from_multiple_threads(
-    test_file: Path, path_type: type[str] | type[Path]
-) -> None:
-    path = path_type(test_file)
-
+def test_non_blocking_lock_from_multiple_threads(test_file: Path) -> None:
     acquired = []
 
     # Only one thread will ever be able to acquire this lock.
     def acquire(_n: int) -> None:
         try:
-            store.acquire_lock(path, blocking=False)
+            store.acquire_lock(test_file, blocking=False)
             acquired.append(1)
-            assert store.have_lock(path)
-            store.release_lock(path)
-            assert not store.have_lock(path)
+            assert store.have_lock(test_file)
+            store.release_lock(test_file)
+            assert not store.have_lock(test_file)
         except OSError:
-            assert not store.have_lock(path)
+            assert not store.have_lock(test_file)
 
     pool = ThreadPool(2)
     pool.map(acquire, iter(range(20)))
@@ -591,16 +547,12 @@ def test_non_blocking_lock_from_multiple_threads(
     assert len(acquired) > 1, "No thread got any lock."
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
 def test_blocking_lock_while_other_holds_the_lock(
-    test_file: Path, path_type: type[str] | type[Path], t1: LockTestThread, t2: LockTestThread
+    test_file: Path, t1: LockTestThread, t2: LockTestThread
 ) -> None:
     assert t1.store != t2.store
-
-    path = path_type(test_file)
-
-    assert t1.store.have_lock(path) is False
-    assert t2.store.have_lock(path) is False
+    assert t1.store.have_lock(test_file) is False
+    assert t2.store.have_lock(test_file) is False
 
     try:
         # Take lock with t1
@@ -616,60 +568,44 @@ def test_blocking_lock_while_other_holds_the_lock(
     t2.join_jobs()
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_non_blocking_locking_without_previous_lock(
-    test_file: Path, path_type: type[str] | type[Path], t1: LockTestThread
-) -> None:
+def test_non_blocking_locking_without_previous_lock(test_file: Path, t1: LockTestThread) -> None:
     assert t1.store != store
-    path = path_type(test_file)
-
     # Try to lock first
-    assert store.try_acquire_lock(path) is True
-    assert store.have_lock(path) is True
-    store.release_lock(path)
-    assert store.have_lock(path) is False
+    assert store.try_acquire_lock(test_file) is True
+    assert store.have_lock(test_file) is True
+    store.release_lock(test_file)
+    assert store.have_lock(test_file) is False
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
-def test_non_blocking_locking_while_already_locked(
-    test_file: Path, path_type: type[str] | type[Path], t1: LockTestThread
-) -> None:
+def test_non_blocking_locking_while_already_locked(test_file: Path, t1: LockTestThread) -> None:
     assert t1.store != store
-    path = path_type(test_file)
-
     # Now take lock with t1.store
     t1.lock()
 
     # And now try to get the lock (which should not be possible)
-    assert store.try_acquire_lock(path) is False
-    assert store.have_lock(path) is False
+    assert store.try_acquire_lock(test_file) is False
+    assert store.have_lock(test_file) is False
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
 def test_non_blocking_decorated_locking_without_previous_lock(
-    test_file: Path, path_type: type[str] | type[Path], t1: LockTestThread
+    test_file: Path, t1: LockTestThread
 ) -> None:
     assert t1.store != store
-    path = path_type(test_file)
-
-    with store.try_locked(path) as result:
+    with store.try_locked(test_file) as result:
         assert result is True
-        assert store.have_lock(path) is True
-    assert store.have_lock(path) is False
+        assert store.have_lock(test_file) is True
+    assert store.have_lock(test_file) is False
 
 
-@pytest.mark.parametrize("path_type", [str, Path])
 def test_non_blocking_decorated_locking_while_already_locked(
-    test_file: Path, path_type: type[str] | type[Path], t1: LockTestThread
+    test_file: Path, t1: LockTestThread
 ) -> None:
     assert t1.store != store
-    path = path_type(test_file)
-
     # Take lock with t1.store
     t1.lock()
 
     # And now try to get the lock (which should not be possible)
-    with store.try_locked(path) as result:
+    with store.try_locked(test_file) as result:
         assert result is False
-        assert store.have_lock(path) is False
-    assert store.have_lock(path) is False
+        assert store.have_lock(test_file) is False
+    assert store.have_lock(test_file) is False
