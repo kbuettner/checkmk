@@ -67,6 +67,7 @@ interface GraphTimeRange {
 export interface GraphContext {
   graph_id: string
   recipe: GraphRecipe
+  specification: object
   time_range: GraphTimeRange
   display_config: GraphDisplayConfigHTML
   display_id: string
@@ -233,6 +234,7 @@ function _hover_cache_set(key: string, data: GraphHover): void {
 interface DelayedGraph {
   graph_load_container: HTMLElement | Node | null
   recipe: GraphRecipe
+  specification: object
   time_range: GraphTimeRange
   display_config: GraphDisplayConfigHTML
   script_object: HTMLScriptElement
@@ -273,8 +275,8 @@ function get_id_of_graph(ajax_context: GraphContext) {
     const existing_context = g_ajax_contexts[graph_id]
     if (
       existing_context &&
-      JSON.stringify(ajax_context.recipe.specification) ==
-        JSON.stringify(existing_context.recipe.specification) &&
+      JSON.stringify(ajax_context.specification) ==
+        JSON.stringify(existing_context.specification) &&
       JSON.stringify(ajax_context.display_config) ==
         JSON.stringify(existing_context.display_config) &&
       ajax_context.display_id == existing_context.display_id
@@ -427,6 +429,7 @@ function get_current_script(): HTMLScriptElement {
 //    faster by parallelizing the graph loading processes.
 export function load_graph_content(
   recipe: GraphRecipe,
+  specification: object,
   time_range: GraphTimeRange,
   display_config: GraphDisplayConfigHTML,
   display_id: string,
@@ -441,6 +444,7 @@ export function load_graph_content(
     g_delayed_graphs.push({
       graph_load_container: graph_load_container,
       recipe: recipe,
+      specification: specification,
       time_range: time_range,
       display_config: display_config,
       script_object: script_object,
@@ -451,6 +455,7 @@ export function load_graph_content(
   } else {
     do_load_graph_content(
       recipe,
+      specification,
       time_range,
       display_config,
       script_object,
@@ -483,6 +488,7 @@ export function register_delayed_graph_listener() {
 
 function do_load_graph_content(
   recipe: GraphRecipe,
+  specification: object,
   time_range: GraphTimeRange,
   display_config: GraphDisplayConfigHTML,
   script_object: HTMLScriptElement,
@@ -501,6 +507,7 @@ function do_load_graph_content(
     encodeURIComponent(
       JSON.stringify({
         recipe: recipe,
+        specification: specification,
         time_range: time_range,
         display_config: display_config,
         display_id: display_id,
@@ -578,6 +585,7 @@ function delayed_graph_renderer() {
     if (is_in_viewport(entry.graph_load_container as HTMLElement)) {
       do_load_graph_content(
         entry.recipe,
+        entry.specification,
         entry.time_range,
         entry.display_config,
         entry.script_object,

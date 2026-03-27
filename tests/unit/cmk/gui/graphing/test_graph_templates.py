@@ -612,13 +612,6 @@ class _FakeTemplateGraphSpecification(TemplateGraphSpecification):
                             color="#0080c0",
                         )
                     ],
-                    specification=_FakeTemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                        graph_index=0,
-                        graph_id="graph1",
-                    ),
                 ),
                 GraphRecipe(
                     title="Graph 2",
@@ -649,13 +642,6 @@ class _FakeTemplateGraphSpecification(TemplateGraphSpecification):
                             color="#0080c0",
                         )
                     ],
-                    specification=_FakeTemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                        graph_index=1,
-                        graph_id="graph2",
-                    ),
                 ),
             ],
             id="no index and no id",
@@ -693,13 +679,6 @@ class _FakeTemplateGraphSpecification(TemplateGraphSpecification):
                             color="#0080c0",
                         )
                     ],
-                    specification=_FakeTemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                        graph_index=0,
-                        graph_id="graph1",
-                    ),
                 ),
             ],
             id="matching index and no id",
@@ -743,13 +722,6 @@ class _FakeTemplateGraphSpecification(TemplateGraphSpecification):
                             color="#0080c0",
                         )
                     ],
-                    specification=_FakeTemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                        graph_index=1,
-                        graph_id="graph2",
-                    ),
                 ),
             ],
             id="no index and matching id",
@@ -793,13 +765,6 @@ class _FakeTemplateGraphSpecification(TemplateGraphSpecification):
                             color="#0080c0",
                         )
                     ],
-                    specification=_FakeTemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                        graph_id="graph1",
-                        graph_index=0,
-                    ),
                 ),
             ],
             id="matching index and matching id",
@@ -1037,11 +1002,6 @@ def test__compute_graph_recipes_1(
                 HostName("host_name"),
                 ServiceName("service_name"),
                 translated_metrics,
-                TemplateGraphSpecification(
-                    site=SiteId("site_id"),
-                    host_name=HostName("host_name"),
-                    service_description=ServiceName("service_name"),
-                ),
                 consolidation_function="max",
                 temperature_unit=TemperatureUnit.CELSIUS,
             )
@@ -1086,11 +1046,6 @@ def test__compute_graph_recipes_2(
                 HostName("host_name"),
                 ServiceName("service_name"),
                 translated_metrics,
-                TemplateGraphSpecification(
-                    site=SiteId("site_id"),
-                    host_name=HostName("host_name"),
-                    service_description=ServiceName("service_name"),
-                ),
                 consolidation_function="max",
                 temperature_unit=TemperatureUnit.CELSIUS,
             )
@@ -1268,11 +1223,6 @@ def test__compute_graph_recipes_2(
                             color="#696969",
                         ),
                     ],
-                    specification=TemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                    ),
                 ),
             ],
             id="matches",
@@ -1367,11 +1317,6 @@ def test__compute_graph_recipes_2(
                             color="#1ee6e6",
                         ),
                     ],
-                    specification=TemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                    ),
                 ),
                 GraphRecipe(
                     title="Foo",
@@ -1403,11 +1348,6 @@ def test__compute_graph_recipes_2(
                             color="#cc00ff",
                         )
                     ],
-                    specification=TemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                    ),
                 ),
                 GraphRecipe(
                     title="Prediction of Foo (upper levels)",
@@ -1445,11 +1385,6 @@ def test__compute_graph_recipes_2(
                             color="#4b4b4b",
                         )
                     ],
-                    specification=TemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                    ),
                 ),
                 GraphRecipe(
                     title="Prediction of Foo (lower levels)",
@@ -1487,11 +1422,6 @@ def test__compute_graph_recipes_2(
                             color="#5a5a5a",
                         )
                     ],
-                    specification=TemplateGraphSpecification(
-                        site=SiteId("site_id"),
-                        host_name=HostName("host_name"),
-                        service_description=ServiceName("service_name"),
-                    ),
                 ),
             ],
             id="does-not-match",
@@ -1527,11 +1457,6 @@ def test__compute_graph_recipes_with_predictive_metrics(
             HostName("host_name"),
             ServiceName("service_name"),
             translated_metrics,
-            TemplateGraphSpecification(
-                site=SiteId("site_id"),
-                host_name=HostName("host_name"),
-                service_description=ServiceName("service_name"),
-            ),
             consolidation_function="max",
             temperature_unit=TemperatureUnit.CELSIUS,
         )
@@ -2070,11 +1995,6 @@ def test_conflicting_metrics(
                 HostName("host_name"),
                 ServiceName("service_name"),
                 translated_metrics,
-                TemplateGraphSpecification(
-                    site=SiteId("site_id"),
-                    host_name=HostName("host_name"),
-                    service_description=ServiceName("service_name"),
-                ),
                 consolidation_function="max",
                 temperature_unit=TemperatureUnit.CELSIUS,
             )
@@ -2235,14 +2155,6 @@ def test_template_recipes_fs() -> None:
                     color="#37fa37",
                 ),
             ],
-            specification=_FakeTemplateGraphSpecificationFS(
-                site=SiteId("site_id"),
-                host_name=HostName("host_name"),
-                service_description=ServiceName("service_name"),
-                graph_index=0,
-                graph_id="fs_used",
-                destination=None,
-            ),
         ),
         GraphRecipe(
             title="Growth",
@@ -2273,13 +2185,5 @@ def test_template_recipes_fs() -> None:
                     color="#1ee6e6",
                 )
             ],
-            specification=_FakeTemplateGraphSpecificationFS(
-                site=SiteId("site_id"),
-                host_name=HostName("host_name"),
-                service_description=ServiceName("service_name"),
-                graph_index=1,
-                graph_id="METRIC_fs_growth",
-                destination=None,
-            ),
         ),
     ]

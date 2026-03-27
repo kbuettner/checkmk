@@ -160,7 +160,6 @@ def _create_graph_recipe_from_translated_metric(
     service_name: ServiceName,
     consolidation_function: GraphConsolidationFunction,
     translated_metric: TranslatedMetric,
-    specification: TemplateGraphSpecification,
     *,
     temperature_unit: TemperatureUnit,
 ) -> GraphRecipe:
@@ -189,12 +188,10 @@ def _create_graph_recipe_from_translated_metric(
         ),
         omit_zero_metrics=False,
         consolidation_function=consolidation_function,
-        specification=specification,
     )
 
 
 def _create_graph_recipe(
-    specification: GraphSpecification,
     *,
     title: str,
     graph_metrics: Sequence[GraphMetric],
@@ -225,7 +222,6 @@ def _create_graph_recipe(
         horizontal_rules=horizontal_rules,
         omit_zero_metrics=False,
         consolidation_function=consolidation_function,
-        specification=specification,
     )
 
 
@@ -236,7 +232,6 @@ def _compute_graph_recipes(
     host_name: HostName,
     service_name: ServiceName,
     translated_metrics: Mapping[str, TranslatedMetric],
-    specification: TemplateGraphSpecification,
     *,
     consolidation_function: GraphConsolidationFunction,
     temperature_unit: TemperatureUnit,
@@ -258,7 +253,6 @@ def _compute_graph_recipes(
             yield (
                 graph_id,
                 _create_graph_recipe(
-                    specification,
                     title=evaluate_graph_plugin_title(
                         registered_metrics,
                         graph_plugin.title.localize(translate_to_current_language),
@@ -285,7 +279,6 @@ def _compute_graph_recipes(
             yield (
                 metric_name if metric_name.startswith("METRIC_") else f"METRIC_{metric_name}",
                 _create_graph_recipe(
-                    specification,
                     title="",
                     graph_metrics=[
                         GraphMetric(
@@ -376,15 +369,15 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
                 omit_zero_metrics=recipe.omit_zero_metrics,
                 consolidation_function=recipe.consolidation_function,
                 metrics=recipe.metrics,
-                specification=self._make_specification(
-                    site=site_id,
-                    host_name=self.host_name,
-                    service_description=self.service_description,
-                    graph_index=graph_index,
-                    graph_id=graph_id,
-                    destination=self.destination,
-                ),
-            )
+            ),
+            specification=self._make_specification(
+                site=site_id,
+                host_name=self.host_name,
+                service_description=self.service_description,
+                graph_index=graph_index,
+                graph_id=graph_id,
+                destination=self.destination,
+            ),
         )
 
     @tracer.instrument("graphing.TemplateGraphSpecification.recipes")
@@ -425,7 +418,6 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
                         service_name,
                         context.consolidation_function,
                         translated_metrics[self.graph_id[7:]],
-                        self,  # does not matter here, it will be overwritten in _post_process_recipe
                         temperature_unit=context.temperature_unit,
                     ),
                 )
@@ -441,7 +433,6 @@ class TemplateGraphSpecification(GraphSpecification, frozen=True):
                         host_name,
                         service_name,
                         translated_metrics,
-                        self,  # does not matter here, it will be overwritten in _post_process_recipe
                         consolidation_function=context.consolidation_function,
                         temperature_unit=context.temperature_unit,
                     )

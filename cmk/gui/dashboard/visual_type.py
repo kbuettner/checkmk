@@ -134,7 +134,7 @@ class VisualTypeDashboards(VisualType):
             # parameters = [ 'template', {'service_description': 'CPU load', 'site': 'mysite',
             #                         'graph_index': 0, 'host_name': 'server123'}])
             add_type, context, parameters = self._handle_add_graph(
-                GraphContext.model_validate(parameters).recipe.specification
+                GraphContext.model_validate(parameters).specification
             )
 
         # the DashletConfig below doesn't take None for context, so at this point we should have one

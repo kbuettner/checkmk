@@ -529,7 +529,7 @@ export function pagetype_add_to_container(page_type: string, page_name: string) 
 
 export function graph_export(page: string) {
   const request = {
-    specification: (active_popup.data![2] as GraphContext).recipe.specification,
+    specification: (active_popup.data![2] as GraphContext).specification,
     data_range: (active_popup.data![2] as GraphContext).time_range
   }
   location.href = page + '.py?request=' + encodeURIComponent(JSON.stringify(request))

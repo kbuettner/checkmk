@@ -26,7 +26,6 @@ from cmk.gui.graphing._graph_specification import (
     GraphRecipe,
     GraphTimeRange,
 )
-from cmk.gui.graphing._graph_templates import TemplateGraphSpecification
 from cmk.gui.graphing._legacy import CheckMetricEntry
 from cmk.gui.graphing._rrd import (
     _metric_props_by_service,
@@ -99,13 +98,6 @@ _GRAPH_RECIPE = GraphRecipe(
     horizontal_rules=[],
     omit_zero_metrics=False,
     consolidation_function="max",
-    specification=TemplateGraphSpecification(
-        site=SiteId("NO_SITE"),
-        host_name=HostName("my-host"),
-        service_description="Temperature Zone 6",
-        graph_index=0,
-        graph_id="temperature",
-    ),
 )
 
 _GRAPH_TIME_RANGE = GraphTimeRange(start=1681985455, end=1681999855, step=20)

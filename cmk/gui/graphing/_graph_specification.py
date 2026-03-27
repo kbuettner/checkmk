@@ -16,7 +16,6 @@ from pydantic import (
     BaseModel,
     computed_field,
     Field,
-    field_validator,
     PlainValidator,
     SerializeAsAny,
 )
@@ -212,14 +211,6 @@ class GraphRecipe(BaseModel, frozen=True):
     omit_zero_metrics: bool
     consolidation_function: GraphConsolidationFunction | None
     metrics: Sequence[GraphMetric]
-    # https://docs.pydantic.dev/2.4/concepts/serialization/#subclass-instances-for-fields-of-basemodel-dataclasses-typeddict
-    # https://docs.pydantic.dev/2.4/concepts/serialization/#serializing-with-duck-typing
-    specification: SerializeAsAny[GraphSpecification]
-
-    @field_validator("specification", mode="before")
-    @classmethod
-    def parse_specification(cls, value: Mapping[str, object]) -> GraphSpecification:
-        return parse_raw_graph_specification(value)
 
 
 @dataclass(frozen=True)
@@ -227,12 +218,13 @@ class GraphRecipeWithOverrides:
     """Bundles a GraphRecipe with its per-recipe settings.
 
     Keeps the core GraphRecipe (the serializable graph definition) separate
-    from per-recipe settings (time_range, render_options, additional_html)
-    that mirror the sibling fields in GraphContext without polluting the
-    recipe itself.
+    from per-recipe settings (specification, time_range, render_options,
+    additional_html) that mirror the sibling fields in GraphContext without
+    polluting the recipe itself.
     """
 
     recipe: GraphRecipe
+    specification: GraphSpecification
     time_range: GraphTimeRange | None = None
     render_options: GraphRenderOptions = field(default_factory=GraphRenderOptions)
     additional_html: AdditionalGraphHTML | None = None

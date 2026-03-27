@@ -12,7 +12,7 @@ from enum import auto, Enum
 from typing import assert_never, Literal, override
 from uuid import uuid4
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator, SerializeAsAny
 
 from livestatus import MKLivestatusNotFoundError
 
@@ -79,6 +79,7 @@ from ._graph_specification import (
     GraphRenderContext,
     GraphSpecification,
     GraphTimeRange,
+    parse_raw_graph_specification,
 )
 from ._graph_templates import (
     get_template_graph_specification,
@@ -113,10 +114,18 @@ class GraphContext(BaseModel):
 
     graph_id: str = ""
     recipe: GraphRecipe
+    specification: SerializeAsAny[GraphSpecification]
     time_range: GraphTimeRange
     display_config: GraphDisplayConfigHTML
     display_id: str = ""
     onclick: str | None = None
+
+    @field_validator("specification", mode="before")
+    @classmethod
+    def _parse_specification(cls, value: object) -> GraphSpecification:
+        if isinstance(value, GraphSpecification):
+            return value
+        return parse_raw_graph_specification(value)
 
 
 def _load_graph_pin() -> int | None:
@@ -323,6 +332,7 @@ def render_graph_error_html(*, title: str, msg_or_exc: Exception | str, debug: b
 def _collect_graph_html(
     request: Request,
     recipe: GraphRecipe,
+    specification: GraphSpecification,
     display_id: str,
     artwork: GraphArtwork,
     time_range: GraphTimeRange,
@@ -335,6 +345,7 @@ def _collect_graph_html(
         _show_graph_html_content(
             request,
             recipe,
+            specification,
             display_id,
             artwork,
             time_range,
@@ -350,6 +361,7 @@ def _collect_graph_html(
 def _render_graph_html(
     request: Request,
     recipe: GraphRecipe,
+    specification: GraphSpecification,
     display_id: str,
     artwork: GraphArtwork,
     time_range: GraphTimeRange,
@@ -362,6 +374,7 @@ def _render_graph_html(
     html_code = _collect_graph_html(
         request,
         recipe,
+        specification,
         display_id,
         artwork,
         time_range,
@@ -377,6 +390,7 @@ def _render_graph_html(
             json.dumps(
                 GraphContext(
                     recipe=recipe,
+                    specification=specification,
                     time_range=time_range,
                     display_config=display_config,
                     display_id=display_id,
@@ -394,18 +408,22 @@ def _render_title_elements_plain(elements: Iterable[str]) -> str:
 # TODO: still relies on the global request object because painters also use this function.
 def render_plain_graph_title(
     recipe: GraphRecipe,
+    specification: GraphSpecification,
     artwork: GraphArtwork,
     display_config: GraphDisplayConfigBase,
 ) -> str:
     return _render_title_elements_plain(
         element[0]
-        for element in _render_graph_title_elements(request, recipe, artwork, display_config)
+        for element in _render_graph_title_elements(
+            request, recipe, specification, artwork, display_config
+        )
     )
 
 
 def _render_graph_title_elements(
     request: Request,
     recipe: GraphRecipe,
+    specification: GraphSpecification,
     artwork: GraphArtwork,
     display_config: GraphDisplayConfigBase,
     explicit_title: str | None = None,
@@ -423,7 +441,6 @@ def _render_graph_title_elements(
         title_elements.append((artwork.title, None))
 
     # Only add host/service information for template based graphs
-    specification = recipe.specification
     if not isinstance(specification, TemplateGraphSpecification):
         return title_elements
 
@@ -470,6 +487,7 @@ def _title_info_elements(
 def _show_graph_html_content(
     request: Request,
     recipe: GraphRecipe,
+    specification: GraphSpecification,
     display_id: str,
     artwork: GraphArtwork,
     time_range: GraphTimeRange,
@@ -503,6 +521,7 @@ def _show_graph_html_content(
                 None,
                 GraphContext(
                     recipe=recipe,
+                    specification=specification,
                     time_range=time_range,
                     display_config=display_config,
                     display_id=display_id,
@@ -532,6 +551,7 @@ def _show_graph_html_content(
         _render_graph_title_elements(
             request,
             recipe,
+            specification,
             artwork,
             display_config,
             explicit_title=display_config.explicit_title,
@@ -972,9 +992,9 @@ def render_ajax_graph(
     )
 
     # Persist the current data range for the graph editor.
-    if display_config.editing and (context.recipe.specification.id):
+    if display_config.editing and (context.specification.id):
         assert user.id is not None
-        UserGraphTimeRangeStore(user.id).save(context.recipe.specification.id, time_range)
+        UserGraphTimeRangeStore(user.id).save(context.specification.id, time_range)
 
     display_id = context.display_id
 
@@ -1029,6 +1049,7 @@ def render_ajax_graph(
     html_code = _collect_graph_html(
         request,
         recipe,
+        context.specification,
         display_id,
         artwork_or_errors.artwork,
         time_range,
@@ -1042,6 +1063,7 @@ def render_ajax_graph(
         "context": GraphContext(
             graph_id=context.graph_id,
             recipe=recipe,
+            specification=context.specification,
             time_range=time_range,
             display_config=display_config,
             display_id=display_id,
@@ -1100,6 +1122,7 @@ class UserGraphTimeRangeStore:
 # cmk.graphs.load_graph_content will call ajax_render_graph_content() via JSON to finally load the graph
 def _render_deferred_graph_html(
     recipe: GraphRecipe,
+    specification: GraphSpecification,
     time_range: GraphTimeRange,
     display_config: GraphDisplayConfigHTML,
     *,
@@ -1122,9 +1145,10 @@ def _render_deferred_graph_html(
         class_="graph_load_container",
     )
     output += HTMLWriter.render_javascript(
-        "cmk.graphs.load_graph_content(%s, %s, %s, %s, %s)"
+        "cmk.graphs.load_graph_content(%s, %s, %s, %s, %s, %s)"
         % (
             json.dumps(recipe.model_dump()),
+            json.dumps(specification.model_dump()),
             json.dumps(time_range.model_dump()),
             json.dumps(display_config.model_dump()),
             json.dumps(display_id),
@@ -1175,6 +1199,7 @@ def render_deferred_graphs_html(
     for recipe_with_overrides in recipes:
         output += _render_deferred_graph_html(
             recipe_with_overrides.recipe,
+            recipe_with_overrides.specification,
             recipe_with_overrides.time_range or time_range,
             display_config.update_from_options(recipe_with_overrides.render_options),
             display_id=display_id,
@@ -1223,6 +1248,7 @@ def render_graphs_html(
         output += _render_graph_content_html(
             request,
             recipe_with_overrides.recipe,
+            recipe_with_overrides.specification,
             effective_time_range,
             effective_config,
             compute_graph_artwork(
@@ -1254,6 +1280,7 @@ class AjaxRenderGraphContent(AjaxPage):
         """Registered as `ajax_render_graph_content`."""
         api_request = ctx.request.get_request()
         recipe = GraphRecipe.model_validate(api_request["recipe"])
+        specification = parse_raw_graph_specification(api_request["specification"])
         time_range = GraphTimeRange.model_validate(api_request["time_range"])
         display_config = GraphDisplayConfigHTML.model_validate(api_request["display_config"])
         additional_html = (
@@ -1269,6 +1296,7 @@ class AjaxRenderGraphContent(AjaxPage):
         return _render_graph_content_html(
             ctx.request,
             recipe,
+            specification,
             time_range,
             display_config,
             compute_graph_artwork(
@@ -1294,6 +1322,7 @@ class AjaxRenderGraphContent(AjaxPage):
 def _render_graph_content_html(
     request: Request,
     recipe: GraphRecipe,
+    specification: GraphSpecification,
     time_range: GraphTimeRange,
     display_config: GraphDisplayConfigHTML,
     artwork_or_errors: GraphArtworkOrErrors,
@@ -1308,7 +1337,7 @@ def _render_graph_content_html(
     additional_html: AdditionalGraphHTML | None = None,
 ) -> HTML:
     if artwork_or_errors.errors:
-        if url := recipe.specification.url():
+        if url := specification.url():
             output = HTMLWriter.render_div(
                 _(
                     "Cannot render complete graph. See graph '<a href='%s'>%s</a>' for further details."
@@ -1328,7 +1357,7 @@ def _render_graph_content_html(
         output = HTML.empty()
 
     if show_limits_if_reached and artwork_or_errors.graph_metric_limits_reached:
-        if url := recipe.specification.url():
+        if url := specification.url():
             output += HTMLWriter.render_div(
                 _(
                     "The result of your query hit the maximum number of %s time series."
@@ -1365,6 +1394,7 @@ def _render_graph_content_html(
         output += _render_graph_html(
             request,
             recipe,
+            specification,
             display_id,
             artwork_or_errors.artwork,
             time_range,
@@ -1378,6 +1408,7 @@ def _render_graph_content_html(
                 + _render_time_range_selection(
                     request,
                     recipe,
+                    specification,
                     display_config,
                     graph_timeranges=graph_timeranges,
                     temperature_unit=temperature_unit,
@@ -1410,6 +1441,7 @@ def _render_graph_content_html(
 def _render_time_range_selection(
     request: Request,
     recipe: GraphRecipe,
+    specification: GraphSpecification,
     display_config: GraphDisplayConfigHTML,
     *,
     graph_timeranges: Sequence[GraphTimerange],
@@ -1460,6 +1492,7 @@ def _render_time_range_selection(
                 _render_graph_html(
                     request,
                     recipe,
+                    specification,
                     display_id,
                     artwork,
                     time_range,
@@ -1718,6 +1751,7 @@ def host_service_graph_dashlet_cmk(
     return _render_graph_content_html(
         request,
         recipe,
+        recipe_with_overrides.specification,
         recipe_with_overrides.time_range or graph_time_range,
         display_config.update_from_options(recipe_with_overrides.render_options),
         artwork_or_errors,
