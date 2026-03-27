@@ -82,11 +82,11 @@ class FilterBehaviour(Enum):
     FINISHED = "finished"
 
 
-def _sanitize_and_validate_regex(s: str) -> str:
+def _sanitize_and_validate_regex(query: str) -> str:
     """Validate and return sanitized regex string."""
     # Regex sanitization:
     #  * convert glob patterns to valid regex wildcard pattern
-    sanitized = s.replace("*", ".*")
+    sanitized = query.replace("*", ".*")
     validate_regex(sanitized, varname=None)
     return sanitized
 
