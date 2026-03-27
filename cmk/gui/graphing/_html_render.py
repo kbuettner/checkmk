@@ -412,9 +412,15 @@ def render_plain_graph_title(
     display_config: GraphDisplayConfigBase,
 ) -> str:
     return _render_title_elements_plain(
-        element[0]
+        element.text
         for element in _render_graph_title_elements(request, specification, artwork, display_config)
     )
+
+
+@dataclass(frozen=True, kw_only=True)
+class _TitleElement:
+    text: str
+    url: str | None
 
 
 def _render_graph_title_elements(
@@ -423,18 +429,18 @@ def _render_graph_title_elements(
     artwork: GraphArtwork,
     display_config: GraphDisplayConfigBase,
     explicit_title: str | None = None,
-) -> list[tuple[str, str | None]]:
+) -> Sequence[_TitleElement]:
     if not display_config.show_title:
         return []
 
     # Hard override of the graph title. This is e.g. needed for the graph previews
     if explicit_title is not None:
-        return [(explicit_title, None)]
+        return [_TitleElement(text=explicit_title, url=None)]
 
-    title_elements: list[tuple[str, str | None]] = []
+    title_elements: list[_TitleElement] = []
 
     if display_config.title_format.plain and artwork.title:
-        title_elements.append((artwork.title, None))
+        title_elements.append(_TitleElement(text=artwork.title, url=None))
 
     # Only add host/service information for template based graphs
     if not isinstance(specification, TemplateGraphSpecification):
@@ -447,7 +453,7 @@ def _render_graph_title_elements(
 
 def _title_info_elements(
     request: Request, spec_info: TemplateGraphSpecification, title_format: GraphTitleFormat
-) -> Iterable[tuple[str, str]]:
+) -> Iterable[_TitleElement]:
     if title_format.add_host_name or title_format.add_host_alias:
         host_url = makeuri_contextless(
             request,
@@ -455,9 +461,11 @@ def _title_info_elements(
             filename="view.py",
         )
         if title_format.add_host_name:
-            yield spec_info.host_name, host_url
+            yield _TitleElement(text=spec_info.host_name, url=host_url)
         if title_format.add_host_alias:
-            yield get_alias_of_host(spec_info.site, spec_info.host_name), host_url
+            yield _TitleElement(
+                text=get_alias_of_host(spec_info.site, spec_info.host_name), url=host_url
+            )
 
     if title_format.add_service_description:
         service_description = spec_info.service_description
@@ -471,7 +479,7 @@ def _title_info_elements(
                 ],
                 filename="view.py",
             )
-            yield service_description, service_url
+            yield _TitleElement(text=service_description, url=service_url)
 
 
 def _show_graph_html_content(
@@ -538,13 +546,16 @@ def _show_graph_html_content(
         time_text = artwork.x_axis["title"] or ""
 
     title = text_with_links_to_user_translated_html(
-        _render_graph_title_elements(
-            request,
-            specification,
-            artwork,
-            display_config,
-            explicit_title=display_config.explicit_title,
-        ),
+        [
+            (element.text, element.url)
+            for element in _render_graph_title_elements(
+                request,
+                specification,
+                artwork,
+                display_config,
+                explicit_title=display_config.explicit_title,
+            )
+        ],
         separator=HTML.without_escaping(" / "),
     )
 
