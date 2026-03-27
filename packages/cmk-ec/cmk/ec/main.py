@@ -39,7 +39,6 @@ from setproctitle import setthreadtitle
 
 import cmk.ccc.daemon
 import cmk.ccc.profile
-from cmk.ccc import store
 from cmk.ccc.crash_reporting import ABCCrashReport, CrashReportStore, make_crash_report_base_path
 from cmk.ccc.exceptions import MKException
 from cmk.ccc.hostaddress import HostAddress, HostName
@@ -3465,8 +3464,7 @@ def main(omd_root: Path, argv: Sequence[str]) -> None:
     logger = getLogger("cmk.mkeventd")
     version_info = get_general_version_infos(omd_root)
     settings = create_settings(version_info["version"], omd_root, sys.argv)
-
-    pid_path = None
+    pid_path = settings.paths.pid_file.value
     try:
         setup_logging_handler(sys.stderr)
         logging.getLogger("cmk").setLevel(verbosity_to_log_level(settings.options.verbosity))
@@ -3484,7 +3482,6 @@ def main(omd_root: Path, argv: Sequence[str]) -> None:
             settings, config, logger, StatusTableEvents.columns, StatusTableHistory.columns
         )
 
-        pid_path = settings.paths.pid_file.value
         if pid_path.exists():
             old_pid = int(pid_path.read_text(encoding="utf-8"))
             if process_exists(old_pid):
@@ -3548,69 +3545,69 @@ def main(omd_root: Path, argv: Sequence[str]) -> None:
             cmk.ccc.daemon.daemonize()
             logger.info("Daemonized with PID %d.", os.getpid())
 
-        cmk.ccc.daemon.lock_with_pid_file(pid_path)
+        with cmk.ccc.daemon.pid_file_lock(pid_path):
 
-        def signal_handler(signum: int, stack_frame: FrameType | None) -> None:
-            logger.log(VERBOSE, "Got signal %d.", signum)
-            raise MKSignalException(signum)
+            def signal_handler(signum: int, stack_frame: FrameType | None) -> None:
+                logger.log(VERBOSE, "Got signal %d.", signum)
+                raise MKSignalException(signum)
 
-        signal.signal(signal.SIGHUP, signal_handler)
-        signal.signal(signal.SIGINT, signal_handler)
-        signal.signal(signal.SIGQUIT, signal_handler)
-        signal.signal(signal.SIGTERM, signal_handler)
+            signal.signal(signal.SIGHUP, signal_handler)
+            signal.signal(signal.SIGINT, signal_handler)
+            signal.signal(signal.SIGQUIT, signal_handler)
+            signal.signal(signal.SIGTERM, signal_handler)
 
-        # Now let's go...
-        run_eventd(
-            terminate_main_event,
-            settings,
-            config,
-            lock_configuration,
-            history,
-            perfcounters,
-            event_status,
-            event_server,
-            status_server,
-            slave_status,
-            logger,
-            reload_config_event,
-        )
+            # Now let's go...
+            run_eventd(
+                terminate_main_event,
+                settings,
+                config,
+                lock_configuration,
+                history,
+                perfcounters,
+                event_status,
+                event_server,
+                status_server,
+                slave_status,
+                logger,
+                reload_config_event,
+            )
 
-        # We reach this point, if the server has been killed by
-        # a signal or hitting Ctrl-C (in foreground mode)
+            # We reach this point, if the server has been killed by
+            # a signal or hitting Ctrl-C (in foreground mode)
 
-        # TODO: Move this cleanup stuff to the classes that are responsible for these resources
+            # TODO: Move this cleanup stuff to the classes that are responsible for these resources
 
-        # Remove event pipe and drain it, so that we make sure
-        # that processes (syslog, etc) will not hang when trying
-        # to write into the pipe.
-        logger.log(VERBOSE, "Cleaning up event pipe")
-        pipe = event_server.open_pipe()  # Open it
-        settings.paths.event_pipe.value.unlink()  # Remove pipe
-        drain_pipe(pipe)  # Drain any data
-        os.close(pipe)  # Close pipe
+            # Remove event pipe and drain it, so that we make sure
+            # that processes (syslog, etc) will not hang when trying
+            # to write into the pipe.
+            logger.log(VERBOSE, "Cleaning up event pipe")
+            pipe = event_server.open_pipe()  # Open it
+            settings.paths.event_pipe.value.unlink()  # Remove pipe
+            drain_pipe(pipe)  # Drain any data
+            os.close(pipe)  # Close pipe
 
-        logger.log(VERBOSE, "Saving final event state")
-        event_status.save_status()
+            logger.log(VERBOSE, "Saving final event state")
+            event_status.save_status()
 
-        logger.log(VERBOSE, "Cleaning up sockets")
-        settings.paths.unix_socket.value.unlink()
-        settings.paths.event_socket.value.unlink()
+            logger.log(VERBOSE, "Cleaning up sockets")
+            settings.paths.unix_socket.value.unlink()
+            settings.paths.event_socket.value.unlink()
 
-        logger.log(VERBOSE, "Output hash stats")
-        event_server.output_hash_stats()
+            logger.log(VERBOSE, "Output hash stats")
+            event_server.output_hash_stats()
 
-        logger.log(VERBOSE, "Closing fds which might be still open")
-        for fd in [
-            settings.options.syslog_udp,
-            settings.options.syslog_tcp,
-            settings.options.snmptrap_udp,
-        ]:
-            with contextlib.suppress(Exception):
-                if isinstance(fd, FileDescriptor):
-                    os.close(fd.value)
+            logger.log(VERBOSE, "Closing fds which might be still open")
+            for fd in [
+                settings.options.syslog_udp,
+                settings.options.syslog_tcp,
+                settings.options.snmptrap_udp,
+            ]:
+                with contextlib.suppress(Exception):
+                    if isinstance(fd, FileDescriptor):
+                        os.close(fd.value)
 
-        logger.info("Successfully shut down.")
-        sys.exit(0)
+            logger.info("Successfully shut down.")
+            sys.exit(0)
 
     except MKSignalException:
         pass
@@ -3626,11 +3623,6 @@ def main(omd_root: Path, argv: Sequence[str]) -> None:
             )
         )
         bail_out(logger, traceback.format_exc())
-
-    finally:
-        if pid_path and store.have_lock(pid_path):
-            with contextlib.suppress(OSError):
-                pid_path.unlink()
 
 
 class ECCrashReport(ABCCrashReport[None]):

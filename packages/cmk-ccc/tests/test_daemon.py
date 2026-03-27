@@ -3,8 +3,6 @@
 # This file is part of Checkmk (https://checkmk.com). It is subject to the terms and
 # conditions defined in the file COPYING, which is part of this source code package.
 
-
-import os
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -18,16 +16,6 @@ from cmk.ccc.exceptions import MKGeneralException
 def cleanup_locks() -> Iterator[None]:
     yield
     store.release_all_locks()
-
-
-def test_lock_with_pid_file(tmp_path: Path) -> None:
-    pid_file = tmp_path / "test.pid"
-
-    daemon.lock_with_pid_file(pid_file)
-
-    assert store.have_lock(pid_file)
-    with pid_file.open() as f:
-        assert int(f.read()) == os.getpid()
 
 
 def test_pid_file_lock_context_manager(tmp_path: Path) -> None:

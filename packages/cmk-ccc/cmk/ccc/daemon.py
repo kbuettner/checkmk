@@ -71,38 +71,20 @@ def closefrom(lowfd: int) -> None:
     os.closerange(lowfd, highfd)
 
 
-def lock_with_pid_file(path: Path) -> None:
-    """
-    Use this after daemonizing or in foreground mode to ensure there is only
-    one process running.
-    """
+@contextmanager
+def pid_file_lock(path: Path) -> Generator[None]:
+    """Context manager for PID file based locking"""
     if not store.try_acquire_lock(path):
         raise MKGeneralException(
             "Failed to acquire PID file lock: Another process is already running"
         )
-
     # Now that we have the lock we are allowed to write our pid to the file.
     # The pid can then be used by the init script.
     with path.open("w", encoding="utf-8") as f:
         f.write(f"{os.getpid()}\n")
-
-
-def _cleanup_locked_pid_file(path: Path) -> None:
-    """Cleanup the lock + file acquired by the function above"""
-    if not store.have_lock(path):
-        return
-
-    store.release_lock(path)
-
-    with suppress(OSError):
-        path.unlink()
-
-
-@contextmanager
-def pid_file_lock(path: Path) -> Generator[None]:
-    """Context manager for PID file based locking"""
-    lock_with_pid_file(path)
     try:
         yield
     finally:
-        _cleanup_locked_pid_file(path)
+        store.release_lock(path)
+        with suppress(OSError):
+            path.unlink()
