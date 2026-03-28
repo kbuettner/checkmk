@@ -733,10 +733,6 @@ msgid "%s running for %s"
 msgstr "%s in esecuzione per %s"
 
 #, python-format
-msgid "%s section"
-msgstr "sezione %s"
-
-#, python-format
 msgid "%s server"
 msgstr "server %s"
 
@@ -2805,6 +2801,10 @@ msgstr "Eventi del sistema APC Inrow"
 
 msgid "APC Symmetra Checks"
 msgstr "Controlli APC Symmetra"
+
+#, fuzzy
+msgid "API (via Unix socket)"
+msgstr "Accesso tramite socket UNIX"
 
 msgid "API access token"
 msgstr "Token di accesso API"
@@ -11281,6 +11281,9 @@ msgstr "Velocità di scrittura"
 msgid "CISCO Digital Optical Monitoring (DOM)"
 msgstr "Monitoraggio ottico digitale (DOM) di CISCO"
 
+msgid "CLI (podman command)"
+msgstr ""
+
 msgid "CLOSED"
 msgstr "CHIUSO"
 
@@ -15093,10 +15096,6 @@ msgstr "Configurazione dell'agente speciale Datadog."
 msgid "Configuration of update plug-in"
 msgstr "Configurazione del plugin di aggiornamento"
 
-#, fuzzy, python-format
-msgid "Configuration options for the %s section."
-msgstr "Connessione di configurazione"
-
 #, python-format
 msgid ""
 "Configuration update failed\n"
@@ -15776,6 +15775,10 @@ msgstr ""
 #, fuzzy
 msgid "Connection lost occurred"
 msgstr "Connessione persa si è verificata"
+
+#, fuzzy
+msgid "Connection method"
+msgstr "Nome della connessione"
 
 msgid "Connection name"
 msgstr "Nome della connessione"
@@ -18406,9 +18409,6 @@ msgstr "Fonte dati: %s"
 msgid "Data store name"
 msgstr "Nome del datastore"
 
-msgid "Data to collect (Sections)"
-msgstr "Dati da raccogliere (Sezioni)"
-
 #, fuzzy
 msgid "Data to collect (sections)"
 msgstr "Dati da raccogliere (Sezioni)"
@@ -20005,10 +20005,6 @@ msgid "Deploy the Plesk plug-ins"
 msgstr "Distribuire i plugin plesk"
 
 #, fuzzy
-msgid "Deploy the PostgreSQL plug-in"
-msgstr "Distribuire il plugin PostgreSQL"
-
-#, fuzzy
 msgid "Deploy the SAP HANA plug-in"
 msgstr "Distribuire il plugin SAP HANA"
 
@@ -20052,7 +20048,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "Deploy the agent plug-in <tt>mk_postgres</tt>. This will create information "
-"necessary for all <tt>postgres_*</tt> checks"
+"necessary for all <tt>postgres_*</tt> checks."
 msgstr ""
 "Distribuire il plugin agente <tt>mk_postgres</tt>. Questo creerà le "
 "informazioni necessarie per tutti i controlli <tt>postgres_*</tt>"
@@ -21750,10 +21746,6 @@ msgid "Do not deploy the Plesk plug-ins"
 msgstr "Non distribuire i plugin plesk"
 
 #, fuzzy
-msgid "Do not deploy the PostgreSQL plug-in"
-msgstr "Non distribuire il plugin PostgreSQL"
-
-#, fuzzy
 msgid "Do not deploy the Redis plug-in"
 msgstr "Non distribuire il plugin Redis"
 
@@ -22573,9 +22565,6 @@ msgstr "Dw"
 #, fuzzy
 msgid "Dynamic MAC enabled"
 msgstr "Sincronizzazione attivata"
-
-msgid "Dynamic host configuration connections"
-msgstr "Connessioni di configurazione dinamica dell'host"
 
 msgid "Dynamic host management"
 msgstr "Gestione dinamica degli host"
@@ -27868,7 +27857,7 @@ msgstr "CPU"
 msgid "GPU utilization"
 msgstr "Utilizzo della CPU"
 
-msgid "GRPC-based receiver"
+msgid "GRPC-based OTLP receiver"
 msgstr ""
 
 msgid "GUI design"
@@ -28807,7 +28796,7 @@ msgstr "Bilanciatori di carico"
 msgid "HTTP, TCP, email, ..."
 msgstr "HTTP, TCP, e-mail, ..."
 
-msgid "HTTP-based receiver"
+msgid "HTTP-based OTLP receiver"
 msgstr ""
 
 #, fuzzy
@@ -48723,10 +48712,6 @@ msgid "OpenTelemetry Collector"
 msgstr "Configurazione dello stile selezionato"
 
 #, fuzzy
-msgid "OpenTelemetry Collector configuration"
-msgstr "Configurazione dello stile selezionato"
-
-#, fuzzy
 msgid "OpenTelemetry Collector configurations"
 msgstr "Configurazione dello stile selezionato"
 
@@ -51270,7 +51255,8 @@ msgstr "Percorso del file della chiave del certificato"
 msgid "Path to MRPE configuration file"
 msgstr "File di configurazione Pretty-Print"
 
-msgid "Path to PostGreSQL binary"
+#, fuzzy
+msgid "Path to PostgreSQL binary"
 msgstr "Percorso al binario di PostGreSQL"
 
 #, fuzzy
@@ -59065,6 +59051,13 @@ msgid ""
 "the same host (e.g. same service.name, different service.instance.id)."
 "<br><br>Aggregations occur only over the set of most recent data points per "
 "replica since the last check."
+msgstr ""
+
+msgid ""
+"Select how the agent plug-in communicates with Podman. The <b>API</b> method "
+"connects through a Unix socket and is the default. The <b>CLI</b> method "
+"invokes the <tt>podman</tt> command directly and works without a running "
+"Podman socket service."
 msgstr ""
 
 msgid ""
@@ -68766,9 +68759,6 @@ msgstr ""
 #, python-format
 msgid "The global setting \"%s\" does not exist."
 msgstr "L'impostazione globale \"%s\" non esiste."
-
-msgid "The graph data range is wrong or missing"
-msgstr "L'intervallo di dati del grafico è sbagliato o mancante"
 
 msgid "The graph specification is"
 msgstr "La specifica del grafico è"
@@ -83253,6 +83243,12 @@ msgstr ""
 msgid "Use system wide CAs"
 msgstr "Utilizzare CA a livello di sistema"
 
+msgid ""
+"Use the <tt>podman</tt> CLI for all queries. This works out of the box "
+"without any socket configuration and is recommended when the Podman socket "
+"service is not available."
+msgstr ""
+
 #, fuzzy
 msgid "Use the Checkmk username as ntopng username"
 msgstr "Utilizzare il nome utente Checkmk come nome utente ntopng"
@@ -92689,6 +92685,10 @@ msgstr "Restringimento"
 msgid "Please review to ensure factual correctness."
 msgstr ""
 
+#, fuzzy
+msgid "Copy answer"
+msgstr "Accesso disabilitato"
+
 msgid ""
 "This feature uses ${aiTemplate.value.info.models.join(', ')} by $"
 "{aiTemplate.value.info.provider}. "
@@ -95472,7 +95472,7 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "Configure OpenTelemetry collector"
+msgid "Configure OpenTelemetry Collector"
 msgstr "Configurazione dello stile selezionato"
 
 #, fuzzy
@@ -95512,6 +95512,10 @@ msgstr "%s è richiesto ma non è stato specificato."
 msgid "Password is required but not specified."
 msgstr "%s è richiesto ma non è stato specificato."
 
+#, fuzzy
+msgid "Your input is not a valid host name or IP address."
+msgstr "L'indirizzo immesso non è un indirizzo e-mail valido."
+
 msgid "GRPC"
 msgstr ""
 
@@ -95519,20 +95523,37 @@ msgid ""
 "Configure a GRPC-based OTLP receiver that will collect OpenTelemetry data."
 msgstr ""
 
-#, fuzzy
-msgid "username"
-msgstr "Nome utente"
+msgid "0.0.0.0"
+msgstr ""
+
+msgid "4317"
+msgstr ""
 
 #, fuzzy
 msgid "Select password"
 msgstr "Nuova password"
 
 #, fuzzy
+msgid "No passwords available"
+msgstr "Porte disponibili"
+
+#, fuzzy
 msgid "+ Create"
 msgstr "Creare"
 
+#, fuzzy
+msgid "Send log messages to event console"
+msgstr "Invia gli eventi alla console eventi locale"
+
+#, fuzzy
+msgid "service.name"
+msgstr "nome del servizio"
+
 msgid ""
 "Configure an HTTP-based OTLP receiver that will collect OpenTelemetry data."
+msgstr ""
+
+msgid "4318"
 msgstr ""
 
 #, fuzzy
@@ -95571,10 +95592,6 @@ msgstr ""
 #, fuzzy
 msgid "Metrics path is required but not specified."
 msgstr "%s è richiesto ma non è stato specificato."
-
-#, fuzzy
-msgid "Your input is not a valid host name or IP address."
-msgstr "L'indirizzo immesso non è un indirizzo e-mail valido."
 
 #, fuzzy
 msgid "Port must be a whole number."
@@ -96604,6 +96621,39 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, python-format
+#~ msgid "%s section"
+#~ msgstr "sezione %s"
+
+#, fuzzy, python-format
+#~ msgid "Configuration options for the %s section."
+#~ msgstr "Connessione di configurazione"
+
+#~ msgid "Data to collect (Sections)"
+#~ msgstr "Dati da raccogliere (Sezioni)"
+
+#, fuzzy
+#~ msgid "Deploy the PostgreSQL plug-in"
+#~ msgstr "Distribuire il plugin PostgreSQL"
+
+#, fuzzy
+#~ msgid "Do not deploy the PostgreSQL plug-in"
+#~ msgstr "Non distribuire il plugin PostgreSQL"
+
+#~ msgid "Dynamic host configuration connections"
+#~ msgstr "Connessioni di configurazione dinamica dell'host"
+
+#, fuzzy
+#~ msgid "OpenTelemetry Collector configuration"
+#~ msgstr "Configurazione dello stile selezionato"
+
+#~ msgid "The graph data range is wrong or missing"
+#~ msgstr "L'intervallo di dati del grafico è sbagliato o mancante"
+
+#, fuzzy
+#~ msgid "username"
+#~ msgstr "Nome utente"
 
 #~ msgid "Capacity filled"
 #~ msgstr "Capacità riempita"
@@ -99132,10 +99182,6 @@ msgstr ""
 
 #~ msgid "iops"
 #~ msgstr "iops"
-
-#, fuzzy
-#~ msgid "service.name"
-#~ msgstr "nome del servizio"
 
 #~ msgid "Allow access via TCP"
 #~ msgstr "Permettere l'accesso via TCP"

@@ -728,10 +728,6 @@ msgid "%s running for %s"
 msgstr "%s loopt gedurende %s"
 
 #, fuzzy, python-format
-msgid "%s section"
-msgstr "Map Selectie"
-
-#, fuzzy, python-format
 msgid "%s server"
 msgstr "Als server"
 
@@ -2778,6 +2774,10 @@ msgstr "APC Inrow Systeem Gebeurtenissen"
 
 msgid "APC Symmetra Checks"
 msgstr "APC Symmetra Controles"
+
+#, fuzzy
+msgid "API (via Unix socket)"
+msgstr "Toegang via UNIX socket"
 
 #, fuzzy
 msgid "API access token"
@@ -11379,6 +11379,9 @@ msgstr "Schrijf doorvoer"
 msgid "CISCO Digital Optical Monitoring (DOM)"
 msgstr "CISCO digitale optische bewaking (DOM)"
 
+msgid "CLI (podman command)"
+msgstr ""
+
 msgid "CLOSED"
 msgstr "GESLOTEN"
 
@@ -15209,10 +15212,6 @@ msgstr "Configuratie van de Datadog special agent."
 msgid "Configuration of update plug-in"
 msgstr "Configuratie van update plugin"
 
-#, fuzzy, python-format
-msgid "Configuration options for the %s section."
-msgstr "Configuratie aansluiting"
-
 #, python-format
 msgid ""
 "Configuration update failed\n"
@@ -15896,6 +15895,10 @@ msgstr "Verbinding gemaakt. De verbindingsinstellingen lijken in orde te zijn."
 #, fuzzy
 msgid "Connection lost occurred"
 msgstr "Verbinding verbroken"
+
+#, fuzzy
+msgid "Connection method"
+msgstr "Naam verbinding"
 
 msgid "Connection name"
 msgstr "Naam verbinding"
@@ -18551,10 +18554,6 @@ msgid "Data store name"
 msgstr "Datastore Naam"
 
 #, fuzzy
-msgid "Data to collect (Sections)"
-msgstr "Vuilnisophaaldiensten"
-
-#, fuzzy
 msgid "Data to collect (sections)"
 msgstr "Vuilnisophaaldiensten"
 
@@ -20147,10 +20146,6 @@ msgid "Deploy the Plesk plug-ins"
 msgstr "Implementeer de plesk plugins"
 
 #, fuzzy
-msgid "Deploy the PostgreSQL plug-in"
-msgstr "De PostgreSQL plugin implementeren"
-
-#, fuzzy
 msgid "Deploy the SAP HANA plug-in"
 msgstr "De SAP HANA plugin implementeren"
 
@@ -20190,7 +20185,7 @@ msgstr "Implementeer de agent plugin <tt>zorp</tt> op uw doelsysteem."
 #, fuzzy
 msgid ""
 "Deploy the agent plug-in <tt>mk_postgres</tt>. This will create information "
-"necessary for all <tt>postgres_*</tt> checks"
+"necessary for all <tt>postgres_*</tt> checks."
 msgstr ""
 "Implementeer de agent-plugin <tt>mk_postgres</tt>. Dit zal informatie "
 "creëren die nodig is voor alle <tt>postgres_*</tt> controles"
@@ -21881,10 +21876,6 @@ msgid "Do not deploy the Plesk plug-ins"
 msgstr "Implementeer de plesk plugins niet"
 
 #, fuzzy
-msgid "Do not deploy the PostgreSQL plug-in"
-msgstr "Implementeer de PostgreSQL plugin niet"
-
-#, fuzzy
 msgid "Do not deploy the Redis plug-in"
 msgstr "Zet de Redis plugin niet in"
 
@@ -22694,9 +22685,6 @@ msgstr "Dw"
 #, fuzzy
 msgid "Dynamic MAC enabled"
 msgstr "inschakelen"
-
-msgid "Dynamic host configuration connections"
-msgstr "Dynamische host configuratie verbindingen"
 
 msgid "Dynamic host management"
 msgstr "Dynamisch hostbeheer"
@@ -28002,7 +27990,7 @@ msgstr "CPU"
 msgid "GPU utilization"
 msgstr "CPU-gebruik"
 
-msgid "GRPC-based receiver"
+msgid "GRPC-based OTLP receiver"
 msgstr ""
 
 msgid "GUI design"
@@ -28945,7 +28933,7 @@ msgstr "Load balancers"
 msgid "HTTP, TCP, email, ..."
 msgstr "HTTP, TCP, E-mail, ..."
 
-msgid "HTTP-based receiver"
+msgid "HTTP-based OTLP receiver"
 msgstr ""
 
 #, fuzzy
@@ -48932,10 +48920,6 @@ msgid "OpenTelemetry Collector"
 msgstr "Configuratie toestand toevoegen"
 
 #, fuzzy
-msgid "OpenTelemetry Collector configuration"
-msgstr "Configuratie toestand toevoegen"
-
-#, fuzzy
 msgid "OpenTelemetry Collector configurations"
 msgstr "Configuratie toestand toevoegen"
 
@@ -51473,8 +51457,9 @@ msgstr "Pad naar certificaatsleutelbestand"
 msgid "Path to MRPE configuration file"
 msgstr "Pretty-Print configuratiebestanden"
 
-msgid "Path to PostGreSQL binary"
-msgstr ""
+#, fuzzy
+msgid "Path to PostgreSQL binary"
+msgstr "Database voor PostgreSQL"
 
 #, fuzzy
 msgid "Path to Unix socket"
@@ -59289,6 +59274,13 @@ msgid ""
 "the same host (e.g. same service.name, different service.instance.id)."
 "<br><br>Aggregations occur only over the set of most recent data points per "
 "replica since the last check."
+msgstr ""
+
+msgid ""
+"Select how the agent plug-in communicates with Podman. The <b>API</b> method "
+"connects through a Unix socket and is the default. The <b>CLI</b> method "
+"invokes the <tt>podman</tt> command directly and works without a running "
+"Podman socket service."
 msgstr ""
 
 #, fuzzy
@@ -69023,9 +69015,6 @@ msgstr ""
 #, python-format
 msgid "The global setting \"%s\" does not exist."
 msgstr "De globale instelling \"%s\" bestaat niet."
-
-msgid "The graph data range is wrong or missing"
-msgstr "Het bereik van de grafiekgegevens is verkeerd of ontbreekt"
 
 msgid "The graph specification is"
 msgstr "De grafiekspecificatie is"
@@ -83533,6 +83522,12 @@ msgstr ""
 msgid "Use system wide CAs"
 msgstr "Gebruik systeemwijde CA's"
 
+msgid ""
+"Use the <tt>podman</tt> CLI for all queries. This works out of the box "
+"without any socket configuration and is recommended when the Podman socket "
+"service is not available."
+msgstr ""
+
 #, fuzzy
 msgid "Use the Checkmk username as ntopng username"
 msgstr "Gebruik de Checkmk gebruikersnaam als ntopng gebruikersnaam"
@@ -92991,6 +92986,10 @@ msgstr "Shrinking"
 msgid "Please review to ensure factual correctness."
 msgstr ""
 
+#, fuzzy
+msgid "Copy answer"
+msgstr "Inloggen uitgeschakeld"
+
 msgid ""
 "This feature uses ${aiTemplate.value.info.models.join(', ')} by $"
 "{aiTemplate.value.info.provider}. "
@@ -95779,7 +95778,7 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "Configure OpenTelemetry collector"
+msgid "Configure OpenTelemetry Collector"
 msgstr "Configuratie toestand toevoegen"
 
 #, fuzzy
@@ -95819,6 +95818,10 @@ msgstr "JSON inloggegevens voor dienstaccount"
 msgid "Password is required but not specified."
 msgstr "JSON inloggegevens voor dienstaccount"
 
+#, fuzzy
+msgid "Your input is not a valid host name or IP address."
+msgstr "alle gebruikers met en emailadres"
+
 msgid "GRPC"
 msgstr ""
 
@@ -95826,20 +95829,37 @@ msgid ""
 "Configure a GRPC-based OTLP receiver that will collect OpenTelemetry data."
 msgstr ""
 
-#, fuzzy
-msgid "username"
-msgstr "Gebruikersnaam"
+msgid "0.0.0.0"
+msgstr ""
+
+msgid "4317"
+msgstr ""
 
 #, fuzzy
 msgid "Select password"
 msgstr "Nieuw wachtwoord"
 
 #, fuzzy
+msgid "No passwords available"
+msgstr "Beschikbare poorten"
+
+#, fuzzy
 msgid "+ Create"
 msgstr "Maak"
 
+#, fuzzy
+msgid "Send log messages to event console"
+msgstr "Gebeurtenissen verzenden naar lokale gebeurtenissenconsole"
+
+#, fuzzy
+msgid "service.name"
+msgstr "Naam van de dienst"
+
 msgid ""
 "Configure an HTTP-based OTLP receiver that will collect OpenTelemetry data."
+msgstr ""
+
+msgid "4318"
 msgstr ""
 
 #, fuzzy
@@ -95878,10 +95898,6 @@ msgstr ""
 #, fuzzy
 msgid "Metrics path is required but not specified."
 msgstr "JSON inloggegevens voor dienstaccount"
-
-#, fuzzy
-msgid "Your input is not a valid host name or IP address."
-msgstr "alle gebruikers met en emailadres"
 
 #, fuzzy
 msgid "Port must be a whole number."
@@ -96906,6 +96922,40 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, fuzzy, python-format
+#~ msgid "%s section"
+#~ msgstr "Map Selectie"
+
+#, fuzzy, python-format
+#~ msgid "Configuration options for the %s section."
+#~ msgstr "Configuratie aansluiting"
+
+#, fuzzy
+#~ msgid "Data to collect (Sections)"
+#~ msgstr "Vuilnisophaaldiensten"
+
+#, fuzzy
+#~ msgid "Deploy the PostgreSQL plug-in"
+#~ msgstr "De PostgreSQL plugin implementeren"
+
+#, fuzzy
+#~ msgid "Do not deploy the PostgreSQL plug-in"
+#~ msgstr "Implementeer de PostgreSQL plugin niet"
+
+#~ msgid "Dynamic host configuration connections"
+#~ msgstr "Dynamische host configuratie verbindingen"
+
+#, fuzzy
+#~ msgid "OpenTelemetry Collector configuration"
+#~ msgstr "Configuratie toestand toevoegen"
+
+#~ msgid "The graph data range is wrong or missing"
+#~ msgstr "Het bereik van de grafiekgegevens is verkeerd of ontbreekt"
+
+#, fuzzy
+#~ msgid "username"
+#~ msgstr "Gebruikersnaam"
 
 #~ msgid "Capacity filled"
 #~ msgstr "Capaciteit gevuld"
@@ -99088,10 +99138,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Warning services"
 #~ msgstr "In afwachting van diensten"
-
-#, fuzzy
-#~ msgid "service.name"
-#~ msgstr "Naam van de dienst"
 
 #~ msgid "Allow access via TCP"
 #~ msgstr "Toegang toestaan via TCP"
@@ -104376,9 +104422,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Indien uitgeschakeld, toont Setup de helpteksten van regels ook in de "
 #~ "lijstweergaven."
-
-#~ msgid "Database for PostgreSQL"
-#~ msgstr "Database voor PostgreSQL"
 
 #, fuzzy
 #~ msgid "Checkmk Cloud (SaaS) Beta"

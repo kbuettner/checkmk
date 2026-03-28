@@ -739,10 +739,6 @@ msgid "%s running for %s"
 msgstr "%s rulează pentru %s"
 
 #, fuzzy, python-format
-msgid "%s section"
-msgstr "Selecția fișierelor"
-
-#, fuzzy, python-format
 msgid "%s server"
 msgstr "Ca server"
 
@@ -2809,6 +2805,10 @@ msgstr "Evenimentele sistemului APC Inrow"
 
 msgid "APC Symmetra Checks"
 msgstr "Verificări APC Symmetra"
+
+#, fuzzy
+msgid "API (via Unix socket)"
+msgstr "Acces prin socket UNIX"
 
 #, fuzzy
 msgid "API access token"
@@ -11397,6 +11397,9 @@ msgstr "Viteza de scriere"
 msgid "CISCO Digital Optical Monitoring (DOM)"
 msgstr "CISCO Monitorizare optică digitală (DOM)"
 
+msgid "CLI (podman command)"
+msgstr ""
+
 msgid "CLOSED"
 msgstr "ÎNCHIS"
 
@@ -15226,10 +15229,6 @@ msgstr "Configurarea agentului special Datadog."
 msgid "Configuration of update plug-in"
 msgstr "Configurarea plugin-ului de actualizare"
 
-#, fuzzy, python-format
-msgid "Configuration options for the %s section."
-msgstr "Nu există opțiuni suplimentare de configurare pentru această metodă."
-
 #, python-format
 msgid ""
 "Configuration update failed\n"
@@ -15909,6 +15908,10 @@ msgstr "Conexiune stabilită. Setările de conectare par a fi în regulă."
 #, fuzzy
 msgid "Connection lost occurred"
 msgstr "A avut loc pierderea conexiunii"
+
+#, fuzzy
+msgid "Connection method"
+msgstr "Numele conexiunii"
 
 msgid "Connection name"
 msgstr "Numele conexiunii"
@@ -18558,9 +18561,6 @@ msgstr "Sursa de date: %s"
 msgid "Data store name"
 msgstr "Numele depozitului de date"
 
-msgid "Data to collect (Sections)"
-msgstr "Date de colectat (secțiuni)"
-
 #, fuzzy
 msgid "Data to collect (sections)"
 msgstr "Date de colectat (secțiuni)"
@@ -20167,10 +20167,6 @@ msgid "Deploy the Plesk plug-ins"
 msgstr "Implementați plugin-urile plesk"
 
 #, fuzzy
-msgid "Deploy the PostgreSQL plug-in"
-msgstr "Implementarea plugin-ului PostgreSQL"
-
-#, fuzzy
 msgid "Deploy the SAP HANA plug-in"
 msgstr "Implementați extensia SAP HANA"
 
@@ -20210,7 +20206,7 @@ msgstr "Implementați pluginul agent <tt>zorp</tt> pe sistemul țintă."
 #, fuzzy
 msgid ""
 "Deploy the agent plug-in <tt>mk_postgres</tt>. This will create information "
-"necessary for all <tt>postgres_*</tt> checks"
+"necessary for all <tt>postgres_*</tt> checks."
 msgstr ""
 "Implementați plugin-ul agent <tt>mk_postgres</tt>. Aceasta va crea "
 "informațiile necesare pentru toate verificările <tt>postgres_*</tt>."
@@ -21912,10 +21908,6 @@ msgid "Do not deploy the Plesk plug-ins"
 msgstr "Nu implementați plugin-urile plesk"
 
 #, fuzzy
-msgid "Do not deploy the PostgreSQL plug-in"
-msgstr "Nu implementați extensia PostgreSQL"
-
-#, fuzzy
 msgid "Do not deploy the Redis plug-in"
 msgstr "Nu implementați extensia Redis"
 
@@ -22716,9 +22708,6 @@ msgstr "Dw"
 #, fuzzy
 msgid "Dynamic MAC enabled"
 msgstr "Sincronizare activată"
-
-msgid "Dynamic host configuration connections"
-msgstr "Conexiuni de configurare dinamică a gazdei"
 
 msgid "Dynamic host management"
 msgstr "Gestionarea dinamică a gazdei"
@@ -28052,7 +28041,7 @@ msgstr "CPU"
 msgid "GPU utilization"
 msgstr "Utilizare GPU"
 
-msgid "GRPC-based receiver"
+msgid "GRPC-based OTLP receiver"
 msgstr ""
 
 msgid "GUI design"
@@ -28986,7 +28975,7 @@ msgstr "Solicitări GCP/HTTP(S) load balancer"
 msgid "HTTP, TCP, email, ..."
 msgstr "HTTP, TCP, e-mail, ..."
 
-msgid "HTTP-based receiver"
+msgid "HTTP-based OTLP receiver"
 msgstr ""
 
 #, fuzzy
@@ -49010,10 +48999,6 @@ msgid "OpenTelemetry Collector"
 msgstr "Configurația stilului selectat"
 
 #, fuzzy
-msgid "OpenTelemetry Collector configuration"
-msgstr "Configurația stilului selectat"
-
-#, fuzzy
 msgid "OpenTelemetry Collector configurations"
 msgstr "Configurația stilului selectat"
 
@@ -51547,8 +51532,9 @@ msgstr "Calea de acces la fișierul cu cheia de certificat"
 msgid "Path to MRPE configuration file"
 msgstr "Fișiere de configurare Pretty-Print"
 
-msgid "Path to PostGreSQL binary"
-msgstr ""
+#, fuzzy
+msgid "Path to PostgreSQL binary"
+msgstr "Baza de date pentru PostgreSQL"
 
 #, fuzzy
 msgid "Path to Unix socket"
@@ -59368,6 +59354,13 @@ msgid ""
 "the same host (e.g. same service.name, different service.instance.id)."
 "<br><br>Aggregations occur only over the set of most recent data points per "
 "replica since the last check."
+msgstr ""
+
+msgid ""
+"Select how the agent plug-in communicates with Podman. The <b>API</b> method "
+"connects through a Unix socket and is the default. The <b>CLI</b> method "
+"invokes the <tt>podman</tt> command directly and works without a running "
+"Podman socket service."
 msgstr ""
 
 msgid ""
@@ -69133,9 +69126,6 @@ msgstr ""
 #, python-format
 msgid "The global setting \"%s\" does not exist."
 msgstr "Setarea globală \"%s\" nu există."
-
-msgid "The graph data range is wrong or missing"
-msgstr "Intervalul de date al graficului este greșit sau lipsește"
 
 msgid "The graph specification is"
 msgstr "Specificația graficului este"
@@ -83650,6 +83640,12 @@ msgstr "Utilizați ghilimele simple, scăpați ghilimelele conținute cu backsla
 msgid "Use system wide CAs"
 msgstr "Utilizați CA-uri la nivel de sistem"
 
+msgid ""
+"Use the <tt>podman</tt> CLI for all queries. This works out of the box "
+"without any socket configuration and is recommended when the Podman socket "
+"service is not available."
+msgstr ""
+
 #, fuzzy
 msgid "Use the Checkmk username as ntopng username"
 msgstr "Utilizați numele de utilizator Checkmk ca nume de utilizator ntopng"
@@ -93122,6 +93118,10 @@ msgstr "Micșorarea"
 msgid "Please review to ensure factual correctness."
 msgstr ""
 
+#, fuzzy
+msgid "Copy answer"
+msgstr "Login dezactivat"
+
 msgid ""
 "This feature uses ${aiTemplate.value.info.models.join(', ')} by $"
 "{aiTemplate.value.info.provider}. "
@@ -95927,7 +95927,7 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "Configure OpenTelemetry collector"
+msgid "Configure OpenTelemetry Collector"
 msgstr "Configurația stilului selectat"
 
 #, fuzzy
@@ -95967,6 +95967,10 @@ msgstr "credențiale JSON pentru contul de servicii"
 msgid "Password is required but not specified."
 msgstr "credențiale JSON pentru contul de servicii"
 
+#, fuzzy
+msgid "Your input is not a valid host name or IP address."
+msgstr "Datele introduse nu sunt o adresă de e-mail validă."
+
 msgid "GRPC"
 msgstr ""
 
@@ -95974,20 +95978,37 @@ msgid ""
 "Configure a GRPC-based OTLP receiver that will collect OpenTelemetry data."
 msgstr ""
 
-#, fuzzy
-msgid "username"
-msgstr "Nume utilizator"
+msgid "0.0.0.0"
+msgstr ""
+
+msgid "4317"
+msgstr ""
 
 #, fuzzy
 msgid "Select password"
 msgstr "Parolă nouă"
 
 #, fuzzy
+msgid "No passwords available"
+msgstr "Porturi disponibile"
+
+#, fuzzy
 msgid "+ Create"
 msgstr "Creați"
 
+#, fuzzy
+msgid "Send log messages to event console"
+msgstr "Trimiterea evenimentelor către consola locală de evenimente"
+
+#, fuzzy
+msgid "service.name"
+msgstr "Denumirea serviciului"
+
 msgid ""
 "Configure an HTTP-based OTLP receiver that will collect OpenTelemetry data."
+msgstr ""
+
+msgid "4318"
 msgstr ""
 
 #, fuzzy
@@ -96027,10 +96048,6 @@ msgstr ""
 #, fuzzy
 msgid "Metrics path is required but not specified."
 msgstr "credențiale JSON pentru contul de servicii"
-
-#, fuzzy
-msgid "Your input is not a valid host name or IP address."
-msgstr "Datele introduse nu sunt o adresă de e-mail validă."
 
 #, fuzzy
 msgid "Port must be a whole number."
@@ -97062,6 +97079,40 @@ msgstr ""
 msgid ""
 "You can still access it later via Help > Learning Checkmk > Welcome page"
 msgstr ""
+
+#, fuzzy, python-format
+#~ msgid "%s section"
+#~ msgstr "Selecția fișierelor"
+
+#, fuzzy, python-format
+#~ msgid "Configuration options for the %s section."
+#~ msgstr ""
+#~ "Nu există opțiuni suplimentare de configurare pentru această metodă."
+
+#~ msgid "Data to collect (Sections)"
+#~ msgstr "Date de colectat (secțiuni)"
+
+#, fuzzy
+#~ msgid "Deploy the PostgreSQL plug-in"
+#~ msgstr "Implementarea plugin-ului PostgreSQL"
+
+#, fuzzy
+#~ msgid "Do not deploy the PostgreSQL plug-in"
+#~ msgstr "Nu implementați extensia PostgreSQL"
+
+#~ msgid "Dynamic host configuration connections"
+#~ msgstr "Conexiuni de configurare dinamică a gazdei"
+
+#, fuzzy
+#~ msgid "OpenTelemetry Collector configuration"
+#~ msgstr "Configurația stilului selectat"
+
+#~ msgid "The graph data range is wrong or missing"
+#~ msgstr "Intervalul de date al graficului este greșit sau lipsește"
+
+#, fuzzy
+#~ msgid "username"
+#~ msgstr "Nume utilizator"
 
 #~ msgid "Capacity filled"
 #~ msgstr "Capacitate umplută"
@@ -99725,10 +99776,6 @@ msgstr ""
 
 #~ msgid "iops"
 #~ msgstr "iops"
-
-#, fuzzy
-#~ msgid "service.name"
-#~ msgstr "Denumirea serviciului"
 
 #~ msgid "Allow access via TCP"
 #~ msgstr "Permiteți accesul prin TCP"
@@ -105125,9 +105172,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Dacă este dezactivat, Setup afișează textele de ajutor ale regulilor și "
 #~ "în vizualizările listei."
-
-#~ msgid "Database for PostgreSQL"
-#~ msgstr "Baza de date pentru PostgreSQL"
 
 #, fuzzy
 #~ msgid "Checkmk Cloud (SaaS) Beta"
