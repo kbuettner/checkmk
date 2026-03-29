@@ -6714,7 +6714,7 @@ msgid "Always build bulks"
 msgstr "Toujours en vrac"
 
 #, fuzzy
-msgid "Always compute the rate"
+msgid "Always compute the rate (excluding histograms)"
 msgstr "Reclasser l'état complet"
 
 msgid "Always fetch data from Meraki API."
@@ -63210,7 +63210,12 @@ msgid ""
 "rate in case the metric is a monotonic counter. This is of course just a "
 "heuristic and might not work for all metrics: The uptime, for example, would "
 "be reported as '1.0 s/s', which is not too useful. You can override the "
-"default behavior here."
+"default behavior here.<br><br>Histogram and exponential histogram metrics "
+"are not affected by this setting. They always report the average of observed "
+"values within an interval: for delta temporality this is sum / count of the "
+"current reporting interval, and for cumulative temporality this is the "
+"average of new observations since the last check cycle (delta sum / delta "
+"count)."
 msgstr ""
 
 msgid ""

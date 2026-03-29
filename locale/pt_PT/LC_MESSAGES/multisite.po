@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Checkmk user interface translation 0.1\n"
-"Report-Msgid-Bugs-To: martin.hirschvogel@checkmk.com\n"
+"Report-Msgid-Bugs-To: feedback@checkmk.com\n"
 "POT-Creation-Date: 2011-05-13 09:42+0200\n"
 "PO-Revision-Date: 2026-03-28 13:03+0000\n"
 "Language-Team: Portuguese (Portugal) <https://translate.checkmk.com/projects/"
@@ -6675,7 +6675,7 @@ msgid "Always build bulks"
 msgstr "Sempre a granel"
 
 #, fuzzy
-msgid "Always compute the rate"
+msgid "Always compute the rate (excluding histograms)"
 msgstr "Reclassificar o estado completo"
 
 msgid "Always fetch data from Meraki API."
@@ -62688,7 +62688,12 @@ msgid ""
 "rate in case the metric is a monotonic counter. This is of course just a "
 "heuristic and might not work for all metrics: The uptime, for example, would "
 "be reported as '1.0 s/s', which is not too useful. You can override the "
-"default behavior here."
+"default behavior here.<br><br>Histogram and exponential histogram metrics "
+"are not affected by this setting. They always report the average of observed "
+"values within an interval: for delta temporality this is sum / count of the "
+"current reporting interval, and for cumulative temporality this is the "
+"average of new observations since the last check cycle (delta sum / delta "
+"count)."
 msgstr ""
 
 msgid ""
@@ -90859,7 +90864,6 @@ msgstr "contando"
 msgid "cp437"
 msgstr "cp437"
 
-#, fuzzy
 msgid "crash report"
 msgid_plural "crash reports"
 msgstr[0] ""
@@ -91361,7 +91365,6 @@ msgstr "os anfitriões estão de pé e não têm problemas de serviço"
 msgid "hosts in total"
 msgstr "anfitriões no total"
 
-#, fuzzy
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] ""
