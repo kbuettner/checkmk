@@ -7,6 +7,7 @@
 
 from typing import Literal
 
+from cmk.gui.icons import all_icon_categories
 from cmk.gui.openapi.api_endpoints.icon._family import ICON_FAMILY
 from cmk.gui.openapi.framework import (
     ApiContext,
@@ -23,7 +24,6 @@ from cmk.gui.openapi.framework.model.base_models import (
     DomainObjectModel,
 )
 from cmk.gui.openapi.restful_objects.constructors import collection_href
-from cmk.gui.watolib.icons import all_icon_categories
 
 
 @api_model

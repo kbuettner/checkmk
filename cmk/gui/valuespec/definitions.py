@@ -76,6 +76,7 @@ from cmk.gui.htmllib.html import html
 from cmk.gui.htmllib.tag_rendering import HTMLTagAttributes
 from cmk.gui.http import request, UploadedFile
 from cmk.gui.i18n import _
+from cmk.gui.icons import all_available_icon_emblems, all_available_icons
 from cmk.gui.logged_in import user
 from cmk.gui.theme.current_theme import theme
 from cmk.gui.type_defs import (
@@ -109,7 +110,6 @@ from cmk.gui.utils.popups import MethodAjax, MethodColorpicker
 from cmk.gui.utils.speaklater import LazyString
 from cmk.gui.utils.urls import makeuri, urlencode
 from cmk.gui.view_utils import render_labels
-from cmk.gui.watolib.icons import all_available_icon_emblems, all_available_icons
 from cmk.utils import dateutils
 from cmk.utils.images import CMKImage, ImageType
 from cmk.utils.labels import AndOrNotLiteral, LabelSources

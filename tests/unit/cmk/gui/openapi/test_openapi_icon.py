@@ -5,27 +5,27 @@
 
 from pytest_mock import MockerFixture
 
-from cmk.gui.watolib.icons import IconData
+from cmk.gui.icons import IconData
 from tests.testlib.unit.rest_api_client import ClientRegistry
 
 
 def _mock_built_in_icons(mocker: MockerFixture, icons: list[IconData]) -> None:
     mocker.patch(
-        "cmk.gui.watolib.icons._available_built_in_icon_data",
+        "cmk.gui.icons._available_built_in_icon_data",
         return_value=icons,
     )
 
 
 def _mock_user_icons(mocker: MockerFixture, icons: list[IconData]) -> None:
     mocker.patch(
-        "cmk.gui.watolib.icons._available_user_icon_data",
+        "cmk.gui.icons._available_user_icon_data",
         return_value=icons,
     )
 
 
 def _mock_icon_emblems(mocker: MockerFixture, emblems: list[IconData]) -> None:
     mocker.patch(
-        "cmk.gui.watolib.icons._available_built_in_icon_emblem_data",
+        "cmk.gui.icons._available_built_in_icon_emblem_data",
         return_value=emblems,
     )
 
